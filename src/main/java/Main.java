@@ -1,3 +1,4 @@
+
 public class Main {
 
     private static boolean isCorrect(String query) {
