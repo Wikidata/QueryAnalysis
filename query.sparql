@@ -1,4 +1,5 @@
-#ein anfang
+#a comment that starts at the beginning of a line
+ # and a comment with a ## comment inside
 PREFIX foaf:  <http://xmlns.com/foaf/0.1/>
 SELECT $name#test
 WHERE {

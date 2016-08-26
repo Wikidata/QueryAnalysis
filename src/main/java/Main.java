@@ -44,9 +44,6 @@ public class Main {
         //remove the $ or ?, because it's NOT part of the variable
         tokens = tokens.stream().map(token -> token.substring(1)).collect(Collectors.toSet());
 
-        for (String token : tokens) {
-            System.out.println(token);
-        }
         return tokens.size();
     }
 
@@ -75,6 +72,6 @@ public class Main {
         //System.out.println("Original Query: " + query);
         System.out.println("Is the query correct? " + isCorrect(query));
         System.out.println("How many variables does the query contain? " + countVariables(removeComments(query)));
-        System.out.println("Query string with all comments removed: " + removeComments(query));
+        System.out.println("Query with all comments removed: " + removeComments(query));
     }
 }
