@@ -8,9 +8,7 @@ import org.eclipse.rdf4j.query.parser.sparql.SPARQLParserFactory;
 
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.StringTokenizer;
+import java.util.*;
 
 import static java.nio.file.Files.readAllBytes;
 
@@ -27,6 +25,7 @@ public class Main {
         return true;
     }
 
+    //@todo not working
     private static int countVariables(String query) {
         StringTokenizer stringTokenizer = new StringTokenizer(query);
 
@@ -41,11 +40,18 @@ public class Main {
                 p -> !(p.startsWith("?") || p.startsWith("$"))
         );
 
-
         return tokens.size();
     }
 
     private static String removeComments(String query) {
+        StringTokenizer stringTokenizer = new StringTokenizer(query, "\n");
+
+        //get a list with all lines from the query
+        List<String> lines = new LinkedList<>();
+        while (stringTokenizer.hasMoreTokens()) {
+            lines.add(stringTokenizer.nextToken());
+        }
+
         return query;
     }
 
@@ -54,6 +60,6 @@ public class Main {
         //System.out.println("Original Query: " + query);
         System.out.println("Is the query correct? " + isCorrect(query));
         System.out.println("How many variables does the query contain? " + countVariables(query));
-        //System.out.println("Query string with all comments removed: " + removeComments(query));
+        System.out.println("Query string with all comments removed: " + removeComments(query));
     }
 }
