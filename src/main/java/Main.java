@@ -1,31 +1,29 @@
-import org.eclipse.rdf4j.query.Dataset;
-import org.eclipse.rdf4j.query.MalformedQueryException;
-import org.eclipse.rdf4j.query.algebra.TupleExpr;
-import org.eclipse.rdf4j.query.parser.ParsedQuery;
-import org.eclipse.rdf4j.query.parser.QueryParser;
-import org.eclipse.rdf4j.query.parser.sparql.DatasetDeclProcessor;
-import org.eclipse.rdf4j.query.parser.sparql.SPARQLParserFactory;
+import org.apache.jena.query.Query;
+import org.apache.jena.query.QueryFactory;
+import org.apache.jena.query.QueryParseException;
+import org.apache.jena.sparql.core.Var;
+import org.apache.jena.sparql.engine.binding.Binding;
 
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static java.nio.file.Files.readAllBytes;
 
 public class Main {
 
     private static boolean isCorrect(String queryText) {
-        SPARQLParserFactory sparqlParserFactory = new SPARQLParserFactory();
-        QueryParser parser = sparqlParserFactory.getParser();
+        QueryFactory queryFactor = new QueryFactory();
         try {
-            parser.parseQuery(queryText, "http://wikiba.se/ontology#");
-        } catch (MalformedQueryException e) {
+            QueryFactory.create(queryText);
+        } catch (QueryParseException exception) {
             return false;
         }
         return true;
     }
 
-    //@todo not working
     private static int countVariables(String query) {
         StringTokenizer stringTokenizer = new StringTokenizer(query);
 
@@ -37,29 +35,46 @@ public class Main {
 
         //filter out all elements from the set that are not starting with a ? or a $
         tokens.removeIf(
-                p -> !(p.startsWith("?") || p.startsWith("$"))
+                token -> !(token.startsWith("?") || token.startsWith("$"))
         );
 
+        //filter out stupid duplicates
+        tokens.removeIf(token -> token.endsWith(")"));
+
+        //remove the $ or ?, because it's NOT part of the variable
+        tokens = tokens.stream().map(token -> token.substring(1)).collect(Collectors.toSet());
+
+        for (String token : tokens) {
+            System.out.println(token);
+        }
         return tokens.size();
     }
 
     private static String removeComments(String query) {
         StringTokenizer stringTokenizer = new StringTokenizer(query, "\n");
 
-        //get a list with all lines from the query
-        List<String> lines = new LinkedList<>();
+        String result = "";
+        //iterate over all lines of query
         while (stringTokenizer.hasMoreTokens()) {
-            lines.add(stringTokenizer.nextToken());
+            String token = stringTokenizer.nextToken();
+
+            //if there is comment in this line this variable is greater than 0
+            int commentBeginning = token.indexOf("#");
+
+            //trim line to only contain the part with out the comment
+            token = token.substring(0, commentBeginning >= 0 ? commentBeginning : token.length());
+
+            result += token + "\n";
         }
 
-        return query;
+        return result;
     }
 
     public static void main(String[] args) throws IOException {
         String query = new String(readAllBytes(Paths.get("query.sparql")));
         //System.out.println("Original Query: " + query);
         System.out.println("Is the query correct? " + isCorrect(query));
-        System.out.println("How many variables does the query contain? " + countVariables(query));
+        System.out.println("How many variables does the query contain? " + countVariables(removeComments(query)));
         System.out.println("Query string with all comments removed: " + removeComments(query));
     }
 }

@@ -1,5 +1,6 @@
+#ein anfang
 PREFIX foaf:  <http://xmlns.com/foaf/0.1/>
-SELECT ?name#test
+SELECT $name#test
 WHERE {
   # find members in the Strategic Forces subcommittee
   <http://www.rdfabout.com/rdf/usgov/congress/committees/SenateArmedServices/StrategicForces>
@@ -15,5 +16,5 @@ WHERE {
   # keep only those rows that failed to find a ?member2
   # (member of Personnel subcommittee)
   FILTER (!bound(?member2)) .
-  ?member foaf:name ?name .
+  ?member foaf:name $name .
 }
