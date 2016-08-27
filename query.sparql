@@ -13,6 +13,7 @@ WHERE {
     <http://www.rdfabout.com/rdf/usgov/congress/committees/SenateArmedServices/Personnel>
       foaf:member ?member2 .
     FILTER (?member2 = ?member) .
+    FILTER regex(?member2,"^SPARQL#this is not a comment")
   }
   # keep only those rows that failed to find a ?member2
   # (member of Personnel subcommittee)

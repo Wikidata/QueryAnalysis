@@ -1,13 +1,12 @@
 import org.apache.jena.query.Query;
 import org.apache.jena.query.QueryFactory;
 import org.apache.jena.query.QueryParseException;
-import org.apache.jena.sparql.core.Var;
-import org.apache.jena.sparql.engine.binding.Binding;
 
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.*;
-import java.util.function.Function;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.StringTokenizer;
 import java.util.stream.Collectors;
 
 import static java.nio.file.Files.readAllBytes;
@@ -15,7 +14,6 @@ import static java.nio.file.Files.readAllBytes;
 public class Main {
 
     private static boolean isCorrect(String queryText) {
-        QueryFactory queryFactor = new QueryFactory();
         try {
             QueryFactory.create(queryText);
         } catch (QueryParseException exception) {
@@ -47,24 +45,9 @@ public class Main {
         return tokens.size();
     }
 
-    private static String removeComments(String query) {
-        StringTokenizer stringTokenizer = new StringTokenizer(query, "\n");
-
-        String result = "";
-        //iterate over all lines of query
-        while (stringTokenizer.hasMoreTokens()) {
-            String token = stringTokenizer.nextToken();
-
-            //if there is comment in this line this variable is greater than 0
-            int commentBeginning = token.indexOf("#");
-
-            //trim line to only contain the part with out the comment
-            token = token.substring(0, commentBeginning >= 0 ? commentBeginning : token.length());
-
-            result += token + "\n";
-        }
-
-        return result;
+    private static String removeComments(String queryText) {
+        Query q = QueryFactory.create(queryText);
+        return q.toString();
     }
 
     public static void main(String[] args) throws IOException {
