@@ -17,10 +17,6 @@ import java.util.stream.Stream;
 import static java.nio.file.Files.readAllBytes;
 import static junit.framework.TestCase.assertEquals;
 
-
-/**
- * @author jgonsior
- */
 @RunWith(Parameterized.class)
 public class SparqlQueryMetricsTest {
 
@@ -64,9 +60,7 @@ public class SparqlQueryMetricsTest {
     @Test
     public void countVariables() {
         SparqlQueryAnalyzer sparqlQueryAnalyzer = new SparqlQueryAnalyzer();
-        System.out.println(query + expected);
-        assertEquals(true, true);
-        //sparqlQueryAnalyzer.addMetric("countVariables");
-        //assertEquals(expected, sparqlQueryAnalyzer.analyse(query));
+        sparqlQueryAnalyzer.addMetric("CountVariables");
+        assertEquals(expected, sparqlQueryAnalyzer.analyse(query));
     }
 }
