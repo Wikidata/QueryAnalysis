@@ -12,6 +12,12 @@ import java.util.stream.Collectors;
 
 import static java.nio.file.Files.readAllBytes;
 
+
+/**
+ * @todo: - transfer countVariables and so on into seperate Metric classes
+ * - ask user for metrics and queries he want's to analyse (see SparqlQueryMetricsTest) and then do the analysis
+ * (and present the output to the user in a nice way)
+ */
 public class Main {
 
     private static boolean isCorrect(String queryText) {

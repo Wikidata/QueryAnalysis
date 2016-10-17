@@ -3,6 +3,9 @@ import metrics.Metric;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * @todo: better naming!
+ */
 public class SparqlQueryAnalyzer {
 
     private List<Metric> queryAnalysers = new LinkedList<>();
@@ -23,8 +26,8 @@ public class SparqlQueryAnalyzer {
 
     }
 
-    public String analyse(String query) {
-        String output = "";
+    public Object analyse(String query) {
+        Object output = null;
         for (Metric queryAnalyser : queryAnalysers) {
             output = queryAnalyser.analyseQuery(query);
         }

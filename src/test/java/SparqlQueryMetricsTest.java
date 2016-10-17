@@ -1,10 +1,14 @@
 import org.apache.commons.io.FilenameUtils;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
 
+import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -14,6 +18,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Stream;
 
+import static java.lang.Math.toIntExact;
 import static java.nio.file.Files.readAllBytes;
 import static junit.framework.TestCase.assertEquals;
 
@@ -38,9 +43,12 @@ public class SparqlQueryMetricsTest {
 
                         //@todo: convert this string into a HashMap!
                         //the expected outputs
-                        array[1] = new String(readAllBytes(Paths.get("sparqlQueries/" + FilenameUtils.getBaseName(filePath.toString()) + ".output")));
+                        JSONParser parser = new JSONParser();
+                        array[1] = parser.parse(new FileReader("sparqlQueries/" + FilenameUtils.getBaseName(filePath.toString()) + ".json"));
                         sparqlQueriesAndExpectedOutput.add(array);
                     } catch (IOException e) {
+                        e.printStackTrace();
+                    } catch (ParseException e) {
                         e.printStackTrace();
                     }
                 }
@@ -55,12 +63,12 @@ public class SparqlQueryMetricsTest {
     public String query;
 
     @Parameter(value = 1)
-    public String expected;
+    public JSONObject expected;
 
     @Test
     public void countVariables() {
         SparqlQueryAnalyzer sparqlQueryAnalyzer = new SparqlQueryAnalyzer();
         sparqlQueryAnalyzer.addMetric("CountVariables");
-        assertEquals(expected, sparqlQueryAnalyzer.analyse(query));
+        assertEquals(toIntExact((long) expected.get("CountVariables")), sparqlQueryAnalyzer.analyse(query));
     }
 }

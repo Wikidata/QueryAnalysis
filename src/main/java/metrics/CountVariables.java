@@ -5,9 +5,13 @@ import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.stream.Collectors;
 
+
+/**
+ * @todo: use jena to count variables
+ */
 public class CountVariables implements Metric {
     @Override
-    public String analyseQuery(String query) {
+    public Object analyseQuery(String query) {
         query = MetricUtils.removeComments(query);
         StringTokenizer stringTokenizer = new StringTokenizer(query);
 
@@ -28,6 +32,6 @@ public class CountVariables implements Metric {
         //remove the $ or ?, because it's NOT part of the variable
         tokens = tokens.stream().map(token -> token.substring(1)).collect(Collectors.toSet());
 
-        return Integer.toString(tokens.size());
+        return tokens.size();
     }
 }
