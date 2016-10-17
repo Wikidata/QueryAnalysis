@@ -1,6 +1,7 @@
 import org.apache.jena.query.Query;
 import org.apache.jena.query.QueryFactory;
 import org.apache.jena.query.QueryParseException;
+import org.apache.jena.query.Syntax;
 
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -14,11 +15,14 @@ import static java.nio.file.Files.readAllBytes;
 public class Main {
 
     private static boolean isCorrect(String queryText) {
+        Query parsedQuery;
         try {
-            QueryFactory.create(queryText);
+            parsedQuery = QueryFactory.create(queryText);
         } catch (QueryParseException exception) {
             return false;
         }
+
+        Syntax test = parsedQuery.getSyntax();
         return true;
     }
 
@@ -51,7 +55,7 @@ public class Main {
     }
 
     public static void main(String[] args) throws IOException {
-        String query = new String(readAllBytes(Paths.get("query.sparql")));
+        String query = new String(readAllBytes(Paths.get("sparqlQueries/memberQuery.sparql")));
         //System.out.println("Original Query: " + query);
         System.out.println("Is the query correct? " + isCorrect(query));
         System.out.println("How many variables does the query contain? " + countVariables(removeComments(query)));
