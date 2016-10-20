@@ -14,10 +14,6 @@ import org.apache.jena.sparql.syntax.ElementPathBlock;
 import org.apache.jena.sparql.syntax.ElementVisitorBase;
 import org.apache.jena.sparql.syntax.ElementWalker;
 
-
-/**
- * @todo: use jena to count variables
- */
 public class CountVariables implements Metric {
     @Override
     public Object analyseQuery(String query_string) {
