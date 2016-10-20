@@ -7,6 +7,7 @@ import org.apache.jena.graph.Node;
 import org.apache.jena.query.Query;
 import org.apache.jena.query.QueryFactory;
 import org.apache.jena.sparql.core.TriplePath;
+import org.apache.jena.sparql.path.P_Link;
 import org.apache.jena.sparql.path.Path;
 import org.apache.jena.sparql.path.PathVisitorBase;
 import org.apache.jena.sparql.syntax.ElementPathBlock;
@@ -39,13 +40,7 @@ public class CountVariables implements Metric {
 							if (next.getSubject().isVariable()) variables.add(next.getSubject());
 							if (next.getPredicate() != null) {
 								if (next.getPredicate().isVariable()) variables.add(next.getPredicate());
-							} else {
-								// TODO analyse next.getPath()
-								Path path = next.getPath();
-								path.visit(new PathVisitorBase() {
-									
-								});
-							}
+							};
 							if (next.getObject().isVariable()) variables.add(next.getObject());
 						}
 					}
