@@ -8,45 +8,47 @@
     <artifactId>sparqlQueryTester</artifactId>
     <version>1.0-SNAPSHOT</version>
     <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
-                </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>license-maven-plugin</artifactId>
-                <version>1.9</version>
-                <executions>
-                    <execution>
-                        <id>download-licenses</id>
-                        <goals>
-                            <goal>download-licenses</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>first</id>
-                        <goals>
-                            <goal>update-file-header</goal>
-                            <goal>update-project-license</goal>
-                        </goals>
-                        <phase>process-sources</phase>
-                        <configuration>
-                            <licenseName>apache_v2</licenseName>
-                            <roots>
-                                <root>src/main/java</root>
-                                <root>src/test</root>
-                            </roots>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
+        <pluginManagement>
+	        <plugins>
+	            <plugin>
+	                <groupId>org.apache.maven.plugins</groupId>
+	                <artifactId>maven-compiler-plugin</artifactId>
+	                <configuration>
+	                    <source>1.8</source>
+	                    <target>1.8</target>
+	                </configuration>
+	            </plugin>
+	
+	            <plugin>
+	                <groupId>org.codehaus.mojo</groupId>
+	                <artifactId>license-maven-plugin</artifactId>
+	                <version>1.9</version>
+	                <executions>
+	                    <execution>
+	                        <id>download-licenses</id>
+	                        <goals>
+	                            <goal>download-licenses</goal>
+	                        </goals>
+	                    </execution>
+	                    <execution>
+	                        <id>first</id>
+	                        <goals>
+	                            <goal>update-file-header</goal>
+	                            <goal>update-project-license</goal>
+	                        </goals>
+	                        <phase>process-sources</phase>
+	                        <configuration>
+	                            <licenseName>apache_v2</licenseName>
+	                            <roots>
+	                                <root>src/main/java</root>
+	                                <root>src/test</root>
+	                            </roots>
+	                        </configuration>
+	                    </execution>
+	                </executions>
+	            </plugin>
+	        </plugins>
+	    </pluginManagement>
     </build>
 
     <licenses>
