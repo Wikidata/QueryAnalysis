@@ -9,9 +9,9 @@ package metrics;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,53 +20,59 @@ package metrics;
  * #L%
  */
 
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+
 import org.apache.jena.graph.Node;
 import org.apache.jena.query.Query;
+import org.apache.jena.query.QueryException;
 import org.apache.jena.query.QueryFactory;
 import org.apache.jena.sparql.core.TriplePath;
 import org.apache.jena.sparql.syntax.ElementPathBlock;
 import org.apache.jena.sparql.syntax.ElementVisitorBase;
 import org.apache.jena.sparql.syntax.ElementWalker;
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
-
 /**
- * counts the number of variables in the query
+ * @author Adrian-Bielefeldt
+ * Counts the number of variables in the query.
  */
-public class CountVariables implements Metric {
-    @Override
-    public Object analyseQuery(String queryString) {
-        Query query;
-        try {
-            query = QueryFactory.create(queryString);
-        } catch (Exception e) {
-            throw e;
-        }
-
-        Set<Node> variables = new HashSet<Node>();
-
-        ElementWalker.walk(query.getQueryPattern(),
-                new ElementVisitorBase() {
-                    public void visit(ElementPathBlock el) {
-                        Iterator<TriplePath> triples = el.patternElts();
-                        while (triples.hasNext()) {
-                            TriplePath next = triples.next();
-                            if (next.getSubject().isVariable()) {
-                                variables.add(next.getSubject());
-                            }
-                            if (next.getPredicate() != null) {
-                                if (next.getPredicate().isVariable()) {
-                                    variables.add(next.getPredicate());
-                                }
-                            }
-                            if (next.getObject().isVariable()) {
-                                variables.add(next.getObject());
-                            }
-                        }
-                    }
-                });
-        return variables.size();
+public class CountVariables implements Metric
+{
+  @Override
+  public final Object analyzeQuery(String queryString)
+  {
+    Query query;
+    try {
+      query = QueryFactory.create(queryString);
     }
+    catch (QueryException e) {
+      throw e;
+    }
+
+    Set<Node> variables = new HashSet<Node>();
+
+    ElementWalker.walk(query.getQueryPattern(), new ElementVisitorBase()
+    {
+      public void visit(ElementPathBlock el)
+      {
+        Iterator<TriplePath> triples = el.patternElts();
+        while (triples.hasNext()) {
+          TriplePath next = triples.next();
+          if (next.getSubject().isVariable()) {
+            variables.add(next.getSubject());
+          }
+          if (next.getPredicate() != null) {
+            if (next.getPredicate().isVariable()) {
+              variables.add(next.getPredicate());
+            }
+          }
+          if (next.getObject().isVariable()) {
+            variables.add(next.getObject());
+          }
+        }
+      }
+    });
+    return variables.size();
+  }
 }
