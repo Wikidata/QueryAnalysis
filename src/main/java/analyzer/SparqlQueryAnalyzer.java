@@ -19,20 +19,21 @@ package analyzer;
  * limitations under the License.
  * #L%
  */
-import java.util.LinkedList;
-import java.util.List;
 
+import metrics.Metric;
 import org.apache.jena.query.Query;
 import org.apache.jena.query.QueryException;
 import org.apache.jena.query.QueryFactory;
 
-import metrics.Metric;
-
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 
 /**
- * @todo: better naming!
  * @author jgonsior
+ * @todo: better naming!
  */
 public class SparqlQueryAnalyzer
 {
@@ -42,8 +43,8 @@ public class SparqlQueryAnalyzer
   private List<Metric> queryAnalysers = new LinkedList<>();
 
   /**
-   * @todo: replace choosing of metrics via class name
    * @param metric class name of the metric to be added
+   * @todo: replace choosing of metrics via class name
    */
   public final void addMetric(String metric)
   {
@@ -70,22 +71,25 @@ public class SparqlQueryAnalyzer
   }
 
   /**
-   * @param query query to which the metrics set by addMetric()
-   *              should be applied
-   * @return returns the results of the metric application
+   * @param queryString query to which the metrics set by addMetric()
+   *                    should be applied
+   * @return returns the results of the metrics as a Map where the key is the
+   * name of the metric and the value is the result of this metric
    */
-  public final Object analyse(String queryString)
+  public final Map<String, Object> analyse(String queryString)
   {
     Query query;
     try {
       query = QueryFactory.create(queryString);
-    }
-    catch (QueryException e) {
+    } catch (QueryException e) {
+      //this query is probably syntactically wrong?
       throw e;
     }
-    Object output = null;
+
+    Map<String, Object> output = new HashMap<>();
     for (Metric queryAnalyser : queryAnalysers) {
-      output = queryAnalyser.analyzeQuery(query);
+      output.put(queryAnalyser.getClass().toString(),
+          queryAnalyser.analyzeQuery(query));
     }
     return output;
   }

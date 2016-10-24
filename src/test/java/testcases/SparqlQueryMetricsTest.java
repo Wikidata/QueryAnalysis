@@ -38,6 +38,7 @@ import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 
 import static java.lang.Math.toIntExact;
@@ -134,7 +135,8 @@ public class SparqlQueryMetricsTest
   {
     SparqlQueryAnalyzer sparqlQueryAnalyzer = new SparqlQueryAnalyzer();
     sparqlQueryAnalyzer.addMetric("CountVariables");
+    Map result = sparqlQueryAnalyzer.analyse(query);
     assertEquals(toIntExact((long) expected.get("CountVariables")),
-        sparqlQueryAnalyzer.analyse(query));
+        sparqlQueryAnalyzer.analyse(query).get("class metrics.CountVariables"));
   }
 }
