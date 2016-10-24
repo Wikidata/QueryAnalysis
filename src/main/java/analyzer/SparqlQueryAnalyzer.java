@@ -19,16 +19,20 @@ package analyzer;
  * limitations under the License.
  * #L%
  */
-
-import metrics.Metric;
-
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.jena.query.Query;
+import org.apache.jena.query.QueryException;
+import org.apache.jena.query.QueryFactory;
+
+import metrics.Metric;
+
+
 
 /**
- * @author jgonsior
  * @todo: better naming!
+ * @author jgonsior
  */
 public class SparqlQueryAnalyzer
 {
@@ -38,26 +42,31 @@ public class SparqlQueryAnalyzer
   private List<Metric> queryAnalysers = new LinkedList<>();
 
   /**
-   * @param metric class name of the metric to be added
    * @todo: replace choosing of metrics via class name
+   * @param metric class name of the metric to be added
    */
   public final void addMetric(String metric)
   {
+
     try {
       Metric metricInstance = (Metric) Class.forName("metrics." + metric)
           .newInstance();
       queryAnalysers.add(metricInstance);
-    } catch (InstantiationException e) {
+    }
+    catch (InstantiationException e) {
       e.printStackTrace();
-    } catch (IllegalAccessException e) {
+    }
+    catch (IllegalAccessException e) {
       e.printStackTrace();
-    } catch (ClassNotFoundException e) {
+    }
+    catch (ClassNotFoundException e) {
       System.out.println("You want to add the metric '" + metric +
           "' but it looks like we do not have such a " +
           "metric defined. Have you checked that you" +
           "have spelled it correctly?");
       e.printStackTrace();
     }
+
   }
 
   /**
@@ -65,8 +74,15 @@ public class SparqlQueryAnalyzer
    *              should be applied
    * @return returns the results of the metric application
    */
-  public final Object analyse(String query)
+  public final Object analyse(String queryString)
   {
+    Query query;
+    try {
+      query = QueryFactory.create(queryString);
+    }
+    catch (QueryException e) {
+      throw e;
+    }
     Object output = null;
     for (Metric queryAnalyser : queryAnalysers) {
       output = queryAnalyser.analyzeQuery(query);

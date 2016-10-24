@@ -94,16 +94,19 @@ public class SparqlQueryMetricsTest
             // the expected outputs
             JSONParser parser = new JSONParser();
             array[1] = parser.parse(new FileReader("sparqlQueries/" +
-                FilenameUtils.getBaseName(filePath.toString()) + ".json"));
+            FilenameUtils.getBaseName(filePath.toString()) + ".json"));
             sparqlQueriesAndExpectedOutput.add(array);
-          } catch (IOException e) {
+          }
+          catch (IOException e) {
             e.printStackTrace();
-          } catch (ParseException e) {
+          }
+          catch (ParseException e) {
             e.printStackTrace();
           }
         }
       });
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       e.printStackTrace();
     }
     return sparqlQueriesAndExpectedOutput;
