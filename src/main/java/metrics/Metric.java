@@ -1,5 +1,7 @@
 package metrics;
 
+import org.apache.jena.query.Query;
+
 /*-
  * #%L
  * sparqlQueryTester
@@ -21,14 +23,15 @@ package metrics;
  */
 
 /**
+ * @param <T> return type of the metrics analyze method
  * @author jgonsior
  */
-public interface Metric
+public interface Metric<T>
 {
   /**
    *
    * @param query query to be analyzed by the metric
    * @return result of the evaluation
    */
-  Object analyzeQuery(String query);
+  T analyzeQuery(Query query);
 }

@@ -37,19 +37,11 @@ import org.apache.jena.sparql.syntax.ElementWalker;
  * @author Adrian-Bielefeldt
  * Counts the number of variables in the query.
  */
-public class CountVariables implements Metric
+public class CountVariables implements Metric<Integer>
 {
   @Override
-  public final Object analyzeQuery(String queryString)
+  public final Integer analyzeQuery(Query query)
   {
-    Query query;
-    try {
-      query = QueryFactory.create(queryString);
-    }
-    catch (QueryException e) {
-      throw e;
-    }
-
     Set<Node> variables = new HashSet<Node>();
 
     ElementWalker.walk(query.getQueryPattern(), new ElementVisitorBase()

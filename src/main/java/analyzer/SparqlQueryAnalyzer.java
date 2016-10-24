@@ -22,6 +22,10 @@ package analyzer;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.jena.query.Query;
+import org.apache.jena.query.QueryException;
+import org.apache.jena.query.QueryFactory;
+
 import metrics.Metric;
 
 
@@ -66,12 +70,19 @@ public class SparqlQueryAnalyzer
   }
 
   /**
-   * @param query query to which the metrics set by addMetric()
+   * @param queryString query to which the metrics set by addMetric()
    * should be applied
    * @return returns the results of the metric application
    */
-  public final Object analyse(String query)
+  public final Object analyse(String queryString)
   {
+    Query query;
+    try {
+      query = QueryFactory.create(queryString);
+    }
+    catch (QueryException e) {
+      throw e;
+    }
     Object output = null;
     for (Metric queryAnalyser : queryAnalysers) {
       output = queryAnalyser.analyzeQuery(query);

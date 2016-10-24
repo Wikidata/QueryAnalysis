@@ -61,13 +61,13 @@ public class SparqlQueryMetricsTest
    * @todo describe what this value is being used for
    */
   @Parameter(value = 0)
-  private String query;
+  public String query;
 
   /**
    * @todo describe what this value is being used for
    */
   @Parameter(value = 1)
-  private JSONObject expected;
+  public JSONObject expected;
 
   /**
    * Reads in all files from the folder sparqlQueries and then executes each
