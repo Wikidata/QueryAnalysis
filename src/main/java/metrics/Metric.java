@@ -26,7 +26,6 @@ package metrics;
 public interface Metric
 {
   /**
-   *
    * @param query query to be analyzed by the metric
    * @return result of the evaluation
    */

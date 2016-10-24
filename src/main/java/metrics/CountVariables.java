@@ -20,10 +20,6 @@ package metrics;
  * #L%
  */
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
-
 import org.apache.jena.graph.Node;
 import org.apache.jena.query.Query;
 import org.apache.jena.query.QueryException;
@@ -33,9 +29,13 @@ import org.apache.jena.sparql.syntax.ElementPathBlock;
 import org.apache.jena.sparql.syntax.ElementVisitorBase;
 import org.apache.jena.sparql.syntax.ElementWalker;
 
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+
 /**
  * @author Adrian-Bielefeldt
- * Counts the number of variables in the query.
+ *         Counts the number of variables in the query.
  */
 public class CountVariables implements Metric
 {
@@ -45,12 +45,11 @@ public class CountVariables implements Metric
     Query query;
     try {
       query = QueryFactory.create(queryString);
-    }
-    catch (QueryException e) {
+    } catch (QueryException e) {
       throw e;
     }
 
-    Set<Node> variables = new HashSet<Node>();
+    Set<Node> variables = new HashSet<>();
 
     ElementWalker.walk(query.getQueryPattern(), new ElementVisitorBase()
     {

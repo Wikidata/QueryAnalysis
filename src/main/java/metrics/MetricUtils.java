@@ -24,10 +24,9 @@ import org.apache.jena.query.Query;
 import org.apache.jena.query.QueryFactory;
 
 /**
- *
  * @author jgonsior
- *
- * Utility class to prepare queries for application of metrics.
+ *         <p>
+ *         Utility class to prepare queries for application of metrics.
  */
 public final class MetricUtils
 {
@@ -42,7 +41,6 @@ public final class MetricUtils
   }
 
   /**
-   *
    * @param queryText query from which the comments should be removed
    * @return query without the comments
    */

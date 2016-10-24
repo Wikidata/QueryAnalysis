@@ -1,4 +1,3 @@
-
 /*-
  * #%L
  * sparqlQueryTester
@@ -18,6 +17,7 @@
  * limitations under the License.
  * #L%
  */
+
 import org.apache.jena.query.Query;
 import org.apache.jena.query.QueryFactory;
 import org.apache.jena.query.QueryParseException;
@@ -34,9 +34,9 @@ import static java.nio.file.Files.readAllBytes;
 
 /**
  * @todo: - transfer countVariables and so on into seperate Metric classes - ask
- *        user for metrics and queries he want's to analyse (see
- *        SparqlQueryMetricsTest) and then do the analysis (and present the
- *        output to the user in a nice way)
+ * user for metrics and queries he want's to analyse (see
+ * SparqlQueryMetricsTest) and then do the analysis (and present the
+ * output to the user in a nice way)
  */
 public class Main
 {
@@ -46,8 +46,7 @@ public class Main
     Query parsedQuery;
     try {
       parsedQuery = QueryFactory.create(queryText);
-    }
-    catch (QueryParseException exception) {
+    } catch (QueryParseException exception) {
       return false;
     }
 

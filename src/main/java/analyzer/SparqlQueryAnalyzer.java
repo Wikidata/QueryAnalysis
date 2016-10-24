@@ -19,16 +19,16 @@ package analyzer;
  * limitations under the License.
  * #L%
  */
-import java.util.LinkedList;
-import java.util.List;
 
 import metrics.Metric;
 
+import java.util.LinkedList;
+import java.util.List;
 
 
 /**
- * @todo: better naming!
  * @author jgonsior
+ * @todo: better naming!
  */
 public class SparqlQueryAnalyzer
 {
@@ -38,36 +38,31 @@ public class SparqlQueryAnalyzer
   private List<Metric> queryAnalysers = new LinkedList<>();
 
   /**
-   * @todo: replace choosing of metrics via class name
    * @param metric class name of the metric to be added
+   * @todo: replace choosing of metrics via class name
    */
   public final void addMetric(String metric)
   {
-
     try {
       Metric metricInstance = (Metric) Class.forName("metrics." + metric)
           .newInstance();
       queryAnalysers.add(metricInstance);
-    }
-    catch (InstantiationException e) {
+    } catch (InstantiationException e) {
       e.printStackTrace();
-    }
-    catch (IllegalAccessException e) {
+    } catch (IllegalAccessException e) {
       e.printStackTrace();
-    }
-    catch (ClassNotFoundException e) {
+    } catch (ClassNotFoundException e) {
       System.out.println("You want to add the metric '" + metric +
           "' but it looks like we do not have such a " +
           "metric defined. Have you checked that you" +
           "have spelled it correctly?");
       e.printStackTrace();
     }
-
   }
 
   /**
    * @param query query to which the metrics set by addMetric()
-   * should be applied
+   *              should be applied
    * @return returns the results of the metric application
    */
   public final Object analyse(String query)
