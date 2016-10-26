@@ -93,6 +93,19 @@
             <version>1.1</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.jdbi</groupId>
+            <artifactId>jdbi</artifactId>
+            <version>LATEST</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>LATEST</version>
+        </dependency>
+
+
         <!--<dependency>
             <groupId>org.eclipse.rdf4j</groupId>
             <artifactId>rdf4j-runtime</artifactId>

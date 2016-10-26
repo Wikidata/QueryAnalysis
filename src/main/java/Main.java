@@ -20,6 +20,10 @@
 
 import analyzer.SparqlQueryAnalyzer;
 
+import java.io.UnsupportedEncodingException;
+import java.security.NoSuchAlgorithmException;
+import java.util.Map;
+
 
 /**
  * @author jgonsior
@@ -27,9 +31,8 @@ import analyzer.SparqlQueryAnalyzer;
 public class Main
 {
 
-  public static void main(String[] args)
+  public static void main(String[] args) throws UnsupportedEncodingException, NoSuchAlgorithmException
   {
-    System.out.println("Starting analyzing");
     String query = "PREFIX wd: <http://www.wikidata.org/entity/>\n" +
         "PREFIX wdt: <http://www.wikidata.org/prop/direct/>\n" +
         "PREFIX wikibase: <http://wikiba.se/ontology#>\n" +
@@ -62,6 +65,10 @@ public class Main
         "}";
     SparqlQueryAnalyzer analyzer = new SparqlQueryAnalyzer();
     analyzer.addMetric("CountVariables");
-    System.out.println("The query contains " + analyzer.analyse(query).get("class metrics.CountVariables") + " variables.");
+    Map<String, Object> metricOutput = analyzer.analyse(query);
+
+    analyzer.saveOutputToDatabase(query, metricOutput);
+
+    analyzer.displayDatabase();
   }
 }

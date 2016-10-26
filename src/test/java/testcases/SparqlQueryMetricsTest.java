@@ -137,6 +137,6 @@ public class SparqlQueryMetricsTest
     sparqlQueryAnalyzer.addMetric("CountVariables");
     Map result = sparqlQueryAnalyzer.analyse(query);
     assertEquals(toIntExact((long) expected.get("CountVariables")),
-        sparqlQueryAnalyzer.analyse(query).get("class metrics.CountVariables"));
+        sparqlQueryAnalyzer.analyse(query).get("CountVariables"));
   }
 }
