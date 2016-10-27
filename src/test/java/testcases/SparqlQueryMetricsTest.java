@@ -20,7 +20,20 @@ package testcases;
  * #L%
  */
 
-import analyzer.SparqlQueryAnalyzer;
+import java.io.FileReader;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.stream.Stream;
+
+import static java.lang.Math.toIntExact;
+import static java.nio.file.Files.readAllBytes;
+
+import analyzer.QueryHandler;
 import org.apache.commons.io.FilenameUtils;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -30,19 +43,6 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
-import java.io.FileReader;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Stream;
-
-import static java.lang.Math.toIntExact;
-import static java.nio.file.Files.readAllBytes;
 import static junit.framework.TestCase.assertEquals;
 
 /**
@@ -53,8 +53,8 @@ import static junit.framework.TestCase.assertEquals;
  *         <p>
  *         The whole test is then run as a parameterized JUnit test
  *         That means the output of getSparqlQueries is a Collection of multiple
- *         input and expected output tuples for the test case. In the end the test
- *         case is being run automatically with all tuples again and again.
+ *         input and expected output tuples for the test case. In the end the
+ *         test case is being run automatically with all tuples again and again.
  *         </p>
  */
 @RunWith(Parameterized.class)
@@ -133,20 +133,20 @@ public class SparqlQueryMetricsTest
   @Test
   public final void countVariables()
   {
-    SparqlQueryAnalyzer sparqlQueryAnalyzer = new SparqlQueryAnalyzer();
-    sparqlQueryAnalyzer.addMetric("CountVariables");
-    Map result = sparqlQueryAnalyzer.analyse(query);
+    QueryHandler queryHandler = new QueryHandler(query);
     assertEquals(toIntExact((long) expected.get("CountVariables")),
-        sparqlQueryAnalyzer.analyse(query).get("CountVariables"));
+        queryHandler.getVariableCount());
   }
 
+  /**
+   * Tests whether the CountTriples-metric returns the correct
+   * number of triples.
+   */
   @Test
   public final void countTriples()
   {
-    SparqlQueryAnalyzer sparqlQueryAnalyzer = new SparqlQueryAnalyzer();
-    sparqlQueryAnalyzer.addMetric("CountTriples");;
-    Map<String, Object> result = sparqlQueryAnalyzer.analyse(query);
+    QueryHandler queryHandler = new QueryHandler(query);
     assertEquals(toIntExact((long) expected.get("CountTriples")),
-        result.get("CountTriples"));
+        queryHandler.getTripleCount());
   }
 }

@@ -18,6 +18,7 @@
  * #L%
  */
 
+import analyzer.QueryHandler;
 import analyzer.SparqlQueryAnalyzer;
 
 import java.io.UnsupportedEncodingException;
@@ -63,12 +64,9 @@ public class Main
         "  OPTIONAL { ?item wdt:P18 ?pic }\n" +
         "  SERVICE wikibase:label {bd:serviceParam wikibase:language \"en\" }\n" +
         "}";
-    SparqlQueryAnalyzer analyzer = new SparqlQueryAnalyzer();
-    analyzer.addMetric("CountVariables");
-    Map<String, Object> metricOutput = analyzer.analyse(query);
-
-    analyzer.saveOutputToDatabase(query, metricOutput);
-
-    analyzer.displayDatabase();
+    QueryHandler queryHandler = new QueryHandler(query);
+    System.out.println("Number of Variables: " +
+        queryHandler.getVariableCount());
+    System.out.println("Number of Triples: " + queryHandler.getTripleCount());
   }
 }
