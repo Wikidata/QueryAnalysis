@@ -115,7 +115,7 @@ public class SparqlQueryMetricsTest
 
   /**
    * JUNit uses this constructor to give the test cases the input and expected
-   * output
+   * output.
    *
    * @param query    the test input
    * @param expected the expected output
@@ -138,5 +138,15 @@ public class SparqlQueryMetricsTest
     Map result = sparqlQueryAnalyzer.analyse(query);
     assertEquals(toIntExact((long) expected.get("CountVariables")),
         sparqlQueryAnalyzer.analyse(query).get("CountVariables"));
+  }
+
+  @Test
+  public final void countTriples()
+  {
+    SparqlQueryAnalyzer sparqlQueryAnalyzer = new SparqlQueryAnalyzer();
+    sparqlQueryAnalyzer.addMetric("CountTriples");;
+    Map<String, Object> result = sparqlQueryAnalyzer.analyse(query);
+    assertEquals(toIntExact((long) expected.get("CountTriples")),
+        result.get("CountTriples"));
   }
 }
