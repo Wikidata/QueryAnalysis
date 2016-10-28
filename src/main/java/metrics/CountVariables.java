@@ -41,7 +41,7 @@ public class CountVariables implements Metric<Integer>
   @Override
   public final Integer analyzeQuery(Query query)
   {
-    Set<Node> variables = new HashSet<>();
+    final Set<Node> variables = new HashSet<>();
 
     ElementWalker.walk(query.getQueryPattern(), new ElementVisitorBase()
     {

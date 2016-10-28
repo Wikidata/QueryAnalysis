@@ -77,7 +77,7 @@ public class QueryHandler
    */
   public final int getVariableCount()
   {
-    Set<Node> variables = new HashSet<>();
+    final Set<Node> variables = new HashSet<>();
 
     ElementWalker.walk(query.getQueryPattern(), new ElementVisitorBase()
     {
