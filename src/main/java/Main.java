@@ -18,12 +18,10 @@
  * #L%
  */
 
-import analyzer.QueryHandler;
-import analyzer.SparqlQueryAnalyzer;
+import QueryHandler.QueryHandler;
 
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
-import java.util.Map;
 
 
 /**
@@ -68,5 +66,13 @@ public class Main
     System.out.println("Number of Variables: " +
         queryHandler.getVariableCount());
     System.out.println("Number of Triples: " + queryHandler.getTripleCount());
+
+    //read in queries from tsv
+
+
+    //create query object
+
+    //persist metrics and so on in tsv
+
   }
 }

@@ -2,4 +2,4 @@
  * @author Adrian-Bielefeldt
  *
  */
-package analyzer;
+package QueryHandler;

@@ -20,6 +20,16 @@ package testcases;
  * #L%
  */
 
+import QueryHandler.QueryHandler;
+import org.apache.commons.io.FilenameUtils;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
+
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -32,17 +42,6 @@ import java.util.stream.Stream;
 
 import static java.lang.Math.toIntExact;
 import static java.nio.file.Files.readAllBytes;
-
-import analyzer.QueryHandler;
-import org.apache.commons.io.FilenameUtils;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
-
 import static junit.framework.TestCase.assertEquals;
 
 /**
