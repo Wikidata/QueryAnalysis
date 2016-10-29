@@ -19,9 +19,16 @@
  */
 
 import QueryHandler.QueryHandler;
+import com.univocity.parsers.common.ParsingContext;
+import com.univocity.parsers.common.processor.ObjectRowProcessor;
+import com.univocity.parsers.tsv.TsvParser;
+import com.univocity.parsers.tsv.TsvParserSettings;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-import java.security.NoSuchAlgorithmException;
+import java.net.URLDecoder;
 
 
 /**
@@ -30,7 +37,7 @@ import java.security.NoSuchAlgorithmException;
 public class Main
 {
 
-  public static void main(String[] args) throws UnsupportedEncodingException, NoSuchAlgorithmException
+  public static void main(String[] args) throws FileNotFoundException, UnsupportedEncodingException
   {
     String query = "PREFIX wd: <http://www.wikidata.org/entity/>\n" +
         "PREFIX wdt: <http://www.wikidata.org/prop/direct/>\n" +
@@ -68,6 +75,30 @@ public class Main
     System.out.println("Number of Triples: " + queryHandler.getTripleCount());
 
     //read in queries from tsv
+    TsvParserSettings parserSettings = new TsvParserSettings();
+    parserSettings.setLineSeparatorDetectionEnabled(true);
+    parserSettings.setHeaderExtractionEnabled(true);
+    ObjectRowProcessor rowProcessor = new ObjectRowProcessor()
+    {
+      @Override
+      public void rowProcessed(Object[] row, ParsingContext parsingContext)
+      {
+        String queryString = "";
+        try {
+          queryString = URLDecoder.decode((String) row[0], "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+          System.out.println("Somehow UTF-8 encoding can not be used to decode the following query" + row[0]);
+        }
+        System.out.println(queryString);
+      }
+
+    };
+
+    parserSettings.setRowProcessor(rowProcessor);
+
+    TsvParser parser = new TsvParser(parserSettings);
+
+    parser.parse(new InputStreamReader(new FileInputStream("QueryCutSept01.tsv"), "UTF-8"));
 
 
     //create query object

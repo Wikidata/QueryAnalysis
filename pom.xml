@@ -94,17 +94,11 @@
         </dependency>
 
         <dependency>
-            <groupId>org.jdbi</groupId>
-            <artifactId>jdbi</artifactId>
-            <version>LATEST</version>
+            <groupId>com.univocity</groupId>
+            <artifactId>univocity-parsers</artifactId>
+            <version>2.2.2</version>
+            <type>jar</type>
         </dependency>
-
-        <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-            <version>LATEST</version>
-        </dependency>
-
 
         <!--<dependency>
             <groupId>org.eclipse.rdf4j</groupId>
