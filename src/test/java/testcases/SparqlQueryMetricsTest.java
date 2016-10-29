@@ -38,6 +38,7 @@ import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 import static java.lang.Math.toIntExact;
@@ -79,29 +80,34 @@ public class SparqlQueryMetricsTest
   @Parameters
   public static Collection<Object[]> getSparqlQueries()
   {
-    List<Object[]> sparqlQueriesAndExpectedOutput = new LinkedList<>();
+    final List<Object[]> sparqlQueriesAndExpectedOutput = new LinkedList<>();
 
     try (Stream<Path> paths = Files.walk(Paths.get("sparqlQueries"))) {
-      paths.forEach(filePath -> {
-        if (Files.isRegularFile(filePath) &&
-            filePath.toString().toLowerCase().endsWith(".sparql")) {
-          try {
-            Object[] array = new Object[2];
-            // the query
-            array[0] = new String(readAllBytes(filePath));
+      paths.forEach(new Consumer<Path>()
+      {
+        @Override
+        public void accept(Path filePath)
+        {
+          if (Files.isRegularFile(filePath) &&
+              filePath.toString().toLowerCase().endsWith(".sparql")) {
+            try {
+              Object[] array = new Object[2];
+              // the query
+              array[0] = new String(readAllBytes(filePath));
 
-            // @todo: convert this string into a HashMap!
-            // the expected outputs
-            JSONParser parser = new JSONParser();
-            array[1] = parser.parse(new FileReader("sparqlQueries/" +
-            FilenameUtils.getBaseName(filePath.toString()) + ".json"));
-            sparqlQueriesAndExpectedOutput.add(array);
-          }
-          catch (IOException e) {
-            e.printStackTrace();
-          }
-          catch (ParseException e) {
-            e.printStackTrace();
+              // @todo: convert this string into a HashMap!
+              // the expected outputs
+              JSONParser parser = new JSONParser();
+              array[1] = parser.parse(new FileReader("sparqlQueries/" +
+              FilenameUtils.getBaseName(filePath.toString()) + ".json"));
+              sparqlQueriesAndExpectedOutput.add(array);
+            }
+            catch (IOException e) {
+              e.printStackTrace();
+            }
+            catch (ParseException e) {
+              e.printStackTrace();
+            }
           }
         }
       });
