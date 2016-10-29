@@ -20,6 +20,7 @@ package testcases;
  * #L%
  */
 
+import QueryHandler.InvalidQueryException;
 import QueryHandler.QueryHandler;
 import org.apache.commons.io.FilenameUtils;
 import org.json.simple.JSONObject;
@@ -136,7 +137,7 @@ public class SparqlQueryMetricsTest
    * number of variables.
    */
   @Test
-  public final void countVariables()
+  public final void countVariables() throws InvalidQueryException
   {
     QueryHandler queryHandler = new QueryHandler(query);
     assertEquals(toIntExact((long) expected.get("CountVariables")),
@@ -148,7 +149,7 @@ public class SparqlQueryMetricsTest
    * number of triples.
    */
   @Test
-  public final void countTriples()
+  public final void countTriples() throws InvalidQueryException
   {
     QueryHandler queryHandler = new QueryHandler(query);
     assertEquals(toIntExact((long) expected.get("CountTriples")),

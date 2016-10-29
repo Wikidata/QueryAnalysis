@@ -18,6 +18,7 @@
  * #L%
  */
 
+import QueryHandler.InvalidQueryException;
 import QueryHandler.QueryHandler;
 import com.univocity.parsers.common.ParsingContext;
 import com.univocity.parsers.common.processor.ObjectRowProcessor;
@@ -42,11 +43,11 @@ public class Main
 
   public static void main(String[] args) throws FileNotFoundException, UnsupportedEncodingException
   {
-
     //read in queries from tsv
     TsvParserSettings parserSettings = new TsvParserSettings();
     parserSettings.setLineSeparatorDetectionEnabled(true);
     parserSettings.setHeaderExtractionEnabled(true);
+
     ObjectRowProcessor rowProcessor = new ObjectRowProcessor()
     {
       @Override
@@ -66,11 +67,19 @@ public class Main
         } catch (URISyntaxException e) {
           System.out.println("There was a syntax error in the following URI: " + row[0]);
         }
-        System.out.println("q" + queryString);
         QueryHandler queryHandler = new QueryHandler(queryString);
-        System.out.println("Number of Variables: " +
-            queryHandler.getVariableCount());
-        System.out.println("Number of Triples: " + queryHandler.getTripleCount());
+
+        try {
+          //in case that query is valid
+          System.out.println("Number of Variables: " +
+              queryHandler.getVariableCount());
+          System.out.println("Number of Triples: " + queryHandler.getTripleCount());
+        } catch (InvalidQueryException exception) {
+          //save query as invalid
+          System.out.println("Invalid query: " + queryString);
+        }
+
+        //persist metrics and so on in tsv
 
       }
 
@@ -80,12 +89,10 @@ public class Main
 
     TsvParser parser = new TsvParser(parserSettings);
 
-    parser.parse(new InputStreamReader(new FileInputStream("QueryCutSept01.tsv"), "UTF-8"));
-
-
-    //create query object
-
-    //persist metrics and so on in tsv
-
+    //should be changed when it is being run on the server
+    int i = 1;
+    //for (int i = 1; i < 30; i++) {
+    parser.parse(new InputStreamReader(new FileInputStream("QueryCutSept" + String.format("%02d", i) + ".tsv"), "UTF-8"));
+    //}
   }
 }
