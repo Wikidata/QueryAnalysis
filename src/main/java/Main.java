@@ -23,13 +23,16 @@ import com.univocity.parsers.common.ParsingContext;
 import com.univocity.parsers.common.processor.ObjectRowProcessor;
 import com.univocity.parsers.tsv.TsvParser;
 import com.univocity.parsers.tsv.TsvParserSettings;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.utils.URLEncodedUtils;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.List;
 
 /**
  * @author jgonsior
@@ -39,40 +42,6 @@ public class Main
 
   public static void main(String[] args) throws FileNotFoundException, UnsupportedEncodingException
   {
-    String query = "PREFIX wd: <http://www.wikidata.org/entity/>\n" +
-        "PREFIX wdt: <http://www.wikidata.org/prop/direct/>\n" +
-        "PREFIX wikibase: <http://wikiba.se/ontology#>\n" +
-        "PREFIX p: <http://www.wikidata.org/prop/>\n" +
-        "PREFIX ps: <http://www.wikidata.org/prop/statement/>\n" +
-        "PREFIX pq: <http://www.wikidata.org/prop/qualifier/>\n" +
-        "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
-        "PREFIX bd: <http://www.bigdata.com/rdf#>\n" +
-        "\n" +
-        "#Children of Genghis Khan\n" +
-        "#added before 2016-10\n" +
-        " #defaultView:Graph\n" +
-        "PREFIX gas: <http://www.bigdata.com/rdf/gas#>\n" +
-        "\n" +
-        "SELECT ?item ?itemLabel ?pic ?linkTo\n" +
-        "WHERE\n" +
-        "{\n" +
-        "  SERVICE gas:service {\n" +
-        "    gas:program gas:gasClass \"com.bigdata.rdf.graph.analytics.SSSP\" ;\n" +
-        "                gas:in wd:Q720 ;\n" +
-        "                gas:traversalDirection \"Forward\" ;\n" +
-        "                gas:out ?item ;\n" +
-        "                gas:out1 ?depth ;\n" +
-        "                gas:maxIterations 4 ;\n" +
-        "                gas:linkType wdt:P40 .\n" +
-        "  }\n" +
-        "  OPTIONAL { ?item wdt:P40 ?linkTo }\n" +
-        "  OPTIONAL { ?item wdt:P18 ?pic }\n" +
-        "  SERVICE wikibase:label {bd:serviceParam wikibase:language \"en\" }\n" +
-        "}";
-    QueryHandler queryHandler = new QueryHandler(query);
-    System.out.println("Number of Variables: " +
-        queryHandler.getVariableCount());
-    System.out.println("Number of Triples: " + queryHandler.getTripleCount());
 
     //read in queries from tsv
     TsvParserSettings parserSettings = new TsvParserSettings();
@@ -85,11 +54,24 @@ public class Main
       {
         String queryString = "";
         try {
-          queryString = URLDecoder.decode((String) row[0], "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-          System.out.println("Somehow UTF-8 encoding can not be used to decode the following query" + row[0]);
+          //parse url
+          List<NameValuePair> params = URLEncodedUtils.parse(new URI(((String) row[0])), "UTF-8");
+
+          //find out the query parameter
+          for (NameValuePair param : params) {
+            if (param.getName().equals("query")) {
+              queryString = param.getValue();
+            }
+          }
+        } catch (URISyntaxException e) {
+          System.out.println("There was a syntax error in the following URI: " + row[0]);
         }
-        System.out.println(queryString);
+        System.out.println("q" + queryString);
+        QueryHandler queryHandler = new QueryHandler(queryString);
+        System.out.println("Number of Variables: " +
+            queryHandler.getVariableCount());
+        System.out.println("Number of Triples: " + queryHandler.getTripleCount());
+
       }
 
     };
