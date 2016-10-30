@@ -18,7 +18,6 @@ import java.util.Set;
 
 /**
  * @author Adrian-Bielefeldt
- *
  */
 public class QueryHandler
 {
@@ -29,13 +28,14 @@ public class QueryHandler
   /**
    * Saves if queryString is a valid query.
    */
-  private boolean valid;
+  private boolean valid = false;
   /**
    * The query object created from query-string.
    */
   private Query query;
   /**
    * Saves the number of triples in the pattern.
+   *
    * @todo Should be local variable of getTripleCount() but cannot because of:
    * Local variable triplesCount defined in an enclosing scope must be final or
    * effectively final.
@@ -43,14 +43,15 @@ public class QueryHandler
   private int triplesCount;
 
   /**
-   *
    * @param queryToAnalyze String which (if possible) will be parsed
-   * for further analysis
+   *                       for further analysis
    */
   public QueryHandler(String queryToAnalyze)
   {
+    this.queryString = queryToAnalyze;
     try {
       this.query = QueryFactory.create(queryToAnalyze);
+      this.valid = true;
     } catch (QueryException e) {
       this.valid = false;
     }
@@ -75,8 +76,11 @@ public class QueryHandler
   /**
    * @return Returns the number of variables in the query pattern.
    */
-  public final int getVariableCount()
+  public final int getVariableCount() throws InvalidQueryException
   {
+    if (!this.valid) {
+      throw new InvalidQueryException();
+    }
     final Set<Node> variables = new HashSet<>();
 
     ElementWalker.walk(query.getQueryPattern(), new ElementVisitorBase()
@@ -106,8 +110,11 @@ public class QueryHandler
   /**
    * @return Returns the number of triples in the query pattern.
    */
-  public final int getTripleCount()
+  public final int getTripleCount() throws InvalidQueryException
   {
+    if (!this.valid) {
+      throw new InvalidQueryException();
+    }
     triplesCount = 0;
 
     ElementWalker.walk(query.getQueryPattern(), new ElementVisitorBase()
