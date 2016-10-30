@@ -1,7 +1,7 @@
 /**
  *
  */
-package QueryHandler;
+package query;
 
 import org.apache.jena.graph.Node;
 import org.apache.jena.query.Query;
@@ -28,7 +28,7 @@ public class QueryHandler
   /**
    * Saves if queryString is a valid query.
    */
-  private boolean valid = false;
+  private boolean valid;
   /**
    * The query object created from query-string.
    */
@@ -66,7 +66,7 @@ public class QueryHandler
   }
 
   /**
-   * @return Returns true if the query saved in query-string is valid.
+   * @return Returns true if the query is valid.
    */
   public final boolean isValid()
   {
@@ -74,12 +74,32 @@ public class QueryHandler
   }
 
   /**
+   * @return Returns the length of the query with comments and even if invalid.
+   * '/n' counts as one character.
+   */
+  public final Integer getStringLength()
+  {
+    return queryString.length();
+  }
+
+  /**
+   * @return Returns the length of the query without comments (null if invalid).
+   */
+  public final Integer getStringLengthNoComments()
+  {
+    if (!valid) {
+      return null;
+    }
+    return query.toString().length();
+  }
+
+  /**
    * @return Returns the number of variables in the query pattern.
    */
-  public final int getVariableCount() throws InvalidQueryException
+  public final Integer getVariableCountPattern()
   {
     if (!this.valid) {
-      throw new InvalidQueryException();
+      return null;
     }
     final Set<Node> variables = new HashSet<>();
 
@@ -108,12 +128,24 @@ public class QueryHandler
   }
 
   /**
-   * @return Returns the number of triples in the query pattern.
+   * @return Returns the number of variables in the query head.
    */
-  public final int getTripleCount() throws InvalidQueryException
+  public final Integer getVariableCountHead()
   {
     if (!this.valid) {
-      throw new InvalidQueryException();
+      return null;
+    }
+    return query.getProjectVars().size();
+  }
+
+  /**
+   * @return Returns the number of triples in the query pattern
+   * (including triples in SERIVCE blocks).
+   */
+  public final Integer getTripleCountWithService()
+  {
+    if (!this.valid) {
+      return null;
     }
     triplesCount = 0;
 

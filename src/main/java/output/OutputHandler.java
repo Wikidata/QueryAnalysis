@@ -2,9 +2,13 @@ package output;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.univocity.parsers.tsv.TsvWriter;
 import com.univocity.parsers.tsv.TsvWriterSettings;
+
+import query.QueryHandler;
 
 /**
  *
@@ -28,7 +32,21 @@ public class OutputHandler
   {
     FileOutputStream outputWriter = new FileOutputStream(fileToWrite);
     writer = new TsvWriter(outputWriter, new TsvWriterSettings());
-
+    List<String> header = new ArrayList<String>();
+    header.add("#Valid");
+    header.add("#StringLengthWithComments");
+    header.add("#StringLengthNoComments");
+    header.add("#VariableCountHead");
+    header.add("#VariableCountPattern");
+    header.add("#TripleCountWithService");
+    header.add("#TripleCountNoService");
+    header.add("#uri_query");
+    header.add("#uri_path");
+    header.add("#user_agent");
+    header.add("#ts");
+    header.add("#agent_type");
+    header.add("#hour");
+    writer.writeHeaders(header);
   }
 
   /**
@@ -42,9 +60,26 @@ public class OutputHandler
   /**
    * Takes a query and the additional information from input and writes
    * the available data to the active .tsv.
+   * @param queryHandler The queryHandler whose data should be written.
+   * @param row The input data to be written to this line.
    */
-  public final void writeLine()
+  public final void writeLine(QueryHandler queryHandler, Object[] row)
   {
-
+    List<Object> line = new ArrayList<Object>();
+    if (queryHandler.isValid()) {
+      line.add("1");
+    } else {
+      line.add("0");
+    }
+    line.add(queryHandler.getStringLength());
+    line.add(queryHandler.getStringLengthNoComments());
+    line.add(queryHandler.getVariableCountHead());
+    line.add(queryHandler.getVariableCountPattern());
+    line.add(queryHandler.getTripleCountWithService());
+    line.add("not implemented");
+    for (Object object : row) {
+      line.add(object);
+    }
+    writer.writeRow(line);
   }
 }

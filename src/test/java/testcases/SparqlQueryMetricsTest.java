@@ -1,27 +1,5 @@
 package testcases;
 
-/*-
- * #%L
- * sparqlQueryTester
- * %%
- * Copyright (C) 2016 QueryAnalysis
- * %%
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * #L%
- */
-
-import QueryHandler.InvalidQueryException;
-import QueryHandler.QueryHandler;
 import org.apache.commons.io.FilenameUtils;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -30,6 +8,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
+
+import query.QueryHandler;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -62,12 +42,12 @@ import static junit.framework.TestCase.assertEquals;
 public class SparqlQueryMetricsTest
 {
   /**
-   * The expected input query for one test run
+   * The expected input query for one test run.
    */
   private String query;
 
   /**
-   * The expected output for one test run
+   * The expected output for one test run.
    */
   private JSONObject expected;
 
@@ -133,26 +113,66 @@ public class SparqlQueryMetricsTest
   }
 
   /**
-   * Tests whether the CountVariables-metric returns the correct
-   * number of variables.
+   * Tests if the getStringLength()-metric returns the correct
+   * length.
    */
   @Test
-  public final void countVariables() throws InvalidQueryException
+  public final void stringLength()
   {
     QueryHandler queryHandler = new QueryHandler(query);
-    assertEquals(toIntExact((long) expected.get("CountVariables")),
-        queryHandler.getVariableCount());
+    Integer expectedInteger = Integer.parseInt(expected.get(
+        "StringLength").toString());
+    assertEquals(expectedInteger, queryHandler.getStringLength());
   }
 
   /**
-   * Tests whether the CountTriples-metric returns the correct
+   * Test if the getStringLengthNoComments()-metric returns the correct
+   * length.
+   */
+  public final void stringLengthNoComments()
+  {
+    QueryHandler queryHandler = new QueryHandler(query);
+    Integer expectedInteger = Integer.parseInt(expected.get(
+        "StringLengthNoComments").toString());
+    assertEquals(expectedInteger, queryHandler.getStringLengthNoComments());
+  }
+
+  /**
+   * Tests if the CountVariablesHead-metric returns the correct
+   * number of variables.
+   */
+  @Test
+  public final void countVariablesHead()
+  {
+    QueryHandler queryHandler = new QueryHandler(query);
+    Integer expectedInteger = Integer.parseInt(expected.get(
+        "CountVariablesHead").toString());
+    assertEquals(expectedInteger, queryHandler.getVariableCountHead());
+  }
+
+  /**
+   * Tests if the CountVariablesPattern-metric returns the correct
+   * number of variables.
+   */
+  @Test
+  public final void countVariablesPattern()
+  {
+    QueryHandler queryHandler = new QueryHandler(query);
+    Integer expectedInteger = Integer.parseInt(expected.get(
+        "CountVariablesPattern").toString());
+    assertEquals(expectedInteger, queryHandler.getVariableCountPattern());
+  }
+
+  /**
+   * Tests if the CountTriples-metric returns the correct
    * number of triples.
    */
   @Test
-  public final void countTriples() throws InvalidQueryException
+  public final void countTriplesWService()
   {
     QueryHandler queryHandler = new QueryHandler(query);
-    assertEquals(toIntExact((long) expected.get("CountTriples")),
-        queryHandler.getTripleCount());
+    Integer expectedInteger = Integer.parseInt(expected.get(
+        "CountTriplesWithService").toString());
+    assertEquals(expectedInteger, queryHandler.getTripleCountWithService());
   }
 }

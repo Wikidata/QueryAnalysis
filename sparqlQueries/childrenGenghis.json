@@ -1,4 +1,7 @@
 {
-  "CountVariables": 4,
-  "CountTriples" : 10
+  "StringLength": 1009,
+  "StringLengthNoComments": 1115,
+  "CountVariablesHead": 4,
+  "CountVariablesPattern": 4,
+  "CountTriplesWithService" : 10
 }
