@@ -1,16 +1,5 @@
 package testcases;
 
-import org.apache.commons.io.FilenameUtils;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
-
-import query.QueryHandler;
-
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -22,8 +11,19 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
-import static java.lang.Math.toIntExact;
 import static java.nio.file.Files.readAllBytes;
+
+import org.apache.commons.io.FilenameUtils;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
+
+import query.QueryHandler;
+
 import static junit.framework.TestCase.assertEquals;
 
 /**
@@ -50,6 +50,19 @@ public class SparqlQueryMetricsTest
    * The expected output for one test run.
    */
   private JSONObject expected;
+
+  /**
+   * JUNit uses this constructor to give the test cases the input and expected
+   * output.
+   *
+   * @param queryString    the test input
+   * @param expectedValue  the expected output
+   */
+  public SparqlQueryMetricsTest(String queryString, JSONObject expectedValue)
+  {
+    this.query = queryString;
+    this.expected = expectedValue;
+  }
 
   /**
    * Reads in all files from the folder sparqlQueries and then executes each
@@ -97,19 +110,6 @@ public class SparqlQueryMetricsTest
       e.printStackTrace();
     }
     return sparqlQueriesAndExpectedOutput;
-  }
-
-  /**
-   * JUNit uses this constructor to give the test cases the input and expected
-   * output.
-   *
-   * @param query    the test input
-   * @param expected the expected output
-   */
-  public SparqlQueryMetricsTest(String query, JSONObject expected)
-  {
-    this.query = query;
-    this.expected = expected;
   }
 
   /**

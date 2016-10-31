@@ -33,13 +33,18 @@ public class Main
   public static void main(String[] args) throws FileNotFoundException, UnsupportedEncodingException
   {
     //should be changed when it is being run on the server
-    int i = 1;
-    //for (int i = 1; i < 30; i++) {
-    InputHandler inputHandler = new InputHandler(
-        "QueryCutSept" + String.format("%02d", i) + ".tsv");
-    OutputHandler outputHandler = new OutputHandler(
-        "QueryProcessedSept" + String.format("%02d", i) + ".tsv");
-    inputHandler.parseTo(outputHandler);
-    //}
+    for (int i = 1; i <= 30; i++) {
+      String inputFile = "QueryCutSept" + String.format("%02d", i) + ".tsv";
+      String outputFile = "QueryProcessedSept" +
+          String.format("%02d", i) + ".tsv";
+      try {
+        InputHandler inputHandler = new InputHandler(inputFile);
+        OutputHandler outputHandler = new OutputHandler(outputFile);
+        inputHandler.parseTo(outputHandler);
+      }
+      catch (FileNotFoundException e) {
+        System.out.println("File " + inputFile + " could not be found.");
+      }
+    }
   }
 }

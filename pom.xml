@@ -99,6 +99,19 @@
             <version>2.2.2</version>
             <type>jar</type>
         </dependency>
+        
+        <dependency>
+            <groupId>com.blazegraph</groupId>
+            <artifactId>sparql-grammar</artifactId>
+            <version>2.1.4</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>com.blazegraph</groupId>
+            <artifactId>bigdata-core</artifactId>
+            <version>2.1.4</version>
+        </dependency>
+        
 
         <!--<dependency>
             <groupId>org.eclipse.rdf4j</groupId>
