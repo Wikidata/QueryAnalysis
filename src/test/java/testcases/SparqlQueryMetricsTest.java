@@ -129,6 +129,7 @@ public class SparqlQueryMetricsTest
    * Test if the getStringLengthNoComments()-metric returns the correct
    * length.
    */
+  @Test
   public final void stringLengthNoComments()
   {
     QueryHandler queryHandler = new QueryHandler(query);

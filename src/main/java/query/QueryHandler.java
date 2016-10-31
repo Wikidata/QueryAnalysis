@@ -87,7 +87,8 @@ public class QueryHandler
     if (!valid) {
       return null;
     }
-    return query.toString().length();
+    String after = query.toString().trim().replaceAll(" +", " ");
+    return after.length();
   }
 
   /**
