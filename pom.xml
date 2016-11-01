@@ -70,7 +70,7 @@
             <groupId>org.apache.jena</groupId>
             <artifactId>apache-jena-libs</artifactId>
             <type>pom</type>
-            <version>LATEST</version>
+            <version>2.13.0</version>
         </dependency>
 
 

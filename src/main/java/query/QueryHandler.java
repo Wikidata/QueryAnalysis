@@ -4,14 +4,14 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.apache.jena.graph.Node;
-import org.apache.jena.query.Query;
-import org.apache.jena.query.QueryException;
-import org.apache.jena.query.QueryFactory;
-import org.apache.jena.sparql.core.TriplePath;
-import org.apache.jena.sparql.syntax.ElementPathBlock;
-import org.apache.jena.sparql.syntax.ElementVisitorBase;
-import org.apache.jena.sparql.syntax.ElementWalker;
+import com.hp.hpl.jena.graph.Node;
+import com.hp.hpl.jena.query.Query;
+import com.hp.hpl.jena.query.QueryException;
+import com.hp.hpl.jena.query.QueryFactory;
+import com.hp.hpl.jena.sparql.core.TriplePath;
+import com.hp.hpl.jena.sparql.syntax.ElementPathBlock;
+import com.hp.hpl.jena.sparql.syntax.ElementVisitorBase;
+import com.hp.hpl.jena.sparql.syntax.ElementWalker;
 
 /**
  * @author Adrian-Bielefeldt
@@ -80,6 +80,10 @@ public class QueryHandler
   }
 
   /**
+   * The function returns the length of the query as a string
+   * without comments and formatting.
+   * @todo Complete removal of formatting
+   * and make sure it cannot break the query.
    * @return Returns the length of the query without comments (null if invalid).
    */
   public final Integer getStringLengthNoComments()
@@ -87,8 +91,22 @@ public class QueryHandler
     if (!valid) {
       return null;
     }
-    String after = query.toString().trim().replaceAll(" +", " ");
-    return after.length();
+    String uncommented = query.toString().trim().replaceAll("[ ]+", " ");
+    uncommented = uncommented.replaceAll("\n ", "\n");
+    uncommented = uncommented.replaceAll("(\r?\n){2,}", "$1");
+    uncommented = uncommented.replaceAll(": ", ":");
+    uncommented = uncommented.replaceAll("\n[{]", "{");
+    uncommented = uncommented.replaceAll("[{] ", "{");
+    uncommented = uncommented.replaceAll(" [}]", "}");
+    try {
+      Query queryTest = QueryFactory.create(uncommented);
+    }
+    catch (QueryException e) {
+      System.out.println(
+          "Tried to remove formatting from a valid string but broke it.");
+      return null;
+    }
+    return uncommented.length();
   }
 
   /**
