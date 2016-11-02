@@ -30,7 +30,7 @@ import output.OutputHandler;
 public class Main
 {
 
-  public static void main(String[] args) throws FileNotFoundException, UnsupportedEncodingException
+  public static void main(String[] args)
   {
     //should be changed when it is being run on the server
     for (int i = 1; i <= 30; i++) {
@@ -39,8 +39,13 @@ public class Main
           String.format("%02d", i) + ".tsv";
       try {
         InputHandler inputHandler = new InputHandler(inputFile);
-        OutputHandler outputHandler = new OutputHandler(outputFile);
-        inputHandler.parseTo(outputHandler);
+        try {
+          OutputHandler outputHandler = new OutputHandler(outputFile);
+          inputHandler.parseTo(outputHandler);
+        } catch (FileNotFoundException e) {
+          System.out.println("File " + outputFile +
+              " could not be created or written to.");
+        }
       }
       catch (FileNotFoundException e) {
         System.out.println("File " + inputFile + " could not be found.");

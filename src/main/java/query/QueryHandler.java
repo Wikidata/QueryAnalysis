@@ -119,27 +119,36 @@ public class QueryHandler
     }
     final Set<Node> variables = new HashSet<>();
 
-    ElementWalker.walk(query.getQueryPattern(), new ElementVisitorBase()
-    {
-      public void visit(ElementPathBlock el)
+    try {
+      ElementWalker.walk(query.getQueryPattern(), new ElementVisitorBase()
       {
-        Iterator<TriplePath> triples = el.patternElts();
-        while (triples.hasNext()) {
-          TriplePath next = triples.next();
-          if (next.getSubject().isVariable()) {
-            variables.add(next.getSubject());
-          }
-          if (next.getPredicate() != null) {
-            if (next.getPredicate().isVariable()) {
-              variables.add(next.getPredicate());
+        public void visit(ElementPathBlock el)
+        {
+          Iterator<TriplePath> triples = el.patternElts();
+          while (triples.hasNext()) {
+            TriplePath next = triples.next();
+            if (next.getSubject().isVariable()) {
+              variables.add(next.getSubject());
+            }
+            if (next.getPredicate() != null) {
+              if (next.getPredicate().isVariable()) {
+                variables.add(next.getPredicate());
+              }
+            }
+            if (next.getObject().isVariable()) {
+              variables.add(next.getObject());
             }
           }
-          if (next.getObject().isVariable()) {
-            variables.add(next.getObject());
-          }
         }
-      }
-    });
+      });
+    }
+    catch (Exception e) {
+      System.out.println("Unexpected error while counting variables.");
+      System.out.println("The query that was parsed was:\n" + queryString);
+      System.out.println("The query that resulted from parsing was:\n" +
+          query.toString());
+      return null;
+    }
     return variables.size();
   }
 
@@ -165,17 +174,26 @@ public class QueryHandler
     }
     triplesCount = 0;
 
-    ElementWalker.walk(query.getQueryPattern(), new ElementVisitorBase()
-    {
-      public void visit(ElementPathBlock el)
+    try {
+      ElementWalker.walk(query.getQueryPattern(), new ElementVisitorBase()
       {
-        Iterator<TriplePath> triples = el.patternElts();
-        while (triples.hasNext()) {
-          triplesCount += 1;
-          triples.next();
+        public void visit(ElementPathBlock el)
+        {
+          Iterator<TriplePath> triples = el.patternElts();
+          while (triples.hasNext()) {
+            triplesCount += 1;
+            triples.next();
+          }
         }
-      }
-    });
+      });
+    }
+    catch (Exception e) {
+      System.out.println("Unexpected error while counting triples.");
+      System.out.println("The query that was parsed was:\n" + queryString);
+      System.out.println("The query that resulted from parsing was:\n" +
+          query.toString());
+      return null;
+    }
     return triplesCount;
   }
 }
