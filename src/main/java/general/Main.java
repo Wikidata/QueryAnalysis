@@ -1,3 +1,4 @@
+package general;
 /*-
  * #%L
  * sparqlQueryTester
@@ -19,19 +20,38 @@
  */
 
 import java.io.FileNotFoundException;
-import java.io.UnsupportedEncodingException;
+
+import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
 
 import input.InputHandler;
 import output.OutputHandler;
+
+
 
 /**
  * @author jgonsior
  */
 public class Main
 {
+  /**
+   * Define a static logger variable.
+   */
+  private static Logger logger = Logger.getLogger(Main.class);
 
+  /**
+   * Selects the files to be processed and specifies the files to write to.
+   * @param args Arguments to specify runtime behavior (non so far).
+   */
   public static void main(String[] args)
   {
+    PropertyConfigurator.configure("log4j.properties");
+    for (String argument : args) {
+      if (argument.equals("-logging")) {
+        logger.removeAllAppenders();
+      }
+    }
+
     //should be changed when it is being run on the server
     for (int i = 1; i <= 30; i++) {
       String inputFile = "QueryCutSept" + String.format("%02d", i) + ".tsv";
@@ -41,14 +61,20 @@ public class Main
         InputHandler inputHandler = new InputHandler(inputFile);
         try {
           OutputHandler outputHandler = new OutputHandler(outputFile);
-          inputHandler.parseTo(outputHandler);
+          try {
+            inputHandler.parseTo(outputHandler);
+          } catch (Exception e) {
+            logger.error("Unexpected error while parsing " +
+                inputFile + ".", e);
+          }
+          logger.info("Processed " + inputFile + " to " + outputFile + ".");
         } catch (FileNotFoundException e) {
-          System.out.println("File " + outputFile +
-              " could not be created or written to.");
+          logger.error("File " + outputFile +
+              " could not be created or written to.", e);
         }
       }
       catch (FileNotFoundException e) {
-        System.out.println("File " + inputFile + " could not be found.");
+        logger.warn("File " + inputFile + " could not be found.");
       }
     }
   }

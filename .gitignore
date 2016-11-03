@@ -39,6 +39,8 @@ fabric.properties
 .checkstyle
 .settings
 
-
 #wikidata logs
 /*.tsv
+
+#error logs
+/logs/

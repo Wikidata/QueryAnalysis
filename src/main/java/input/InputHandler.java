@@ -15,6 +15,7 @@ import com.univocity.parsers.tsv.TsvParserSettings;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
+import org.apache.log4j.Logger;
 
 import output.OutputHandler;
 import query.QueryHandler;
@@ -26,6 +27,10 @@ import query.QueryHandler;
  */
 public class InputHandler
 {
+  /** Define a static logger variable so that it references the
+   * Logger instance named "Main".
+   */
+  private static Logger logger = Logger.getLogger(InputHandler.class);
   /**
    * The reader the parse()-method should read from.
    */
@@ -57,7 +62,7 @@ public class InputHandler
       @Override
       public void rowProcessed(Object[] row, ParsingContext parsingContext)
       {
-        String queryString = "";
+        String queryString = null;
         try {
           //parse url
           List<NameValuePair> params = URLEncodedUtils.parse(
@@ -70,7 +75,7 @@ public class InputHandler
             }
           }
         } catch (URISyntaxException e) {
-          System.out.println("There was a syntax error in the following URI: " +
+          logger.warn("There was a syntax error in the following URI: " +
               row[0]);
         }
         QueryHandler queryHandler = new QueryHandler(queryString);
