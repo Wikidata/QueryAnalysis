@@ -52,15 +52,15 @@ public class QueryHandler
   public QueryHandler(String queryToAnalyze)
   {
     this.queryString = queryToAnalyze;
-    if (queryToAnalyze == null) {
+    try {
+      this.query = QueryFactory.create(queryToAnalyze);
+      this.valid = true;
+    } catch (QueryException e) {
       this.valid = false;
-    } else {
-      try {
-        this.query = QueryFactory.create(queryToAnalyze);
-        this.valid = true;
-      } catch (QueryException e) {
-        this.valid = false;
-      }
+    }
+    catch (NullPointerException e) {
+      this.valid = false;
+      this.queryString = "";
     }
   }
 
