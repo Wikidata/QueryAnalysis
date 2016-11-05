@@ -86,7 +86,7 @@ public class QueryHandler
    */
   public final Integer getStringLength()
   {
-    if (queryString == null) return null;
+    if (queryString == null) return -1;
     return queryString.length();
   }
 
@@ -95,12 +95,12 @@ public class QueryHandler
    * without comments and formatting.
    * @todo Complete removal of formatting
    * and make sure it cannot break the query.
-   * @return Returns the length of the query without comments (null if invalid).
+   * @return Returns the length of the query without comments (-1 if invalid).
    */
   public final Integer getStringLengthNoComments()
   {
     if (!valid) {
-      return null;
+      return -1;
     }
     String uncommented = query.toString().trim().replaceAll("[ ]+", " ");
     uncommented = uncommented.replaceAll("\n ", "\n");
@@ -115,7 +115,7 @@ public class QueryHandler
     catch (QueryException e) {
       logger.warn("Tried to remove formatting from a valid string" +
           "but broke it while doing so.");
-      return null;
+      return -1;
     }
     return uncommented.length();
   }
@@ -126,7 +126,7 @@ public class QueryHandler
   public final Integer getVariableCountPattern()
   {
     if (!this.valid) {
-      return null;
+      return -1;
     }
     final Set<Node> variables = new HashSet<>();
 
@@ -156,11 +156,11 @@ public class QueryHandler
     catch (NullPointerException e) {
       logger.error("Unexpeted null pointer" +
           "exception while counting variables.", e);
-      return null;
+      return -1;
     }
     catch (Exception e) {
       logger.error("Unexpected error while counting variables.", e);
-      return null;
+      return -1;
     }
     return variables.size();
   }
@@ -171,7 +171,7 @@ public class QueryHandler
   public final Integer getVariableCountHead()
   {
     if (!this.valid) {
-      return null;
+      return -1;
     }
     return query.getProjectVars().size();
   }
@@ -183,7 +183,7 @@ public class QueryHandler
   public final Integer getTripleCountWithService()
   {
     if (!this.valid) {
-      return null;
+      return -1;
     }
     triplesCount = 0;
 
@@ -203,11 +203,11 @@ public class QueryHandler
     catch (NullPointerException e) {
       logger.error("Unexcpected null pointer exception " +
           "while counting triples.", e);
-      return null;
+      return -1;
     }
     catch (Exception e) {
       logger.error("Unexpected error while counting triples.", e);
-      return null;
+      return -1;
     }
     return triplesCount;
   }

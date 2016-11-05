@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.univocity.parsers.common.ParsingContext;
 import com.univocity.parsers.tsv.TsvWriter;
 import com.univocity.parsers.tsv.TsvWriterSettings;
 
@@ -40,12 +41,14 @@ public class OutputHandler
     header.add("#VariableCountPattern");
     header.add("#TripleCountWithService");
     header.add("#TripleCountNoService");
-    header.add("#uri_query");
+    header.add("#original_line(filename_line)");
+    /*
     header.add("#uri_path");
     header.add("#user_agent");
     header.add("#ts");
     header.add("#agent_type");
     header.add("#hour");
+    */
     writer.writeHeaders(header);
   }
 
@@ -62,8 +65,11 @@ public class OutputHandler
    * the available data to the active .tsv.
    * @param queryHandler The queryHandler whose data should be written.
    * @param row The input data to be written to this line.
+   * @param currentLine The line from which the data to be written originates.
+   * @param currentFile The file from which the data to be written originates.
    */
-  public final void writeLine(QueryHandler queryHandler, Object[] row)
+  public final void writeLine(QueryHandler queryHandler, Object[] row,
+      long currentLine, String currentFile)
   {
     List<Object> line = new ArrayList<Object>();
     if (queryHandler.isValid()) {
@@ -76,10 +82,13 @@ public class OutputHandler
     line.add(queryHandler.getVariableCountHead());
     line.add(queryHandler.getVariableCountPattern());
     line.add(queryHandler.getTripleCountWithService());
-    line.add("not implemented");
-    for (Object object : row) {
-      line.add(object);
+    line.add(-1);
+    line.add(currentFile + "_" + currentLine);
+    /*
+    for (int i = 1; i < row.length; i++) {
+      line.add(row[i]);
     }
+    */
     writer.writeRow(line);
   }
 }
