@@ -1,6 +1,7 @@
 package testcases;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.log4j.BasicConfigurator;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -57,6 +58,7 @@ public class SparqlQueryMetricsTest
    */
   public SparqlQueryMetricsTest(String queryString, JSONObject expectedValue)
   {
+    BasicConfigurator.configure();
     this.query = queryString;
     this.expected = expectedValue;
   }
