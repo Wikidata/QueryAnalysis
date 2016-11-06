@@ -166,6 +166,6 @@ public class SparqlQueryMetricsTest
     BlazedQueryHandler queryHandler = new BlazedQueryHandler(query);
     Integer expectedInteger = Integer.parseInt(expected.get(
         "CountTriplesWithService").toString());
-    //assertEquals(expectedInteger, queryHandler.getTripleCountWithService());
+    assertEquals(expectedInteger, queryHandler.getTripleCountWithService());
   }
 }

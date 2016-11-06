@@ -3,6 +3,8 @@ package query;
 import org.apache.log4j.Logger;
 import org.openrdf.query.MalformedQueryException;
 import org.openrdf.query.QueryLanguage;
+import org.openrdf.query.algebra.TupleExpr;
+import org.openrdf.query.algebra.helpers.StatementPatternCollector;
 import org.openrdf.query.parser.ParsedQuery;
 import org.openrdf.query.parser.QueryParserUtil;
 
@@ -100,18 +102,21 @@ public class BlazedQueryHandler
     if (!valid) {
       return -1;
     }
-    String uncommented = query.toString().trim().replaceAll("[ ]+", " ");
+    String uncommented = query.getSourceString();
+    //uncommented = uncommented.replaceAll("#.*", ""); -> would remove too much…
+    uncommented = uncommented.replaceAll("[ ]+", " ");
     uncommented = uncommented.replaceAll("\n ", "\n");
     uncommented = uncommented.replaceAll("(\r?\n){2,}", "$1");
     uncommented = uncommented.replaceAll(": ", ":");
     uncommented = uncommented.replaceAll("\n[{]", "{");
     uncommented = uncommented.replaceAll("[{] ", "{");
     uncommented = uncommented.replaceAll(" [}]", "}");
+    uncommented = uncommented.trim();
     try {
       this.parseQuery(uncommented);
     } catch (MalformedQueryException e) {
-      logger.warn("Tried to remove formatting from a valid string" +
-          "but broke it while doing so.");
+      logger.warn("Tried to remove formatting from a valid string " +
+          "but broke it while doing so.\n" + e.getLocalizedMessage() + "\n\n" + e.getMessage());
       return -1;
     }
     return uncommented.length();
@@ -132,34 +137,15 @@ public class BlazedQueryHandler
   /**
    * @return Returns the number of triples in the query pattern
    * (including triples in SERIVCE blocks).
-   *
+   */
   public final Integer getTripleCountWithService()
   {
-  if (!this.valid) {
-  return -1;
+    if (!this.valid) {
+      return -1;
+    }
+    TupleExpr expr = this.query.getTupleExpr();
+    StatementPatternCollector collector = new StatementPatternCollector();
+    expr.visit(collector);
+    return collector.getStatementPatterns().size();
   }
-  triplesCount = 0;
-
-  try {
-  ElementWalker.walk(query.getQueryPattern(), new ElementVisitorBase()
-  {
-  public void visit(ElementPathBlock el)
-  {
-  Iterator<TriplePath> triples = el.patternElts();
-  while (triples.hasNext()) {
-  triplesCount += 1;
-  triples.next();
-  }
-  }
-  });
-  } catch (NullPointerException e) {
-  logger.error("Unexcpected null pointer exception " +
-  "while counting triples.", e);
-  return -1;
-  } catch (Exception e) {
-  logger.error("Unexpected error while counting triples.", e);
-  return -1;
-  }
-  return triplesCount;
-  }*/
 }
