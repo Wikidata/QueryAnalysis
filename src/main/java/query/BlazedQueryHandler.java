@@ -1,0 +1,165 @@
+package query;
+
+import org.apache.log4j.Logger;
+import org.openrdf.query.MalformedQueryException;
+import org.openrdf.query.QueryLanguage;
+import org.openrdf.query.parser.ParsedQuery;
+import org.openrdf.query.parser.QueryParserUtil;
+
+/**
+ * @author Adrian-Bielefeldt
+ */
+public class BlazedQueryHandler
+{
+  /**
+   * Define a static logger variable.
+   */
+  private static Logger logger = Logger.getLogger(BlazedQueryHandler.class);
+
+  /**
+   * Saves if queryString is a valid query.
+   */
+  private boolean valid;
+  /**
+   * The query object created from query-string.
+   */
+  private ParsedQuery query;
+  /**
+   * Saves the number of triples in the pattern.
+   *
+   * @todo Should be local variable of getTripleCount() but cannot because of:
+   * Local variable triplesCount defined in an enclosing scope must be final or
+   * effectively final.
+   */
+  private int triplesCount;
+
+  /**
+   * @param queryToAnalyze String which (if possible) will be parsed
+   *                       for further analysis
+   */
+  public BlazedQueryHandler(String queryToAnalyze)
+  {
+    try {
+      this.query = this.parseQuery(queryToAnalyze);
+      this.valid = true;
+    } catch (MalformedQueryException e) {
+      this.valid = false;
+    }
+  }
+
+  /**
+   * parses a given SPARQL 1.1 query into an OpenRDF ParsedQuery object
+   *
+   * @param queryToParse
+   * @return
+   * @throws MalformedQueryException
+   */
+  private ParsedQuery parseQuery(String queryToParse) throws MalformedQueryException
+  {
+    //the third argument is the basURI to resolve any relative URIs that are in
+    //the query against, but it can be NULL as well
+    return QueryParserUtil.parseQuery(QueryLanguage.SPARQL, queryToParse, null);
+  }
+
+  /**
+   * @return Returns the query-string represented by this handler.
+   */
+  public final String getQueryString()
+  {
+    return this.query.getSourceString();
+  }
+
+  /**
+   * @return Returns true if the query is valid.
+   */
+  public final boolean isValid()
+  {
+    return valid;
+  }
+
+  /**
+   * @return Returns the length of the query with comments and even if invalid.
+   * '/n' counts as one character.
+   */
+  public final Integer getStringLength()
+  {
+    if (this.getQueryString() == null) return -1;
+    return this.getQueryString().length();
+  }
+
+  /**
+   * The function returns the length of the query as a string
+   * without comments and formatting.
+   *
+   * @return Returns the length of the query without comments (-1 if invalid).
+   * @todo Complete removal of formatting
+   * and make sure it cannot break the query.
+   */
+  public final Integer getStringLengthNoComments()
+  {
+    if (!valid) {
+      return -1;
+    }
+    String uncommented = query.toString().trim().replaceAll("[ ]+", " ");
+    uncommented = uncommented.replaceAll("\n ", "\n");
+    uncommented = uncommented.replaceAll("(\r?\n){2,}", "$1");
+    uncommented = uncommented.replaceAll(": ", ":");
+    uncommented = uncommented.replaceAll("\n[{]", "{");
+    uncommented = uncommented.replaceAll("[{] ", "{");
+    uncommented = uncommented.replaceAll(" [}]", "}");
+    try {
+      this.parseQuery(uncommented);
+    } catch (MalformedQueryException e) {
+      logger.warn("Tried to remove formatting from a valid string" +
+          "but broke it while doing so.");
+      return -1;
+    }
+    return uncommented.length();
+  }
+
+  /**
+   * @return Returns the number of variables in the query head.
+   */
+  public final Integer getVariableCountHead()
+  {
+    if (!this.valid) {
+      return -1;
+    }
+
+    return this.query.getTupleExpr().getBindingNames().size();
+  }
+
+  /**
+   * @return Returns the number of triples in the query pattern
+   * (including triples in SERIVCE blocks).
+   *
+  public final Integer getTripleCountWithService()
+  {
+  if (!this.valid) {
+  return -1;
+  }
+  triplesCount = 0;
+
+  try {
+  ElementWalker.walk(query.getQueryPattern(), new ElementVisitorBase()
+  {
+  public void visit(ElementPathBlock el)
+  {
+  Iterator<TriplePath> triples = el.patternElts();
+  while (triples.hasNext()) {
+  triplesCount += 1;
+  triples.next();
+  }
+  }
+  });
+  } catch (NullPointerException e) {
+  logger.error("Unexcpected null pointer exception " +
+  "while counting triples.", e);
+  return -1;
+  } catch (Exception e) {
+  logger.error("Unexpected error while counting triples.", e);
+  return -1;
+  }
+  return triplesCount;
+  }*/
+}

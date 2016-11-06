@@ -1,15 +1,15 @@
 package logging;
 
+import org.apache.log4j.FileAppender;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
-import org.apache.log4j.FileAppender;
 
 /**
  * @author adrian
  */
 
-public class TimestampFileAppender extends  FileAppender
+public class TimestampFileAppender extends FileAppender
 {
 
   @Override

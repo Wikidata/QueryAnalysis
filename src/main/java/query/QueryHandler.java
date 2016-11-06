@@ -1,9 +1,5 @@
 package query;
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
-
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryException;
@@ -12,8 +8,11 @@ import com.hp.hpl.jena.sparql.core.TriplePath;
 import com.hp.hpl.jena.sparql.syntax.ElementPathBlock;
 import com.hp.hpl.jena.sparql.syntax.ElementVisitorBase;
 import com.hp.hpl.jena.sparql.syntax.ElementWalker;
-
 import org.apache.log4j.Logger;
+
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 /**
  * @author Adrian-Bielefeldt
@@ -57,8 +56,7 @@ public class QueryHandler
       this.valid = true;
     } catch (QueryException e) {
       this.valid = false;
-    }
-    catch (NullPointerException e) {
+    } catch (NullPointerException e) {
       this.valid = false;
       this.queryString = "";
     }
@@ -93,9 +91,10 @@ public class QueryHandler
   /**
    * The function returns the length of the query as a string
    * without comments and formatting.
+   *
+   * @return Returns the length of the query without comments (-1 if invalid).
    * @todo Complete removal of formatting
    * and make sure it cannot break the query.
-   * @return Returns the length of the query without comments (-1 if invalid).
    */
   public final Integer getStringLengthNoComments()
   {
@@ -111,8 +110,7 @@ public class QueryHandler
     uncommented = uncommented.replaceAll(" [}]", "}");
     try {
       QueryFactory.create(uncommented);
-    }
-    catch (QueryException e) {
+    } catch (QueryException e) {
       logger.warn("Tried to remove formatting from a valid string" +
           "but broke it while doing so.");
       return -1;
@@ -152,13 +150,11 @@ public class QueryHandler
           }
         }
       });
-    }
-    catch (NullPointerException e) {
+    } catch (NullPointerException e) {
       logger.error("Unexpeted null pointer" +
           "exception while counting variables.", e);
       return -1;
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       logger.error("Unexpected error while counting variables.", e);
       return -1;
     }
@@ -199,13 +195,11 @@ public class QueryHandler
           }
         }
       });
-    }
-    catch (NullPointerException e) {
+    } catch (NullPointerException e) {
       logger.error("Unexcpected null pointer exception " +
           "while counting triples.", e);
       return -1;
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       logger.error("Unexpected error while counting triples.", e);
       return -1;
     }

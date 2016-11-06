@@ -19,14 +19,12 @@ package general;
  * #L%
  */
 
-import java.io.FileNotFoundException;
-
+import input.InputHandler;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
-
-import input.InputHandler;
 import output.OutputHandler;
 
+import java.io.FileNotFoundException;
 
 
 /**
@@ -41,6 +39,7 @@ public class Main
 
   /**
    * Selects the files to be processed and specifies the files to write to.
+   *
    * @param args Arguments to specify runtime behavior (non so far).
    */
   public static void main(String[] args)
@@ -52,7 +51,6 @@ public class Main
       }
     }
 
-    //should be changed when it is being run on the server
     for (int i = 1; i <= 30; i++) {
       String inputFile = "QueryCutSept" + String.format("%02d", i) + ".tsv";
       String outputFile = "QueryProcessedSept" +
@@ -72,8 +70,7 @@ public class Main
           logger.error("File " + outputFile +
               " could not be created or written to.", e);
         }
-      }
-      catch (FileNotFoundException e) {
+      } catch (FileNotFoundException e) {
         logger.warn("File " + inputFile + " could not be found.");
       }
     }

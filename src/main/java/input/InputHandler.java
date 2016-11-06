@@ -1,5 +1,15 @@
 package input;
 
+import com.univocity.parsers.common.ParsingContext;
+import com.univocity.parsers.common.processor.ObjectRowProcessor;
+import com.univocity.parsers.tsv.TsvParser;
+import com.univocity.parsers.tsv.TsvParserSettings;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.utils.URLEncodedUtils;
+import org.apache.log4j.Logger;
+import output.OutputHandler;
+import query.QueryHandler;
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
@@ -8,26 +18,13 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 
-import com.univocity.parsers.common.ParsingContext;
-import com.univocity.parsers.common.processor.ObjectRowProcessor;
-import com.univocity.parsers.tsv.TsvParser;
-import com.univocity.parsers.tsv.TsvParserSettings;
-
-import org.apache.http.NameValuePair;
-import org.apache.http.client.utils.URLEncodedUtils;
-import org.apache.log4j.Logger;
-
-import output.OutputHandler;
-import query.QueryHandler;
-
 /**
- *
  * @author adrian
- *
  */
 public class InputHandler
 {
-  /** Define a static logger variable so that it references the
+  /**
+   * Define a static logger variable so that it references the
    * Logger instance named "Main".
    */
   private static Logger logger = Logger.getLogger(InputHandler.class);
@@ -39,11 +36,12 @@ public class InputHandler
    * The reader the parse()-method should read from.
    */
   private Reader reader;
+
   /**
    * @param fileToRead The file the parse()-method should read from.
    * @throws FileNotFoundException If the file does not exist,
-   * is a directory rather than a regular file,
-   * or for some other reason cannot be opened for reading.
+   *                               is a directory rather than a regular file,
+   *                               or for some other reason cannot be opened for reading.
    */
   public InputHandler(String fileToRead) throws FileNotFoundException
   {
@@ -53,6 +51,7 @@ public class InputHandler
 
   /**
    * Read the file given by reader and hands the data to the outputHandler.
+   *
    * @param outputHandler Handles the data that should be written.
    */
   public final void parseTo(final OutputHandler outputHandler)

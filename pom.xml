@@ -104,12 +104,6 @@
             <artifactId>bigdata-core</artifactId>
             <version>2.1.4</version>
         </dependency>
-        
 
-        <!--<dependency>
-            <groupId>org.eclipse.rdf4j</groupId>
-            <artifactId>rdf4j-runtime</artifactId>
-            <version>LATEST</version>
-        </dependency>-->
     </dependencies>
 </project>
