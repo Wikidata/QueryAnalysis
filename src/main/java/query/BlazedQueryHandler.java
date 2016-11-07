@@ -98,9 +98,11 @@ public class BlazedQueryHandler
   /**
    * The function returns the length of the query as a string
    * without comments and formatting.
+   * <p>
+   * Unfortunately I couldn't find any OpenRDF method for removing the comments
+   * --> it needs to be done in a cumbersome manual way…
    *
    * @return Returns the length of the query without comments (-1 if invalid).
-   * @todo Complete removal of formatting
    * and make sure it cannot break the query.
    */
   public final Integer getStringLengthNoComments()
@@ -108,21 +110,40 @@ public class BlazedQueryHandler
     if (!valid) {
       return -1;
     }
-    String uncommented = query.getSourceString();
-    //uncommented = uncommented.replaceAll("#.*", ""); -> would remove too much…
-    uncommented = uncommented.replaceAll("[ ]+", " ");
-    uncommented = uncommented.replaceAll("\n ", "\n");
-    uncommented = uncommented.replaceAll("(\r?\n){2,}", "$1");
-    uncommented = uncommented.replaceAll(": ", ":");
-    uncommented = uncommented.replaceAll("\n[{]", "{");
-    uncommented = uncommented.replaceAll("[{] ", "{");
-    uncommented = uncommented.replaceAll(" [}]", "}");
-    uncommented = uncommented.trim();
+    String sourceQuery = query.getSourceString();
+    String uncommented = "";
+
+    //if there is a < or a " then there can't be a comment anymore until we reach a > or another "
+    boolean canFindComments = true;
+    boolean commentFound = false;
+
+    //ignore all # that are inside <> or ""
+    for (int i = 0; i < sourceQuery.length(); i++) {
+      Character character = sourceQuery.charAt(i);
+
+      if (character == '#' && canFindComments) {
+        commentFound = true;
+      } else if (character == '\n') {
+        // in a new line everything is possible again
+        commentFound = false;
+        canFindComments = true;
+      } else if (canFindComments && (character == '<' || character == '"')) {
+        canFindComments = false;
+      } else if (character == '>' || character == '"') {
+        // now we can find comments again
+        canFindComments = true;
+      }
+
+      //finally keep only charachters that are NOT inside a comment
+      if (!commentFound) {
+        uncommented = uncommented + character;
+      }
+    }
+
     try {
       this.parseQuery(uncommented);
     } catch (MalformedQueryException e) {
-      logger.warn("Tried to remove formatting from a valid string " +
-          "but broke it while doing so.\n" + e.getLocalizedMessage() + "\n\n" + e.getMessage());
+      logger.warn("Tried to remove formatting from a valid string " + "but broke it while doing so.\n" + e.getLocalizedMessage() + "\n\n" + e.getMessage());
       return -1;
     }
     return uncommented.length();

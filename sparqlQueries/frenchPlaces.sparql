@@ -15,28 +15,28 @@ SELECT DISTINCT ?item ?itemLabel ?ed ?edLabel ?auteurLabel (year(?dateCreation) 
 WHERE
 {
   ?item wdt:P136 wd:Q1164267 .    # genre :récit de voyage
-  ?item  wdt:P31 wd:Q571 .        # nature : livre 
+  ?item  wdt:P31 wd:Q571 .        # nature : livre
   OPTIONAL{
     ?item wdt:P50 ?auteur .       # [option] auteur
   }
   OPTIONAL{
-    ?item wdt:P571 ?dateCreation. # [option] date de création               
+    ?item wdt:P571 ?dateCreation. # [option] date de création
   }
-  
+
   ?item  wdt:P840 ?lieu .         # lieu de l'action
   MINUS {?item  wdt:P840 wd:Q933} # (bug du Pôle Sud)
   ?lieu wdt:P625 ?coord .         # coordonnées géographiques du lieu
-  
+
   {
-    ?item wdt:P953 ?lien .        # URL, texte intégral disponible sur 
+    ?item wdt:P953 ?lien .        # URL, texte intégral disponible sur
     ?item wdt:P364 wd:Q150        # langue originale : français
   }UNION{
     ?ed wdt:P629 ?item .          # édition du livre
-    ?ed wdt:P953 ?lien .          # URL, texte intégral disponible sur  
+    ?ed wdt:P953 ?lien .          # URL, texte intégral disponible sur
     ?ed wdt:P407 wd:Q150          # langue de l'œuvre : français
   }
 
   SERVICE wikibase:label {        #BabelRainbow
-    bd:serviceParam wikibase:language "fr,ar,be,bg,bn,ca,cs,da,de,el,en,es,et,fa,fi,he,hi,hu,hy,id,it,ja,jv,ko,nb,nl,eo,pa,pl,pt,ro,ru,sh,sk,sr,sv,sw,te,th,tr,uk,yue,vec,vi,zh" 
-  } 
+    bd:serviceParam wikibase:language "fr,ar,be,bg,bn,ca,cs,da,de,el,en,es,et,fa,fi,he,hi,hu,hy,id,it,ja,jv,ko,nb,nl,eo,pa,pl,pt,ro,ru,sh,sk,sr,sv,sw,te,th,tr,uk,yue,vec,vi,zh"
+  }
 } ORDER BY ?dateCreation
