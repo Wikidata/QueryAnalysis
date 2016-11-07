@@ -69,7 +69,7 @@ public class OutputHandler
     if (queryHandler.isValid()) {
       line.add("1");
     } else {
-      line.add("0");
+      line.add("-1");
     }
     line.add(queryHandler.getStringLength());
     line.add(queryHandler.getStringLengthNoComments());
