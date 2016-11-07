@@ -52,8 +52,9 @@ public class Main
     }
 
     for (int i = 1; i <= 30; i++) {
-      String inputFile = "QueryCutSept" + String.format("%02d", i) + ".tsv";
-      String outputFile = "QueryProcessedSept" + String.format("%02d", i) + ".tsv";
+      String inputFile = "QueryCnt" + String.format("%02d", i) + ".tsv";
+      String outputFile = "QueryProcessedSept" +
+          String.format("%02d", i) + ".tsv";
       try {
         InputHandler inputHandler = new InputHandler(inputFile);
         try {
@@ -65,8 +66,7 @@ public class Main
           }
           logger.info("Processed " + inputFile + " to " + outputFile + ".");
         } catch (FileNotFoundException e) {
-          logger.error("File " + outputFile +
-              " could not be created or written to.", e);
+          logger.error("File " + outputFile + "could not be created or written to.", e);
         }
       } catch (FileNotFoundException e) {
         logger.warn("File " + inputFile + " could not be found.");
