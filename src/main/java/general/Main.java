@@ -54,7 +54,7 @@ public class Main
 
     //should be changed when it is being run on the server
     for (int i = 1; i <= 30; i++) {
-      String inputFile = "QueryCutSept" + String.format("%02d", i) + ".tsv";
+      String inputFile = "QueryCnt" + String.format("%02d", i) + ".tsv";
       String outputFile = "QueryProcessedSept" +
           String.format("%02d", i) + ".tsv";
       try {
@@ -69,8 +69,7 @@ public class Main
           }
           logger.info("Processed " + inputFile + " to " + outputFile + ".");
         } catch (FileNotFoundException e) {
-          logger.error("File " + outputFile +
-              " could not be created or written to.", e);
+          logger.error("File " + outputFile + "could not be created or written to.", e);
         }
       }
       catch (FileNotFoundException e) {

@@ -41,14 +41,12 @@ public class OutputHandler
     header.add("#VariableCountPattern");
     header.add("#TripleCountWithService");
     header.add("#TripleCountNoService");
-    header.add("#original_line(filename_line)");
-    /*
     header.add("#uri_path");
     header.add("#user_agent");
     header.add("#ts");
     header.add("#agent_type");
     header.add("#hour");
-    */
+    header.add("#original_line(filename_line)");
     writer.writeHeaders(header);
   }
 
@@ -83,12 +81,10 @@ public class OutputHandler
     line.add(queryHandler.getVariableCountPattern());
     line.add(queryHandler.getTripleCountWithService());
     line.add(-1);
-    line.add(currentFile + "_" + currentLine);
-    /*
     for (int i = 1; i < row.length; i++) {
       line.add(row[i]);
     }
-    */
+    line.add(currentFile + "_" + currentLine);
     writer.writeRow(line);
   }
 }
