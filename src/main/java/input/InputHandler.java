@@ -32,6 +32,10 @@ public class InputHandler
    */
   private static Logger logger = Logger.getLogger(InputHandler.class);
   /**
+   * The name of the input file for referencing in the output file.
+   */
+  private String inputFile;
+  /**
    * The reader the parse()-method should read from.
    */
   private Reader reader;
@@ -44,6 +48,7 @@ public class InputHandler
   public InputHandler(String fileToRead) throws FileNotFoundException
   {
     this.reader = new InputStreamReader(new FileInputStream(fileToRead));
+    this.inputFile = fileToRead;
   }
 
   /**
@@ -80,7 +85,8 @@ public class InputHandler
         }
         QueryHandler queryHandler = new QueryHandler(queryString);
 
-        outputHandler.writeLine(queryHandler, row);
+        outputHandler.writeLine(queryHandler, row,
+            parsingContext.currentLine(), inputFile);
       }
 
     };
