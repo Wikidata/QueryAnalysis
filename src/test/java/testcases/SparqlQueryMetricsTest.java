@@ -153,7 +153,7 @@ public class SparqlQueryMetricsTest
     BlazedQueryHandler queryHandler = new BlazedQueryHandler(query);
     Integer expectedInteger = Integer.parseInt(expected.get(
         "CountVariablesPattern").toString());
-    //assertEquals(expectedInteger, queryHandler.getVariableCountPattern());
+    assertEquals(expectedInteger, queryHandler.getVariableCountPattern());
   }
 
   /**

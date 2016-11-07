@@ -53,8 +53,7 @@ public class Main
 
     for (int i = 1; i <= 30; i++) {
       String inputFile = "QueryCutSept" + String.format("%02d", i) + ".tsv";
-      String outputFile = "QueryProcessedSept" +
-          String.format("%02d", i) + ".tsv";
+      String outputFile = "QueryProcessedSept" + String.format("%02d", i) + ".tsv";
       try {
         InputHandler inputHandler = new InputHandler(inputFile);
         try {
@@ -62,8 +61,7 @@ public class Main
           try {
             inputHandler.parseTo(outputHandler);
           } catch (Exception e) {
-            logger.error("Unexpected error while parsing " +
-                inputFile + ".", e);
+            logger.error("Unexpected error while parsing " + inputFile + ".", e);
           }
           logger.info("Processed " + inputFile + " to " + outputFile + ".");
         } catch (FileNotFoundException e) {

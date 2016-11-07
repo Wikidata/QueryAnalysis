@@ -3,13 +3,19 @@ package query;
 import org.apache.log4j.Logger;
 import org.openrdf.query.MalformedQueryException;
 import org.openrdf.query.QueryLanguage;
+import org.openrdf.query.algebra.StatementPattern;
 import org.openrdf.query.algebra.TupleExpr;
+import org.openrdf.query.algebra.Var;
 import org.openrdf.query.algebra.helpers.StatementPatternCollector;
 import org.openrdf.query.parser.ParsedQuery;
 import org.openrdf.query.parser.QueryParserUtil;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 /**
- * @author Adrian-Bielefeldt
+ * @author jgonsior
  */
 public class BlazedQueryHandler
 {
@@ -120,6 +126,36 @@ public class BlazedQueryHandler
       return -1;
     }
     return uncommented.length();
+  }
+
+
+  /**
+   * @return Returns the number of variables in the query pattern.
+   */
+  public final Integer getVariableCountPattern()
+  {
+    if (!this.valid) {
+      return -1;
+    }
+
+    final Set<Var> variables = new HashSet<>();
+
+    TupleExpr expr = this.query.getTupleExpr();
+    StatementPatternCollector collector = new StatementPatternCollector();
+    expr.visit(collector);
+    List<StatementPattern> statementPatterns = collector.getStatementPatterns();
+
+    for (StatementPattern statementPattern : statementPatterns) {
+      List<Var> statementVariables = statementPattern.getVarList();
+      for (Var statementVariable : statementVariables) {
+        if (!statementVariable.isConstant()) {
+          variables.add(statementVariable);
+        }
+      }
+
+    }
+
+    return variables.size();
   }
 
   /**

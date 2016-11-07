@@ -37,7 +37,10 @@
             <property name="groups" value="java,javax"/>
             <property name="separated" value="true"/>
         </module>
-        <module name="LineLength"/>
+        <module name="LineLength">
+            <property name="severity" value="ignore"/>
+            <metadata name="net.sf.eclipsecs.core.lastEnabledSeverity" value="inherit"/>
+        </module>
         <module name="MethodParamPad"/>
         <module name="NoWhitespaceAfter"/>
         <module name="NoWhitespaceBefore"/>
