@@ -8,7 +8,7 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.log4j.Logger;
 import output.OutputHandler;
-import query.QueryHandler;
+import query.BlazedQueryHandler;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -82,7 +82,7 @@ public class InputHandler
           logger.warn("There was a syntax error in the following URI: " +
               row[0]);
         }
-        QueryHandler queryHandler = new QueryHandler(queryString);
+        BlazedQueryHandler queryHandler = new BlazedQueryHandler(queryString);
 
         outputHandler.writeLine(queryHandler, row,
             parsingContext.currentLine(), inputFile);

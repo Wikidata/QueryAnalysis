@@ -2,7 +2,7 @@ package output;
 
 import com.univocity.parsers.tsv.TsvWriter;
 import com.univocity.parsers.tsv.TsvWriterSettings;
-import query.QueryHandler;
+import query.BlazedQueryHandler;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -66,7 +66,7 @@ public class OutputHandler
    * @param currentLine  The line from which the data to be written originates.
    * @param currentFile  The file from which the data to be written originates.
    */
-  public final void writeLine(QueryHandler queryHandler, Object[] row,
+  public final void writeLine(BlazedQueryHandler queryHandler, Object[] row,
                               long currentLine, String currentFile)
   {
     List<Object> line = new ArrayList<Object>();

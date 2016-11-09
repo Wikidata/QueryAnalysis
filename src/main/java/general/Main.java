@@ -45,11 +45,7 @@ public class Main
   public static void main(String[] args)
   {
     PropertyConfigurator.configure("log4j.properties");
-    for (String argument : args) {
-      if (argument.equals("-logging")) {
-        logger.removeAllAppenders();
-      }
-    }
+
 
     for (int i = 1; i <= 30; i++) {
       String inputFile = "QueryCnt" + String.format("%02d", i) + ".tsv";

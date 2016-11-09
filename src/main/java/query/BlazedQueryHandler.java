@@ -23,7 +23,10 @@ public class BlazedQueryHandler
    * Define a static logger variable.
    */
   private static Logger logger = Logger.getLogger(BlazedQueryHandler.class);
-
+  /**
+   * Saves the query-string handed to the constructor.
+   */
+  private String queryString;
   /**
    * Saves if queryString is a valid query.
    */
@@ -47,6 +50,14 @@ public class BlazedQueryHandler
    */
   public BlazedQueryHandler(String queryToAnalyze)
   {
+    this.queryString = queryToAnalyze;
+
+    if (queryToAnalyze == null) {
+      this.valid = false;
+      this.queryString = "";
+      return;
+    }
+
     try {
       this.query = this.parseQuery(queryToAnalyze);
       this.valid = true;
@@ -56,11 +67,11 @@ public class BlazedQueryHandler
   }
 
   /**
-   * parses a given SPARQL 1.1 query into an OpenRDF ParsedQuery object
+   * Parses a given SPARQL 1.1 query into an OpenRDF ParsedQuery object.
    *
-   * @param queryToParse
-   * @return
-   * @throws MalformedQueryException
+   * @param queryToParse SPARQL-query as string that should be parsed to OpenRDF
+   * @return Returns the query as an OpenRDF ParsedQuery object
+   * @throws MalformedQueryException if the supplied query was malformed
    */
   private ParsedQuery parseQuery(String queryToParse) throws MalformedQueryException
   {
@@ -74,7 +85,7 @@ public class BlazedQueryHandler
    */
   public final String getQueryString()
   {
-    return this.query.getSourceString();
+    return queryString;
   }
 
   /**
@@ -134,7 +145,7 @@ public class BlazedQueryHandler
         canFindComments = true;
       }
 
-      //finally keep only charachters that are NOT inside a comment
+      //finally keep only characters that are NOT inside a comment
       if (!commentFound) {
         uncommented = uncommented + character;
       }
