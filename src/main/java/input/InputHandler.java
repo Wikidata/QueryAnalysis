@@ -1,15 +1,5 @@
 package input;
 
-import com.univocity.parsers.common.ParsingContext;
-import com.univocity.parsers.common.processor.ObjectRowProcessor;
-import com.univocity.parsers.tsv.TsvParser;
-import com.univocity.parsers.tsv.TsvParserSettings;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.utils.URLEncodedUtils;
-import org.apache.log4j.Logger;
-import output.OutputHandler;
-import query.BlazedQueryHandler;
-
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
@@ -18,6 +8,15 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 
+import com.univocity.parsers.common.ParsingContext;
+import com.univocity.parsers.common.processor.ObjectRowProcessor;
+import com.univocity.parsers.tsv.TsvParser;
+import com.univocity.parsers.tsv.TsvParserSettings;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.utils.URLEncodedUtils;
+import org.apache.log4j.Logger;
+import output.OutputHandler;
+
 /**
  * @author adrian
  */
@@ -25,7 +24,7 @@ public class InputHandler
 {
   /**
    * Define a static logger variable so that it references the
-   * Logger instance named "Main".
+   * Logger instance named "InputHandler".
    */
   private static Logger logger = Logger.getLogger(InputHandler.class);
   /**
@@ -79,13 +78,9 @@ public class InputHandler
             }
           }
         } catch (URISyntaxException e) {
-          logger.warn("There was a syntax error in the following URI: " +
-              row[0]);
+          logger.warn("There was a syntax error in the following URI: " + row[0] + " /nFound at " + inputFile + ", line " + parsingContext.currentLine());
         }
-        BlazedQueryHandler queryHandler = new BlazedQueryHandler(queryString);
-
-        outputHandler.writeLine(queryHandler, row,
-            parsingContext.currentLine(), inputFile);
+        outputHandler.writeLine(queryString, row, parsingContext.currentLine(), inputFile);
       }
 
     };

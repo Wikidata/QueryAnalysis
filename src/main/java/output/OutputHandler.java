@@ -1,19 +1,24 @@
 package output;
 
-import com.univocity.parsers.tsv.TsvWriter;
-import com.univocity.parsers.tsv.TsvWriterSettings;
-import query.BlazedQueryHandler;
-
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.univocity.parsers.tsv.TsvWriter;
+import com.univocity.parsers.tsv.TsvWriterSettings;
+import query.OpenRDFQueryHandler;
+import query.QueryHandler;
 
 /**
  * @author adrian
  */
 public class OutputHandler
 {
+  /**
+   * The handler used to process the rows to output.
+   */
+  private QueryHandler queryHandler;
   /**
    * A writer created at object creation to be used in line-by-line writing.
    */
@@ -22,13 +27,16 @@ public class OutputHandler
   /**
    * Creates the file specified in the constructor and writes the header.
    *
+   * @param queryHandlerToUse The handler used to analyze the query string that will be written
    * @param fileToWrite location of the file to write the received values to
    * @throws FileNotFoundException if the file exists but is a directory
    *                               rather than a regular file, does not exist but cannot be created,
    *                               or cannot be opened for any other reason
+   *
    */
-  public OutputHandler(String fileToWrite) throws FileNotFoundException
+  public OutputHandler(String fileToWrite, QueryHandler queryHandlerToUse) throws FileNotFoundException
   {
+    this.queryHandler = queryHandlerToUse;
     FileOutputStream outputWriter = new FileOutputStream(fileToWrite);
     writer = new TsvWriter(outputWriter, new TsvWriterSettings());
     List<String> header = new ArrayList<String>();
@@ -61,14 +69,14 @@ public class OutputHandler
    * Takes a query and the additional information from input and writes
    * the available data to the active .tsv.
    *
-   * @param queryHandler The queryHandler whose data should be written.
-   * @param row          The input data to be written to this line.
-   * @param currentLine  The line from which the data to be written originates.
-   * @param currentFile  The file from which the data to be written originates.
+   * @param queryToAnalyze  The query that should be analyzed and written.
+   * @param row             The input data to be written to this line.
+   * @param currentLine     The line from which the data to be written originates.
+   * @param currentFile     The file from which the data to be written originates.
    */
-  public final void writeLine(BlazedQueryHandler queryHandler, Object[] row,
-                              long currentLine, String currentFile)
+  public final void writeLine(String queryToAnalyze, Object[] row, long currentLine, String currentFile)
   {
+    queryHandler.setQueryString(queryToAnalyze);
     List<Object> line = new ArrayList<Object>();
     if (queryHandler.isValid()) {
       line.add("1");

@@ -9,7 +9,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-import query.BlazedQueryHandler;
+import query.OpenRDFQueryHandler;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -111,7 +111,8 @@ public class SparqlQueryMetricsTest
   @Test
   public final void stringLength()
   {
-    BlazedQueryHandler queryHandler = new BlazedQueryHandler(query);
+    OpenRDFQueryHandler queryHandler = new OpenRDFQueryHandler();
+    queryHandler.setQueryString(query);
     Integer expectedInteger = Integer.parseInt(expected.get(
         "StringLength").toString());
     assertEquals(expectedInteger, queryHandler.getStringLength());
@@ -124,7 +125,8 @@ public class SparqlQueryMetricsTest
   @Test
   public final void stringLengthNoComments()
   {
-    BlazedQueryHandler queryHandler = new BlazedQueryHandler(query);
+    OpenRDFQueryHandler queryHandler = new OpenRDFQueryHandler();
+    queryHandler.setQueryString(query);
     Integer expectedInteger = Integer.parseInt(expected.get(
         "StringLengthNoComments").toString());
     assertEquals(expectedInteger, queryHandler.getStringLengthNoComments());
@@ -137,7 +139,8 @@ public class SparqlQueryMetricsTest
   @Test
   public final void countVariablesHead()
   {
-    BlazedQueryHandler queryHandler = new BlazedQueryHandler(query);
+    OpenRDFQueryHandler queryHandler = new OpenRDFQueryHandler();
+    queryHandler.setQueryString(query);
     Integer expectedInteger = Integer.parseInt(expected.get(
         "CountVariablesHead").toString());
     assertEquals(expectedInteger, queryHandler.getVariableCountHead());
@@ -150,7 +153,8 @@ public class SparqlQueryMetricsTest
   @Test
   public final void countVariablesPattern()
   {
-    BlazedQueryHandler queryHandler = new BlazedQueryHandler(query);
+    OpenRDFQueryHandler queryHandler = new OpenRDFQueryHandler();
+    queryHandler.setQueryString(query);
     Integer expectedInteger = Integer.parseInt(expected.get(
         "CountVariablesPattern").toString());
     assertEquals(expectedInteger, queryHandler.getVariableCountPattern());
@@ -163,7 +167,8 @@ public class SparqlQueryMetricsTest
   @Test
   public final void countTriplesWService()
   {
-    BlazedQueryHandler queryHandler = new BlazedQueryHandler(query);
+    OpenRDFQueryHandler queryHandler = new OpenRDFQueryHandler();
+    queryHandler.setQueryString(query);
     Integer expectedInteger = Integer.parseInt(expected.get(
         "CountTriplesWithService").toString());
     assertEquals(expectedInteger, queryHandler.getTripleCountWithService());

@@ -31,6 +31,9 @@ import org.apache.log4j.PatternLayout;
 import org.apache.log4j.varia.LevelRangeFilter;
 
 import output.OutputHandler;
+import query.JenaQueryHandler;
+import query.OpenRDFQueryHandler;
+import query.QueryHandler;
 
 
 /**
@@ -50,10 +53,13 @@ public class Main
    */
   public static void main(String[] args)
   {
+    QueryHandler queryHandler = new OpenRDFQueryHandler();
     for (String argument : args) {
       if (argument.equals("-logging")) {
         initFileLog();
       }
+      if (argument.equals("-jena")) queryHandler = new JenaQueryHandler();
+      if (argument.equals("-openrdf")) queryHandler = new OpenRDFQueryHandler();
     }
     initConsoleLog();
 
@@ -64,7 +70,7 @@ public class Main
       try {
         InputHandler inputHandler = new InputHandler(inputFile);
         try {
-          OutputHandler outputHandler = new OutputHandler(outputFile);
+          OutputHandler outputHandler = new OutputHandler(outputFile, queryHandler);
           try {
             inputHandler.parseTo(outputHandler);
           } catch (Exception e) {
@@ -83,7 +89,8 @@ public class Main
   /**
    * Defines an appender that writes all log messages to the file general.%timestamp.log.
    */
-  public static void initFileLog() {
+  public static void initFileLog()
+  {
     TimestampFileAppender fileAppender = new TimestampFileAppender();
     fileAppender.setName("FileLogger");
     fileAppender.setLayout(new PatternLayout("%-4r [%t] %-5p %c %x - %m%n"));
@@ -95,7 +102,8 @@ public class Main
   /**
    * Defines an appender that writes INFO log messages to the console.
    */
-  public static void initConsoleLog() {
+  public static void initConsoleLog()
+  {
     ConsoleAppender consoleAppender = new ConsoleAppender();
     consoleAppender.setName("ConsoleLogger");
     consoleAppender.setLayout(new PatternLayout("%-4r [%t] %-5p %c %x - %m%n"));
