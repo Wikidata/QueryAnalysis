@@ -44,3 +44,4 @@ fabric.properties
 
 #error logs
 /logs/
+/logsExperimental/

@@ -22,13 +22,9 @@ package general;
 import java.io.FileNotFoundException;
 
 import input.InputHandler;
-import logging.TimestampFileAppender;
+import logging.LoggingHandler;
 
-import org.apache.log4j.ConsoleAppender;
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.apache.log4j.PatternLayout;
-import org.apache.log4j.varia.LevelRangeFilter;
 
 import output.OutputHandler;
 import query.JenaQueryHandler;
@@ -39,7 +35,7 @@ import query.QueryHandler;
 /**
  * @author jgonsior
  */
-public class Main
+public final class Main
 {
   /**
    * Define a static logger variable.
@@ -47,21 +43,29 @@ public class Main
   private static Logger logger = Logger.getLogger(Main.class);
 
   /**
+   * Since this is a utility class, it should not be instantiated.
+   */
+  private Main()
+  {
+    throw new AssertionError("Instantiating utility class Main");
+  }
+
+  /**
    * Selects the files to be processed and specifies the files to write to.
    *
-   * @param args Arguments to specify runtime behavior (non so far).
+   * @param args Arguments to specify runtime behavior.
    */
   public static void main(String[] args)
   {
     QueryHandler queryHandler = new OpenRDFQueryHandler();
     for (String argument : args) {
       if (argument.equals("-logging")) {
-        initFileLog();
+        LoggingHandler.initFileLog();
       }
       if (argument.equals("-jena")) queryHandler = new JenaQueryHandler();
       if (argument.equals("-openrdf")) queryHandler = new OpenRDFQueryHandler();
     }
-    initConsoleLog();
+    LoggingHandler.initConsoleLog();
 
     for (int i = 1; i <= 30; i++) {
       String inputFile = "QueryCnt" + String.format("%02d", i) + ".tsv";
@@ -84,34 +88,5 @@ public class Main
         logger.warn("File " + inputFile + " could not be found.");
       }
     }
-  }
-
-  /**
-   * Defines an appender that writes all log messages to the file general.%timestamp.log.
-   */
-  public static void initFileLog()
-  {
-    TimestampFileAppender fileAppender = new TimestampFileAppender();
-    fileAppender.setName("FileLogger");
-    fileAppender.setLayout(new PatternLayout("%-4r [%t] %-5p %c %x - %m%n"));
-    fileAppender.setFile("logs/general.%timestamp.log");
-    fileAppender.activateOptions();
-    Logger.getRootLogger().addAppender(fileAppender);
-  }
-
-  /**
-   * Defines an appender that writes INFO log messages to the console.
-   */
-  public static void initConsoleLog()
-  {
-    ConsoleAppender consoleAppender = new ConsoleAppender();
-    consoleAppender.setName("ConsoleLogger");
-    consoleAppender.setLayout(new PatternLayout("%-4r [%t] %-5p %c %x - %m%n"));
-    LevelRangeFilter levelRangeFilter = new LevelRangeFilter();
-    levelRangeFilter.setLevelMax(Level.INFO);
-    levelRangeFilter.setLevelMin(Level.INFO);
-    consoleAppender.addFilter(levelRangeFilter);
-    consoleAppender.activateOptions();
-    Logger.getRootLogger().addAppender(consoleAppender);
   }
 }
