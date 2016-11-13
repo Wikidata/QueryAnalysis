@@ -66,7 +66,7 @@ public final class Main
 
     LoggingHandler.initConsoleLog();
 
-    for (int i = 1; i <= 1; i++) {
+    for (int i = 1; i <= 30; i++) {
       String inputFile = "QueryCnt" + String.format("%02d", i) + ".tsv";
       String outputFile = "QueryProcessedSept" +
           String.format("%02d", i) + ".tsv";
