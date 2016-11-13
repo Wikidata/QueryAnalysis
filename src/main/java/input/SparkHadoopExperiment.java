@@ -1,14 +1,12 @@
 package input;
 
 import logging.LoggingHandler;
-
 import org.apache.log4j.Level;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
 
 /**
  * @author adrian
- *
  */
 public final class SparkHadoopExperiment
 {

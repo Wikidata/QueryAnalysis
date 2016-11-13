@@ -1,21 +1,16 @@
 package input;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.List;
-
 import com.univocity.parsers.common.ParsingContext;
 import com.univocity.parsers.common.processor.ObjectRowProcessor;
 import com.univocity.parsers.tsv.TsvParser;
 import com.univocity.parsers.tsv.TsvParserSettings;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.log4j.Logger;
 import output.OutputHandler;
+
+import java.io.*;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLDecoder;
 
 /**
  * @author adrian
@@ -65,20 +60,28 @@ public class InputHandler
       @Override
       public void rowProcessed(Object[] row, ParsingContext parsingContext)
       {
-        String queryString = null;
+        String queryString = "";
         try {
-          //parse url
-          List<NameValuePair> params = URLEncodedUtils.parse(
-              new URI((String) row[0]), "UTF-8");
+          // the url needs to be transformed first into a URL and then later into a URI because the charachter ^
+          // which is included in some Queries is apparently an illegal charachter which needs to be encoded
+          // differently (which the creation of a URL object first is dealing with)
+          URL url = new URL("https://query.wikidata.org/" + row[0]);
 
-          //find out the query parameter
-          for (NameValuePair param : params) {
-            if (param.getName().equals("query")) {
-              queryString = param.getValue();
+          //parse url
+          String[] pairs = url.getQuery().split("&");
+          for (String pair : pairs) {
+            int idx = pair.indexOf("=");
+            String key = idx > 0 ? URLDecoder.decode(pair.substring(0, idx), "UTF-8") : pair;
+            if (key.equals("query")) {
+              //find out the query parameter
+              queryString = idx > 0 && pair.length() > idx + 1 ? URLDecoder.decode(pair.substring(idx + 1), "UTF-8") : null;
             }
           }
-        } catch (URISyntaxException e) {
-          logger.warn("There was a syntax error in the following URI: " + row[0] + " /nFound at " + inputFile + ", line " + parsingContext.currentLine());
+
+        } catch (MalformedURLException e) {
+          logger.error("There was a syntax error in the following URL: " + row[0] + " /nFound at " + inputFile + ", line " + parsingContext.currentLine() + "\n" + e.getMessage());
+        } catch (UnsupportedEncodingException e) {
+          logger.error("Your system apperently doesn't supports UTF-8 encoding. Please fix this before running this software again.");
         }
         outputHandler.writeLine(queryString, row, parsingContext.currentLine(), inputFile);
       }

@@ -2,9 +2,11 @@ package query;
 
 import org.apache.log4j.Logger;
 
+import java.util.LinkedList;
+import java.util.List;
+
 /**
  * @author adrian
- *
  */
 public abstract class QueryHandler
 {
@@ -20,6 +22,17 @@ public abstract class QueryHandler
    * Saves if queryString is a valid query.
    */
   private boolean valid;
+
+  /**
+   * saves the current line the query was from
+   */
+  private long currentLine;
+
+  /**
+   * saves the current file the query was from
+   */
+  private String currentFile;
+
 
   /**
    *
@@ -60,10 +73,41 @@ public abstract class QueryHandler
       this.queryString = "";
       this.valid = false;
     } else {
-      this.queryString = queryStringToSet;
+      this.queryString = this.addMissingPrefixesToQuery(queryStringToSet);
       update();
     }
     return;
+  }
+
+  /**
+   * https://query.wikidata.org/ automatically adds some prefixes to all queried queries
+   * therefore the queries in the log files are missing mostly these prefixes and therefore
+   * we need to add them manually (but only if they aren't already inside of the queries)
+   * -> this method is here to achieve exactly this
+   *
+   * @param queryWithoutPrefixes
+   * @return
+   */
+  public final String addMissingPrefixesToQuery(String queryWithoutPrefixes)
+  {
+    String toBeAddedPrefixes = "";
+    List<String> prefixes = new LinkedList<>();
+    prefixes.add("PREFIX wd: <http://www.wikidata.org/entity/>");
+    prefixes.add("PREFIX wdt: <http://www.wikidata.org/prop/direct/>");
+    prefixes.add("PREFIX wikibase: <http://wikiba.se/ontology#>");
+    prefixes.add("PREFIX p: <http://www.wikidata.org/prop/>");
+    prefixes.add("PREFIX ps: <http://www.wikidata.org/prop/statement/>");
+    prefixes.add("PREFIX pq: <http://www.wikidata.org/prop/qualifier/>");
+    prefixes.add("PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>");
+    prefixes.add("PREFIX bd: <http://www.bigdata.com/rdf#>");
+
+    for (String prefix : prefixes) {
+      if (!queryWithoutPrefixes.toLowerCase().contains(prefix.toLowerCase())) {
+        toBeAddedPrefixes += prefix + "\n";
+      }
+    }
+
+    return toBeAddedPrefixes + queryWithoutPrefixes;
   }
 
   /**
@@ -115,4 +159,36 @@ public abstract class QueryHandler
    * (including triples in SERIVCE blocks).
    */
   public abstract Integer getTripleCountWithService();
+
+  /**
+   * @param currentLine the current line the query was from
+   */
+  public void setCurrentLine(long currentLine)
+  {
+    this.currentLine = currentLine;
+  }
+
+  /**
+   * @param currentFile the current file the query originated from
+   */
+  public void setCurrentFile(String currentFile)
+  {
+    this.currentFile = currentFile;
+  }
+
+  /**
+   * @return the line the query originated from
+   */
+  public long getCurrentLine()
+  {
+    return currentLine;
+  }
+
+  /**
+   * @return the file the query originated from
+   */
+  public String getCurrentFile()
+  {
+    return currentFile;
+  }
 }

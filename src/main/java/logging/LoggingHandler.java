@@ -8,7 +8,6 @@ import org.apache.log4j.varia.LevelRangeFilter;
 
 /**
  * @author adrian
- *
  */
 public final class LoggingHandler
 {
@@ -30,6 +29,7 @@ public final class LoggingHandler
 
   /**
    * Defines an appender that writes all log messages of level levelToWrite or higher to the file fileToWrite.
+   *
    * @param fileToWrite File to write the log to.
    */
   public static void initFileLog(String fileToWrite, Level levelToWrite)
@@ -52,7 +52,7 @@ public final class LoggingHandler
     consoleAppender.setName("ConsoleLogger");
     consoleAppender.setLayout(new PatternLayout("%-4r [%t] %-5p %c %x - %m%n"));
     LevelRangeFilter levelRangeFilter = new LevelRangeFilter();
-    levelRangeFilter.setLevelMax(Level.INFO);
+    //levelRangeFilter.setLevelMax(Level.INFO);
     levelRangeFilter.setLevelMin(Level.INFO);
     consoleAppender.addFilter(levelRangeFilter);
     consoleAppender.activateOptions();

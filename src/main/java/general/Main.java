@@ -19,17 +19,15 @@ package general;
  * #L%
  */
 
-import java.io.FileNotFoundException;
-
 import input.InputHandler;
 import logging.LoggingHandler;
-
 import org.apache.log4j.Logger;
-
 import output.OutputHandler;
 import query.JenaQueryHandler;
 import query.OpenRDFQueryHandler;
 import query.QueryHandler;
+
+import java.io.FileNotFoundException;
 
 
 /**
@@ -65,9 +63,10 @@ public final class Main
       if (argument.equals("-jena")) queryHandler = new JenaQueryHandler();
       if (argument.equals("-openrdf")) queryHandler = new OpenRDFQueryHandler();
     }
+
     LoggingHandler.initConsoleLog();
 
-    for (int i = 1; i <= 30; i++) {
+    for (int i = 1; i <= 1; i++) {
       String inputFile = "QueryCnt" + String.format("%02d", i) + ".tsv";
       String outputFile = "QueryProcessedSept" +
           String.format("%02d", i) + ".tsv";

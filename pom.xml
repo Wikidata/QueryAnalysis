@@ -106,14 +106,21 @@
         </dependency>
 
         <dependency>
-        	<groupId>org.apache.spark</groupId>
-        	<artifactId>spark-core_2.11</artifactId>
-        	<version>2.0.1</version>
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-core_2.11</artifactId>
+            <version>2.0.1</version>
         </dependency>
+
         <dependency>
-        	<groupId>org.apache.hadoop</groupId>
-        	<artifactId>hadoop-client</artifactId>
-        	<version>2.2.0</version>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-client</artifactId>
+            <version>2.2.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.17</version>
         </dependency>
     </dependencies>
 </project>

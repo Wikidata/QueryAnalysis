@@ -1,9 +1,5 @@
 package query;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import org.openrdf.query.MalformedQueryException;
 import org.openrdf.query.QueryLanguage;
 import org.openrdf.query.algebra.StatementPattern;
@@ -13,6 +9,9 @@ import org.openrdf.query.algebra.helpers.StatementPatternCollector;
 import org.openrdf.query.parser.ParsedQuery;
 import org.openrdf.query.parser.QueryParserUtil;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 
 /**
@@ -34,9 +33,11 @@ public class OpenRDFQueryHandler extends QueryHandler
       this.query = this.parseQuery(getQueryString());
       setValid(true);
     } catch (MalformedQueryException e) {
+      getLogger().info("Invalid query found at " + this.getCurrentFile() + ", line " + this.getCurrentLine());
       setValid(false);
     }
   }
+
   /**
    * Parses a given SPARQL 1.1 query into an OpenRDF ParsedQuery object.
    *
