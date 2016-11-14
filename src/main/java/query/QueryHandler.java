@@ -69,7 +69,7 @@ public abstract class QueryHandler
    */
   public final void setQueryString(String queryStringToSet)
   {
-    if (queryString == null) {
+    if (queryStringToSet == null) {
       this.queryString = "";
       this.valid = false;
     } else {

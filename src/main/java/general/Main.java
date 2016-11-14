@@ -70,8 +70,8 @@ public final class Main
       String inputFile = "QueryCnt" + String.format("%02d", i) + ".tsv";
       String outputFile = "QueryProcessed" + String.format("%02d", i) + ".tsv";
       try {
-        logger.info("Processed " + inputFile);
         InputHandler inputHandler = new InputHandler(inputFile);
+        logger.info("Start processing " + inputFile);
         try {
           OutputHandler outputHandler = new OutputHandler(outputFile, queryHandler);
           try {
@@ -79,7 +79,7 @@ public final class Main
           } catch (Exception e) {
             logger.error("Unexpected error while parsing " + inputFile + ".", e);
           }
-          logger.info("Processed " + inputFile + " to " + outputFile + ".");
+          logger.info("Done processing " + inputFile + " to " + outputFile + ".");
         } catch (FileNotFoundException e) {
           logger.error("File " + outputFile + "could not be created or written to.", e);
         }
