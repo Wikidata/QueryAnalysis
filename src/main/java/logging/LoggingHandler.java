@@ -52,7 +52,7 @@ public final class LoggingHandler
     consoleAppender.setName("ConsoleLogger");
     consoleAppender.setLayout(new PatternLayout("%-4r [%t] %-5p %c %x - %m%n"));
     LevelRangeFilter levelRangeFilter = new LevelRangeFilter();
-    //levelRangeFilter.setLevelMax(Level.INFO);
+    levelRangeFilter.setLevelMax(Level.INFO);
     levelRangeFilter.setLevelMin(Level.INFO);
     consoleAppender.addFilter(levelRangeFilter);
     consoleAppender.activateOptions();

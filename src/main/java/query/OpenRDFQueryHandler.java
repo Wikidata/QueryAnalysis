@@ -33,7 +33,6 @@ public class OpenRDFQueryHandler extends QueryHandler
       this.query = this.parseQuery(getQueryString());
       setValid(true);
     } catch (MalformedQueryException e) {
-      getLogger().info("Invalid query found at " + this.getCurrentFile() + ", line " + this.getCurrentLine());
       setValid(false);
     }
   }

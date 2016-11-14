@@ -68,9 +68,9 @@ public final class Main
 
     for (int i = 1; i <= 30; i++) {
       String inputFile = "QueryCnt" + String.format("%02d", i) + ".tsv";
-      String outputFile = "QueryProcessedSept" +
-          String.format("%02d", i) + ".tsv";
+      String outputFile = "QueryProcessed" + String.format("%02d", i) + ".tsv";
       try {
+        logger.info("Processed " + inputFile);
         InputHandler inputHandler = new InputHandler(inputFile);
         try {
           OutputHandler outputHandler = new OutputHandler(outputFile, queryHandler);
