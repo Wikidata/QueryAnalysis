@@ -68,7 +68,9 @@ public class InputHandler
           URL url = new URL("https://query.wikidata.org/" + row[0]);
 
           //parse url
-          String[] pairs = url.getQuery().split("&");
+          String temp = url.getQuery();
+          if (temp == null) return;
+          String[] pairs = temp.split("&");
           for (String pair : pairs) {
             int idx = pair.indexOf("=");
             String key = idx > 0 ? URLDecoder.decode(pair.substring(0, idx), "UTF-8") : pair;
