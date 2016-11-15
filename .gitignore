@@ -41,7 +41,7 @@ fabric.properties
 
 #wikidata logs
 *.tsv
-/test
+test/
 
 #error logs
 /logs/
