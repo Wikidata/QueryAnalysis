@@ -40,7 +40,8 @@ fabric.properties
 .settings
 
 #wikidata logs
-/*.tsv
+*.tsv
+/test
 
 #error logs
 /logs/

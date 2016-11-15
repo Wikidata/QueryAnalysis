@@ -21,6 +21,7 @@ package general;
 
 import input.InputHandler;
 import logging.LoggingHandler;
+import org.apache.commons.cli.*;
 import org.apache.log4j.Logger;
 import output.OutputHandler;
 import query.JenaQueryHandler;
@@ -55,20 +56,65 @@ public final class Main
    */
   public static void main(String[] args)
   {
+    //args = new String[] {"-jl", "-file test/test/test/QueryCntSept"};
+
+    Options options = new Options();
+    options.addOption("l", "logging", false, "enables file logging");
+    options.addOption("j", "jena", false, "uses the Jena SPARQL Parser");
+    options.addOption("o", "openrdf", false, "uses the OpenRDF SPARQL Parser");
+    options.addOption("f", "file", true, "defines the input file prefix");
+    options.addOption("h", "help", false, "displays this help");
+
+    //some parameters which can be changed through parameters
     QueryHandler queryHandler = new OpenRDFQueryHandler();
-    for (String argument : args) {
-      if (argument.equals("-logging")) {
+    String inputFilePrefix;
+    String queryParserName = "OpenRDF";
+
+    CommandLineParser parser = new DefaultParser();
+    try {
+      CommandLine cmd = parser.parse(options, args);
+      if (cmd.hasOption("help")) {
+        HelpFormatter formatter = new HelpFormatter();
+        formatter.printHelp("help", options);
+        return;
+      }
+      if (cmd.hasOption("logging")) {
         LoggingHandler.initFileLog();
       }
-      if (argument.equals("-jena")) queryHandler = new JenaQueryHandler();
-      if (argument.equals("-openrdf")) queryHandler = new OpenRDFQueryHandler();
+      if (cmd.hasOption("jena")) {
+        queryHandler = new JenaQueryHandler();
+        queryParserName = "Jena";
+      }
+      if (cmd.hasOption("openrdf")) {
+        queryHandler = new OpenRDFQueryHandler();
+      }
+      if (cmd.hasOption("file")) {
+        inputFilePrefix = cmd.getOptionValue("file").trim();
+      } else {
+        System.out.println("Please specify at least the file which we should work on using the option '--file PREFIX' or 'f PREFIX'");
+        return;
+      }
+    } catch (UnrecognizedOptionException e) {
+      System.out.println("Unrecognized commandline option: " + e.getOption());
+      HelpFormatter formatter = new HelpFormatter();
+      formatter.printHelp("help", options);
+      return;
+
+    } catch (ParseException e) {
+      System.out.println("There was an error while parsing your command line input. Did you rechecked your syntax before running?");
+      HelpFormatter formatter = new HelpFormatter();
+      formatter.printHelp("help", options);
+      return;
     }
 
     LoggingHandler.initConsoleLog();
 
     for (int i = 1; i <= 30; i++) {
-      String inputFile = "QueryCnt" + String.format("%02d", i) + ".tsv";
-      String outputFile = "QueryProcessed" + String.format("%02d", i) + ".tsv";
+      String inputFile = inputFilePrefix + String.format("%02d", i) + ".tsv";
+
+      //create directory for the output
+      String outputFolderName = inputFilePrefix.substring(0, inputFilePrefix.lastIndexOf('/'));
+      String outputFile = outputFolderName + "/QueryProcessed" + queryParserName + String.format("%02d", i) + ".tsv";
       try {
         InputHandler inputHandler = new InputHandler(inputFile);
         logger.info("Start processing " + inputFile);
