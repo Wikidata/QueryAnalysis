@@ -13,7 +13,7 @@ public abstract class QueryHandler
   /**
    * Define a static logger variable.
    */
-  private static Logger logger = Logger.getLogger(QueryHandler.class);
+  private static Logger logger = Logger.getLogger(JenaQueryHandler.class);
   /**
    * Saves the query-string handed to the constructor.
    */
@@ -24,12 +24,12 @@ public abstract class QueryHandler
   private boolean valid;
 
   /**
-   * Saves the current line the query was from.
+   * saves the current line the query was from
    */
   private long currentLine;
 
   /**
-   * Saves the current file the query was from.
+   * saves the current file the query was from
    */
   private String currentFile;
 
@@ -83,7 +83,7 @@ public abstract class QueryHandler
    * https://query.wikidata.org/ automatically adds some prefixes to all queried queries
    * therefore the queries in the log files are missing mostly these prefixes and therefore
    * we need to add them manually (but only if they aren't already inside of the queries)
-   * -> this method is here to achieve exactly this.
+   * -> this method is here to achieve exactly this
    *
    * @param queryWithoutPrefixes
    * @return

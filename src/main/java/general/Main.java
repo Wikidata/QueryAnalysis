@@ -19,25 +19,16 @@ package general;
  * #L%
  */
 
-import java.io.FileNotFoundException;
-
 import input.InputHandler;
-import input.InputHandlerParquet;
-import input.InputHandlerTSV;
 import logging.LoggingHandler;
-
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
-import org.apache.commons.cli.UnrecognizedOptionException;
+import org.apache.commons.cli.*;
 import org.apache.log4j.Logger;
-import output.OutputHandlerTSV;
+import output.OutputHandler;
 import query.JenaQueryHandler;
 import query.OpenRDFQueryHandler;
 import query.QueryHandler;
+
+import java.io.FileNotFoundException;
 
 
 /**
@@ -72,14 +63,11 @@ public final class Main
     options.addOption("j", "jena", false, "uses the Jena SPARQL Parser");
     options.addOption("o", "openrdf", false, "uses the OpenRDF SPARQL Parser");
     options.addOption("f", "file", true, "defines the input file prefix");
-    options.addOption("p", "parquet", false, "enable if the file to read is .parquet format");
     options.addOption("h", "help", false, "displays this help");
 
     //some parameters which can be changed through parameters
-    InputHandler inputHandler = new InputHandlerTSV();
     QueryHandler queryHandler = new OpenRDFQueryHandler();
     String inputFilePrefix;
-    String inputFileSuffix = ".tsv";
     String queryParserName = "OpenRDF";
 
     CommandLineParser parser = new DefaultParser();
@@ -106,22 +94,13 @@ public final class Main
         System.out.println("Please specify at least the file which we should work on using the option '--file PREFIX' or 'f PREFIX'");
         return;
       }
-      if (cmd.hasOption("parquet")) {
-        System.out.println("Not yet functional, added for development.");
-        return;
-        /*
-        inputHandler = new InputHandlerParquet();
-        inputFileSuffix = ".parquet";
-        */
-      }
     } catch (UnrecognizedOptionException e) {
       System.out.println("Unrecognized commandline option: " + e.getOption());
       HelpFormatter formatter = new HelpFormatter();
       formatter.printHelp("help", options);
       return;
 
-    }
-    catch (ParseException e) {
+    } catch (ParseException e) {
       System.out.println("There was an error while parsing your command line input. Did you rechecked your syntax before running?");
       HelpFormatter formatter = new HelpFormatter();
       formatter.printHelp("help", options);
@@ -131,22 +110,16 @@ public final class Main
     LoggingHandler.initConsoleLog();
 
     for (int i = 1; i <= 30; i++) {
-      String inputFile = inputFilePrefix + String.format("%02d", i) + inputFileSuffix;
+      String inputFile = inputFilePrefix + String.format("%02d", i) + ".tsv";
 
       //create directory for the output
-      String outputFolderName;
-      int lastIndex = inputFilePrefix.lastIndexOf('/');
-      if (lastIndex != -1) {
-        outputFolderName = inputFilePrefix.substring(0, lastIndex);
-      } else {
-        outputFolderName = "";
-      }
+      String outputFolderName = inputFilePrefix.substring(0, inputFilePrefix.lastIndexOf('/'));
       String outputFile = outputFolderName + "/QueryProcessed" + queryParserName + String.format("%02d", i) + ".tsv";
       try {
-        inputHandler.setInputFile(inputFile);
+        InputHandler inputHandler = new InputHandler(inputFile);
         logger.info("Start processing " + inputFile);
         try {
-          OutputHandlerTSV outputHandler = new OutputHandlerTSV(outputFile, queryHandler);
+          OutputHandler outputHandler = new OutputHandler(outputFile, queryHandler);
           try {
             inputHandler.parseTo(outputHandler);
           } catch (Exception e) {
