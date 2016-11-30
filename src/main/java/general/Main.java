@@ -20,10 +20,11 @@ package general;
  */
 
 import input.InputHandler;
+import input.InputHandlerTSV;
 import logging.LoggingHandler;
 import org.apache.commons.cli.*;
 import org.apache.log4j.Logger;
-import output.OutputHandler;
+import output.OutputHandlerTSV;
 import query.JenaQueryHandler;
 import query.OpenRDFQueryHandler;
 import query.QueryHandler;
@@ -64,15 +65,18 @@ public final class Main
     options.addOption("o", "openrdf", false, "uses the OpenRDF SPARQL Parser");
     options.addOption("f", "file", true, "defines the input file prefix");
     options.addOption("h", "help", false, "displays this help");
+    options.addOption("t", "tsv", false, "reads from .tsv-files");
 
     //some parameters which can be changed through parameters
     QueryHandler queryHandler = new OpenRDFQueryHandler();
     String inputFilePrefix;
+    String inputFileSuffix = ".tsv";
     String queryParserName = "OpenRDF";
 
     CommandLineParser parser = new DefaultParser();
+    CommandLine cmd;
     try {
-      CommandLine cmd = parser.parse(options, args);
+      cmd = parser.parse(options, args);
       if (cmd.hasOption("help")) {
         HelpFormatter formatter = new HelpFormatter();
         formatter.printHelp("help", options);
@@ -87,6 +91,9 @@ public final class Main
       }
       if (cmd.hasOption("openrdf")) {
         queryHandler = new OpenRDFQueryHandler();
+      }
+      if (cmd.hasOption("tsv")) {
+        inputFileSuffix = ".tsv";
       }
       if (cmd.hasOption("file")) {
         inputFilePrefix = cmd.getOptionValue("file").trim();
@@ -110,16 +117,17 @@ public final class Main
     LoggingHandler.initConsoleLog();
 
     for (int i = 1; i <= 30; i++) {
-      String inputFile = inputFilePrefix + String.format("%02d", i) + ".tsv";
+      String inputFile = inputFilePrefix + String.format("%02d", i) + inputFileSuffix;
 
       //create directory for the output
       String outputFolderName = inputFilePrefix.substring(0, inputFilePrefix.lastIndexOf('/'));
       String outputFile = outputFolderName + "/QueryProcessed" + queryParserName + String.format("%02d", i) + ".tsv";
       try {
-        InputHandler inputHandler = new InputHandler(inputFile);
+        InputHandler inputHandler;
+        inputHandler = new InputHandlerTSV(inputFile);
         logger.info("Start processing " + inputFile);
         try {
-          OutputHandler outputHandler = new OutputHandler(outputFile, queryHandler);
+          OutputHandlerTSV outputHandler = new OutputHandlerTSV(outputFile, queryHandler);
           try {
             inputHandler.parseTo(outputHandler);
           } catch (Exception e) {
