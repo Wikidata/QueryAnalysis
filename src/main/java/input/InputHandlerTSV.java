@@ -5,6 +5,8 @@ import com.univocity.parsers.common.processor.ObjectRowProcessor;
 import com.univocity.parsers.tsv.TsvParser;
 import com.univocity.parsers.tsv.TsvParserSettings;
 import org.apache.log4j.Logger;
+
+import output.OutputHandler;
 import output.OutputHandlerTSV;
 
 import java.io.*;
@@ -45,7 +47,7 @@ public class InputHandlerTSV extends InputHandler
    *
    * @param outputHandler Handles the data that should be written.
    */
-  public final void parseTo(final OutputHandlerTSV outputHandler)
+  public final void parseTo(final OutputHandler outputHandler)
   {
     //read in queries from .tsv
     TsvParserSettings parserSettings = new TsvParserSettings();

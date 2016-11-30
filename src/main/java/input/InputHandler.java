@@ -7,6 +7,7 @@ import java.net.URLDecoder;
 
 import org.apache.log4j.Logger;
 
+import output.OutputHandler;
 import output.OutputHandlerTSV;
 
 /**
@@ -25,7 +26,7 @@ public abstract class InputHandler
    *
    * @param outputHandler Handles the data that should be written.
    */
-  public abstract void parseTo(OutputHandlerTSV outputHandler);
+  public abstract void parseTo(OutputHandler outputHandler);
 
   /**
    * @param uriQuery The uri_query entry from the logs.
