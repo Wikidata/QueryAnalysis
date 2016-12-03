@@ -24,6 +24,7 @@ import input.InputHandlerParquet;
 import input.InputHandlerTSV;
 import logging.LoggingHandler;
 import org.apache.commons.cli.*;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
@@ -103,9 +104,10 @@ public final class Main
       }
       if (cmd.hasOption("parquet")) {
         inputFileSuffix = ".parquet";
+        Logger.getLogger("org").setLevel(Level.WARN);
+        Logger.getLogger("akka").setLevel(Level.WARN);
         SparkConf conf = new SparkConf().setAppName("SPARQLQueryAnalyzer").setMaster("local");
         JavaSparkContext sc = new JavaSparkContext(conf);
-        sc.setLogLevel("WARN");
       }
       if (cmd.hasOption("file")) {
         inputFilePrefix = cmd.getOptionValue("file").trim();
