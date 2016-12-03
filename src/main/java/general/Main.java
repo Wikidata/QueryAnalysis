@@ -20,10 +20,16 @@ package general;
  */
 
 import input.InputHandler;
+import input.InputHandlerParquet;
 import input.InputHandlerTSV;
 import logging.LoggingHandler;
 import org.apache.commons.cli.*;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.apache.spark.SparkConf;
+import org.apache.spark.api.java.JavaSparkContext;
+import org.apache.spark.sql.AnalysisException;
+
 import output.OutputHandlerTSV;
 import query.JenaQueryHandler;
 import query.OpenRDFQueryHandler;
@@ -66,6 +72,7 @@ public final class Main
     options.addOption("f", "file", true, "defines the input file prefix");
     options.addOption("h", "help", false, "displays this help");
     options.addOption("t", "tsv", false, "reads from .tsv-files");
+    options.addOption("p", "parquet", false, "read from .parquet-files");
 
     //some parameters which can be changed through parameters
     QueryHandler queryHandler = new OpenRDFQueryHandler();
@@ -95,6 +102,13 @@ public final class Main
       if (cmd.hasOption("tsv")) {
         inputFileSuffix = ".tsv";
       }
+      if (cmd.hasOption("parquet")) {
+        inputFileSuffix = ".parquet";
+        Logger.getLogger("org").setLevel(Level.WARN);
+        Logger.getLogger("akka").setLevel(Level.WARN);
+        SparkConf conf = new SparkConf().setAppName("SPARQLQueryAnalyzer").setMaster("local");
+        JavaSparkContext sc = new JavaSparkContext(conf);
+      }
       if (cmd.hasOption("file")) {
         inputFilePrefix = cmd.getOptionValue("file").trim();
       } else {
@@ -106,8 +120,8 @@ public final class Main
       HelpFormatter formatter = new HelpFormatter();
       formatter.printHelp("help", options);
       return;
-
-    } catch (ParseException e) {
+    }
+    catch (ParseException e) {
       System.out.println("There was an error while parsing your command line input. Did you rechecked your syntax before running?");
       HelpFormatter formatter = new HelpFormatter();
       formatter.printHelp("help", options);
@@ -124,7 +138,11 @@ public final class Main
       String outputFile = outputFolderName + "/QueryProcessed" + queryParserName + String.format("%02d", i) + ".tsv";
       try {
         InputHandler inputHandler;
-        inputHandler = new InputHandlerTSV(inputFile);
+        if (cmd.hasOption("parquet")) {
+          inputHandler = new InputHandlerParquet(inputFile);
+        } else {
+          inputHandler = new InputHandlerTSV(inputFile);
+        }
         logger.info("Start processing " + inputFile);
         try {
           OutputHandlerTSV outputHandler = new OutputHandlerTSV(outputFile, queryHandler);
@@ -139,7 +157,10 @@ public final class Main
         }
       } catch (FileNotFoundException e) {
         logger.warn("File " + inputFile + " could not be found.");
+      } catch (AnalysisException e) {
+        logger.warn("File " + inputFile + " could not be found.");
       }
     }
   }
 }
+
