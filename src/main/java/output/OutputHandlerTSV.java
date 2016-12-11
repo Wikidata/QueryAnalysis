@@ -5,8 +5,13 @@ import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 import com.univocity.parsers.tsv.TsvWriter;
 import com.univocity.parsers.tsv.TsvWriterSettings;
+
+import cern.colt.Arrays;
+import general.Main;
 import query.QueryHandler;
 
 /**
@@ -14,6 +19,10 @@ import query.QueryHandler;
  */
 public class OutputHandlerTSV extends OutputHandler
 {
+  /**
+   * Define a static logger variable.
+   */
+  private static Logger logger = Logger.getLogger(OutputHandlerTSV.class);
   /**
    *
    */
@@ -26,6 +35,10 @@ public class OutputHandlerTSV extends OutputHandler
    * A writer created at object creation to be used in line-by-line writing.
    */
   private TsvWriter writer;
+  /**
+   * The file to write the data to.
+   */
+  private String file;
 
   /**
    * Creates the file specified in the constructor and writes the header.
@@ -39,10 +52,15 @@ public class OutputHandlerTSV extends OutputHandler
   public OutputHandlerTSV(String fileToWrite, QueryHandler queryHandlerToUse) throws FileNotFoundException
   {
     this.queryHandler = queryHandlerToUse;
-    FileOutputStream outputWriter = new FileOutputStream(fileToWrite);
+    this.file = fileToWrite;
+    FileOutputStream outputWriter = new FileOutputStream(fileToWrite + ".tsv");
     writer = new TsvWriter(outputWriter, new TsvWriterSettings());
-    List<String> header = new ArrayList<String>();
+    for (int i = 0; i < hourly_user.length; i++) {
+      hourly_user[i] = 0L;
+      hourly_spider[i] = 0L;
+    }
 
+    List<String> header = new ArrayList<String>();
     header.add("#Valid");
     header.add("#StringLengthWithComments");
     header.add("#StringLengthNoComments");
@@ -64,6 +82,18 @@ public class OutputHandlerTSV extends OutputHandler
    */
   public final void closeFiles()
   {
+    try {
+      FileOutputStream outputHourly = new FileOutputStream(file + "HourlyAgentCount.tsv");
+      TsvWriter hourlyWriter = new TsvWriter(outputHourly, new TsvWriterSettings());
+      hourlyWriter.writeHeaders(new String[] {"hour", "user_count", "spider_count"});
+      for (int i = 0; i < hourly_user.length; i++) {
+        hourlyWriter.writeRow(new String[] {String.valueOf(i), String.valueOf(hourly_user[i]), String.valueOf(hourly_spider[i])});
+      }
+      hourlyWriter.close();
+    }
+    catch (FileNotFoundException e) {
+      logger.error("Could not write the hourly agent_type count.", e);
+    }
     writer.close();
   }
 
@@ -100,6 +130,12 @@ public class OutputHandlerTSV extends OutputHandler
       line.add(row[i]);
     }
     line.add(currentFile + "_" + currentLine);
+    if (row[4].toString().equals("user")) {
+      hourly_user[Integer.parseInt(row[5].toString())] += 1L;
+    }
+    if (row[4].toString().equals("spider")) {
+      hourly_spider[Integer.parseInt(row[5].toString())] += 1L;
+    }
     writer.writeRow(line);
   }
 }

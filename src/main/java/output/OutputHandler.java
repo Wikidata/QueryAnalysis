@@ -15,6 +15,15 @@ public abstract class OutputHandler implements Serializable
   private static final long serialVersionUID = 1L;
 
   /**
+   * Saves the amount of queries put by agent_type user.
+   */
+  protected final Long[] hourly_user = new Long[24];
+  /**
+   * Saves the amount of queries put by agent_type spider.
+   */
+  protected final Long[] hourly_spider = new Long[24];
+
+  /**
    * Takes a query and the additional information from input and writes
    * the available data to the active file.
    *
