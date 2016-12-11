@@ -135,7 +135,7 @@ public final class Main
 
       //create directory for the output
       String outputFolderName = inputFilePrefix.substring(0, inputFilePrefix.lastIndexOf('/'));
-      String outputFile = outputFolderName + "/QueryProcessed" + queryParserName + String.format("%02d", i) + ".tsv";
+      String outputFile = outputFolderName + "/QueryProcessed" + queryParserName + String.format("%02d", i);
       try {
         InputHandler inputHandler;
         if (cmd.hasOption("parquet")) {
@@ -148,10 +148,10 @@ public final class Main
           OutputHandlerTSV outputHandler = new OutputHandlerTSV(outputFile, queryHandler);
           try {
             inputHandler.parseTo(outputHandler);
+            logger.info("Done processing " + inputFile + " to " + outputFile + ".");
           } catch (Exception e) {
             logger.error("Unexpected error while parsing " + inputFile + ".", e);
           }
-          logger.info("Done processing " + inputFile + " to " + outputFile + ".");
         } catch (FileNotFoundException e) {
           logger.error("File " + outputFile + "could not be created or written to.", e);
         }
