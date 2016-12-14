@@ -55,6 +55,7 @@ public class InputHandlerTSV extends InputHandler
     parserSettings.setLineSeparatorDetectionEnabled(true);
     parserSettings.setHeaderExtractionEnabled(true);
     parserSettings.setSkipEmptyLines(true);
+    parserSettings.setReadInputOnSeparateThread(true);
 
     ObjectRowProcessor rowProcessor = new ObjectRowProcessor()
     {
