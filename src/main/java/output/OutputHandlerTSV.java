@@ -1,18 +1,14 @@
 package output;
 
+import com.univocity.parsers.tsv.TsvWriter;
+import com.univocity.parsers.tsv.TsvWriterSettings;
+import org.apache.log4j.Logger;
+import query.QueryHandler;
+
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.apache.log4j.Logger;
-
-import com.univocity.parsers.tsv.TsvWriter;
-import com.univocity.parsers.tsv.TsvWriterSettings;
-
-import cern.colt.Arrays;
-import general.Main;
-import query.QueryHandler;
 
 /**
  * @author adrian
@@ -20,13 +16,13 @@ import query.QueryHandler;
 public class OutputHandlerTSV extends OutputHandler
 {
   /**
-   * Define a static logger variable.
-   */
-  private static Logger logger = Logger.getLogger(OutputHandlerTSV.class);
-  /**
    *
    */
   private static final long serialVersionUID = 1L;
+  /**
+   * Define a static logger variable.
+   */
+  private static Logger logger = Logger.getLogger(OutputHandlerTSV.class);
   /**
    * The handler used to process the rows to output.
    */
@@ -90,8 +86,7 @@ public class OutputHandlerTSV extends OutputHandler
         hourlyWriter.writeRow(new String[] {String.valueOf(i), String.valueOf(hourly_user[i]), String.valueOf(hourly_spider[i])});
       }
       hourlyWriter.close();
-    }
-    catch (FileNotFoundException e) {
+    } catch (FileNotFoundException e) {
       logger.error("Could not write the hourly agent_type count.", e);
     }
     writer.close();

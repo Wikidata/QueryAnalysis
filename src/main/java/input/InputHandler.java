@@ -1,18 +1,15 @@
 package input;
 
+import org.apache.log4j.Logger;
+import output.OutputHandler;
+
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
 
-import org.apache.log4j.Logger;
-
-import output.OutputHandler;
-import output.OutputHandlerTSV;
-
 /**
  * @author adrian
- *
  */
 public abstract class InputHandler
 {
@@ -29,7 +26,7 @@ public abstract class InputHandler
   public abstract void parseTo(OutputHandler outputHandler);
 
   /**
-   * @param uriQuery The uri_query entry from the logs.
+   * @param uriQuery  The uri_query entry from the logs.
    * @param inputFile The file this uri_query was read from.
    * @return The query as a pure string if possible, else an empty string.
    */
@@ -57,11 +54,8 @@ public abstract class InputHandler
 
     } catch (MalformedURLException e) {
       logger.error("There was a syntax error in the following URL: " + uriQuery + " /nFound at " + inputFile + ", line " + line + "\n" + e.getMessage());
-    }
-    catch (UnsupportedEncodingException e) {
+    } catch (UnsupportedEncodingException e) {
       logger.error("Your system apperently doesn't supports UTF-8 encoding. Please fix this before running this software again.");
-    } catch (IllegalArgumentException e) {
-      logger.error("There was an error while parsing the following URL: " + uriQuery + " /nFound at " + inputFile + ", line " + line +"\n" + e.getMessage());
     }
     return queryString;
   }

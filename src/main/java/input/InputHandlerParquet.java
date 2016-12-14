@@ -1,26 +1,19 @@
 package input;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.log4j.Logger;
-import org.apache.spark.api.java.function.ForeachFunction;
 import org.apache.spark.sql.AnalysisException;
-import org.apache.spark.sql.Column;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
-
 import output.OutputHandler;
-import query.QueryHandler;
+
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * @author adrian
- *
  */
 public class InputHandlerParquet extends InputHandler implements Serializable
 {
@@ -36,7 +29,7 @@ public class InputHandlerParquet extends InputHandler implements Serializable
   /**
    * A map to save the index of a field name.
    */
-  private Map <String, Integer> columnNames = new HashMap<String, Integer>();
+  private Map<String, Integer> columnNames = new HashMap<String, Integer>();
   /**
    * A SparkSession for reading .parquet files and executing transformations on them.
    */
@@ -61,7 +54,7 @@ public class InputHandlerParquet extends InputHandler implements Serializable
     this.inputDF = spark.read().parquet(fileToRead);
 
     int i = 0;
-    for (String name:inputDF.schema().fieldNames()) {
+    for (String name : inputDF.schema().fieldNames()) {
       this.columnNames.put(name, i);
       i++;
     }

@@ -5,11 +5,12 @@ import com.univocity.parsers.common.processor.ObjectRowProcessor;
 import com.univocity.parsers.tsv.TsvParser;
 import com.univocity.parsers.tsv.TsvParserSettings;
 import org.apache.log4j.Logger;
-
 import output.OutputHandler;
-import output.OutputHandlerTSV;
 
-import java.io.*;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStreamReader;
+import java.io.Reader;
 
 /**
  * @author adrian
@@ -59,8 +60,12 @@ public class InputHandlerTSV extends InputHandler
       @Override
       public void rowProcessed(Object[] row, ParsingContext parsingContext)
       {
-        String queryString = decode(row[0].toString(), inputFile, parsingContext.currentLine());
-        outputHandler.writeLine(queryString, row, parsingContext.currentLine(), inputFile);
+        try {
+          String queryString = decode(row[0].toString(), inputFile, parsingContext.currentLine());
+          outputHandler.writeLine(queryString, row, parsingContext.currentLine(), inputFile);
+        } catch (IllegalArgumentException e) {
+          logger.error("There was an error while parsing the following URL: " + row[0].toString() + " /nFound at " + inputFile + ", line " + parsingContext.currentLine() + "\n" + e.getMessage());
+        }
       }
 
     };
@@ -68,7 +73,10 @@ public class InputHandlerTSV extends InputHandler
     parserSettings.setProcessor(rowProcessor);
 
     TsvParser parser = new TsvParser(parserSettings);
+
     parser.parse(reader);
+
+
     outputHandler.closeFiles();
   }
 }

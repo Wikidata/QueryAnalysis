@@ -29,7 +29,6 @@ import org.apache.log4j.Logger;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.sql.AnalysisException;
-
 import output.OutputHandlerTSV;
 import query.JenaQueryHandler;
 import query.OpenRDFQueryHandler;
@@ -120,8 +119,7 @@ public final class Main
       HelpFormatter formatter = new HelpFormatter();
       formatter.printHelp("help", options);
       return;
-    }
-    catch (ParseException e) {
+    } catch (ParseException e) {
       System.out.println("There was an error while parsing your command line input. Did you rechecked your syntax before running?");
       HelpFormatter formatter = new HelpFormatter();
       formatter.printHelp("help", options);

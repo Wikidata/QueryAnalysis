@@ -1,11 +1,9 @@
 package output;
 
 import java.io.Serializable;
-import java.util.List;
 
 /**
  * @author adrian
- *
  */
 public abstract class OutputHandler implements Serializable
 {

@@ -161,22 +161,6 @@ public abstract class QueryHandler
   public abstract Integer getTripleCountWithService();
 
   /**
-   * @param currentLine the current line the query was from
-   */
-  public void setCurrentLine(long currentLine)
-  {
-    this.currentLine = currentLine;
-  }
-
-  /**
-   * @param currentFile the current file the query originated from
-   */
-  public void setCurrentFile(String currentFile)
-  {
-    this.currentFile = currentFile;
-  }
-
-  /**
    * @return the line the query originated from
    */
   public long getCurrentLine()
@@ -185,10 +169,26 @@ public abstract class QueryHandler
   }
 
   /**
+   * @param currentLine the current line the query was from
+   */
+  public void setCurrentLine(long currentLine)
+  {
+    this.currentLine = currentLine;
+  }
+
+  /**
    * @return the file the query originated from
    */
   public String getCurrentFile()
   {
     return currentFile;
+  }
+
+  /**
+   * @param currentFile the current file the query originated from
+   */
+  public void setCurrentFile(String currentFile)
+  {
+    this.currentFile = currentFile;
   }
 }
