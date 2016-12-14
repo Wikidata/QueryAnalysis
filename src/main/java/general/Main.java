@@ -62,7 +62,7 @@ public final class Main
    */
   public static void main(String[] args)
   {
-    args = new String[] {"-ol", "-file test/test/test/QueryCntSept"};
+    //args = new String[] {"-ol", "-file test/test/test/QueryCntSept"};
 
     Options options = new Options();
     options.addOption("l", "logging", false, "enables file logging");
