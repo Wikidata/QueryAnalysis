@@ -60,8 +60,8 @@ public class InputHandlerTSV extends InputHandler
       @Override
       public void rowProcessed(Object[] row, ParsingContext parsingContext)
       {
-        if(row[0].toString().contains("parquet.hadoop.ParquetRecordReader: Can not initialize counter due to context is not a instance of TaskInputOutputContext, but is org.apache.hadoop.mapreduce.task.TaskAttemptContextImpl")) {
-          logger.warn("Found parquet.hadoop.ParquetRecordReader: Can not initialize counter due to context is not a instance of TaskInputOutputContext, but is org.apache.hadoop.mapreduce.task.TaskAttemptContextImpl, ignoring this line while parsing.");
+        if(!row[0].toString().contains("\t")) {
+          logger.warn("Ignoring line without tab while parsing.");
           return;
         }
         String queryString = decode(row[0].toString(), inputFile, parsingContext.currentLine());

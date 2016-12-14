@@ -53,12 +53,12 @@ public abstract class InputHandler
       }
 
     } catch (MalformedURLException e) {
-      logger.error("There was a syntax error in the following URL: " + uriQuery + " \nFound at " + inputFile + ", line " + line + "\n" + e.getMessage());
+      logger.warn("There was a syntax error in the following URL: " + uriQuery + " \tFound at " + inputFile + ", line " + line + "\t" + e.getMessage());
     } catch (UnsupportedEncodingException e) {
       logger.error("Your system apperently doesn't supports UTF-8 encoding. Please fix this before running this software again.");
     } catch (IllegalArgumentException e) {
       //increment counter for truncated queries
-      logger.error("There was an error while parsing the following URL, probably caused by a truncated URI: " + uriQuery + " \nFound at " + inputFile + ", line " + line +"\n" + e.getMessage());
+      logger.warn("There was an error while parsing the following URL, probably caused by a truncated URI: " + uriQuery + " \tFound at " + inputFile + ", line " + line +"\t" + e.getMessage());
     }
     return queryString;
   }
