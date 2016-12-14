@@ -60,6 +60,8 @@ public abstract class InputHandler
     }
     catch (UnsupportedEncodingException e) {
       logger.error("Your system apperently doesn't supports UTF-8 encoding. Please fix this before running this software again.");
+    } catch (IllegalArgumentException e) {
+      logger.error("There was an error while parsing the following URL: " + uriQuery + " /nFound at " + inputFile + ", line " + line +"\n" + e.getMessage());
     }
     return queryString;
   }
