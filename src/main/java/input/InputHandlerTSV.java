@@ -54,13 +54,14 @@ public class InputHandlerTSV extends InputHandler
     TsvParserSettings parserSettings = new TsvParserSettings();
     parserSettings.setLineSeparatorDetectionEnabled(true);
     parserSettings.setHeaderExtractionEnabled(true);
+    parserSettings.setSkipEmptyLines(true);
 
     ObjectRowProcessor rowProcessor = new ObjectRowProcessor()
     {
       @Override
       public void rowProcessed(Object[] row, ParsingContext parsingContext)
       {
-        if(!row[0].toString().contains("\t")) {
+        if(row.length <= 1) {
           logger.warn("Ignoring line without tab while parsing.");
           return;
         }
