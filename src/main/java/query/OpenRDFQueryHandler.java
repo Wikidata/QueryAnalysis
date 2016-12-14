@@ -33,7 +33,7 @@ public class OpenRDFQueryHandler extends QueryHandler
       this.query = this.parseQuery(getQueryString());
       setValid(true);
     } catch (MalformedQueryException e) {
-      logger.info("Invalid query: \t" + getQueryString() + "\t->\t" + e.getMessage());
+      logger.debug("Invalid query: \t" + getQueryString() + "\t->\t" + e.getMessage());
       setValid(false);
     }
   }
@@ -49,7 +49,12 @@ public class OpenRDFQueryHandler extends QueryHandler
   {
     //the third argument is the basURI to resolve any relative URIs that are in
     //the query against, but it can be NULL as well
-    return QueryParserUtil.parseQuery(QueryLanguage.SPARQL, queryToParse, null);
+    try {
+      return QueryParserUtil.parseQuery(QueryLanguage.SPARQL, queryToParse, null);
+    } catch (Throwable e){ // kind of a dirty hack to catch an java.lang.error which occurs when trying to parse a query which contains f.e. the following string: "jul\ius" where the \ is an invalid escape charachter
+      //because this error is kind of an MalformedQueryException we will just throw it as one
+      throw new MalformedQueryException(e.getMessage());
+  }
   }
 
   /**
