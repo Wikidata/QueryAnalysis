@@ -13,7 +13,7 @@ public abstract class QueryHandler
   /**
    * Define a static logger variable.
    */
-  private static Logger logger = Logger.getLogger(JenaQueryHandler.class);
+  protected static Logger logger = Logger.getLogger(QueryHandler.class);
   /**
    * Saves the query-string handed to the constructor.
    */
