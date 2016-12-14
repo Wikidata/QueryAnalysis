@@ -60,12 +60,8 @@ public class InputHandlerTSV extends InputHandler
       @Override
       public void rowProcessed(Object[] row, ParsingContext parsingContext)
       {
-        try {
-          String queryString = decode(row[0].toString(), inputFile, parsingContext.currentLine());
-          outputHandler.writeLine(queryString, row, parsingContext.currentLine(), inputFile);
-        } catch (IllegalArgumentException e) {
-          logger.error("There was an error while parsing the following URL: " + row[0].toString() + " /nFound at " + inputFile + ", line " + parsingContext.currentLine() + "\n" + e.getMessage());
-        }
+        String queryString = decode(row[0].toString(), inputFile, parsingContext.currentLine());
+        outputHandler.writeLine(queryString, row, parsingContext.currentLine(), inputFile);
       }
 
     };

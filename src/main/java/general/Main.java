@@ -62,7 +62,7 @@ public final class Main
    */
   public static void main(String[] args)
   {
-    //args = new String[] {"-jl", "-file test/test/test/QueryCntSept"};
+    args = new String[] {"-ol", "-file test/test/test/QueryCntSept"};
 
     Options options = new Options();
     options.addOption("l", "logging", false, "enables file logging");
@@ -144,12 +144,12 @@ public final class Main
         logger.info("Start processing " + inputFile);
         try {
           OutputHandlerTSV outputHandler = new OutputHandlerTSV(outputFile, queryHandler);
-          try {
+          //try {
             inputHandler.parseTo(outputHandler);
             logger.info("Done processing " + inputFile + " to " + outputFile + ".");
-          } catch (Exception e) {
-            logger.error("Unexpected error while parsing " + inputFile + ".", e);
-          }
+       //   } catch (Exception e) {
+        //    logger.error("Unexpected error while parsing " + inputFile + ".", e);
+        //  }
         } catch (FileNotFoundException e) {
           logger.error("File " + outputFile + "could not be created or written to.", e);
         }
