@@ -3,8 +3,6 @@ package query;
 import org.apache.log4j.Logger;
 
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -21,9 +19,22 @@ public abstract class QueryHandler
    */
   private String queryString;
   /**
-   * Saves if queryString is a valid query.
+   * Saves if queryString is a valid query, and if not, why
+   *
+   * 1 -> valid
+   * -1 -> invalid for unkown reasons
+   * -2 -> queryString empty
+   * -3 -> Not a valid (absolute URI):
+   * -4 -> Encountered " <PNAME_NS> "TOOL: ""
+   * -5 -> BIND clause alias '{}' was previously used
+   * -6 ->	Multiple prefix declarations for prefix 'p'
+   * -7 ->	projection alias 'item' was previously used
+   * -8 -> org.openrdf.query.parser.sparql.ast.VisitorException: QName 'pv:P31' uses an undefined prefix
+   * -9 -> There was a syntax error in the URL
+   * -10 -> The url was truncated and was therefore undecodable
+   * -11 -> The query string was empty and was therefore not being parsed
    */
-  private boolean valid;
+  private int validityStatus;
 
   /**
    * saves the current line the query was from
@@ -46,7 +57,7 @@ public abstract class QueryHandler
   public QueryHandler()
   {
     this.queryString = "";
-    this.valid = false;
+    this.validityStatus = -1;
   }
 
   /**
@@ -77,7 +88,7 @@ public abstract class QueryHandler
   {
     if (queryStringToSet == null) {
       this.queryString = "";
-      this.valid = false;
+      this.validityStatus = -2;
     } else {
       this.queryString = this.addMissingPrefixesToQuery(queryStringToSet);
       update();
@@ -100,37 +111,40 @@ public abstract class QueryHandler
     String toBeAddedPrefixes = "";
     Map<String, String> prefixes = new LinkedHashMap<>();
 
-    prefixes.put("PREFIX hint: <http://www.bigdata.com/queryHints#>", "<http://www.bigdata.com/queryHints#>");
-    prefixes.put("PREFIX gas: <http://www.bigdata.com/rdf/gas#>", "<http://www.bigdata.com/rdf/gas#>");
-    prefixes.put("PREFIX bds: <http://www.bigdata.com/rdf/search#>", "<http://www.bigdata.com/rdf/search#>");
-    prefixes.put("PREFIX bd: <http://www.bigdata.com/rdf#>", "<http://www.bigdata.com/rdf#>");
-    prefixes.put("PREFIX schema: <http://schema.org/>", "<http://schema.org/>");
-    prefixes.put("PREFIX cc: <http://creativecommons.org/ns#>", "<http://creativecommons.org/ns#>");
-    prefixes.put("PREFIX geo: <http://www.opengis.net/ont/geosparql#>", "<http://www.opengis.net/ont/geosparql#>");
-    prefixes.put("PREFIX prov: <http://www.w3.org/ns/prov#>", "<http://www.w3.org/ns/prov#>");
-    prefixes.put("PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>", "<http://www.w3.org/2001/XMLSchema#>");
-    prefixes.put("PREFIX skos: <http://www.w3.org/2004/02/skos/core#>", "<http://www.w3.org/2004/02/skos/core#>");
-    prefixes.put("PREFIX owl: <http://www.w3.org/2002/07/owl#>", "<http://www.w3.org/2002/07/owl#>");
-    prefixes.put("PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>", "<http://www.w3.org/1999/02/22-rdf-syntax-ns#>");
-    prefixes.put("PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>", "<http://www.w3.org/2000/01/rdf-schema#>");
-    prefixes.put("PREFIX wdata: <http://www.wikidata.org/wiki/Special:EntityData/>", "<http://www.wikidata.org/wiki/Special:EntityData/>");
-    prefixes.put("PREFIX wdno: <http://www.wikidata.org/prop/novalue/>", "<http://www.wikidata.org/prop/novalue/>");
-    prefixes.put("PREFIX prn: <http://www.wikidata.org/prop/reference/value-normalized/>", "<http://www.wikidata.org/prop/reference/value-normalized/>");
-    prefixes.put("PREFIX prv: <http://www.wikidata.org/prop/reference/value/>", "<http://www.wikidata.org/prop/reference/value/>");
-    prefixes.put("PREFIX pr: <http://www.wikidata.org/prop/reference/>", "<http://www.wikidata.org/prop/reference/>");
-    prefixes.put("PREFIX pqn: <http://www.wikidata.org/prop/qualifier/value-normalized/>", "<http://www.wikidata.org/prop/qualifier/value-normalized/>");
-    prefixes.put("PREFIX pqv: <http://www.wikidata.org/prop/qualifier/value/>", "<http://www.wikidata.org/prop/qualifier/value/>");
-    prefixes.put("PREFIX pq: <http://www.wikidata.org/prop/qualifier/>", "<http://www.wikidata.org/prop/qualifier/>");
-    prefixes.put("PREFIX psn: <http://www.wikidata.org/prop/statement/value-normalized/>", "<http://www.wikidata.org/prop/statement/value-normalized/>");
-    prefixes.put("PREFIX psv: <http://www.wikidata.org/prop/statement/value/>", "<http://www.wikidata.org/prop/statement/value/>");
-    prefixes.put("PREFIX ps: <http://www.wikidata.org/prop/statement/>", "<http://www.wikidata.org/prop/statement/>");
-    prefixes.put("PREFIX wdv: <http://www.wikidata.org/value/>", "<http://www.wikidata.org/value/>");
-    prefixes.put("PREFIX wdref: <http://www.wikidata.org/reference/>", "<http://www.wikidata.org/reference/>");
-    prefixes.put("PREFIX p: <http://www.wikidata.org/prop/>", "<http://www.wikidata.org/prop/");
-    prefixes.put("PREFIX wds: <http://www.wikidata.org/entity/statement/>", "<http://www.wikidata.org/entity/statement/>");
-    prefixes.put("PREFIX wdt: <http://www.wikidata.org/prop/direct/>", "<http://www.wikidata.org/prop/direct/>");
-    prefixes.put("PREFIX wd: <http://www.wikidata.org/entity/>", "<http://www.wikidata.org/entity/>");
-    prefixes.put("PREFIX wikibase: <http://wikiba.se/ontology#>", "<http://wikiba.se/ontology#>");
+
+    // @error: what when there is something like PREFIX   hint: (two spaces after PREFIX
+    // -> RegEx?
+    prefixes.put("PREFIX hint: <http://www.bigdata.com/queryHints#>", "PREFIX hint:");
+    prefixes.put("PREFIX gas: <http://www.bigdata.com/rdf/gas#>", "PREFIX gas:");
+    prefixes.put("PREFIX bds: <http://www.bigdata.com/rdf/search#>", "PREFIX bds:");
+    prefixes.put("PREFIX bd: <http://www.bigdata.com/rdf#>", "PREFIX bd:");
+    prefixes.put("PREFIX schema: <http://schema.org/>", "PREFIX schema:");
+    prefixes.put("PREFIX cc: <http://creativecommons.org/ns#>", "PREFIX cc:");
+    prefixes.put("PREFIX geo: <http://www.opengis.net/ont/geosparql#>", "PREFIX geo:");
+    prefixes.put("PREFIX prov: <http://www.w3.org/ns/prov#>", "PREFIX prox:");
+    prefixes.put("PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>", "PREFIX xsd:");
+    prefixes.put("PREFIX skos: <http://www.w3.org/2004/02/skos/core#>", "PREFIX skos:");
+    prefixes.put("PREFIX owl: <http://www.w3.org/2002/07/owl#>", "PREFIX owl:");
+    prefixes.put("PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>", "PREFIX rdf:");
+    prefixes.put("PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>", "PREFIX rdfs:");
+    prefixes.put("PREFIX wdata: <http://www.wikidata.org/wiki/Special:EntityData/>", "PREFIX wdata:");
+    prefixes.put("PREFIX wdno: <http://www.wikidata.org/prop/novalue/>", "PREFIX wdno:");
+    prefixes.put("PREFIX prn: <http://www.wikidata.org/prop/reference/value-normalized/>", "PREFIX prn:");
+    prefixes.put("PREFIX prv: <http://www.wikidata.org/prop/reference/value/>", "PREFIX prv:");
+    prefixes.put("PREFIX pr: <http://www.wikidata.org/prop/reference/>", "PREFIX pr:");
+    prefixes.put("PREFIX pqn: <http://www.wikidata.org/prop/qualifier/value-normalized/>", "PREFIX pqn:");
+    prefixes.put("PREFIX pqv: <http://www.wikidata.org/prop/qualifier/value/>", "PREFIX pqv:");
+    prefixes.put("PREFIX pq: <http://www.wikidata.org/prop/qualifier/>", "PREFIX pq:");
+    prefixes.put("PREFIX psn: <http://www.wikidata.org/prop/statement/value-normalized/>", "PREFIX psn:");
+    prefixes.put("PREFIX psv: <http://www.wikidata.org/prop/statement/value/>", "PREFIX psv:");
+    prefixes.put("PREFIX ps: <http://www.wikidata.org/prop/statement/>", "PREFIX ps:");
+    prefixes.put("PREFIX wdv: <http://www.wikidata.org/value/>", "PREFIX wdv:");
+    prefixes.put("PREFIX wdref: <http://www.wikidata.org/reference/>", "PREFIX wdref:");
+    prefixes.put("PREFIX p: <http://www.wikidata.org/prop/>", "PREFIX p:");
+    prefixes.put("PREFIX wds: <http://www.wikidata.org/entity/statement/>", "PREFIX wds:");
+    prefixes.put("PREFIX wdt: <http://www.wikidata.org/prop/direct/>", "PREFIX wdt:");
+    prefixes.put("PREFIX wd: <http://www.wikidata.org/entity/>", "PREFIX wd:");
+    prefixes.put("PREFIX wikibase: <http://wikiba.se/ontology#>", "PREFIX wikibase:");
 
     for (Map.Entry<String, String> entry : prefixes.entrySet()) {
       //prevents prefixes from being added twice
@@ -143,19 +157,19 @@ public abstract class QueryHandler
   }
 
   /**
-   * @return Returns true if the query is valid.
+   * @return Returns the validity status of the query
    */
-  public final boolean isValid()
+  public final int getValidityStatus()
   {
-    return valid;
+    return validityStatus;
   }
 
   /**
-   * @param validToSet validity to set the variable valid to
+   * @param validityStatus validityStatus to set the variable valid to
    */
-  public final void setValid(boolean validToSet)
+  public final void setValidityStatus(int validityStatus)
   {
-    this.valid = validToSet;
+    this.validityStatus = validityStatus;
   }
 
   /**
