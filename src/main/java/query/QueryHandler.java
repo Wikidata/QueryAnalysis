@@ -98,6 +98,8 @@ public abstract class QueryHandler
     prefixes.add("PREFIX bds: <http://www.bigdata.com/rdf/search#>");
     prefixes.add("PREFIX bd: <http://www.bigdata.com/rdf#>");
     prefixes.add("PREFIX schema: <http://schema.org/>");
+    prefixes.add("PREFIX cc: <http://creativecommons.org/ns#>");
+    prefixes.add("PREFIX geo: <http://www.opengis.net/ont/geosparql#>");
     prefixes.add("PREFIX prov: <http://www.w3.org/ns/prov#>");
     prefixes.add("PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>");
     prefixes.add("PREFIX skos: <http://www.w3.org/2004/02/skos/core#>");
