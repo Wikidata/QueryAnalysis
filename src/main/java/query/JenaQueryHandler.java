@@ -40,6 +40,7 @@ public class JenaQueryHandler extends QueryHandler
       this.query = QueryFactory.create(getQueryString());
       this.setValid(true);
     } catch (QueryException e) {
+      logger.info("QUE length:" + this.getStringLength());
       logger.debug("Invalid query: \t" + getQueryString() + "\t->\t" + e.getMessage());
       this.setValid(false);
     }
