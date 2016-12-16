@@ -35,7 +35,7 @@ public abstract class InputHandler
   public final Tuple2<String, Integer> decode(String uriQuery, String inputFile, long line)
   {
     String queryString = "";
-    Integer validityStatus = 1;
+    Integer validityStatus = -1;
     try {
       // the url needs to be transformed first into a URL and then later into a URI because the charachter ^
       // which is included in some Queries is apparently an illegal charachter which needs to be encoded
@@ -56,9 +56,14 @@ public abstract class InputHandler
           queryString = idx > 0 && pair.length() > idx + 1 ? URLDecoder.decode(pair.substring(idx + 1), "UTF-8") : null;
         }
       }
+      if(queryString == null) {
+        queryString = "";
+      }
+      validityStatus = 1;
 
     } catch (MalformedURLException e) {
       validityStatus = -9;
+      queryString = "INVALID"; //needs to be something != null
       logger.info("MAL length: " + uriQuery.length());
       logger.warn("There was a syntax error in the following URL: " + uriQuery + " \tFound at " + inputFile + ", line " + line + "\t" + e.getMessage());
     } catch (UnsupportedEncodingException e) {
@@ -66,6 +71,7 @@ public abstract class InputHandler
     } catch (IllegalArgumentException e) {
       //increment counter for truncated queries
       validityStatus = -10;
+      queryString = "INVALID"; //needs to be something != null
       logger.info("ILL length: " + uriQuery.length());
       logger.warn("There was an error while parsing the following URL, probably caused by a truncated URI: " + uriQuery + " \tFound at " + inputFile + ", line " + line +"\t" + e.getMessage());
     }

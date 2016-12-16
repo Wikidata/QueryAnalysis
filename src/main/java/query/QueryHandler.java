@@ -20,10 +20,9 @@ public abstract class QueryHandler
   private String queryString;
   /**
    * Saves if queryString is a valid query, and if not, why
-   *
+   * 2 -> valid, but empty query
    * 1 -> valid
    * -1 -> invalid for unkown reasons
-   * -2 -> queryString empty
    * -3 -> Not a valid (absolute URI):
    * -5 -> BIND clause alias '{}' was previously used
    * -6 ->	Multiple prefix declarations for prefix 'p'
@@ -83,10 +82,9 @@ public abstract class QueryHandler
    */
   public final void setQueryString(String queryStringToSet)
   {
-    if (queryStringToSet == null) {
-      this.queryString = "";
-      this.validityStatus = -2;
-    } else {
+    if(queryStringToSet == "") {
+      this.validityStatus = 2;
+    } else if (this.validityStatus >= -1) {
       this.queryString = this.addMissingPrefixesToQuery(queryStringToSet);
       update();
     }
