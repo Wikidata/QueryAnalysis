@@ -22,6 +22,7 @@ public abstract class QueryHandler
    * Saves if queryString is a valid query, and if not, why
    * 2 -> valid, but empty query
    * 1 -> valid
+   * 0 -> default internal value -> should always be changed, if it is 0 then there was an internal error!
    * -1 -> invalid for unkown reasons
    * -3 -> Not a valid (absolute URI):
    * -5 -> BIND clause alias '{}' was previously used
@@ -53,7 +54,7 @@ public abstract class QueryHandler
   public QueryHandler()
   {
     this.queryString = "";
-    this.validityStatus = -1;
+    this.validityStatus = 0;
   }
 
   /**
@@ -84,7 +85,7 @@ public abstract class QueryHandler
   {
     if(queryStringToSet == "") {
       this.validityStatus = 2;
-    } else if (this.validityStatus >= -1) {
+    } else if(validityStatus > -1){
       this.queryString = this.addMissingPrefixesToQuery(queryStringToSet);
       update();
     }
