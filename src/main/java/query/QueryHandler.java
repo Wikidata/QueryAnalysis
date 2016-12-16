@@ -2,8 +2,10 @@ package query;
 
 import org.apache.log4j.Logger;
 
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author adrian
@@ -96,43 +98,44 @@ public abstract class QueryHandler
   {
     this.lengthNoAddedPrefixes = queryWithoutPrefixes.length();
     String toBeAddedPrefixes = "";
-    List<String> prefixes = new LinkedList<>();
+    Map<String, String> prefixes = new LinkedHashMap<>();
 
-    prefixes.add("PREFIX hint: <http://www.bigdata.com/queryHints#>");
-    prefixes.add("PREFIX gas: <http://www.bigdata.com/rdf/gas#>");
-    prefixes.add("PREFIX bds: <http://www.bigdata.com/rdf/search#>");
-    prefixes.add("PREFIX bd: <http://www.bigdata.com/rdf#>");
-    prefixes.add("PREFIX schema: <http://schema.org/>");
-    prefixes.add("PREFIX cc: <http://creativecommons.org/ns#>");
-    prefixes.add("PREFIX geo: <http://www.opengis.net/ont/geosparql#>");
-    prefixes.add("PREFIX prov: <http://www.w3.org/ns/prov#>");
-    prefixes.add("PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>");
-    prefixes.add("PREFIX skos: <http://www.w3.org/2004/02/skos/core#>");
-    prefixes.add("PREFIX owl: <http://www.w3.org/2002/07/owl#>");
-    prefixes.add("PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>");
-    prefixes.add("PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>");
-    prefixes.add("PREFIX wdata: <http://www.wikidata.org/wiki/Special:EntityData/>");
-    prefixes.add("PREFIX wdno: <http://www.wikidata.org/prop/novalue/>");
-    prefixes.add("PREFIX prn: <http://www.wikidata.org/prop/reference/value-normalized/>");
-    prefixes.add("PREFIX prv: <http://www.wikidata.org/prop/reference/value/>");
-    prefixes.add("PREFIX pr: <http://www.wikidata.org/prop/reference/>");
-    prefixes.add("PREFIX pqn: <http://www.wikidata.org/prop/qualifier/value-normalized/>");
-    prefixes.add("PREFIX pqv: <http://www.wikidata.org/prop/qualifier/value/>");
-    prefixes.add("PREFIX pq: <http://www.wikidata.org/prop/qualifier/>");
-    prefixes.add("PREFIX psn: <http://www.wikidata.org/prop/statement/value-normalized/>");
-    prefixes.add("PREFIX psv: <http://www.wikidata.org/prop/statement/value/>");
-    prefixes.add("PREFIX ps: <http://www.wikidata.org/prop/statement/>");
-    prefixes.add("PREFIX wdv: <http://www.wikidata.org/value/>");
-    prefixes.add("PREFIX wdref: <http://www.wikidata.org/reference/>");
-    prefixes.add("PREFIX p: <http://www.wikidata.org/prop/>");
-    prefixes.add("PREFIX wds: <http://www.wikidata.org/entity/statement/>");
-    prefixes.add("PREFIX wdt: <http://www.wikidata.org/prop/direct/>");
-    prefixes.add("PREFIX wd: <http://www.wikidata.org/entity/>");
-    prefixes.add("PREFIX wikibase: <http://wikiba.se/ontology#>");
+    prefixes.put("PREFIX hint: <http://www.bigdata.com/queryHints#>", "PREFIX hint:");
+    prefixes.put("PREFIX gas: <http://www.bigdata.com/rdf/gas#>", "PREFIX gas:");
+    prefixes.put("PREFIX bds: <http://www.bigdata.com/rdf/search#>", "PREFIX bds:");
+    prefixes.put("PREFIX bd: <http://www.bigdata.com/rdf#>", "PREFIX bd:");
+    prefixes.put("PREFIX schema: <http://schema.org/>", "PREFIX schema:");
+    prefixes.put("PREFIX cc: <http://creativecommons.org/ns#>", "PREFIX cc:");
+    prefixes.put("PREFIX geo: <http://www.opengis.net/ont/geosparql#>", "PREFIX geo:");
+    prefixes.put("PREFIX prov: <http://www.w3.org/ns/prov#>", "PREFIX prox:");
+    prefixes.put("PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>", "PREFIX xsd:");
+    prefixes.put("PREFIX skos: <http://www.w3.org/2004/02/skos/core#>", "PREFIX skos:");
+    prefixes.put("PREFIX owl: <http://www.w3.org/2002/07/owl#>", "PREFIX owl:");
+    prefixes.put("PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>", "PREFIX rdf:");
+    prefixes.put("PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>", "PREFIX rdfs:");
+    prefixes.put("PREFIX wdata: <http://www.wikidata.org/wiki/Special:EntityData/>", "PREFIX wdata:");
+    prefixes.put("PREFIX wdno: <http://www.wikidata.org/prop/novalue/>", "PREFIX wdno:");
+    prefixes.put("PREFIX prn: <http://www.wikidata.org/prop/reference/value-normalized/>", "PREFIX prn:");
+    prefixes.put("PREFIX prv: <http://www.wikidata.org/prop/reference/value/>", "PREFIX prv:");
+    prefixes.put("PREFIX pr: <http://www.wikidata.org/prop/reference/>", "PREFIX pr:");
+    prefixes.put("PREFIX pqn: <http://www.wikidata.org/prop/qualifier/value-normalized/>", "PREFIX pqn:");
+    prefixes.put("PREFIX pqv: <http://www.wikidata.org/prop/qualifier/value/>", "PREFIX pqv:");
+    prefixes.put("PREFIX pq: <http://www.wikidata.org/prop/qualifier/>", "PREFIX pq:");
+    prefixes.put("PREFIX psn: <http://www.wikidata.org/prop/statement/value-normalized/>", "PREFIX psn:");
+    prefixes.put("PREFIX psv: <http://www.wikidata.org/prop/statement/value/>", "PREFIX psv:");
+    prefixes.put("PREFIX ps: <http://www.wikidata.org/prop/statement/>", "PREFIX ps:");
+    prefixes.put("PREFIX wdv: <http://www.wikidata.org/value/>", "PREFIX wdv:");
+    prefixes.put("PREFIX wdref: <http://www.wikidata.org/reference/>", "PREFIX wdref:");
+    prefixes.put("PREFIX p: <http://www.wikidata.org/prop/>", "PREFIX p:");
+    prefixes.put("PREFIX wds: <http://www.wikidata.org/entity/statement/>", "PREFIX wds:");
+    prefixes.put("PREFIX wdt: <http://www.wikidata.org/prop/direct/>", "PREFIX wdt:");
+    prefixes.put("PREFIX wd: <http://www.wikidata.org/entity/>", "PREFIX wd:");
+    prefixes.put("PREFIX wikibase: <http://wikiba.se/ontology#>", "PREFIX wikibase:");
 
-    for (String prefix : prefixes) {
-      if (!queryWithoutPrefixes.toLowerCase().contains(prefix.toLowerCase())) {
-        toBeAddedPrefixes += prefix + "\n";
+    for (Map.Entry<String, String> entry : prefixes.entrySet()) {
+      //prevents prefixes from being added twice
+      if (!queryWithoutPrefixes.toLowerCase().contains(entry.getValue().toLowerCase())) {
+        toBeAddedPrefixes += entry.getKey() + "\n";
       }
     }
 

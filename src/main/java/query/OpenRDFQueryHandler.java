@@ -33,7 +33,11 @@ public class OpenRDFQueryHandler extends QueryHandler
       this.query = this.parseQuery(getQueryString());
       setValid(true);
     } catch (MalformedQueryException e) {
-      logger.info("QUE length:" + this.getLengthNoAddedPrefixes() + "\t" + e.getMessage().substring(e.getMessage().indexOf("\n")));
+      String message = e.getMessage();
+      if(message.contains("\n")) {
+        message = message.substring(0, message.indexOf("\n"));
+      }
+      logger.info("QUE length:" + this.getLengthNoAddedPrefixes() + "\t" + message);
       logger.debug("Invalid query: \t" + getQueryString() + "\t->\t" + e.getMessage());
       setValid(false);
     }
