@@ -33,6 +33,10 @@ public abstract class QueryHandler
    */
   private String currentFile;
 
+  /**
+   * contains the length of the Query without added prefixes
+   */
+  private int lengthNoAddedPrefixes;
 
   /**
    *
@@ -90,6 +94,7 @@ public abstract class QueryHandler
    */
   public final String addMissingPrefixesToQuery(String queryWithoutPrefixes)
   {
+    this.lengthNoAddedPrefixes = queryWithoutPrefixes.length();
     String toBeAddedPrefixes = "";
     List<String> prefixes = new LinkedList<>();
 
@@ -214,5 +219,10 @@ public abstract class QueryHandler
   public void setCurrentFile(String currentFile)
   {
     this.currentFile = currentFile;
+  }
+
+  public int getLengthNoAddedPrefixes()
+  {
+    return lengthNoAddedPrefixes;
   }
 }
