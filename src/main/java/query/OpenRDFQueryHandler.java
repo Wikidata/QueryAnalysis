@@ -40,16 +40,10 @@ public class OpenRDFQueryHandler extends QueryHandler
 
       if(message.contains("Not a valid (absolute) URI:")) {
         setValidityStatus(-3);
-      } else if(message.contains("\"Encountered \" <PNAME_NS> \"TOOL: \"\" \"")) {
-        setValidityStatus(-4);
-      } else if (message.contains("BIND clause alias '{}' was previously used")) {
+      }  else if (message.contains("BIND clause alias '{}' was previously used")) {
         setValidityStatus(-5);
       } else if (message.contains("Multiple prefix declarations for prefix")) {
         setValidityStatus(-6);
-      } else if(message.contains("projection alias ")) {
-        setValidityStatus(-7);
-      } else if(message.contains("org.openrdf.query.parser.sparql.ast.VisitorException: QName ")) {
-        setValidityStatus(-8);
       } else {
         setValidityStatus(-1);
         logger.debug("Invalid query: \t" + getQueryString() + "\t->\t" + e.getMessage());

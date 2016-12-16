@@ -25,11 +25,8 @@ public abstract class QueryHandler
    * -1 -> invalid for unkown reasons
    * -2 -> queryString empty
    * -3 -> Not a valid (absolute URI):
-   * -4 -> Encountered " <PNAME_NS> "TOOL: ""
    * -5 -> BIND clause alias '{}' was previously used
    * -6 ->	Multiple prefix declarations for prefix 'p'
-   * -7 ->	projection alias 'item' was previously used
-   * -8 -> org.openrdf.query.parser.sparql.ast.VisitorException: QName 'pv:P31' uses an undefined prefix
    * -9 -> There was a syntax error in the URL
    * -10 -> The url was truncated and was therefore undecodable
    * -11 -> The query string was empty and was therefore not being parsed
