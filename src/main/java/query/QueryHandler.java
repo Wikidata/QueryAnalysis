@@ -126,7 +126,7 @@ public abstract class QueryHandler
     prefixes.put("PREFIX ps: <http://www.wikidata.org/prop/statement/>", "<http://www.wikidata.org/prop/statement/>");
     prefixes.put("PREFIX wdv: <http://www.wikidata.org/value/>", "<http://www.wikidata.org/value/>");
     prefixes.put("PREFIX wdref: <http://www.wikidata.org/reference/>", "<http://www.wikidata.org/reference/>");
-    prefixes.put("PREFIX p: <http://www.wikidata.org/prop/>", "<http://www.wikidata.org/prop/>");
+    prefixes.put("PREFIX p: <http://www.wikidata.org/prop/>", "<http://www.wikidata.org/prop/");
     prefixes.put("PREFIX wds: <http://www.wikidata.org/entity/statement/>", "<http://www.wikidata.org/entity/statement/>");
     prefixes.put("PREFIX wdt: <http://www.wikidata.org/prop/direct/>", "<http://www.wikidata.org/prop/direct/>");
     prefixes.put("PREFIX wd: <http://www.wikidata.org/entity/>", "<http://www.wikidata.org/entity/>");
