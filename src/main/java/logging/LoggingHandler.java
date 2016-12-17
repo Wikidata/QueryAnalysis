@@ -22,9 +22,9 @@ public final class LoggingHandler
   /**
    * Method for initiating a file log with default parameters.
    */
-  public static void initFileLog()
+  public static void initFileLog(String queryParserName, String inputFilePrefix)
   {
-    initFileLog("logs/general.%timestamp.log", Level.ALL);
+    initFileLog("logs/" + queryParserName + inputFilePrefix.substring(inputFilePrefix.lastIndexOf("/")+1) + "general.%timestamp.log", Level.ALL);
   }
 
   /**
