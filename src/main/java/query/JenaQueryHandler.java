@@ -97,7 +97,7 @@ public class JenaQueryHandler extends QueryHandler
     }
     final Set<Node> variables = new HashSet<>();
     Element queryPattern = query.getQueryPattern();
-    if(queryPattern != null) {
+    if (queryPattern != null) {
       try {
         ElementWalker.walk(queryPattern, new ElementVisitorBase()
         {
@@ -146,7 +146,7 @@ public class JenaQueryHandler extends QueryHandler
     triplesCount = 0;
 
     Element queryPattern = query.getQueryPattern();
-    if(queryPattern != null) {
+    if (queryPattern != null) {
       try {
         ElementWalker.walk(queryPattern, new ElementVisitorBase()
         {

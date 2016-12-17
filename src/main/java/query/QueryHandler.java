@@ -1,11 +1,9 @@
 package query;
 
-import com.hp.hpl.jena.sparql.syntax.PatternVars;
 import org.apache.log4j.Logger;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -86,9 +84,9 @@ public abstract class QueryHandler
    */
   public final void setQueryString(String queryStringToSet)
   {
-    if(queryStringToSet == "") {
+    if (queryStringToSet == "") {
       this.validityStatus = 2;
-    } else if(validityStatus > -1){
+    } else if (validityStatus > -1) {
       this.queryString = this.addMissingPrefixesToQuery(queryStringToSet);
       update();
     }
@@ -141,9 +139,9 @@ public abstract class QueryHandler
     prefixes.put("PREFIX wdt: <http://www.wikidata.org/prop/direct/>", "prefix\\s+wdt:");
     prefixes.put("PREFIX wd: <http://www.wikidata.org/entity/>", "prefix\\s+wd:");
     prefixes.put("PREFIX wikibase: <http://wikiba.se/ontology#>", "prefix\\s+wikibase:");
-    
+
     String queryWithoutPrefixesLowerCase = queryWithoutPrefixes.toLowerCase();
-    
+
     for (Map.Entry<String, String> entry : prefixes.entrySet()) {
       //prevents prefixes from being added twice
       if (!Pattern.compile(entry.getValue()).matcher(queryWithoutPrefixesLowerCase).find()) {
