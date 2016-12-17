@@ -41,7 +41,6 @@ public class JenaQueryHandler extends QueryHandler
       this.query = QueryFactory.create(getQueryString());
       this.setValidityStatus(1);
     } catch (QueryException e) {
-      logger.info("QUE length:" + this.getLengthNoAddedPrefixes());
       logger.debug("Invalid query: \t" + getQueryString() + "\t->\t" + e.getMessage());
       this.setValidityStatus(-1);
     }

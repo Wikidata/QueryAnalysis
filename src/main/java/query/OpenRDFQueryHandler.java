@@ -48,7 +48,6 @@ public class OpenRDFQueryHandler extends QueryHandler
         setValidityStatus(-1);
         logger.debug("Invalid query: \t" + getQueryString() + "\t->\t" + e.getMessage());
       }
-      //logger.info("QUE length:" + this.getLengthNoAddedPrefixes() + "\t" + message);
     }
   }
 
