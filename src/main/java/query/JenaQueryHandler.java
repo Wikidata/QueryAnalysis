@@ -155,7 +155,7 @@ public class JenaQueryHandler extends QueryHandler
       });
     } catch (NullPointerException e) {
       getLogger().error("Unexcpected null pointer exception " +
-          "while counting triples.", e);
+          "while counting triples." + this.getQueryString(), e);
       return -1;
     } catch (Exception e) {
       getLogger().error("Unexpected error while counting triples.", e);
