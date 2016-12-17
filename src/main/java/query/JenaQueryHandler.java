@@ -5,6 +5,7 @@ import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryException;
 import com.hp.hpl.jena.query.QueryFactory;
 import com.hp.hpl.jena.sparql.core.TriplePath;
+import com.hp.hpl.jena.sparql.syntax.Element;
 import com.hp.hpl.jena.sparql.syntax.ElementPathBlock;
 import com.hp.hpl.jena.sparql.syntax.ElementVisitorBase;
 import com.hp.hpl.jena.sparql.syntax.ElementWalker;
@@ -40,7 +41,6 @@ public class JenaQueryHandler extends QueryHandler
       this.query = QueryFactory.create(getQueryString());
       this.setValidityStatus(1);
     } catch (QueryException e) {
-      logger.info("QUE length:" + this.getLengthNoAddedPrefixes());
       logger.debug("Invalid query: \t" + getQueryString() + "\t->\t" + e.getMessage());
       this.setValidityStatus(-1);
     }
@@ -96,38 +96,42 @@ public class JenaQueryHandler extends QueryHandler
       return -1;
     }
     final Set<Node> variables = new HashSet<>();
-
-    try {
-      ElementWalker.walk(query.getQueryPattern(), new ElementVisitorBase()
-      {
-        public void visit(ElementPathBlock el)
+    Element queryPattern = query.getQueryPattern();
+    if (queryPattern != null) {
+      try {
+        ElementWalker.walk(queryPattern, new ElementVisitorBase()
         {
-          Iterator<TriplePath> triples = el.patternElts();
-          while (triples.hasNext()) {
-            TriplePath next = triples.next();
-            if (next.getSubject().isVariable()) {
-              variables.add(next.getSubject());
-            }
-            if (next.getPredicate() != null) {
-              if (next.getPredicate().isVariable()) {
-                variables.add(next.getPredicate());
+          public void visit(ElementPathBlock el)
+          {
+            Iterator<TriplePath> triples = el.patternElts();
+            while (triples.hasNext()) {
+              TriplePath next = triples.next();
+              if (next.getSubject().isVariable()) {
+                variables.add(next.getSubject());
+              }
+              if (next.getPredicate() != null) {
+                if (next.getPredicate().isVariable()) {
+                  variables.add(next.getPredicate());
+                }
+              }
+              if (next.getObject().isVariable()) {
+                variables.add(next.getObject());
               }
             }
-            if (next.getObject().isVariable()) {
-              variables.add(next.getObject());
-            }
           }
-        }
-      });
-    } catch (NullPointerException e) {
-      getLogger().error("Unexpeted null pointer" +
-          "exception while counting variables.", e);
-      return -1;
-    } catch (Exception e) {
-      getLogger().error("Unexpected error while counting variables.", e);
-      return -1;
+        });
+      } catch (NullPointerException e) {
+        getLogger().error("Unexpeted null pointer" +
+            "exception while counting variables.", e);
+        return -1;
+      } catch (Exception e) {
+        getLogger().error("Unexpected error while counting variables.", e);
+        return -1;
+      }
+      return variables.size();
+    } else {
+      return 0;
     }
-    return variables.size();
   }
 
   /**
@@ -141,26 +145,31 @@ public class JenaQueryHandler extends QueryHandler
     }
     triplesCount = 0;
 
-    try {
-      ElementWalker.walk(query.getQueryPattern(), new ElementVisitorBase()
-      {
-        public void visit(ElementPathBlock el)
+    Element queryPattern = query.getQueryPattern();
+    if (queryPattern != null) {
+      try {
+        ElementWalker.walk(queryPattern, new ElementVisitorBase()
         {
-          Iterator<TriplePath> triples = el.patternElts();
-          while (triples.hasNext()) {
-            triplesCount += 1;
-            triples.next();
+          public void visit(ElementPathBlock el)
+          {
+            Iterator<TriplePath> triples = el.patternElts();
+            while (triples.hasNext()) {
+              triplesCount += 1;
+              triples.next();
+            }
           }
-        }
-      });
-    } catch (NullPointerException e) {
-      getLogger().error("Unexcpected null pointer exception " +
-          "while counting triples.", e);
-      return -1;
-    } catch (Exception e) {
-      getLogger().error("Unexpected error while counting triples.", e);
-      return -1;
+        });
+      } catch (NullPointerException e) {
+        getLogger().error("Unexcpected null pointer exception " +
+            "while counting triples." + this.getQueryString(), e);
+        return -1;
+      } catch (Exception e) {
+        getLogger().error("Unexpected error while counting triples.", e);
+        return -1;
+      }
+      return triplesCount;
+    } else {
+      return 0;
     }
-    return triplesCount;
   }
 }

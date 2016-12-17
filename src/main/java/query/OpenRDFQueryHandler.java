@@ -34,21 +34,20 @@ public class OpenRDFQueryHandler extends QueryHandler
       this.setValidityStatus(1);
     } catch (MalformedQueryException e) {
       String message = e.getMessage();
-      if(message.contains("\n")) {
+      if (message.contains("\n")) {
         message = message.substring(0, message.indexOf("\n"));
       }
 
-      if(message.contains("Not a valid (absolute) URI:")) {
+      if (message.contains("Not a valid (absolute) URI:")) {
         setValidityStatus(-3);
-      }  else if (message.contains("BIND clause alias '{}' was previously used")) {
+      } else if (message.contains("BIND clause alias '{}' was previously used")) {
         setValidityStatus(-5);
       } else if (message.contains("Multiple prefix declarations for prefix")) {
         setValidityStatus(-6);
       } else {
         setValidityStatus(-1);
-        logger.debug("Invalid query: \t" + getQueryString() + "\t->\t" + e.getMessage());
       }
-      //logger.info("QUE length:" + this.getLengthNoAddedPrefixes() + "\t" + message);
+      logger.debug("Invalid query: \t" + getQueryString() + "\t->\t" + e.getMessage());
     }
   }
 
@@ -65,10 +64,10 @@ public class OpenRDFQueryHandler extends QueryHandler
     //the query against, but it can be NULL as well
     try {
       return QueryParserUtil.parseQuery(QueryLanguage.SPARQL, queryToParse, null);
-    } catch (Throwable e){ // kind of a dirty hack to catch an java.lang.error which occurs when trying to parse a query which contains f.e. the following string: "jul\ius" where the \ is an invalid escape charachter
+    } catch (Throwable e) { // kind of a dirty hack to catch an java.lang.error which occurs when trying to parse a query which contains f.e. the following string: "jul\ius" where the \ is an invalid escape charachter
       //because this error is kind of an MalformedQueryException we will just throw it as one
       throw new MalformedQueryException(e.getMessage());
-  }
+    }
   }
 
   /**

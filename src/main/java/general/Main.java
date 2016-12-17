@@ -145,11 +145,11 @@ public final class Main
         try {
           OutputHandlerTSV outputHandler = new OutputHandlerTSV(outputFile, queryHandler);
           //try {
-            inputHandler.parseTo(outputHandler);
-            logger.info("Done processing " + inputFile + " to " + outputFile + ".");
-       //   } catch (Exception e) {
-        //    logger.error("Unexpected error while parsing " + inputFile + ".", e);
-        //  }
+          inputHandler.parseTo(outputHandler);
+          logger.info("Done processing " + inputFile + " to " + outputFile + ".");
+          //   } catch (Exception e) {
+          //    logger.error("Unexpected error while parsing " + inputFile + ".", e);
+          //  }
         } catch (FileNotFoundException e) {
           logger.error("File " + outputFile + "could not be created or written to.", e);
         }

@@ -63,7 +63,7 @@ public class InputHandlerTSV extends InputHandler
       @Override
       public void rowProcessed(Object[] row, ParsingContext parsingContext)
       {
-        if(row.length <= 1) {
+        if (row.length <= 1) {
           logger.warn("Ignoring line without tab while parsing.");
           return;
         }

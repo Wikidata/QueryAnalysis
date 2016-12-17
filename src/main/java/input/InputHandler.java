@@ -8,7 +8,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
-import java.util.Map;
 
 /**
  * @author adrian
@@ -34,6 +33,7 @@ public abstract class InputHandler
    */
   public final Tuple2<String, Integer> decode(String uriQuery, String inputFile, long line)
   {
+
     String queryString = "";
     Integer validityStatus = -1;
     try {
@@ -44,7 +44,7 @@ public abstract class InputHandler
 
       //parse url
       String temp = url.getQuery();
-      if (temp == null)  {
+      if (temp == null) {
         return new Tuple2<>("", -11);
       }
       String[] pairs = temp.split("&");
@@ -56,7 +56,7 @@ public abstract class InputHandler
           queryString = idx > 0 && pair.length() > idx + 1 ? URLDecoder.decode(pair.substring(idx + 1), "UTF-8") : null;
         }
       }
-      if(queryString == null) {
+      if (queryString == null) {
         queryString = "";
       }
       validityStatus = 1;
@@ -73,7 +73,7 @@ public abstract class InputHandler
       validityStatus = -10;
       queryString = "INVALID"; //needs to be something != null
       logger.info("ILL length: " + uriQuery.length());
-      logger.warn("There was an error while parsing the following URL, probably caused by a truncated URI: " + uriQuery + " \tFound at " + inputFile + ", line " + line +"\t" + e.getMessage());
+      logger.warn("There was an error while parsing the following URL, probably caused by a truncated URI: " + uriQuery + " \tFound at " + inputFile + ", line " + line + "\t" + e.getMessage());
     }
     return new Tuple2<>(queryString, validityStatus);
   }
