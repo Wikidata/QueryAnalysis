@@ -34,6 +34,7 @@ public abstract class InputHandler
    */
   public final Tuple2<String, Integer> decode(String uriQuery, String inputFile, long line)
   {
+
     String queryString = "";
     Integer validityStatus = -1;
     try {
