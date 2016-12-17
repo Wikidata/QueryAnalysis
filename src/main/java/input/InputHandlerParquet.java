@@ -6,6 +6,7 @@ import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
 import output.OutputHandler;
+import scala.Tuple2;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -67,14 +68,14 @@ public class InputHandlerParquet extends InputHandler implements Serializable
     while (iterator.hasNext()) {
       Row row = iterator.next();
       Object[] convertedRow = new Object[7];
-      String queryString = decode(row.get(columnNames.get("uri_query")).toString(), inputFile, -1);
+      Tuple2<String, Integer> queryTuple = decode(row.get(columnNames.get("uri_query")).toString(), inputFile, -1);
       convertedRow[0] = row.get(columnNames.get("uri_query"));
       convertedRow[1] = row.get(columnNames.get("uri_path"));
       convertedRow[2] = row.get(columnNames.get("user_agent"));
       convertedRow[3] = row.get(columnNames.get("ts"));
       convertedRow[4] = row.get(columnNames.get("agent_type"));
       convertedRow[5] = row.get(columnNames.get("hour"));
-      outputHandler.writeLine(queryString, convertedRow, -1, inputFile);
+      outputHandler.writeLine(queryTuple._1, queryTuple._2, convertedRow, -1, inputFile);
     }
     outputHandler.closeFiles();
   }

@@ -97,23 +97,22 @@ public class OutputHandlerTSV extends OutputHandler
    * the available data to the active .tsv.
    *
    * @param queryToAnalyze The query that should be analyzed and written.
+   * @param validityStatus The validity status which was the result of the decoding process of the URI
    * @param row            The input data to be written to this line.
    * @param currentLine    The line from which the data to be written originates.
    * @param currentFile    The file from which the data to be written originates.
    */
   @Override
-  public final void writeLine(String queryToAnalyze, Object[] row, long currentLine, String currentFile)
+  public final void writeLine(String queryToAnalyze, Integer validityStatus, Object[] row, long currentLine, String currentFile)
   {
+    queryHandler.setValidityStatus(validityStatus);
     queryHandler.setQueryString(queryToAnalyze);
     queryHandler.setCurrentLine(currentLine);
     queryHandler.setCurrentFile(currentFile);
 
+
     List<Object> line = new ArrayList<Object>();
-    if (queryHandler.isValid()) {
-      line.add("1");
-    } else {
-      line.add("-1");
-    }
+    line.add(queryHandler.getValidityStatus());
 
     line.add(queryHandler.getStringLength());
     line.add(queryHandler.getStringLengthNoComments());

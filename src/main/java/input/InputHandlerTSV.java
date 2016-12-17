@@ -6,6 +6,7 @@ import com.univocity.parsers.tsv.TsvParser;
 import com.univocity.parsers.tsv.TsvParserSettings;
 import org.apache.log4j.Logger;
 import output.OutputHandler;
+import scala.Tuple2;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -66,8 +67,8 @@ public class InputHandlerTSV extends InputHandler
           logger.warn("Ignoring line without tab while parsing.");
           return;
         }
-        String queryString = decode(row[0].toString(), inputFile, parsingContext.currentLine());
-        outputHandler.writeLine(queryString, row, parsingContext.currentLine(), inputFile);
+        Tuple2<String, Integer> queryTuple = decode(row[0].toString(), inputFile, parsingContext.currentLine());
+        outputHandler.writeLine(queryTuple._1, queryTuple._2, row, parsingContext.currentLine(), inputFile);
       }
 
     };
