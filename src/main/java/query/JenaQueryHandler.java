@@ -38,10 +38,11 @@ public class JenaQueryHandler extends QueryHandler
   {
     try {
       this.query = QueryFactory.create(getQueryString());
-      this.setValid(true);
+      this.setValidityStatus(1);
     } catch (QueryException e) {
+      logger.info("QUE length:" + this.getLengthNoAddedPrefixes());
       logger.debug("Invalid query: \t" + getQueryString() + "\t->\t" + e.getMessage());
-      this.setValid(false);
+      this.setValidityStatus(-1);
     }
   }
 
@@ -55,7 +56,7 @@ public class JenaQueryHandler extends QueryHandler
    */
   public final Integer getStringLengthNoComments()
   {
-    if (!isValid()) {
+    if (getValidityStatus() != 1) {
       return -1;
     }
     String uncommented = query.toString().trim().replaceAll("[ ]+", " ");
@@ -80,7 +81,7 @@ public class JenaQueryHandler extends QueryHandler
    */
   public final Integer getVariableCountHead()
   {
-    if (!isValid()) {
+    if (getValidityStatus() != 1) {
       return -1;
     }
     return query.getProjectVars().size();
@@ -91,7 +92,7 @@ public class JenaQueryHandler extends QueryHandler
    */
   public final Integer getVariableCountPattern()
   {
-    if (!isValid()) {
+    if (getValidityStatus() != 1) {
       return -1;
     }
     final Set<Node> variables = new HashSet<>();
@@ -135,7 +136,7 @@ public class JenaQueryHandler extends QueryHandler
    */
   public final Integer getTripleCountWithService()
   {
-    if (!isValid()) {
+    if (getValidityStatus() != 1) {
       return -1;
     }
     triplesCount = 0;

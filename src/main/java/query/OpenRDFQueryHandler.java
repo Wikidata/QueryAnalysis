@@ -31,10 +31,24 @@ public class OpenRDFQueryHandler extends QueryHandler
   {
     try {
       this.query = this.parseQuery(getQueryString());
-      setValid(true);
+      this.setValidityStatus(1);
     } catch (MalformedQueryException e) {
-      logger.debug("Invalid query: \t" + getQueryString() + "\t->\t" + e.getMessage());
-      setValid(false);
+      String message = e.getMessage();
+      if(message.contains("\n")) {
+        message = message.substring(0, message.indexOf("\n"));
+      }
+
+      if(message.contains("Not a valid (absolute) URI:")) {
+        setValidityStatus(-3);
+      }  else if (message.contains("BIND clause alias '{}' was previously used")) {
+        setValidityStatus(-5);
+      } else if (message.contains("Multiple prefix declarations for prefix")) {
+        setValidityStatus(-6);
+      } else {
+        setValidityStatus(-1);
+        logger.debug("Invalid query: \t" + getQueryString() + "\t->\t" + e.getMessage());
+      }
+      //logger.info("QUE length:" + this.getLengthNoAddedPrefixes() + "\t" + message);
     }
   }
 
@@ -69,7 +83,7 @@ public class OpenRDFQueryHandler extends QueryHandler
    */
   public final Integer getStringLengthNoComments()
   {
-    if (!isValid()) {
+    if (getValidityStatus() != 1) {
       return -1;
     }
     String sourceQuery = query.getSourceString();
@@ -117,7 +131,7 @@ public class OpenRDFQueryHandler extends QueryHandler
    */
   public final Integer getVariableCountPattern()
   {
-    if (!isValid()) {
+    if (getValidityStatus() != 1) {
       return -1;
     }
 
@@ -146,7 +160,7 @@ public class OpenRDFQueryHandler extends QueryHandler
    */
   public final Integer getVariableCountHead()
   {
-    if (!isValid()) {
+    if (getValidityStatus() != 1) {
       return -1;
     }
 
@@ -159,7 +173,7 @@ public class OpenRDFQueryHandler extends QueryHandler
    */
   public final Integer getTripleCountWithService()
   {
-    if (!isValid()) {
+    if (getValidityStatus() != 1) {
       return -1;
     }
     TupleExpr expr = this.query.getTupleExpr();
