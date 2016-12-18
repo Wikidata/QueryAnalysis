@@ -34,16 +34,20 @@ public class OpenRDFQueryHandler extends QueryHandler
       this.setValidityStatus(1);
     } catch (MalformedQueryException e) {
       String message = e.getMessage();
-      if (message.contains("\n")) {
-        message = message.substring(0, message.indexOf("\n"));
-      }
+      if(message != null) {
+        if (message.contains("\n")) {
+          message = message.substring(0, message.indexOf("\n"));
+        }
 
-      if (message.contains("Not a valid (absolute) URI:")) {
-        setValidityStatus(-3);
-      } else if (message.contains("BIND clause alias '{}' was previously used")) {
-        setValidityStatus(-5);
-      } else if (message.contains("Multiple prefix declarations for prefix")) {
-        setValidityStatus(-6);
+        if (message.contains("Not a valid (absolute) URI:")) {
+          setValidityStatus(-3);
+        } else if (message.contains("BIND clause alias '{}' was previously used")) {
+          setValidityStatus(-5);
+        } else if (message.contains("Multiple prefix declarations for prefix")) {
+          setValidityStatus(-6);
+        } else {
+          setValidityStatus(-1);
+        }
       } else {
         setValidityStatus(-1);
       }
