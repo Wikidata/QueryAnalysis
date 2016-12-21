@@ -128,7 +128,7 @@ public final class Main
 
     LoggingHandler.initConsoleLog();
 
-    for (int i = 1; i <= 30; i++) {
+    for (int i = 1; i <= 31; i++) {
       String inputFile = inputFilePrefix + String.format("%02d", i) + inputFileSuffix;
 
       //create directory for the output
