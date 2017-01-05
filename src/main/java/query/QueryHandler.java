@@ -115,7 +115,7 @@ public abstract class QueryHandler
     prefixes.put("PREFIX schema: <http://schema.org/>", "prefix\\s+schema:");
     prefixes.put("PREFIX cc: <http://creativecommons.org/ns#>", "prefix\\s+cc:");
     prefixes.put("PREFIX geo: <http://www.opengis.net/ont/geosparql#>", "prefix\\s+geo:");
-    prefixes.put("PREFIX prov: <http://www.w3.org/ns/prov#>", "prefix\\s+prox:");
+    prefixes.put("PREFIX prov: <http://www.w3.org/ns/prov#>", "prefix\\s+prov:");
     prefixes.put("PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>", "prefix\\s+xsd:");
     prefixes.put("PREFIX skos: <http://www.w3.org/2004/02/skos/core#>", "prefix\\s+skos:");
     prefixes.put("PREFIX owl: <http://www.w3.org/2002/07/owl#>", "prefix\\s+owl:");

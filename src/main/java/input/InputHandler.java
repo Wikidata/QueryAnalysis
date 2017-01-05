@@ -72,7 +72,7 @@ public abstract class InputHandler
       //increment counter for truncated queries
       validityStatus = -10;
       queryString = "INVALID"; //needs to be something != null
-      logger.info("ILL length: " + uriQuery.length());
+      logger.debug("ILL length: " + uriQuery.length());
       logger.warn("There was an error while parsing the following URL, probably caused by a truncated URI: " + uriQuery + " \tFound at " + inputFile + ", line " + line + "\t" + e.getMessage());
     }
     return new Tuple2<>(queryString, validityStatus);

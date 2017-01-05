@@ -88,9 +88,6 @@ public final class Main
         formatter.printHelp("help", options);
         return;
       }
-      if (cmd.hasOption("logging")) {
-        LoggingHandler.initFileLog();
-      }
       if (cmd.hasOption("jena")) {
         queryHandler = new JenaQueryHandler();
         queryParserName = "Jena";
@@ -113,6 +110,9 @@ public final class Main
       } else {
         System.out.println("Please specify at least the file which we should work on using the option '--file PREFIX' or 'f PREFIX'");
         return;
+      }
+      if (cmd.hasOption("logging")) {
+        LoggingHandler.initFileLog(queryParserName, inputFilePrefix);
       }
     } catch (UnrecognizedOptionException e) {
       System.out.println("Unrecognized commandline option: " + e.getOption());
