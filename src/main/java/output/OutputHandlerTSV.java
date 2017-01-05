@@ -124,11 +124,22 @@ public class OutputHandlerTSV extends OutputHandler
       line.add(row[i]);
     }
     line.add(currentFile + "_" + currentLine);
-    if (row[4].toString().equals("user")) {
-      hourly_user[Integer.parseInt(row[5].toString())] += 1L;
+    int hour = -1;
+
+    try {
+      hour = Integer.parseInt(row[5].toString());
+    } catch (NumberFormatException e) {
+      logger.error("Hour field is not parsable as integer.", e);
     }
-    if (row[4].toString().equals("spider")) {
-      hourly_spider[Integer.parseInt(row[5].toString())] += 1L;
+    if (0 < hour && hour < 24) {
+      if (row[4].toString().equals("user")) {
+        hourly_user[Integer.parseInt(row[5].toString())] += 1L;
+      }
+      if (row[4].toString().equals("spider")) {
+        hourly_spider[Integer.parseInt(row[5].toString())] += 1L;
+      }
+    } else {
+      logger.error("Hour field " + hour + " is not between 0 and 24.");
     }
     writer.writeRow(line);
   }
