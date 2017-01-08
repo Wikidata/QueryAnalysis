@@ -28,13 +28,12 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
-import org.apache.spark.sql.AnalysisException;
-import output.OutputHandlerTSV;
 import query.JenaQueryHandler;
 import query.OpenRDFQueryHandler;
 import query.QueryHandler;
 
-import java.io.FileNotFoundException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 
 /**
@@ -131,39 +130,20 @@ public final class Main
 
     LoggingHandler.initConsoleLog();
 
+    ExecutorService executor = Executors.newFixedThreadPool(5);
+
     for (int day = 1; day <= 31; day++) {
       String inputFile = inputFilePrefix + String.format("%02d", day) + inputFileSuffix;
-      Main.workWithOneFile(inputFile, inputFilePrefix, inputHandler, queryParserName, queryHandler, day);
+      Runnable parseOneMonthWorker = new ParseOneMonthWorker(inputFile, inputFilePrefix, inputHandler, queryParserName, queryHandler, day);
+      executor.execute(parseOneMonthWorker);
     }
+    executor.shutdown();
+
+    while (!executor.isTerminated()) {
+      //wait until all work is finished
+    }
+    System.out.println("Finished executing with all threads.");
   }
 
-  private static void workWithOneFile(String inputFile, String inputFilePrefix, InputHandler inputHandler, String queryParserName, QueryHandler queryHandler, int day)
-  {
-
-    //create directory for the output
-    String outputFolderName = inputFilePrefix.substring(0, inputFilePrefix.lastIndexOf('/'));
-    String outputFile = outputFolderName + "/QueryProcessed" + queryParserName + String.format("%02d", day);
-    try {
-      inputHandler.setInputFile(inputFile);
-
-      logger.info("Start processing " + inputFile);
-      try {
-        OutputHandlerTSV outputHandler = new OutputHandlerTSV(outputFile, queryHandler);
-        //try {
-        inputHandler.parseTo(outputHandler);
-        logger.info("Done processing " + inputFile + " to " + outputFile + ".");
-        //   } catch (Exception e) {
-        //    logger.error("Unexpected error while parsing " + inputFile + ".", e);
-        //  }
-      } catch (FileNotFoundException e) {
-        logger.error("File " + outputFile + "could not be created or written to.", e);
-      }
-    } catch (FileNotFoundException e) {
-      logger.warn("File " + inputFile + " could not be found.");
-    } catch (AnalysisException e) {
-      logger.warn("File " + inputFile + " could not be found.");
-    }
-
-  }
 }
 
