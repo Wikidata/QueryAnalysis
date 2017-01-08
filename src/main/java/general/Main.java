@@ -62,7 +62,7 @@ public final class Main
    */
   public static void main(String[] args)
   {
-    //args = new String[] {"-ol", "-file test/test/test/QueryCntSept"};
+    args = new String[] {"-olt", "-file test/test/test/QueryCntSept"};
 
     Options options = new Options();
     options.addOption("l", "logging", false, "enables file logging");
@@ -78,6 +78,7 @@ public final class Main
     String inputFilePrefix;
     String inputFileSuffix = ".tsv";
     String queryParserName = "OpenRDF";
+    InputHandler inputHandler = null;
 
     CommandLineParser parser = new DefaultParser();
     CommandLine cmd;
@@ -97,6 +98,7 @@ public final class Main
       }
       if (cmd.hasOption("tsv")) {
         inputFileSuffix = ".tsv";
+        inputHandler = new InputHandlerTSV();
       }
       if (cmd.hasOption("parquet")) {
         inputFileSuffix = ".parquet";
@@ -104,6 +106,7 @@ public final class Main
         Logger.getLogger("akka").setLevel(Level.WARN);
         SparkConf conf = new SparkConf().setAppName("SPARQLQueryAnalyzer").setMaster("local");
         JavaSparkContext sc = new JavaSparkContext(conf);
+        inputHandler = new InputHandlerParquet();
       }
       if (cmd.hasOption("file")) {
         inputFilePrefix = cmd.getOptionValue("file").trim();
@@ -128,37 +131,39 @@ public final class Main
 
     LoggingHandler.initConsoleLog();
 
-    for (int i = 1; i <= 31; i++) {
-      String inputFile = inputFilePrefix + String.format("%02d", i) + inputFileSuffix;
-
-      //create directory for the output
-      String outputFolderName = inputFilePrefix.substring(0, inputFilePrefix.lastIndexOf('/'));
-      String outputFile = outputFolderName + "/QueryProcessed" + queryParserName + String.format("%02d", i);
-      try {
-        InputHandler inputHandler;
-        if (cmd.hasOption("parquet")) {
-          inputHandler = new InputHandlerParquet(inputFile);
-        } else {
-          inputHandler = new InputHandlerTSV(inputFile);
-        }
-        logger.info("Start processing " + inputFile);
-        try {
-          OutputHandlerTSV outputHandler = new OutputHandlerTSV(outputFile, queryHandler);
-          //try {
-          inputHandler.parseTo(outputHandler);
-          logger.info("Done processing " + inputFile + " to " + outputFile + ".");
-          //   } catch (Exception e) {
-          //    logger.error("Unexpected error while parsing " + inputFile + ".", e);
-          //  }
-        } catch (FileNotFoundException e) {
-          logger.error("File " + outputFile + "could not be created or written to.", e);
-        }
-      } catch (FileNotFoundException e) {
-        logger.warn("File " + inputFile + " could not be found.");
-      } catch (AnalysisException e) {
-        logger.warn("File " + inputFile + " could not be found.");
-      }
+    for (int day = 1; day <= 31; day++) {
+      String inputFile = inputFilePrefix + String.format("%02d", day) + inputFileSuffix;
+      Main.workWithOneFile(inputFile, inputFilePrefix, inputHandler, queryParserName, queryHandler, day);
     }
+  }
+
+  private static void workWithOneFile(String inputFile, String inputFilePrefix, InputHandler inputHandler, String queryParserName, QueryHandler queryHandler, int day)
+  {
+
+    //create directory for the output
+    String outputFolderName = inputFilePrefix.substring(0, inputFilePrefix.lastIndexOf('/'));
+    String outputFile = outputFolderName + "/QueryProcessed" + queryParserName + String.format("%02d", day);
+    try {
+      inputHandler.setInputFile(inputFile);
+
+      logger.info("Start processing " + inputFile);
+      try {
+        OutputHandlerTSV outputHandler = new OutputHandlerTSV(outputFile, queryHandler);
+        //try {
+        inputHandler.parseTo(outputHandler);
+        logger.info("Done processing " + inputFile + " to " + outputFile + ".");
+        //   } catch (Exception e) {
+        //    logger.error("Unexpected error while parsing " + inputFile + ".", e);
+        //  }
+      } catch (FileNotFoundException e) {
+        logger.error("File " + outputFile + "could not be created or written to.", e);
+      }
+    } catch (FileNotFoundException e) {
+      logger.warn("File " + inputFile + " could not be found.");
+    } catch (AnalysisException e) {
+      logger.warn("File " + inputFile + " could not be found.");
+    }
+
   }
 }
 

@@ -24,7 +24,7 @@ public final class LoggingHandler
    */
   public static void initFileLog(String queryParserName, String inputFilePrefix)
   {
-    initFileLog("logs/" + queryParserName + inputFilePrefix.substring(inputFilePrefix.lastIndexOf("/")+1) + "general.%timestamp.log", Level.ALL);
+    initFileLog("logs/" + queryParserName + inputFilePrefix.substring(inputFilePrefix.lastIndexOf("/") + 1) + ".%timestamp.log", Level.ALL);
   }
 
   /**

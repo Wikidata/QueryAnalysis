@@ -5,6 +5,7 @@ import com.univocity.parsers.common.processor.ObjectRowProcessor;
 import com.univocity.parsers.tsv.TsvParser;
 import com.univocity.parsers.tsv.TsvParserSettings;
 import org.apache.log4j.Logger;
+import org.apache.spark.sql.AnalysisException;
 import output.OutputHandler;
 import scala.Tuple2;
 
@@ -23,10 +24,7 @@ public class InputHandlerTSV extends InputHandler
    * Logger instance named "InputHandler".
    */
   private static Logger logger = Logger.getLogger(InputHandlerTSV.class);
-  /**
-   * The name of the input file for referencing in the output file.
-   */
-  private String inputFile;
+
   /**
    * The reader the parse()-method should read from.
    */
@@ -37,11 +35,12 @@ public class InputHandlerTSV extends InputHandler
    * @throws FileNotFoundException If the file does not exist,
    *                               is a directory rather than a regular file,
    *                               or for some other reason cannot be opened for reading.
+   * @throws AnalysisException If the file cannot be found, may not be read or is damaged in some way.
    */
-  public InputHandlerTSV(String fileToRead) throws FileNotFoundException
+  public void setInputFile(String fileToRead) throws FileNotFoundException, AnalysisException
   {
-    this.reader = new InputStreamReader(new FileInputStream(fileToRead));
     this.inputFile = fileToRead;
+    this.reader = new InputStreamReader(new FileInputStream(fileToRead));
   }
 
   /**
