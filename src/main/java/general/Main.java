@@ -61,7 +61,7 @@ public final class Main
    */
   public static void main(String[] args)
   {
-    args = new String[] {"-olt", "-file test/test/test/QueryCntSept"};
+    //args = new String[] {"-olt", "-file test/test/test/QueryCntSept", "-n5"};
 
     Options options = new Options();
     options.addOption("l", "logging", false, "enables file logging");
@@ -71,6 +71,7 @@ public final class Main
     options.addOption("h", "help", false, "displays this help");
     options.addOption("t", "tsv", false, "reads from .tsv-files");
     options.addOption("p", "parquet", false, "read from .parquet-files");
+    options.addOption("n", "numberOfThreads", true, "number of used threads, default 1");
 
     //some parameters which can be changed through parameters
     QueryHandler queryHandler = new OpenRDFQueryHandler();
@@ -78,6 +79,7 @@ public final class Main
     String inputFileSuffix = ".tsv";
     String queryParserName = "OpenRDF";
     InputHandler inputHandler = null;
+    int numberOfThreads = 1;
 
     CommandLineParser parser = new DefaultParser();
     CommandLine cmd;
@@ -116,6 +118,9 @@ public final class Main
       if (cmd.hasOption("logging")) {
         LoggingHandler.initFileLog(queryParserName, inputFilePrefix);
       }
+      if (cmd.hasOption("numberOfThreads")) {
+        numberOfThreads = Integer.parseInt(cmd.getOptionValue("numberOfThreads"));
+      }
     } catch (UnrecognizedOptionException e) {
       System.out.println("Unrecognized commandline option: " + e.getOption());
       HelpFormatter formatter = new HelpFormatter();
@@ -130,7 +135,7 @@ public final class Main
 
     LoggingHandler.initConsoleLog();
 
-    ExecutorService executor = Executors.newFixedThreadPool(5);
+    ExecutorService executor = Executors.newFixedThreadPool(numberOfThreads);
 
     for (int day = 1; day <= 31; day++) {
       String inputFile = inputFilePrefix + String.format("%02d", day) + inputFileSuffix;

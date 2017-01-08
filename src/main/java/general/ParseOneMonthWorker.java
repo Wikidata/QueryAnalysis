@@ -39,7 +39,6 @@ public class ParseOneMonthWorker implements Runnable
   @Override
   public void run()
   {
-    System.out.println(Thread.currentThread().getName() + "Start " + inputFile);
     //create directory for the output
     String outputFolderName = inputFilePrefix.substring(0, inputFilePrefix.lastIndexOf('/'));
     String outputFile = outputFolderName + "/QueryProcessed" + queryParserName + String.format("%02d", day);
@@ -63,7 +62,6 @@ public class ParseOneMonthWorker implements Runnable
     } catch (AnalysisException e) {
       logger.warn("File " + inputFile + " could not be found.");
     }
-    System.out.println(Thread.currentThread().getName() + " End.");
   }
 
 }
