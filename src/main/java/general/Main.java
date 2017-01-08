@@ -19,7 +19,6 @@ package general;
  * #L%
  */
 
-import input.InputHandler;
 import input.InputHandlerParquet;
 import input.InputHandlerTSV;
 import logging.LoggingHandler;
@@ -32,6 +31,7 @@ import query.JenaQueryHandler;
 import query.OpenRDFQueryHandler;
 import query.QueryHandler;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -59,9 +59,9 @@ public final class Main
    *
    * @param args Arguments to specify runtime behavior.
    */
-  public static void main(String[] args)
+  public static void main(String[] args) throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException
   {
-    //args = new String[] {"-olt", "-file test/test/test/QueryCntSept", "-n5"};
+    args = new String[] {"-olt", "-file test/test/test/QueryCntSept", "-n5"};
 
     Options options = new Options();
     options.addOption("l", "logging", false, "enables file logging");
@@ -78,7 +78,7 @@ public final class Main
     String inputFilePrefix;
     String inputFileSuffix = ".tsv";
     String queryParserName = "OpenRDF";
-    InputHandler inputHandler = null;
+    Class inputHandlerClass = null;
     int numberOfThreads = 1;
 
     CommandLineParser parser = new DefaultParser();
@@ -99,7 +99,7 @@ public final class Main
       }
       if (cmd.hasOption("tsv")) {
         inputFileSuffix = ".tsv";
-        inputHandler = new InputHandlerTSV();
+        inputHandlerClass = InputHandlerTSV.class;
       }
       if (cmd.hasOption("parquet")) {
         inputFileSuffix = ".parquet";
@@ -107,7 +107,10 @@ public final class Main
         Logger.getLogger("akka").setLevel(Level.WARN);
         SparkConf conf = new SparkConf().setAppName("SPARQLQueryAnalyzer").setMaster("local");
         JavaSparkContext sc = new JavaSparkContext(conf);
-        inputHandler = new InputHandlerParquet();
+        inputHandlerClass = InputHandlerParquet.class;
+      }
+      if (inputHandlerClass == null) {
+        System.out.println("Please specify which parser to use, either -t for TSV or -p for parquet.");
       }
       if (cmd.hasOption("file")) {
         inputFilePrefix = cmd.getOptionValue("file").trim();
@@ -139,13 +142,13 @@ public final class Main
 
     for (int day = 1; day <= 31; day++) {
       String inputFile = inputFilePrefix + String.format("%02d", day) + inputFileSuffix;
-      Runnable parseOneMonthWorker = new ParseOneMonthWorker(inputFile, inputFilePrefix, inputHandler, queryParserName, queryHandler, day);
+      Runnable parseOneMonthWorker = new ParseOneMonthWorker(inputFile, inputFilePrefix, inputHandlerClass, queryParserName, queryHandler, day);
       executor.execute(parseOneMonthWorker);
     }
     executor.shutdown();
 
     while (!executor.isTerminated()) {
-      //wait until all work is finished
+      //wait until all workers are finished
     }
     System.out.println("Finished executing with all threads.");
   }

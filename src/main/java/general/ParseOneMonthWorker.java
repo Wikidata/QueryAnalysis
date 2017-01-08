@@ -8,6 +8,7 @@ import output.OutputHandlerTSV;
 import query.QueryHandler;
 
 import java.io.FileNotFoundException;
+import java.lang.reflect.InvocationTargetException;
 
 /**
  * @author: Julius Gonsior
@@ -25,11 +26,11 @@ public class ParseOneMonthWorker implements Runnable
   private QueryHandler queryHandler;
   private int day;
 
-  public ParseOneMonthWorker(String inputFile, String inputFilePrefix, InputHandler inputHandler, String queryParserName, QueryHandler queryHandler, int day)
+  public ParseOneMonthWorker(String inputFile, String inputFilePrefix, Class inputHandlerClass, String queryParserName, QueryHandler queryHandler, int day) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException
   {
     this.inputFile = inputFile;
     this.inputFilePrefix = inputFilePrefix;
-    this.inputHandler = inputHandler;
+    this.inputHandler = (InputHandler) inputHandlerClass.getConstructor().newInstance();
     this.queryParserName = queryParserName;
     this.queryHandler = queryHandler;
     this.day = day;
