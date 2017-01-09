@@ -26,13 +26,13 @@ public class ParseOneMonthWorker implements Runnable
   private QueryHandler queryHandler;
   private int day;
 
-  public ParseOneMonthWorker(String inputFile, String inputFilePrefix, Class inputHandlerClass, String queryParserName, QueryHandler queryHandler, int day) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException
+  public ParseOneMonthWorker(String inputFile, String inputFilePrefix, Class inputHandlerClass, String queryParserName, Class queryHandlerClass, int day) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException
   {
     this.inputFile = inputFile;
     this.inputFilePrefix = inputFilePrefix;
     this.inputHandler = (InputHandler) inputHandlerClass.getConstructor().newInstance();
     this.queryParserName = queryParserName;
-    this.queryHandler = queryHandler;
+    this.queryHandler = (QueryHandler) queryHandlerClass.getConstructor().newInstance();
     this.day = day;
   }
 

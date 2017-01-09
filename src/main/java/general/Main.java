@@ -29,7 +29,6 @@ import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
 import query.JenaQueryHandler;
 import query.OpenRDFQueryHandler;
-import query.QueryHandler;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.ExecutorService;
@@ -74,11 +73,12 @@ public final class Main
     options.addOption("n", "numberOfThreads", true, "number of used threads, default 1");
 
     //some parameters which can be changed through parameters
-    QueryHandler queryHandler = new OpenRDFQueryHandler();
+    //QueryHandler queryHandler = new OpenRDFQueryHandler();
     String inputFilePrefix;
     String inputFileSuffix = ".tsv";
     String queryParserName = "OpenRDF";
     Class inputHandlerClass = null;
+    Class queryHandlerClass = null;
     int numberOfThreads = 1;
 
     CommandLineParser parser = new DefaultParser();
@@ -91,11 +91,11 @@ public final class Main
         return;
       }
       if (cmd.hasOption("jena")) {
-        queryHandler = new JenaQueryHandler();
+        queryHandlerClass = JenaQueryHandler.class;
         queryParserName = "Jena";
       }
       if (cmd.hasOption("openrdf")) {
-        queryHandler = new OpenRDFQueryHandler();
+        queryHandlerClass = OpenRDFQueryHandler.class;
       }
       if (cmd.hasOption("tsv")) {
         inputFileSuffix = ".tsv";
@@ -142,7 +142,7 @@ public final class Main
 
     for (int day = 1; day <= 31; day++) {
       String inputFile = inputFilePrefix + String.format("%02d", day) + inputFileSuffix;
-      Runnable parseOneMonthWorker = new ParseOneMonthWorker(inputFile, inputFilePrefix, inputHandlerClass, queryParserName, queryHandler, day);
+      Runnable parseOneMonthWorker = new ParseOneMonthWorker(inputFile, inputFilePrefix, inputHandlerClass, queryParserName, queryHandlerClass, day);
       executor.execute(parseOneMonthWorker);
     }
     executor.shutdown();
