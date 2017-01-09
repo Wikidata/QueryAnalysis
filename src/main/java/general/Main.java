@@ -31,8 +31,11 @@ import query.JenaQueryHandler;
 import query.OpenRDFQueryHandler;
 
 import java.lang.reflect.InvocationTargetException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -138,6 +141,8 @@ public final class Main
 
     LoggingHandler.initConsoleLog();
 
+    long startTime = System.nanoTime();
+
     ExecutorService executor = Executors.newFixedThreadPool(numberOfThreads);
 
     for (int day = 1; day <= 31; day++) {
@@ -150,7 +155,11 @@ public final class Main
     while (!executor.isTerminated()) {
       //wait until all workers are finished
     }
-    System.out.println("Finished executing with all threads.");
+
+    long stopTime = System.nanoTime();
+    long millis = TimeUnit.MILLISECONDS.convert(stopTime - startTime, TimeUnit.NANOSECONDS);
+    Date date = new Date(millis);
+    System.out.println("Finished executing with all threads: " + new SimpleDateFormat("mm-dd HH:mm:ss:SSSSSSS").format(date));
   }
 
 }
