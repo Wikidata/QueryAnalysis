@@ -131,7 +131,7 @@ public class OutputHandlerTSV extends OutputHandler
     } catch (NumberFormatException e) {
       logger.error("Hour field is not parsable as integer.", e);
     }
-    if (0 < hour && hour < 24) {
+    if (0 <= hour && hour < 24) {
       if (row[4].toString().equals("user")) {
         hourly_user[Integer.parseInt(row[5].toString())] += 1L;
       }
