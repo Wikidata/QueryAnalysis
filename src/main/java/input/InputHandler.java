@@ -1,9 +1,11 @@
 package input;
 
 import org.apache.log4j.Logger;
+import org.apache.spark.sql.AnalysisException;
 import output.OutputHandler;
 import scala.Tuple2;
 
+import java.io.FileNotFoundException;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -18,6 +20,10 @@ public abstract class InputHandler
    * Define a static logger variable.
    */
   private static Logger logger = Logger.getLogger(InputHandler.class);
+  /**
+   * The name of the input file for referencing in the output file.
+   */
+  protected String inputFile;
 
   /**
    * Read the file given by reader and hands the data to the outputHandler.
@@ -25,6 +31,8 @@ public abstract class InputHandler
    * @param outputHandler Handles the data that should be written.
    */
   public abstract void parseTo(OutputHandler outputHandler);
+
+  public abstract void setInputFile(String fileToRead) throws FileNotFoundException, AnalysisException;
 
   /**
    * @param uriQuery  The uri_query entry from the logs.

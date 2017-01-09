@@ -19,7 +19,6 @@ package general;
  * #L%
  */
 
-import input.InputHandler;
 import input.InputHandlerParquet;
 import input.InputHandlerTSV;
 import logging.LoggingHandler;
@@ -28,13 +27,15 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
-import org.apache.spark.sql.AnalysisException;
-import output.OutputHandlerTSV;
 import query.JenaQueryHandler;
 import query.OpenRDFQueryHandler;
-import query.QueryHandler;
 
-import java.io.FileNotFoundException;
+import java.lang.reflect.InvocationTargetException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -60,9 +61,9 @@ public final class Main
    *
    * @param args Arguments to specify runtime behavior.
    */
-  public static void main(String[] args)
+  public static void main(String[] args) throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException
   {
-    //args = new String[] {"-ol", "-file test/test/test/QueryCntSept"};
+    //args = new String[] {"-olt", "-file test/test/test/QueryCntSept", "-n5"};
 
     Options options = new Options();
     options.addOption("l", "logging", false, "enables file logging");
@@ -72,12 +73,16 @@ public final class Main
     options.addOption("h", "help", false, "displays this help");
     options.addOption("t", "tsv", false, "reads from .tsv-files");
     options.addOption("p", "parquet", false, "read from .parquet-files");
+    options.addOption("n", "numberOfThreads", true, "number of used threads, default 1");
 
     //some parameters which can be changed through parameters
-    QueryHandler queryHandler = new OpenRDFQueryHandler();
+    //QueryHandler queryHandler = new OpenRDFQueryHandler();
     String inputFilePrefix;
     String inputFileSuffix = ".tsv";
     String queryParserName = "OpenRDF";
+    Class inputHandlerClass = null;
+    Class queryHandlerClass = null;
+    int numberOfThreads = 1;
 
     CommandLineParser parser = new DefaultParser();
     CommandLine cmd;
@@ -89,14 +94,15 @@ public final class Main
         return;
       }
       if (cmd.hasOption("jena")) {
-        queryHandler = new JenaQueryHandler();
+        queryHandlerClass = JenaQueryHandler.class;
         queryParserName = "Jena";
       }
       if (cmd.hasOption("openrdf")) {
-        queryHandler = new OpenRDFQueryHandler();
+        queryHandlerClass = OpenRDFQueryHandler.class;
       }
       if (cmd.hasOption("tsv")) {
         inputFileSuffix = ".tsv";
+        inputHandlerClass = InputHandlerTSV.class;
       }
       if (cmd.hasOption("parquet")) {
         inputFileSuffix = ".parquet";
@@ -104,6 +110,10 @@ public final class Main
         Logger.getLogger("akka").setLevel(Level.WARN);
         SparkConf conf = new SparkConf().setAppName("SPARQLQueryAnalyzer").setMaster("local");
         JavaSparkContext sc = new JavaSparkContext(conf);
+        inputHandlerClass = InputHandlerParquet.class;
+      }
+      if (inputHandlerClass == null) {
+        System.out.println("Please specify which parser to use, either -t for TSV or -p for parquet.");
       }
       if (cmd.hasOption("file")) {
         inputFilePrefix = cmd.getOptionValue("file").trim();
@@ -113,6 +123,9 @@ public final class Main
       }
       if (cmd.hasOption("logging")) {
         LoggingHandler.initFileLog(queryParserName, inputFilePrefix);
+      }
+      if (cmd.hasOption("numberOfThreads")) {
+        numberOfThreads = Integer.parseInt(cmd.getOptionValue("numberOfThreads"));
       }
     } catch (UnrecognizedOptionException e) {
       System.out.println("Unrecognized commandline option: " + e.getOption());
@@ -128,37 +141,26 @@ public final class Main
 
     LoggingHandler.initConsoleLog();
 
-    for (int i = 1; i <= 31; i++) {
-      String inputFile = inputFilePrefix + String.format("%02d", i) + inputFileSuffix;
+    long startTime = System.nanoTime();
 
-      //create directory for the output
-      String outputFolderName = inputFilePrefix.substring(0, inputFilePrefix.lastIndexOf('/'));
-      String outputFile = outputFolderName + "/QueryProcessed" + queryParserName + String.format("%02d", i);
-      try {
-        InputHandler inputHandler;
-        if (cmd.hasOption("parquet")) {
-          inputHandler = new InputHandlerParquet(inputFile);
-        } else {
-          inputHandler = new InputHandlerTSV(inputFile);
-        }
-        logger.info("Start processing " + inputFile);
-        try {
-          OutputHandlerTSV outputHandler = new OutputHandlerTSV(outputFile, queryHandler);
-          //try {
-          inputHandler.parseTo(outputHandler);
-          logger.info("Done processing " + inputFile + " to " + outputFile + ".");
-          //   } catch (Exception e) {
-          //    logger.error("Unexpected error while parsing " + inputFile + ".", e);
-          //  }
-        } catch (FileNotFoundException e) {
-          logger.error("File " + outputFile + "could not be created or written to.", e);
-        }
-      } catch (FileNotFoundException e) {
-        logger.warn("File " + inputFile + " could not be found.");
-      } catch (AnalysisException e) {
-        logger.warn("File " + inputFile + " could not be found.");
-      }
+    ExecutorService executor = Executors.newFixedThreadPool(numberOfThreads);
+
+    for (int day = 1; day <= 31; day++) {
+      String inputFile = inputFilePrefix + String.format("%02d", day) + inputFileSuffix;
+      Runnable parseOneMonthWorker = new ParseOneMonthWorker(inputFile, inputFilePrefix, inputHandlerClass, queryParserName, queryHandlerClass, day);
+      executor.execute(parseOneMonthWorker);
     }
+    executor.shutdown();
+
+    while (!executor.isTerminated()) {
+      //wait until all workers are finished
+    }
+
+    long stopTime = System.nanoTime();
+    long millis = TimeUnit.MILLISECONDS.convert(stopTime - startTime, TimeUnit.NANOSECONDS);
+    Date date = new Date(millis);
+    System.out.println("Finished executing with all threads: " + new SimpleDateFormat("mm-dd HH:mm:ss:SSSSSSS").format(date));
   }
+
 }
 

@@ -34,7 +34,7 @@ public class OpenRDFQueryHandler extends QueryHandler
       this.setValidityStatus(1);
     } catch (MalformedQueryException e) {
       String message = e.getMessage();
-      if(message != null) {
+      if (message != null) {
         if (message.contains("\n")) {
           message = message.substring(0, message.indexOf("\n"));
         }
