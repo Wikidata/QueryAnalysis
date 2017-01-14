@@ -24,18 +24,18 @@ public abstract class QueryHandler
    * 2 -> valid, but empty query
    * 1 -> valid
    * 0 -> default internal value -> should always be changed, if it is 0 then there was an internal error!
-   * -1 -> invalid for unkown reasons
+   * -1 -> invalid for unknown reasons
    * -3 -> Not a valid (absolute URI):
    * -5 -> BIND clause alias '{}' was previously used
    * -6 ->	Multiple prefix declarations for prefix 'p'
    * -9 -> There was a syntax error in the URL
-   * -10 -> The url was truncated and was therefore undecodable
+   * -10 -> The url was truncated and was therefore not decodable
    * -11 -> The query string was empty and was therefore not being parsed
    */
   private int validityStatus;
 
   /**
-   * saves the current line the query was from
+   * Saves the current line the query was from.
    */
   private long currentLine;
 
@@ -97,7 +97,7 @@ public abstract class QueryHandler
    * https://query.wikidata.org/ automatically adds some prefixes to all queried queries
    * therefore the queries in the log files are missing mostly these prefixes and therefore
    * we need to add them manually (but only if they aren't already inside of the queries)
-   * -> this method is here to achieve exactly this
+   * -> this method is here to achieve exactly this.
    *
    * @param queryWithoutPrefixes
    * @return

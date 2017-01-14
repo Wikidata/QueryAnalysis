@@ -41,9 +41,22 @@ public class JenaQueryHandler extends QueryHandler
       this.query = QueryFactory.create(getQueryString());
       this.setValidityStatus(1);
     } catch (QueryException e) {
+
+      String message = e.getMessage();
+      if (message != null) {
+        if (message.contains("\n")) {
+          message = message.substring(0, message.indexOf("\n"));
+        }
+
+        if (message.contains("BIND: Variable used when already in-scope:")) {
+          this.setValidityStatus(-5);
+        } else {
+          this.setValidityStatus(-1);
+        }
+      }
+
       logger.debug("QUE length:" + this.getLengthNoAddedPrefixes());
       logger.debug("Invalid query: \t" + getQueryString() + "\t->\t" + e.getMessage());
-      this.setValidityStatus(-1);
     }
   }
 
