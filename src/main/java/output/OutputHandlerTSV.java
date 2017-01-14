@@ -81,7 +81,7 @@ public class OutputHandlerTSV extends OutputHandler
     try {
       FileOutputStream outputHourly = new FileOutputStream(file + "HourlyAgentCount.tsv");
       TsvWriter hourlyWriter = new TsvWriter(outputHourly, new TsvWriterSettings());
-      hourlyWriter.writeHeaders(new String[] {"hour", "user_count", "spider_count"});
+      hourlyWriter.writeHeaders("hour", "user_count", "spider_count");
       for (int i = 0; i < hourly_user.length; i++) {
         hourlyWriter.writeRow(new String[] {String.valueOf(i), String.valueOf(hourly_user[i]), String.valueOf(hourly_spider[i])});
       }
@@ -131,7 +131,7 @@ public class OutputHandlerTSV extends OutputHandler
     } catch (NumberFormatException e) {
       logger.error("Hour field is not parsable as integer.", e);
     }
-    if (0 < hour && hour < 24) {
+    if (0 <= hour && hour < 24) {
       if (row[4].toString().equals("user")) {
         hourly_user[Integer.parseInt(row[5].toString())] += 1L;
       }

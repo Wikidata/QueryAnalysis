@@ -8,6 +8,7 @@ import org.apache.spark.sql.SparkSession;
 import output.OutputHandler;
 import scala.Tuple2;
 
+import java.io.FileNotFoundException;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -39,19 +40,19 @@ public class InputHandlerParquet extends InputHandler implements Serializable
    * A dataset containing the queries and metadata to be processed.
    */
   private Dataset<Row> inputDF;
-  /**
-   * The name of the input file for referencing in the output file.
-   */
-  private String inputFile;
 
   /**
-   * @param fileToRead The file the parseTo()-method should read from.
-   * @throws AnalysisException If the file cannot be found, may not be read or is damaged in some way.
+   * @param fileToRead The file the parse()-method should read from.
+   * @throws FileNotFoundException If the file does not exist,
+   *                               is a directory rather than a regular file,
+   *                               or for some other reason cannot be opened for reading.
+   * @throws AnalysisException     If the file cannot be found, may not be read or is damaged in some way.
    */
-  public InputHandlerParquet(String fileToRead) throws AnalysisException
+  public void setInputFile(String fileToRead) throws FileNotFoundException, AnalysisException
   {
-    this.spark = SparkSession.builder().appName("QueryAnalysis").getOrCreate();
     this.inputFile = fileToRead;
+
+    this.spark = SparkSession.builder().appName("QueryAnalysis").getOrCreate();
     this.inputDF = spark.read().parquet(fileToRead);
 
     int i = 0;
