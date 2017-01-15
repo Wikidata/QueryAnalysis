@@ -1,17 +1,15 @@
 package query;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.openrdf.query.MalformedQueryException;
-import org.openrdf.query.QueryLanguage;
 import org.openrdf.query.algebra.StatementPattern;
 import org.openrdf.query.algebra.TupleExpr;
 import org.openrdf.query.algebra.Var;
 import org.openrdf.query.algebra.helpers.StatementPatternCollector;
 import org.openrdf.query.parser.ParsedQuery;
-import org.openrdf.query.parser.QueryParserUtil;
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 
 /**
@@ -40,8 +38,10 @@ public class OpenRDFQueryHandler extends QueryHandler
         }
 
         if (message.contains("Not a valid (absolute) URI:")) {
+          logger.warn("This shoud not happen anymore: " + e.getMessage());
           setValidityStatus(-3);
         } else if (message.contains("BIND clause alias '{}' was previously used")) {
+          logger.warn("This shoud not happen anymore: " + e.getMessage());
           setValidityStatus(-5);
         } else if (message.contains("Multiple prefix declarations for prefix")) {
           setValidityStatus(-6);
@@ -65,11 +65,14 @@ public class OpenRDFQueryHandler extends QueryHandler
    */
   private ParsedQuery parseQuery(String queryToParse) throws MalformedQueryException
   {
-    //the third argument is the basURI to resolve any relative URIs that are in
+    //the third argument is the baseURI to resolve any relative URIs that are in
     //the query against, but it can be NULL as well
     try {
-      return QueryParserUtil.parseQuery(QueryLanguage.SPARQL, queryToParse, "https://query.wikidata.org/bigdata/namespace/wdq/sparql");
-    } catch (Throwable e) { // kind of a dirty hack to catch an java.lang.error which occurs when trying to parse a query which contains f.e. the following string: "jul\ius" where the \ is an invalid escape charachter
+      ParsedQuery parsedQuery = new StandardizingSPARQLParser().parseQuery(queryToParse, "https://query.wikidata.org/bigdata/namespace/wdq/sparql");
+      return parsedQuery;
+          //QueryParserUtil.parseQuery(QueryLanguage.SPARQL, queryToParse, "https://query.wikidata.org/bigdata/namespace/wdq/sparql");
+    } catch (Throwable e) {
+      // kind of a dirty hack to catch an java.lang.error which occurs when trying to parse a query which contains f.e. the following string: "jul\ius" where the \ is an invalid escape charachter
       //because this error is kind of an MalformedQueryException we will just throw it as one
       throw new MalformedQueryException(e.getMessage());
     }
