@@ -4,6 +4,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import general.Main;
+
 import org.openrdf.query.MalformedQueryException;
 import org.openrdf.query.algebra.StatementPattern;
 import org.openrdf.query.algebra.TupleExpr;
@@ -187,5 +189,19 @@ public class OpenRDFQueryHandler extends QueryHandler
     StatementPatternCollector collector = new StatementPatternCollector();
     expr.visit(collector);
     return collector.getStatementPatterns().size();
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public final Integer getQueryType()
+  {
+    TupleExpr tupleExpr = query.getTupleExpr();
+    int indexOf = Main.queryTypes.indexOf(tupleExpr);
+    if (indexOf == -1) {
+      Main.queryTypes.add(tupleExpr);
+      return Main.queryTypes.size();
+    }
+    return indexOf;
   }
 }

@@ -203,6 +203,11 @@ public abstract class QueryHandler
   public abstract Integer getTripleCountWithService();
 
   /**
+   * @return Returns the query type as a number referencing a file containing the queryTypePattern.
+   */
+  public abstract Integer getQueryType();
+  
+  /**
    * @return the line the query originated from
    */
   public long getCurrentLine()

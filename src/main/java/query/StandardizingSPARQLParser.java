@@ -122,8 +122,6 @@ public class StandardizingSPARQLParser extends SPARQLParser
       throws MalformedQueryException
   {
     try {
-/*      ASTQueryContainer bind = SyntaxTreeBuilder.parseQuery("SELECT DISTINCT ?item WHERE{ ?tree0 wdt:P31 ?item . BIND (wd:Q146 AS ?tree0) }");
-      ASTQueryContainer values = SyntaxTreeBuilder.parseQuery("SELECT DISTINCT ?item WHERE { ?tree0 wdt:P31 ?item . VALUES ?tree0 { wd:Q146 } }");*/
       ASTQueryContainer qc = SyntaxTreeBuilder.parseQuery(queryStr);
       debug(qc);
       normalize(qc);

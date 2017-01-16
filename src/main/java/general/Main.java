@@ -19,23 +19,43 @@ package general;
  * #L%
  */
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+
 import input.InputHandlerParquet;
 import input.InputHandlerTSV;
 import logging.LoggingHandler;
-import org.apache.commons.cli.*;
+
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
+import org.apache.commons.cli.UnrecognizedOptionException;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
+import org.openrdf.query.algebra.TupleExpr;
 import query.JenaQueryHandler;
 import query.OpenRDFQueryHandler;
 
-import java.lang.reflect.InvocationTargetException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+
+
 
 
 /**
@@ -43,6 +63,10 @@ import java.util.concurrent.TimeUnit;
  */
 public final class Main
 {
+  /**
+   * Saves the encountered queryTypes.
+   */
+  public static List<TupleExpr> queryTypes = Collections.synchronizedList(new ArrayList<TupleExpr>());
   /**
    * Define a static logger variable.
    */
@@ -154,6 +178,16 @@ public final class Main
 
     while (!executor.isTerminated()) {
       //wait until all workers are finished
+    }
+
+    String outputFolderName = inputFilePrefix.substring(0, inputFilePrefix.lastIndexOf('/') + 1) + "queryTypes/";
+    new File(outputFolderName).mkdir();
+    for (int i = 0; i < queryTypes.size(); i++) {
+      try (BufferedWriter bw = new BufferedWriter(new FileWriter(outputFolderName + i + ".queryType"))) {
+        bw.write(queryTypes.get(i).toString());
+      } catch (IOException e) {
+        logger.error("Could not write the query type " + i + ".", e);
+      }
     }
 
     long stopTime = System.nanoTime();
