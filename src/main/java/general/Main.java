@@ -51,6 +51,9 @@ import org.apache.log4j.Logger;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.openrdf.query.algebra.TupleExpr;
+import org.openrdf.query.parser.ParsedQuery;
+import org.openrdf.queryrender.sparql.SPARQLQueryRenderer;
+
 import query.JenaQueryHandler;
 import query.OpenRDFQueryHandler;
 
@@ -66,7 +69,7 @@ public final class Main
   /**
    * Saves the encountered queryTypes.
    */
-  public static List<TupleExpr> queryTypes = Collections.synchronizedList(new ArrayList<TupleExpr>());
+  public static List<String> queryTypes = Collections.synchronizedList(new ArrayList<String>());
   /**
    * Define a static logger variable.
    */
@@ -184,7 +187,7 @@ public final class Main
     new File(outputFolderName).mkdir();
     for (int i = 0; i < queryTypes.size(); i++) {
       try (BufferedWriter bw = new BufferedWriter(new FileWriter(outputFolderName + i + ".queryType"))) {
-        bw.write(queryTypes.get(i).toString());
+        bw.write(queryTypes.get(i));
       } catch (IOException e) {
         logger.error("Could not write the query type " + i + ".", e);
       }

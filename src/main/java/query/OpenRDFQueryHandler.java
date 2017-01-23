@@ -10,8 +10,15 @@ import org.openrdf.query.MalformedQueryException;
 import org.openrdf.query.algebra.StatementPattern;
 import org.openrdf.query.algebra.TupleExpr;
 import org.openrdf.query.algebra.Var;
+import org.openrdf.query.algebra.helpers.QueryModelVisitorBase;
 import org.openrdf.query.algebra.helpers.StatementPatternCollector;
 import org.openrdf.query.parser.ParsedQuery;
+import org.openrdf.query.parser.sparql.ast.ASTQueryContainer;
+import org.openrdf.query.parser.sparql.ast.ParseException;
+import org.openrdf.query.parser.sparql.ast.SyntaxTreeBuilder;
+import org.openrdf.query.parser.sparql.ast.TokenMgrError;
+import org.openrdf.query.parser.sparql.ast.VisitorException;
+import org.openrdf.queryrender.sparql.SPARQLQueryRenderer;
 
 
 /**
@@ -23,6 +30,10 @@ public class OpenRDFQueryHandler extends QueryHandler
    * The query object created from query-string.
    */
   private ParsedQuery query;
+  /**
+   * The normalized query AST.
+   */
+  private ASTQueryContainer queryAST;
 
   /**
    * {@inheritDoc}
@@ -69,10 +80,19 @@ public class OpenRDFQueryHandler extends QueryHandler
   {
     //the third argument is the baseURI to resolve any relative URIs that are in
     //the query against, but it can be NULL as well
+    StandardizingSPARQLParser parser = new StandardizingSPARQLParser();
+/*  try {
+      queryAST = SyntaxTreeBuilder.parseQuery(queryToParse);
+    }
+    catch (TokenMgrError | ParseException e1) {
+      throw new MalformedQueryException(e1.getMessage());
+    }
+    parser.normalize(queryAST);*/
+
     try {
-      ParsedQuery parsedQuery = new StandardizingSPARQLParser().parseQuery(queryToParse, "https://query.wikidata.org/bigdata/namespace/wdq/sparql");
+      ParsedQuery parsedQuery = parser.parseQuery(queryToParse, "https://query.wikidata.org/bigdata/namespace/wdq/sparql");
+      //QueryParserUtil.parseQuery(QueryLanguage.SPARQL, queryToParse, "https://query.wikidata.org/bigdata/namespace/wdq/sparql");
       return parsedQuery;
-          //QueryParserUtil.parseQuery(QueryLanguage.SPARQL, queryToParse, "https://query.wikidata.org/bigdata/namespace/wdq/sparql");
     } catch (Throwable e) {
       // kind of a dirty hack to catch an java.lang.error which occurs when trying to parse a query which contains f.e. the following string: "jul\ius" where the \ is an invalid escape charachter
       //because this error is kind of an MalformedQueryException we will just throw it as one
@@ -196,11 +216,21 @@ public class OpenRDFQueryHandler extends QueryHandler
    */
   public final Integer getQueryType()
   {
-    TupleExpr tupleExpr = query.getTupleExpr();
-    int indexOf = Main.queryTypes.indexOf(tupleExpr);
+    if (this.getValidityStatus() != 1) {
+      return -1;
+    }
+    String queryString;
+    try {
+      queryString = new SPARQLQueryRenderer().render(query);
+    }
+    catch (Exception e) {
+      logger.error("Error while rendering a query type.", e);
+      return -1;
+    }
+    int indexOf = Main.queryTypes.indexOf(queryString);
     if (indexOf == -1) {
-      Main.queryTypes.add(tupleExpr);
-      return Main.queryTypes.size();
+      Main.queryTypes.add(queryString);
+      return Main.queryTypes.size() - 1;
     }
     return indexOf;
   }
