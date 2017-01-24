@@ -128,7 +128,7 @@ public class StandardizingSPARQLParser extends SPARQLParser
           if (!qnames.containsKey(qname.getValue())) {
             qnames.put(qname.getValue(), qnames.keySet().size() + 1);
           }
-          qname.setValue("qname" + qnames.get(qname.getValue()));
+          qname.setValue(qname.getValue().split(":")[0] + ":qname" + qnames.get(qname.getValue()));
           return super.visit(qname,  data);
         }
       }, null);
@@ -142,13 +142,7 @@ public class StandardizingSPARQLParser extends SPARQLParser
     return;
   }
 
-  /**
-   * Takes a query container and parses it into a parsesQueryObject (used so we can apply the debug-method to the query container and save said container). 
-   * @param qc The query container to be parsed
-   * @param baseURI The base uri to resolve any possible relative uris to
-   * @return The parsed query
-   * @throws MalformedQueryException should the query be malformed in any way
-   */
+  @Override
   public final ParsedQuery parseQuery(String queryString, String baseURI)
       throws MalformedQueryException
   {

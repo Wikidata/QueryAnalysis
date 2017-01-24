@@ -1,6 +1,7 @@
 package query;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -219,19 +220,17 @@ public class OpenRDFQueryHandler extends QueryHandler
     if (this.getValidityStatus() != 1) {
       return -1;
     }
-    String queryString;
-    try {
-      queryString = new SPARQLQueryRenderer().render(query);
+    int indexOf = 0;
+    synchronized (Main.queryTypes) {
+      Iterator<ParsedQuery> iterator = Main.queryTypes.iterator();
+      while (iterator.hasNext()) {
+        if (iterator.next().getTupleExpr().equals(query.getTupleExpr())) {
+          return indexOf;
+        }
+        indexOf++;
+      }
     }
-    catch (Exception e) {
-      logger.error("Error while rendering a query type.", e);
-      return -1;
-    }
-    int indexOf = Main.queryTypes.indexOf(queryString);
-    if (indexOf == -1) {
-      Main.queryTypes.add(queryString);
-      return Main.queryTypes.size() - 1;
-    }
-    return indexOf;
+    Main.queryTypes.add(query);
+    return Main.queryTypes.size() - 1;
   }
 }

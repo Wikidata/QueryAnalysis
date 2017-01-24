@@ -69,7 +69,7 @@ public final class Main
   /**
    * Saves the encountered queryTypes.
    */
-  public static List<String> queryTypes = Collections.synchronizedList(new ArrayList<String>());
+  public static List<ParsedQuery> queryTypes = Collections.synchronizedList(new ArrayList<ParsedQuery>());
   /**
    * Define a static logger variable.
    */
@@ -185,11 +185,15 @@ public final class Main
 
     String outputFolderName = inputFilePrefix.substring(0, inputFilePrefix.lastIndexOf('/') + 1) + "queryTypes/";
     new File(outputFolderName).mkdir();
+    SPARQLQueryRenderer renderer = new SPARQLQueryRenderer();
     for (int i = 0; i < queryTypes.size(); i++) {
       try (BufferedWriter bw = new BufferedWriter(new FileWriter(outputFolderName + i + ".queryType"))) {
-        bw.write(queryTypes.get(i));
+        bw.write(renderer.render(queryTypes.get(i)));
       } catch (IOException e) {
         logger.error("Could not write the query type " + i + ".", e);
+      }
+      catch (Exception e) {
+        logger.error("Error while rendering query type " + i + ".", e);
       }
     }
 
