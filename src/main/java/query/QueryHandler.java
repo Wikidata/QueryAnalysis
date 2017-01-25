@@ -245,5 +245,5 @@ public abstract class QueryHandler
   /**
    * @return kind of the complexity of the SPARQL query
    */
-  public abstract Integer getQueryLength();
+  public abstract Integer getQuerySize();
 }

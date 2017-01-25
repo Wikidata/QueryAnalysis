@@ -92,7 +92,7 @@ public class JenaQueryHandler extends QueryHandler
 
 
   @Override
-  public Integer getQueryLength()
+  public Integer getQuerySize()
   {
     return null;
   }

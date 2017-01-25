@@ -4,14 +4,12 @@ PREFIX foaf:  <http://xmlns.com/foaf/0.1/>
 SELECT $name#test
 WHERE {
   # find members in the Strategic Forces subcommittee
-  <http://www.rdfabout.com/rdf/usgov/congress/committees/SenateArmedServices/StrategicForces>
-    foaf:member ?member .
+  <http://www.rdfabout.com/rdf/usgov/congress/committees/SenateArmedServices/StrategicForces> foaf:member ?member .
   OPTIONAL {
     # find out if this same member is in the Personnel
     # subcommittee - but call him/her something different
     # (?member2)
-    <http://www.rdfabout.com/rdf/usgov/congress/committees/SenateArmedServices/Personnel>
-      foaf:member ?member2 .
+    <http://www.rdfabout.com/rdf/usgov/congress/committees/SenateArmedServices/Personnel> foaf:member ?member2 .
     FILTER (?member2 = ?member) .
     FILTER regex(?member2,"^SPARQL#this is not a comment")
   }

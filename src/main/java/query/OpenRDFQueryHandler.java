@@ -5,6 +5,7 @@ import org.openrdf.query.QueryLanguage;
 import org.openrdf.query.algebra.StatementPattern;
 import org.openrdf.query.algebra.TupleExpr;
 import org.openrdf.query.algebra.Var;
+import org.openrdf.query.algebra.evaluation.impl.EvaluationStatistics;
 import org.openrdf.query.algebra.helpers.StatementPatternCollector;
 import org.openrdf.query.parser.ParsedQuery;
 import org.openrdf.query.parser.QueryParserUtil;
@@ -130,9 +131,21 @@ public class OpenRDFQueryHandler extends QueryHandler
   }
 
   @Override
-  public Integer getQueryLength()
+  public Integer getQuerySize()
   {
-    return null;
+    if (getValidityStatus() != 1) {
+      return -1;
+    }
+
+    OpenRDFQueryLengthVisitor openRDFQueryLengthVisitor = new OpenRDFQueryLengthVisitor();
+
+    try {
+      this.query.getTupleExpr().visit(openRDFQueryLengthVisitor);
+    } catch (Exception e) {
+      logger.error("An unknown error occured while calculating the query size: ", e);
+    }
+
+    return openRDFQueryLengthVisitor.getSize();
   }
 
   /**

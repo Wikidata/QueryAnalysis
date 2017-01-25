@@ -3,5 +3,6 @@
   "StringLengthNoComments": 2121,
   "CountVariablesHead": 1,
   "CountVariablesPattern": 3,
-  "CountTriplesWithService": 3
+  "CountTriplesWithService": 3,
+  "QuerySize": 1
 }
