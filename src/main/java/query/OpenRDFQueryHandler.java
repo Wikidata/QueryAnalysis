@@ -129,6 +129,11 @@ public class OpenRDFQueryHandler extends QueryHandler
     return uncommented.length();
   }
 
+  @Override
+  public Integer getQueryLength()
+  {
+    return null;
+  }
 
   /**
    * @return Returns the number of variables in the query pattern.

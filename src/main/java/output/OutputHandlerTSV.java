@@ -115,7 +115,7 @@ public class OutputHandlerTSV extends OutputHandler
     line.add(queryHandler.getValidityStatus());
 
     line.add(queryHandler.getStringLength());
-    line.add(queryHandler.getStringLengthNoComments());
+    line.add(queryHandler.getQueryLength());
     line.add(queryHandler.getVariableCountHead());
     line.add(queryHandler.getVariableCountPattern());
     line.add(queryHandler.getTripleCountWithService());
