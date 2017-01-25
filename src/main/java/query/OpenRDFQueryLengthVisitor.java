@@ -1,13 +1,10 @@
 package query;
 
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.openrdf.query.algebra.ProjectionElemList;
-import org.openrdf.query.algebra.QueryModelNode;
-import org.openrdf.query.algebra.StatementPattern;
-import org.openrdf.query.algebra.Var;
+import org.openrdf.query.algebra.*;
 import org.openrdf.query.algebra.helpers.QueryModelVisitorBase;
-import org.openrdf.query.parser.sparql.ast.ASTPrefixDecl;
 
 /**
  * @author: Julius Gonsior
@@ -25,22 +22,55 @@ public class OpenRDFQueryLengthVisitor extends QueryModelVisitorBase
 
   /**
    * Increments counter by one for each node of the AST tree
+   *
    * @param node
    */
 
   @Override
-  public void meetNode(QueryModelNode node) {
+  public void meetNode(QueryModelNode node)throws Exception
+  {
     size++;
     logger.info(node);
-    try {
+    //logger.info(node.toString().substring(0, StringUtils.ordinalIndexOf(node.toString(), "\n", 3)));
       node.visitChildren(this);
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
   }
 
   @Override
-  public void meet(StatementPattern node) {
+  public void meet(Join node) throws Exception {
+    node.visitChildren(this);
+  }
+
+  @Override
+  public void meet(ProjectionElemList node) throws  Exception {
+    //ignore select;
+  }
+
+  @Override
+  public void meet(ExtensionElem node) throws Exception{
+    //ignore
+  }
+
+  @Override
+  public void meet(OrderElem node) throws Exception{
+    //size++;
+    //don't increment for children!
+    //node.visitChildren(this);
+  }
+
+  @Override
+  public void meet(Projection node) throws Exception{
+    node.visitChildren(this);
+  }
+
+  @Override
+  public void meet(Extension node) throws Exception{
+    node.visitChildren(this);
+  }
+
+
+  @Override
+  public void meet(StatementPattern node)
+  {
     size++;
     logger.info("visiting statement" + node);
   }

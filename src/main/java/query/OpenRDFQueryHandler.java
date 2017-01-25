@@ -5,7 +5,6 @@ import org.openrdf.query.QueryLanguage;
 import org.openrdf.query.algebra.StatementPattern;
 import org.openrdf.query.algebra.TupleExpr;
 import org.openrdf.query.algebra.Var;
-import org.openrdf.query.algebra.evaluation.impl.EvaluationStatistics;
 import org.openrdf.query.algebra.helpers.StatementPatternCollector;
 import org.openrdf.query.parser.ParsedQuery;
 import org.openrdf.query.parser.QueryParserUtil;
@@ -138,6 +137,8 @@ public class OpenRDFQueryHandler extends QueryHandler
     }
 
     OpenRDFQueryLengthVisitor openRDFQueryLengthVisitor = new OpenRDFQueryLengthVisitor();
+
+    logger.info("ast tree: \n" + this.query.getTupleExpr());
 
     try {
       this.query.getTupleExpr().visit(openRDFQueryLengthVisitor);
