@@ -183,7 +183,7 @@ public final class Main
       //wait until all workers are finished
     }
 
-    String outputFolderName = inputFilePrefix.substring(0, inputFilePrefix.lastIndexOf('/') + 1) + "queryTypes/";
+    String outputFolderName = inputFilePrefix.substring(0, inputFilePrefix.lastIndexOf('/') + 1) + "queryType/queryTypeFiles/";
     new File(outputFolderName).mkdir();
     SPARQLQueryRenderer renderer = new SPARQLQueryRenderer();
     for (int i = 0; i < queryTypes.size(); i++) {
