@@ -1,10 +1,10 @@
 package query;
 
-import org.apache.log4j.Logger;
-
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
+
+import org.apache.log4j.Logger;
 
 /**
  * @author adrian
@@ -84,7 +84,7 @@ public abstract class QueryHandler
    */
   public final void setQueryString(String queryStringToSet)
   {
-    if (queryStringToSet == "") {
+    if (queryStringToSet.equals("")) {
       this.validityStatus = 2;
     } else if (validityStatus > -1) {
       this.queryString = this.addMissingPrefixesToQuery(queryStringToSet);
@@ -202,6 +202,11 @@ public abstract class QueryHandler
    */
   public abstract Integer getTripleCountWithService();
 
+  /**
+   * @return Returns the query type as a number referencing a file containing the queryTypePattern.
+   */
+  public abstract Integer getQueryType();
+  
   /**
    * @return the line the query originated from
    */

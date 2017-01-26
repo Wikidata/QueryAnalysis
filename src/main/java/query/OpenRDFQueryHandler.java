@@ -1,17 +1,25 @@
 package query;
 
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
+import general.Main;
+
 import org.openrdf.query.MalformedQueryException;
-import org.openrdf.query.QueryLanguage;
 import org.openrdf.query.algebra.StatementPattern;
 import org.openrdf.query.algebra.TupleExpr;
 import org.openrdf.query.algebra.Var;
+import org.openrdf.query.algebra.helpers.QueryModelVisitorBase;
 import org.openrdf.query.algebra.helpers.StatementPatternCollector;
 import org.openrdf.query.parser.ParsedQuery;
-import org.openrdf.query.parser.QueryParserUtil;
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import org.openrdf.query.parser.sparql.ast.ASTQueryContainer;
+import org.openrdf.query.parser.sparql.ast.ParseException;
+import org.openrdf.query.parser.sparql.ast.SyntaxTreeBuilder;
+import org.openrdf.query.parser.sparql.ast.TokenMgrError;
+import org.openrdf.query.parser.sparql.ast.VisitorException;
+import org.openrdf.queryrender.sparql.SPARQLQueryRenderer;
 
 
 /**
@@ -23,6 +31,10 @@ public class OpenRDFQueryHandler extends QueryHandler
    * The query object created from query-string.
    */
   private ParsedQuery query;
+  /**
+   * The normalized query AST.
+   */
+  private ASTQueryContainer queryAST;
 
   /**
    * {@inheritDoc}
@@ -40,8 +52,10 @@ public class OpenRDFQueryHandler extends QueryHandler
         }
 
         if (message.contains("Not a valid (absolute) URI:")) {
+          logger.warn("This shoud not happen anymore: " + e.getMessage());
           setValidityStatus(-3);
         } else if (message.contains("BIND clause alias '{}' was previously used")) {
+          logger.warn("This shoud not happen anymore: " + e.getMessage());
           setValidityStatus(-5);
         } else if (message.contains("Multiple prefix declarations for prefix")) {
           setValidityStatus(-6);
@@ -65,11 +79,23 @@ public class OpenRDFQueryHandler extends QueryHandler
    */
   private ParsedQuery parseQuery(String queryToParse) throws MalformedQueryException
   {
-    //the third argument is the basURI to resolve any relative URIs that are in
+    //the third argument is the baseURI to resolve any relative URIs that are in
     //the query against, but it can be NULL as well
+    StandardizingSPARQLParser parser = new StandardizingSPARQLParser();
+/*  try {
+      queryAST = SyntaxTreeBuilder.parseQuery(queryToParse);
+    }
+    catch (TokenMgrError | ParseException e1) {
+      throw new MalformedQueryException(e1.getMessage());
+    }
+    parser.normalize(queryAST);*/
+
     try {
-      return QueryParserUtil.parseQuery(QueryLanguage.SPARQL, queryToParse, "https://query.wikidata.org/bigdata/namespace/wdq/sparql");
-    } catch (Throwable e) { // kind of a dirty hack to catch an java.lang.error which occurs when trying to parse a query which contains f.e. the following string: "jul\ius" where the \ is an invalid escape charachter
+      ParsedQuery parsedQuery = parser.parseQuery(queryToParse, "https://query.wikidata.org/bigdata/namespace/wdq/sparql");
+      //QueryParserUtil.parseQuery(QueryLanguage.SPARQL, queryToParse, "https://query.wikidata.org/bigdata/namespace/wdq/sparql");
+      return parsedQuery;
+    } catch (Throwable e) {
+      // kind of a dirty hack to catch an java.lang.error which occurs when trying to parse a query which contains f.e. the following string: "jul\ius" where the \ is an invalid escape charachter
       //because this error is kind of an MalformedQueryException we will just throw it as one
       throw new MalformedQueryException(e.getMessage());
     }
@@ -184,5 +210,27 @@ public class OpenRDFQueryHandler extends QueryHandler
     StatementPatternCollector collector = new StatementPatternCollector();
     expr.visit(collector);
     return collector.getStatementPatterns().size();
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public final Integer getQueryType()
+  {
+    if (this.getValidityStatus() != 1) {
+      return -1;
+    }
+    int indexOf = 0;
+    synchronized (Main.queryTypes) {
+      Iterator<ParsedQuery> iterator = Main.queryTypes.iterator();
+      while (iterator.hasNext()) {
+        if (iterator.next().getTupleExpr().equals(query.getTupleExpr())) {
+          return indexOf;
+        }
+        indexOf++;
+      }
+    }
+    Main.queryTypes.add(query);
+    return Main.queryTypes.size() - 1;
   }
 }

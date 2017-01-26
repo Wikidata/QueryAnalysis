@@ -186,4 +186,12 @@ public class JenaQueryHandler extends QueryHandler
       return 0;
     }
   }
+
+  /**
+   * {@inheritDoc}
+   */
+  public final Integer getQueryType()
+  {
+    return -1;
+  }
 }
