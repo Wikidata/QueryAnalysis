@@ -115,10 +115,9 @@ public abstract class QueryHandler
     //assuming that, if there is a tool comment at all, it is the first comment
     //in the query and that it start with a #TOOL: and that the tool name is then
     //everything until the end of that line
-    logger.info("newline");
-    System.out.println(queryStringToSet);
     if(queryStringToSet.startsWith("#TOOL:")) {
       this.setToolCommentInfo(queryStringToSet.substring(6, queryStringToSet.indexOf("\n")));
+      this.setToolName(this.getToolCommentInfo());
     }
 
     return;
