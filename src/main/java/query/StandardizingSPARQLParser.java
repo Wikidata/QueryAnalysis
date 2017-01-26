@@ -1,12 +1,7 @@
 /**
- * 
+ *
  */
 package query;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import org.openrdf.model.impl.ValueFactoryImpl;
 import org.openrdf.query.Dataset;
@@ -17,48 +12,30 @@ import org.openrdf.query.parser.ParsedBooleanQuery;
 import org.openrdf.query.parser.ParsedGraphQuery;
 import org.openrdf.query.parser.ParsedQuery;
 import org.openrdf.query.parser.ParsedTupleQuery;
-import org.openrdf.query.parser.sparql.ASTVisitorBase;
-import org.openrdf.query.parser.sparql.BaseDeclProcessor;
-import org.openrdf.query.parser.sparql.BlankNodeVarProcessor;
-import org.openrdf.query.parser.sparql.DatasetDeclProcessor;
-import org.openrdf.query.parser.sparql.PrefixDeclProcessor;
-import org.openrdf.query.parser.sparql.SPARQLParser;
-import org.openrdf.query.parser.sparql.StringEscapesProcessor;
-import org.openrdf.query.parser.sparql.TupleExprBuilder;
-import org.openrdf.query.parser.sparql.WildcardProjectionProcessor;
-import org.openrdf.query.parser.sparql.ast.ASTAskQuery;
-import org.openrdf.query.parser.sparql.ast.ASTBind;
-import org.openrdf.query.parser.sparql.ast.ASTBindingValue;
-import org.openrdf.query.parser.sparql.ast.ASTConstructQuery;
-import org.openrdf.query.parser.sparql.ast.ASTDescribeQuery;
-import org.openrdf.query.parser.sparql.ast.ASTQName;
-import org.openrdf.query.parser.sparql.ast.ASTQuery;
-import org.openrdf.query.parser.sparql.ast.ASTQueryContainer;
-import org.openrdf.query.parser.sparql.ast.ASTSelectQuery;
-import org.openrdf.query.parser.sparql.ast.ASTString;
-import org.openrdf.query.parser.sparql.ast.ASTVar;
-import org.openrdf.query.parser.sparql.ast.Node;
-import org.openrdf.query.parser.sparql.ast.ParseException;
-import org.openrdf.query.parser.sparql.ast.SyntaxTreeBuilder;
-import org.openrdf.query.parser.sparql.ast.SyntaxTreeBuilderVisitor;
-import org.openrdf.query.parser.sparql.ast.TokenMgrError;
-import org.openrdf.query.parser.sparql.ast.VisitorException;
+import org.openrdf.query.parser.sparql.*;
+import org.openrdf.query.parser.sparql.ast.*;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author adrian
- *
  */
 public class StandardizingSPARQLParser extends SPARQLParser
 {
 
   /**
    * Moves BIND()-clauses to the top of the query.
+   *
    * @param queryToBeDebugged The query to be debugged
    */
   public final void debug(ASTQueryContainer queryToBeDebugged)
   {
     try {
-      queryToBeDebugged.jjtAccept(new ASTVisitorBase() {
+      queryToBeDebugged.jjtAccept(new ASTVisitorBase()
+      {
         public Object visit(ASTBind node, Object data) throws VisitorException
         {
           Node parent = node.jjtGetParent();
@@ -84,14 +61,14 @@ public class StandardizingSPARQLParser extends SPARQLParser
           return super.visit(node, data);
         }
       }, null);
-    }
-    catch (VisitorException e) {
+    } catch (VisitorException e) {
       e.printStackTrace();
     }
   }
 
   /**
    * Normalizes a query by replacing all variables with var1, var2 and so on.
+   *
    * @param queryContainer The query to be normalized
    * @throws MalformedQueryException if the query was malformed
    */
@@ -101,7 +78,8 @@ public class StandardizingSPARQLParser extends SPARQLParser
     final Map<String, Integer> strings = new HashMap<String, Integer>();
     final Map<String, Integer> qnames = new HashMap<String, Integer>();
     try {
-      queryContainer.jjtAccept(new ASTVisitorBase() {
+      queryContainer.jjtAccept(new ASTVisitorBase()
+      {
 
         public Object visit(ASTVar variable, Object data) throws VisitorException
         {
@@ -119,7 +97,7 @@ public class StandardizingSPARQLParser extends SPARQLParser
             strings.put(string.getValue(), strings.keySet().size() + 1);
           }
           string.setValue("string" + strings.get(string.getValue()));
-          return super.visit(string,  data);
+          return super.visit(string, data);
         }
 
         @Override
@@ -129,14 +107,12 @@ public class StandardizingSPARQLParser extends SPARQLParser
             qnames.put(qname.getValue(), qnames.keySet().size() + 1);
           }
           qname.setValue(qname.getValue().split(":")[0] + ":qname" + qnames.get(qname.getValue()));
-          return super.visit(qname,  data);
+          return super.visit(qname, data);
         }
       }, null);
-    }
-    catch (TokenMgrError e) {
+    } catch (TokenMgrError e) {
       throw new MalformedQueryException(e);
-    }
-    catch (VisitorException e) {
+    } catch (VisitorException e) {
       throw new MalformedQueryException(e);
     }
     return;
@@ -167,17 +143,13 @@ public class StandardizingSPARQLParser extends SPARQLParser
         ASTQuery queryNode = qc.getQuery();
         if (queryNode instanceof ASTSelectQuery) {
           query = new ParsedTupleQuery(queryString, tupleExpr);
-        }
-        else if (queryNode instanceof ASTConstructQuery) {
+        } else if (queryNode instanceof ASTConstructQuery) {
           query = new ParsedGraphQuery(queryString, tupleExpr, prefixes);
-        }
-        else if (queryNode instanceof ASTAskQuery) {
+        } else if (queryNode instanceof ASTAskQuery) {
           query = new ParsedBooleanQuery(queryString, tupleExpr);
-        }
-        else if (queryNode instanceof ASTDescribeQuery) {
+        } else if (queryNode instanceof ASTDescribeQuery) {
           query = new ParsedGraphQuery(queryString, tupleExpr, prefixes);
-        }
-        else {
+        } else {
           throw new RuntimeException(
               "Unexpected query type: " + queryNode.getClass());
         }
@@ -189,16 +161,13 @@ public class StandardizingSPARQLParser extends SPARQLParser
         }
 
         return query;
-      }
-      else {
+      } else {
         throw new IncompatibleOperationException(
             "supplied string is not a query operation");
       }
-    }
-    catch (TokenMgrError e) {
+    } catch (TokenMgrError e) {
       throw new MalformedQueryException(e.getMessage(), e);
-    }
-    catch (ParseException e) {
+    } catch (ParseException e) {
       throw new MalformedQueryException(e.getMessage(), e);
     }
   }
@@ -209,8 +178,7 @@ public class StandardizingSPARQLParser extends SPARQLParser
         new ValueFactoryImpl());
     try {
       return (TupleExpr) qc.jjtAccept(tupleExprBuilder, null);
-    }
-    catch (VisitorException e) {
+    } catch (VisitorException e) {
       throw new MalformedQueryException(e.getMessage(), e);
     }
   }

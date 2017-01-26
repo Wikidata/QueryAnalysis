@@ -1,10 +1,10 @@
 package query;
 
+import org.apache.log4j.Logger;
+
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
-
-import org.apache.log4j.Logger;
 
 /**
  * @author adrian
@@ -50,6 +50,27 @@ public abstract class QueryHandler
   private int lengthNoAddedPrefixes;
 
   /**
+   * the name of the tool which created the query
+   * 0 for user querys
+   * -1 for unknown tool
+   */
+  private String toolName = "0";
+
+  /**
+   * the version of the tool which created the query
+   * 0 for unknown
+   * -1 for unknown tool
+   */
+  private String toolVersion = "0";
+
+  /**
+   * the tool name from the query comment
+   * 0 if undefined
+   * -1 for unknown tool
+   */
+  private String toolCommentInfo = "0";
+
+  /**
    *
    */
   public QueryHandler()
@@ -59,7 +80,7 @@ public abstract class QueryHandler
   }
 
   /**
-   * Updated the handler to represent the string in queryString.
+   * Update the handler to represent the string in queryString.
    */
   public abstract void update();
 
@@ -90,6 +111,15 @@ public abstract class QueryHandler
       this.queryString = this.addMissingPrefixesToQuery(queryStringToSet);
       update();
     }
+
+    //assuming that, if there is a tool comment at all, it is the first comment
+    //in the query and that it start with a #TOOL: and that the tool name is then
+    //everything until the end of that line
+    if(queryStringToSet.startsWith("#TOOL:")) {
+      this.setToolCommentInfo(queryStringToSet.substring(6, queryStringToSet.indexOf("\n")));
+      this.setToolName(this.getToolCommentInfo());
+    }
+
     return;
   }
 
@@ -206,7 +236,7 @@ public abstract class QueryHandler
    * @return Returns the query type as a number referencing a file containing the queryTypePattern.
    */
   public abstract Integer getQueryType();
-  
+
   /**
    * @return the line the query originated from
    */
@@ -242,5 +272,35 @@ public abstract class QueryHandler
   public int getLengthNoAddedPrefixes()
   {
     return lengthNoAddedPrefixes;
+  }
+
+  public String getToolName()
+  {
+    return toolName;
+  }
+
+  public void setToolName(String toolName)
+  {
+    this.toolName = toolName;
+  }
+
+  public String getToolVersion()
+  {
+    return toolVersion;
+  }
+
+  public void setToolVersion(String toolVersion)
+  {
+    this.toolVersion = toolVersion;
+  }
+
+  public String getToolCommentInfo()
+  {
+    return toolCommentInfo;
+  }
+
+  public void setToolCommentInfo(String toolCommentInfo)
+  {
+    this.toolCommentInfo = toolCommentInfo;
   }
 }

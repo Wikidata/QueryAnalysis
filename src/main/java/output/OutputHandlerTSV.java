@@ -7,6 +7,7 @@ import query.QueryHandler;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,10 +24,12 @@ public class OutputHandlerTSV extends OutputHandler
    * Define a static logger variable.
    */
   private static Logger logger = Logger.getLogger(OutputHandlerTSV.class);
+
   /**
-   * The handler used to process the rows to output.
+   * the class of wich a queryHandlerObject should be created
    */
-  private QueryHandler queryHandler;
+  private final Class queryHandlerClass;
+
   /**
    * A writer created at object creation to be used in line-by-line writing.
    */
@@ -39,15 +42,14 @@ public class OutputHandlerTSV extends OutputHandler
   /**
    * Creates the file specified in the constructor and writes the header.
    *
-   * @param queryHandlerToUse The handler used to analyze the query string that will be written
    * @param fileToWrite       location of the file to write the received values to
+   * @param queryHandlerClass handler class used to analyze the query string that will be written
    * @throws FileNotFoundException if the file exists but is a directory
    *                               rather than a regular file, does not exist but cannot be created,
    *                               or cannot be opened for any other reason
    */
-  public OutputHandlerTSV(String fileToWrite, QueryHandler queryHandlerToUse) throws FileNotFoundException
+  public OutputHandlerTSV(String fileToWrite, Class queryHandlerClass) throws FileNotFoundException
   {
-    this.queryHandler = queryHandlerToUse;
     this.file = fileToWrite;
     FileOutputStream outputWriter = new FileOutputStream(fileToWrite + ".tsv");
     writer = new TsvWriter(outputWriter, new TsvWriterSettings());
@@ -55,6 +57,8 @@ public class OutputHandlerTSV extends OutputHandler
       hourly_user[i] = 0L;
       hourly_spider[i] = 0L;
     }
+
+    this.queryHandlerClass = queryHandlerClass;
 
     List<String> header = new ArrayList<String>();
     header.add("#Valid");
@@ -64,6 +68,9 @@ public class OutputHandlerTSV extends OutputHandler
     header.add("#VariableCountPattern");
     header.add("#TripleCountWithService");
     header.add("#TripleCountNoService");
+    header.add("#ToolName");
+    header.add("#ToolVersion");
+    header.add("#ToolCommentInfo");
     header.add("#QueryType");
     header.add("#uri_path");
     header.add("#user_agent");
@@ -106,6 +113,18 @@ public class OutputHandlerTSV extends OutputHandler
   @Override
   public final void writeLine(String queryToAnalyze, Integer validityStatus, Object[] row, long currentLine, String currentFile)
   {
+    QueryHandler queryHandler = null;
+    try {
+      queryHandler = (QueryHandler) queryHandlerClass.getConstructor().newInstance();
+    } catch (InstantiationException e) {
+      logger.error("Failed to create query handler object" + e);
+    } catch (IllegalAccessException e) {
+      logger.error("Failed to create query handler object" + e);
+    } catch (InvocationTargetException e) {
+      logger.error("Failed to create query handler object" + e);
+    } catch (NoSuchMethodException e) {
+      logger.error("Failed to create query handler object" + e);
+    }
     queryHandler.setValidityStatus(validityStatus);
     queryHandler.setQueryString(queryToAnalyze);
     queryHandler.setCurrentLine(currentLine);
@@ -121,6 +140,9 @@ public class OutputHandlerTSV extends OutputHandler
     line.add(queryHandler.getVariableCountPattern());
     line.add(queryHandler.getTripleCountWithService());
     line.add(-1);
+    line.add(queryHandler.getToolName());
+    line.add(queryHandler.getToolVersion());
+    line.add(queryHandler.getToolCommentInfo());
     line.add(queryHandler.getQueryType());
     for (int i = 1; i < row.length; i++) {
       line.add(row[i]);
