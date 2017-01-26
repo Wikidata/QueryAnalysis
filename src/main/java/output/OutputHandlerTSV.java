@@ -64,6 +64,9 @@ public class OutputHandlerTSV extends OutputHandler
     header.add("#VariableCountPattern");
     header.add("#TripleCountWithService");
     header.add("#TripleCountNoService");
+    header.add("#ToolName");
+    header.add("#ToolVersion");
+    header.add("#ToolCommentInfo");
     header.add("#QueryType");
     header.add("#uri_path");
     header.add("#user_agent");
@@ -120,6 +123,9 @@ public class OutputHandlerTSV extends OutputHandler
     line.add(queryHandler.getVariableCountHead());
     line.add(queryHandler.getVariableCountPattern());
     line.add(queryHandler.getTripleCountWithService());
+    line.add(-1);
+    line.add(-1);
+    line.add(-1);
     line.add(-1);
     line.add(queryHandler.getQueryType());
     for (int i = 1; i < row.length; i++) {
