@@ -23,7 +23,7 @@ public class ParseOneMonthWorker implements Runnable
   private String inputFilePrefix;
   private InputHandler inputHandler;
   private String queryParserName;
-  private QueryHandler queryHandler;
+  private Class queryHandlerClass;
   private int day;
 
   public ParseOneMonthWorker(String inputFile, String inputFilePrefix, Class inputHandlerClass, String queryParserName, Class queryHandlerClass, int day) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException
@@ -32,7 +32,7 @@ public class ParseOneMonthWorker implements Runnable
     this.inputFilePrefix = inputFilePrefix;
     this.inputHandler = (InputHandler) inputHandlerClass.getConstructor().newInstance();
     this.queryParserName = queryParserName;
-    this.queryHandler = (QueryHandler) queryHandlerClass.getConstructor().newInstance();
+    this.queryHandlerClass = queryHandlerClass;
     this.day = day;
   }
 
@@ -48,7 +48,7 @@ public class ParseOneMonthWorker implements Runnable
 
       logger.info("Start processing " + inputFile);
       try {
-        OutputHandlerTSV outputHandler = new OutputHandlerTSV(outputFile, queryHandler);
+        OutputHandlerTSV outputHandler = new OutputHandlerTSV(outputFile, queryHandlerClass);
         //try {
         inputHandler.parseTo(outputHandler);
         logger.info("Done processing " + inputFile + " to " + outputFile + ".");

@@ -1,25 +1,18 @@
 package query;
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
 import general.Main;
-
 import org.openrdf.query.MalformedQueryException;
 import org.openrdf.query.algebra.StatementPattern;
 import org.openrdf.query.algebra.TupleExpr;
 import org.openrdf.query.algebra.Var;
-import org.openrdf.query.algebra.helpers.QueryModelVisitorBase;
 import org.openrdf.query.algebra.helpers.StatementPatternCollector;
 import org.openrdf.query.parser.ParsedQuery;
 import org.openrdf.query.parser.sparql.ast.ASTQueryContainer;
-import org.openrdf.query.parser.sparql.ast.ParseException;
-import org.openrdf.query.parser.sparql.ast.SyntaxTreeBuilder;
-import org.openrdf.query.parser.sparql.ast.TokenMgrError;
-import org.openrdf.query.parser.sparql.ast.VisitorException;
-import org.openrdf.queryrender.sparql.SPARQLQueryRenderer;
+
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 
 /**

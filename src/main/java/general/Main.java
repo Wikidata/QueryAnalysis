@@ -19,6 +19,19 @@ package general;
  * #L%
  */
 
+import input.InputHandlerParquet;
+import input.InputHandlerTSV;
+import logging.LoggingHandler;
+import org.apache.commons.cli.*;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+import org.apache.spark.SparkConf;
+import org.apache.spark.api.java.JavaSparkContext;
+import org.openrdf.query.parser.ParsedQuery;
+import org.openrdf.queryrender.sparql.SPARQLQueryRenderer;
+import query.JenaQueryHandler;
+import query.OpenRDFQueryHandler;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -28,37 +41,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-
-import input.InputHandlerParquet;
-import input.InputHandlerTSV;
-import logging.LoggingHandler;
-
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
-import org.apache.commons.cli.UnrecognizedOptionException;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-import org.apache.spark.SparkConf;
-import org.apache.spark.api.java.JavaSparkContext;
-import org.openrdf.query.algebra.TupleExpr;
-import org.openrdf.query.parser.ParsedQuery;
-import org.openrdf.queryrender.sparql.SPARQLQueryRenderer;
-
-import query.JenaQueryHandler;
-import query.OpenRDFQueryHandler;
-
-
-
 
 
 /**
@@ -90,7 +76,7 @@ public final class Main
    */
   public static void main(String[] args) throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException
   {
-    args = new String[] {"-olt", "-file test/test/test/QueryCntSept", "-n5"};
+    args = new String[] {"-olt", "-file test/test/test/QueryCntSept", "-n1"};
 
     Options options = new Options();
     options.addOption("l", "logging", false, "enables file logging");
@@ -191,8 +177,7 @@ public final class Main
         bw.write(renderer.render(queryTypes.get(i)));
       } catch (IOException e) {
         logger.error("Could not write the query type " + i + ".", e);
-      }
-      catch (Exception e) {
+      } catch (Exception e) {
         logger.error("Error while rendering query type " + i + ".", e);
       }
     }
