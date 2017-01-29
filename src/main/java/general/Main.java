@@ -29,7 +29,6 @@ import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.openrdf.query.parser.ParsedQuery;
 import org.openrdf.queryrender.sparql.SPARQLQueryRenderer;
-import query.JenaQueryHandler;
 import query.OpenRDFQueryHandler;
 
 import java.io.BufferedWriter;
@@ -80,7 +79,6 @@ public final class Main
 
     Options options = new Options();
     options.addOption("l", "logging", false, "enables file logging");
-    options.addOption("j", "jena", false, "uses the Jena SPARQL Parser");
     options.addOption("o", "openrdf", false, "uses the OpenRDF SPARQL Parser");
     options.addOption("f", "file", true, "defines the input file prefix");
     options.addOption("h", "help", false, "displays this help");
@@ -105,10 +103,6 @@ public final class Main
         HelpFormatter formatter = new HelpFormatter();
         formatter.printHelp("help", options);
         return;
-      }
-      if (cmd.hasOption("jena")) {
-        queryHandlerClass = JenaQueryHandler.class;
-        queryParserName = "Jena";
       }
       if (cmd.hasOption("openrdf")) {
         queryHandlerClass = OpenRDFQueryHandler.class;
