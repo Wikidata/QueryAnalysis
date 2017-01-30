@@ -163,12 +163,15 @@ public final class Main
       //wait until all workers are finished
     }
 
-    String outputFolderName = inputFilePrefix.substring(0, inputFilePrefix.lastIndexOf('/') + 1) + "queryType/queryTypeFiles/";
+    String outputFolderName = inputFilePrefix.substring(0, inputFilePrefix.lastIndexOf('/') + 1) + "queryType/";
+    new File(outputFolderName).mkdir();
+    outputFolderName += "queryTypeFiles/";
     new File(outputFolderName).mkdir();
     SPARQLQueryRenderer renderer = new SPARQLQueryRenderer();
     for (int i = 0; i < queryTypes.size(); i++) {
       try (BufferedWriter bw = new BufferedWriter(new FileWriter(outputFolderName + i + ".queryType"))) {
         bw.write(renderer.render(queryTypes.get(i)));
+        bw.write("\n" + queryTypes.get(i).toString());
       } catch (IOException e) {
         logger.error("Could not write the query type " + i + ".", e);
       } catch (Exception e) {
