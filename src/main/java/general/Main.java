@@ -23,6 +23,7 @@ import input.InputHandlerParquet;
 import input.InputHandlerTSV;
 import logging.LoggingHandler;
 import org.apache.commons.cli.*;
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.spark.SparkConf;
@@ -166,6 +167,8 @@ public final class Main
     String outputFolderName = inputFilePrefix.substring(0, inputFilePrefix.lastIndexOf('/') + 1) + "queryType/";
     new File(outputFolderName).mkdir();
     outputFolderName += "queryTypeFiles/";
+    File outputFolderFile = new File(outputFolderName);
+    FileUtils.deleteQuietly(outputFolderFile);
     new File(outputFolderName).mkdir();
     SPARQLQueryRenderer renderer = new SPARQLQueryRenderer();
     String currentOutputFolderName = outputFolderName;
