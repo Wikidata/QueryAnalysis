@@ -1,5 +1,6 @@
 package query;
 
+import org.apache.log4j.Logger;
 import org.openrdf.query.MalformedQueryException;
 import org.openrdf.query.QueryLanguage;
 import org.openrdf.query.algebra.StatementPattern;
@@ -19,6 +20,11 @@ import java.util.Set;
  */
 public class OpenRDFQueryHandler extends QueryHandler
 {
+  /**
+   * Define a static logger variable.
+   */
+  protected static Logger logger = Logger.getLogger(OpenRDFQueryHandler.class);
+
   /**
    * The query object created from query-string.
    */
@@ -136,7 +142,7 @@ public class OpenRDFQueryHandler extends QueryHandler
       return -1;
     }
 
-    OpenRDFQueryLengthVisitor openRDFQueryLengthVisitor = new OpenRDFQueryLengthVisitor();
+    OpenRDFQueryLengthCalculatorVisitor openRDFQueryLengthVisitor = new OpenRDFQueryLengthCalculatorVisitor();
 
     logger.info("ast tree: \n" + this.query.getTupleExpr());
 
