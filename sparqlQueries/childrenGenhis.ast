@@ -1,0 +1,62 @@
+Projection
+   ProjectionElemList
+      ProjectionElem "item"
+      ProjectionElem "itemLabel"
+      ProjectionElem "pic"
+      ProjectionElem "linkTo"
+   Extension
+      ExtensionElem (itemLabel)
+         Var (name=itemLabel)
+      Join
+         LeftJoin
+            LeftJoin
+               Service
+                  Var (name=-const-http://www.bigdata.com/rdf/gas#service-uri, value=http://www.bigdata.com/rdf/gas#service, anonymous)
+                  Join
+                     Join
+                        Join
+                           Join
+                              Join
+                                 Join
+                                    StatementPattern
+                                       Var (name=-const-http://www.bigdata.com/rdf/gas#program-uri, value=http://www.bigdata.com/rdf/gas#program, anonymous)
+                                       Var (name=-const-http://www.bigdata.com/rdf/gas#gasClass-uri, value=http://www.bigdata.com/rdf/gas#gasClass, anonymous)
+                                       Var (name=-const-com.bigdata.rdf.graph.analytics.SSSP-lit, value="com.bigdata.rdf.graph.analytics.SSSP", anonymous)
+                                    StatementPattern
+                                       Var (name=-const-http://www.bigdata.com/rdf/gas#program-uri, value=http://www.bigdata.com/rdf/gas#program, anonymous)
+                                       Var (name=-const-http://www.bigdata.com/rdf/gas#in-uri, value=http://www.bigdata.com/rdf/gas#in, anonymous)
+                                       Var (name=-const-http://www.wikidata.org/entity/Q720-uri, value=http://www.wikidata.org/entity/Q720, anonymous)
+                                 StatementPattern
+                                    Var (name=-const-http://www.bigdata.com/rdf/gas#program-uri, value=http://www.bigdata.com/rdf/gas#program, anonymous)
+                                    Var (name=-const-http://www.bigdata.com/rdf/gas#traversalDirection-uri, value=http://www.bigdata.com/rdf/gas#traversalDirection, anonymous)
+                                    Var (name=-const-Forward-lit, value="Forward", anonymous)
+                              StatementPattern
+                                 Var (name=-const-http://www.bigdata.com/rdf/gas#program-uri, value=http://www.bigdata.com/rdf/gas#program, anonymous)
+                                 Var (name=-const-http://www.bigdata.com/rdf/gas#out-uri, value=http://www.bigdata.com/rdf/gas#out, anonymous)
+                                 Var (name=item)
+                           StatementPattern
+                              Var (name=-const-http://www.bigdata.com/rdf/gas#program-uri, value=http://www.bigdata.com/rdf/gas#program, anonymous)
+                              Var (name=-const-http://www.bigdata.com/rdf/gas#out1-uri, value=http://www.bigdata.com/rdf/gas#out1, anonymous)
+                              Var (name=depth)
+                        StatementPattern
+                           Var (name=-const-http://www.bigdata.com/rdf/gas#program-uri, value=http://www.bigdata.com/rdf/gas#program, anonymous)
+                           Var (name=-const-http://www.bigdata.com/rdf/gas#maxIterations-uri, value=http://www.bigdata.com/rdf/gas#maxIterations, anonymous)
+                           Var (name=-const-4-lit-http://www.w3.org/2001/XMLSchema#integer, value="4"^^<http://www.w3.org/2001/XMLSchema#integer>, anonymous)
+                     StatementPattern
+                        Var (name=-const-http://www.bigdata.com/rdf/gas#program-uri, value=http://www.bigdata.com/rdf/gas#program, anonymous)
+                        Var (name=-const-http://www.bigdata.com/rdf/gas#linkType-uri, value=http://www.bigdata.com/rdf/gas#linkType, anonymous)
+                        Var (name=-const-http://www.wikidata.org/prop/direct/P40-uri, value=http://www.wikidata.org/prop/direct/P40, anonymous)
+               StatementPattern
+                  Var (name=item)
+                  Var (name=-const-http://www.wikidata.org/prop/direct/P40-uri, value=http://www.wikidata.org/prop/direct/P40, anonymous)
+                  Var (name=linkTo)
+            StatementPattern
+               Var (name=item)
+               Var (name=-const-http://www.wikidata.org/prop/direct/P18-uri, value=http://www.wikidata.org/prop/direct/P18, anonymous)
+               Var (name=pic)
+         Service
+            Var (name=-const-http://wikiba.se/ontology#label-uri, value=http://wikiba.se/ontology#label, anonymous)
+            StatementPattern
+               Var (name=-const-http://www.bigdata.com/rdf#serviceParam-uri, value=http://www.bigdata.com/rdf#serviceParam, anonymous)
+               Var (name=-const-http://wikiba.se/ontology#language-uri, value=http://wikiba.se/ontology#language, anonymous)
+               Var (name=-const-en-lit, value="en", anonymous)
