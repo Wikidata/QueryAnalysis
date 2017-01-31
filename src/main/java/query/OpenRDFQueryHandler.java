@@ -1,5 +1,12 @@
 package query;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import general.Main;
 
 import org.openrdf.model.Value;
@@ -8,23 +15,11 @@ import org.openrdf.query.MalformedQueryException;
 import org.openrdf.query.algebra.ArbitraryLengthPath;
 import org.openrdf.query.algebra.StatementPattern;
 import org.openrdf.query.algebra.TupleExpr;
-import org.openrdf.query.algebra.ValueConstant;
 import org.openrdf.query.algebra.Var;
 import org.openrdf.query.algebra.helpers.QueryModelVisitorBase;
 import org.openrdf.query.algebra.helpers.StatementPatternCollector;
 import org.openrdf.query.parser.ParsedQuery;
-import org.openrdf.query.parser.sparql.ast.ASTQueryContainer;
 import org.openrdf.query.parser.sparql.ast.VisitorException;
-
-import com.hp.hpl.jena.rdf.model.impl.LiteralImpl;
-
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 
 /**
  * @author jgonsior
@@ -35,10 +30,6 @@ public class OpenRDFQueryHandler extends QueryHandler
    * The query object created from query-string.
    */
   private ParsedQuery query;
-  /**
-   * The normalized query AST.
-   */
-  private ASTQueryContainer queryAST;
 
   /**
    * {@inheritDoc}
@@ -272,29 +263,17 @@ public class OpenRDFQueryHandler extends QueryHandler
         @Override
         public void meet(StatementPattern statementPattern)
         {
-          Value subject = statementPattern.getSubjectVar().getValue();
-          Value object = statementPattern.getObjectVar().getValue();
-
-          if (subject != null) {
-            statementPattern.setSubjectVar(new Var("", normalizeHelper(subject, strings)));
-          }
-          if (object != null) {
-            statementPattern.setObjectVar(new Var("", normalizeHelper(object, strings)));
-          }
+          statementPattern.setSubjectVar(normalizeHelper(statementPattern.getSubjectVar(), strings));
+          statementPattern.setObjectVar(normalizeHelper(statementPattern.getObjectVar(), strings));
         }
+      });
+      normalizedQuery.getTupleExpr().visit(new QueryModelVisitorBase<VisitorException>() {
 
         @Override
         public void meet(ArbitraryLengthPath arbitraryLengthPath)
         {
-          Value subject = arbitraryLengthPath.getSubjectVar().getValue();
-          Value object = arbitraryLengthPath.getObjectVar().getValue();
-
-          if (subject != null) {
-            arbitraryLengthPath.setSubjectVar(new Var("", normalizeHelper(subject, strings)));
-          }
-          if (object != null) {
-            arbitraryLengthPath.setObjectVar(new Var("", normalizeHelper(object, strings)));
-          }
+          arbitraryLengthPath.setSubjectVar(normalizeHelper(arbitraryLengthPath.getSubjectVar(), strings));
+          arbitraryLengthPath.setObjectVar(normalizeHelper(arbitraryLengthPath.getObjectVar(), strings));
         }
       });
     }
@@ -307,21 +286,28 @@ public class OpenRDFQueryHandler extends QueryHandler
 
   /**
    * A helper function to find the fitting replacement value for wikidata uri normalization.
-   * @param value The value to be normalized
+   * @param var The variable to be normalized
    * @param foundNames The list of already found names
    * @return the normalized name (if applicable)
    */
-  private Value normalizeHelper(Value value, Map<String, Integer> foundNames)
+  private Var normalizeHelper(Var var, Map<String, Integer> foundNames)
   {
-    if (value.getClass().equals(URIImpl.class)) {
-      String subjectString = value.stringValue();
-      if (subjectString.startsWith("http://www.wikidata.org/")) {
-        if (!foundNames.containsKey(subjectString)) {
-          foundNames.put(subjectString, foundNames.size() + 1);
+    if (var != null) {
+      Value value = var.getValue();
+      if (value != null) {
+        if (value.getClass().equals(URIImpl.class)) {
+          String subjectString = value.stringValue();
+          if (subjectString.startsWith("http://www.wikidata.org/")) {
+            if (!foundNames.containsKey(subjectString)) {
+              foundNames.put(subjectString, foundNames.size() + 1);
+            }
+            String uri = subjectString.substring(0, subjectString.lastIndexOf("/")) + "/QName" + foundNames.get(subjectString);
+            String name = "-const-" + uri + "-uri";
+            return new Var(name, new URIImpl(uri));
+          }
         }
-        return new URIImpl(subjectString.substring(0, subjectString.lastIndexOf("/")) + "/QName" + foundNames.get(subjectString));
       }
     }
-    return value;
+    return var;
   }
 }
