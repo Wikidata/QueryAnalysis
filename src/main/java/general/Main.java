@@ -168,8 +168,22 @@ public final class Main
     outputFolderName += "queryTypeFiles/";
     new File(outputFolderName).mkdir();
     SPARQLQueryRenderer renderer = new SPARQLQueryRenderer();
+    String currentOutputFolderName = outputFolderName;
     for (int i = 0; i < queryTypes.size(); i++) {
-      try (BufferedWriter bw = new BufferedWriter(new FileWriter(outputFolderName + i + ".queryType"))) {
+
+      int padding = String.valueOf(queryTypes.size()).length();
+
+      if (i % 1000 == 0) {
+        int upperEnd;
+        if (queryTypes.size() < i + 999) {
+          upperEnd = queryTypes.size();
+        } else {
+          upperEnd = i + 999;
+        }
+        currentOutputFolderName = outputFolderName + String.format("%0" + padding + "d", i) + "-" + String.format("%0" + padding + "d", upperEnd) + "/";
+        new File(currentOutputFolderName).mkdir();
+      }
+      try (BufferedWriter bw = new BufferedWriter(new FileWriter(currentOutputFolderName + String.format("%0" + padding + "d", i) + ".queryType"))) {
         bw.write(renderer.render(queryTypes.get(i)));
         bw.write("\n" + queryTypes.get(i).toString());
       } catch (IOException e) {
