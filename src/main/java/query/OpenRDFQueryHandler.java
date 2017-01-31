@@ -142,7 +142,7 @@ public class OpenRDFQueryHandler extends QueryHandler
       return -1;
     }
 
-    OpenRDFQueryLengthCalculatorVisitor openRDFQueryLengthVisitor = new OpenRDFQueryLengthCalculatorVisitor();
+    OpenRDFQuerySizeCalculatorVisitor openRDFQueryLengthVisitor = new OpenRDFQuerySizeCalculatorVisitor();
 
     logger.info("ast tree: \n" + this.query.getTupleExpr());
 

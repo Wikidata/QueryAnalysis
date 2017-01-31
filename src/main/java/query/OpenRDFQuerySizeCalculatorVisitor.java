@@ -6,15 +6,15 @@ import org.openrdf.query.algebra.*;
 import org.openrdf.query.algebra.helpers.QueryModelVisitorBase;
 
 /**
- * Calculates a length metric for a SPARQL query while counting basically
+ * Calculates size metric for a SPARQL query while counting basically
  * nodes of the abstract syntax tree from OpenRDF
  *
  * @author: Julius Gonsior
  */
-public class OpenRDFQueryLengthCalculatorVisitor extends QueryModelVisitorBase
+public class OpenRDFQuerySizeCalculatorVisitor extends QueryModelVisitorBase
 {
 
-  private static Logger logger = Logger.getLogger(OpenRDFQueryLengthCalculatorVisitor.class);
+  private static Logger logger = Logger.getLogger(OpenRDFQuerySizeCalculatorVisitor.class);
   private int size = 0;
 
   public int getSize()
