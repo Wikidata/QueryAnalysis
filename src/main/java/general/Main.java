@@ -176,7 +176,7 @@ public final class Main
       if (i % 1000 == 0) {
         int upperEnd;
         if (queryTypes.size() < i + 999) {
-          upperEnd = queryTypes.size();
+          upperEnd = queryTypes.size() - 1;
         } else {
           upperEnd = i + 999;
         }
