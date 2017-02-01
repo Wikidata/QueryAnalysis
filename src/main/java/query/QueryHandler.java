@@ -1,7 +1,9 @@
 package query;
 
 import org.apache.log4j.Logger;
+import scala.Tuple2;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -73,21 +75,13 @@ public abstract class QueryHandler
    * 0 for user querys
    * -1 for unknown tool
    */
-  private String toolName = "0";
+  private String toolName;
 
   /**
    * the version of the tool which created the query
-   * 0 for unknown
    * -1 for unknown tool
    */
-  private String toolVersion = "0";
-
-  /**
-   * the tool name from the query comment
-   * 0 if undefined
-   * -1 for unknown tool
-   */
-  private String toolCommentInfo = "0";
+  private String toolVersion;
 
   /**
    * true if the tool information got already computed
@@ -313,17 +307,35 @@ public abstract class QueryHandler
   }
 
   /**
-   * assuming that, if there is a tool comment at all, it is the first comment
-   * in the query and that it start with a #TOOL: and that the tool name is then
-   * everything until the end of that line
+   * Sets the toolName and version
    */
-  private void computeTool() {
-    if(validityStatus != 1) {
+  private void computeTool()
+  {
+    if (validityStatus != 1) {
       return;
     }
+
+    //default values in case we don't find anything for compution
+    this.toolName = "0";
+    this.toolVersion = "0";
+
+    //first check if there is a toolComment
+    //assuming that if there is a tool comment at all, it is the first comment
+    // in the query and that it start with a #TOOL: and that the tool name is then
+    // everything until the end of that line
     if (this.queryStringWithoutPrefixes.startsWith("#TOOL:")) {
-      this.toolCommentInfo = this.queryStringWithoutPrefixes.substring(6, this.queryStringWithoutPrefixes.indexOf("\n"));
-      this.toolName = this.toolCommentInfo;
+      this.toolName = this.queryStringWithoutPrefixes.substring(6, this.queryStringWithoutPrefixes.indexOf("\n"));
+      this.toolVersion = "0.1";
+    }
+
+    //could be defined somewhere else (maybe hardcoding isn't the best idea?)
+    Map<Integer, Tuple2<String, String>> queryTypeToToolMapping = new HashMap<>();
+    queryTypeToToolMapping.put(8, new Tuple2<String, String>("auxiliary_matcher", "1.5"));
+    queryTypeToToolMapping.put(561, new Tuple2<String, String>("thorough_name_match", "3.5.2.1"));
+
+    if(queryTypeToToolMapping.containsKey(this.getQueryType())) {
+      this.toolName = queryTypeToToolMapping.get(this.getQueryType())._1;
+      this.toolVersion = queryTypeToToolMapping.get(this.getQueryType())._2;
     }
 
     this.toolComputed = true;
@@ -331,7 +343,7 @@ public abstract class QueryHandler
 
   public String getToolName()
   {
-    if(!toolComputed) {
+    if (!toolComputed) {
       this.computeTool();
     }
     return toolName;
@@ -339,17 +351,10 @@ public abstract class QueryHandler
 
   public String getToolVersion()
   {
-    if(!toolComputed) {
+    if (!toolComputed) {
       this.computeTool();
     }
     return toolVersion;
   }
 
-  public String getToolCommentInfo()
-  {
-    if(!toolComputed) {
-      this.computeTool();
-    }
-    return toolCommentInfo;
-  }
 }
