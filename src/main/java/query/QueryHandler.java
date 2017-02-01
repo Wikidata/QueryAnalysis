@@ -71,6 +71,17 @@ public abstract class QueryHandler
   private String toolCommentInfo = "0";
 
   /**
+   * A pattern of a SPARQL query where all "parameter" information is removed from
+   * the query
+   * Helpful for similarity comparisons between two Queries
+   * The query type as a number referencing a file containing the queryTypePattern.
+   *
+   * -1 means uninitialized or that the query is or that the queryType could not
+   * be computed
+   */
+  protected Integer queryType  = -1;
+
+  /**
    *
    */
   public QueryHandler()
@@ -232,10 +243,28 @@ public abstract class QueryHandler
    */
   public abstract Integer getTripleCountWithService();
 
+
+  /**
+   * Computes the query type
+   * @throws IllegalStateException
+   */
+  public abstract void  computeQueryType() throws IllegalStateException;
+
+
   /**
    * @return Returns the query type as a number referencing a file containing the queryTypePattern.
    */
-  public abstract Integer getQueryType();
+  public Integer getQueryType() {
+    //lazy loading of queryType
+    if(queryType == -1) {
+      try {
+        this.computeQueryType();
+      } catch (IllegalStateException e) {
+        return -1;
+      }
+    }
+    return this.queryType;
+  }
 
   /**
    * @return the line the query originated from

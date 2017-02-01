@@ -208,22 +208,27 @@ public class OpenRDFQueryHandler extends QueryHandler
   /**
    * {@inheritDoc}
    */
-  public final Integer getQueryType()
+  public final void computeQueryType() throws IllegalStateException
   {
     if (this.getValidityStatus() != 1) {
-      return -1;
+      throw new IllegalStateException();
     }
+
     int indexOf = 0;
     synchronized (Main.queryTypes) {
       Iterator<ParsedQuery> iterator = Main.queryTypes.iterator();
       while (iterator.hasNext()) {
         if (iterator.next().getTupleExpr().equals(query.getTupleExpr())) {
-          return indexOf;
+          //existing query type found
+          this.queryType =  indexOf;
+          return;
         }
         indexOf++;
       }
     }
+
+    //it is a new query type
     Main.queryTypes.add(query);
-    return Main.queryTypes.size() - 1;
+    this.queryType =  Main.queryTypes.size() - 1;
   }
 }
