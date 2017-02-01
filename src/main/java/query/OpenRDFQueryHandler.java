@@ -1,14 +1,6 @@
 package query;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import general.Main;
-
 import org.openrdf.model.Value;
 import org.openrdf.model.impl.URIImpl;
 import org.openrdf.query.MalformedQueryException;
@@ -20,6 +12,8 @@ import org.openrdf.query.algebra.helpers.QueryModelVisitorBase;
 import org.openrdf.query.algebra.helpers.StatementPatternCollector;
 import org.openrdf.query.parser.ParsedQuery;
 import org.openrdf.query.parser.sparql.ast.VisitorException;
+
+import java.util.*;
 
 /**
  * @author jgonsior
@@ -220,7 +214,7 @@ public class OpenRDFQueryHandler extends QueryHandler
     ParsedQuery normalizedQuery = normalize(query);
 
     if (normalizedQuery == null) {
-      return -1;
+      throw new IllegalStateException();
     }
 
     int indexOf = 0;
@@ -228,10 +222,8 @@ public class OpenRDFQueryHandler extends QueryHandler
       Iterator<ParsedQuery> iterator = Main.queryTypes.iterator();
       while (iterator.hasNext()) {
         if (iterator.next().getTupleExpr().equals(normalizedQuery.getTupleExpr())) {
-          return indexOf;
-        if (iterator.next().getTupleExpr().equals(query.getTupleExpr())) {
           //existing query type found
-          this.queryType =  indexOf;
+          this.queryType = indexOf;
           return;
         }
         indexOf++;
@@ -239,15 +231,14 @@ public class OpenRDFQueryHandler extends QueryHandler
     }
 
     //it is a new query type
-    Main.queryTypes.add(query);
-    this.queryType =  Main.queryTypes.size() - 1;
     Main.queryTypes.add(normalizedQuery);
-    return Main.queryTypes.size() - 1;
+    this.queryType = Main.queryTypes.size() - 1;
   }
 
   /**
    * Normalizes a given query by:
-   *  - replacing all wikidata uris at subject and object positions with sub1, sub2 ... (obj1, obj2 ...).
+   * - replacing all wikidata uris at subject and object positions with sub1, sub2 ... (obj1, obj2 ...).
+   *
    * @param queryToNormalize the query to be normalized
    * @return the normalized query
    */
@@ -256,8 +247,7 @@ public class OpenRDFQueryHandler extends QueryHandler
     ParsedQuery normalizedQuery;
     try {
       normalizedQuery = queryToNormalize.getClass().newInstance();
-    }
-    catch (InstantiationException | IllegalAccessException e) {
+    } catch (InstantiationException | IllegalAccessException e) {
       logger.error("Unexpected error while normalizing " + getQueryString(), e);
       return null;
     }
@@ -267,7 +257,8 @@ public class OpenRDFQueryHandler extends QueryHandler
     final Map<String, Integer> strings = new HashMap<String, Integer>();
 
     try {
-      normalizedQuery.getTupleExpr().visit(new QueryModelVisitorBase<VisitorException>() {
+      normalizedQuery.getTupleExpr().visit(new QueryModelVisitorBase<VisitorException>()
+      {
 
         @Override
         public void meet(StatementPattern statementPattern)
@@ -276,7 +267,8 @@ public class OpenRDFQueryHandler extends QueryHandler
           statementPattern.setObjectVar(normalizeHelper(statementPattern.getObjectVar(), strings));
         }
       });
-      normalizedQuery.getTupleExpr().visit(new QueryModelVisitorBase<VisitorException>() {
+      normalizedQuery.getTupleExpr().visit(new QueryModelVisitorBase<VisitorException>()
+      {
 
         @Override
         public void meet(ArbitraryLengthPath arbitraryLengthPath)
@@ -285,8 +277,7 @@ public class OpenRDFQueryHandler extends QueryHandler
           arbitraryLengthPath.setObjectVar(normalizeHelper(arbitraryLengthPath.getObjectVar(), strings));
         }
       });
-    }
-    catch (VisitorException e) {
+    } catch (VisitorException e) {
       logger.error("Unexpected error while normalizing " + getQueryString(), e);
       return null;
     }
@@ -295,7 +286,8 @@ public class OpenRDFQueryHandler extends QueryHandler
 
   /**
    * A helper function to find the fitting replacement value for wikidata uri normalization.
-   * @param var The variable to be normalized
+   *
+   * @param var        The variable to be normalized
    * @param foundNames The list of already found names
    * @return the normalized name (if applicable)
    */

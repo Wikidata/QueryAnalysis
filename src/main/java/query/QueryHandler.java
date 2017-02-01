@@ -16,6 +16,16 @@ public abstract class QueryHandler
    */
   protected static Logger logger = Logger.getLogger(QueryHandler.class);
   /**
+   * A pattern of a SPARQL query where all "parameter" information is removed from
+   * the query
+   * Helpful for similarity comparisons between two Queries
+   * The query type as a number referencing a file containing the queryTypePattern.
+   * <p>
+   * -1 means uninitialized or that the query is or that the queryType could not
+   * be computed
+   */
+  protected Integer queryType = -1;
+  /**
    * Saves the query-string handed to the constructor.
    */
   private String queryString;
@@ -33,53 +43,36 @@ public abstract class QueryHandler
    * -11 -> The query string was empty and was therefore not being parsed
    */
   private int validityStatus;
-
   /**
    * Saves the current line the query was from.
    */
   private long currentLine;
-
   /**
    * saves the current file the query was from
    */
   private String currentFile;
-
   /**
    * contains the length of the Query without added prefixes
    */
   private int lengthNoAddedPrefixes;
-
   /**
    * the name of the tool which created the query
    * 0 for user querys
    * -1 for unknown tool
    */
   private String toolName = "0";
-
   /**
    * the version of the tool which created the query
    * 0 for unknown
    * -1 for unknown tool
    */
   private String toolVersion = "0";
-
   /**
    * the tool name from the query comment
    * 0 if undefined
    * -1 for unknown tool
    */
   private String toolCommentInfo = "0";
-
-  /**
-   * A pattern of a SPARQL query where all "parameter" information is removed from
-   * the query
-   * Helpful for similarity comparisons between two Queries
-   * The query type as a number referencing a file containing the queryTypePattern.
-   *
-   * -1 means uninitialized or that the query is or that the queryType could not
-   * be computed
-   */
-  protected Integer queryType  = -1;
 
   /**
    *
@@ -246,17 +239,19 @@ public abstract class QueryHandler
 
   /**
    * Computes the query type
+   *
    * @throws IllegalStateException
    */
-  public abstract void  computeQueryType() throws IllegalStateException;
+  public abstract void computeQueryType() throws IllegalStateException;
 
 
   /**
    * @return Returns the query type as a number referencing a file containing the queryTypePattern.
    */
-  public Integer getQueryType() {
+  public Integer getQueryType()
+  {
     //lazy loading of queryType
-    if(queryType == -1) {
+    if (queryType == -1) {
       try {
         this.computeQueryType();
       } catch (IllegalStateException e) {
