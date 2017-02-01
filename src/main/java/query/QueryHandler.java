@@ -15,6 +15,7 @@ public abstract class QueryHandler
    * Define a static logger variable.
    */
   protected static Logger logger = Logger.getLogger(QueryHandler.class);
+
   /**
    * A pattern of a SPARQL query where all "parameter" information is removed from
    * the query
@@ -24,11 +25,19 @@ public abstract class QueryHandler
    * -1 means uninitialized or that the query is or that the queryType could not
    * be computed
    */
+
   protected Integer queryType = -1;
+
   /**
-   * Saves the query-string handed to the constructor.
+   * Saves the query-string with added prefixes
    */
   private String queryString;
+
+  /**
+   * Saves the query-string without prefixes
+   */
+  private String queryStringWithoutPrefixes;
+
   /**
    * Saves if queryString is a valid query, and if not, why
    * 2 -> valid, but empty query
@@ -43,36 +52,48 @@ public abstract class QueryHandler
    * -11 -> The query string was empty and was therefore not being parsed
    */
   private int validityStatus;
+
   /**
    * Saves the current line the query was from.
    */
   private long currentLine;
+
   /**
    * saves the current file the query was from
    */
   private String currentFile;
+
   /**
    * contains the length of the Query without added prefixes
    */
   private int lengthNoAddedPrefixes;
+
   /**
    * the name of the tool which created the query
    * 0 for user querys
    * -1 for unknown tool
    */
   private String toolName = "0";
+
   /**
    * the version of the tool which created the query
    * 0 for unknown
    * -1 for unknown tool
    */
   private String toolVersion = "0";
+
   /**
    * the tool name from the query comment
    * 0 if undefined
    * -1 for unknown tool
    */
   private String toolCommentInfo = "0";
+
+  /**
+   * true if the tool information got already computed
+   * useful for lazy-loading of tool information
+   */
+  private boolean toolComputed = false;
 
   /**
    *
@@ -112,19 +133,10 @@ public abstract class QueryHandler
     if (queryStringToSet.equals("")) {
       this.validityStatus = 2;
     } else if (validityStatus > -1) {
+      this.queryStringWithoutPrefixes = queryStringToSet;
       this.queryString = this.addMissingPrefixesToQuery(queryStringToSet);
       update();
     }
-
-    //assuming that, if there is a tool comment at all, it is the first comment
-    //in the query and that it start with a #TOOL: and that the tool name is then
-    //everything until the end of that line
-    if (queryStringToSet.startsWith("#TOOL:")) {
-      this.setToolCommentInfo(queryStringToSet.substring(6, queryStringToSet.indexOf("\n")));
-      this.setToolName(this.getToolCommentInfo());
-    }
-
-    return;
   }
 
   /**
@@ -208,7 +220,9 @@ public abstract class QueryHandler
    */
   public final Integer getStringLength()
   {
-    if (queryString == null) return -1;
+    if (queryString == null) {
+      return -1;
+    }
     return queryString.length();
   }
 
@@ -298,33 +312,44 @@ public abstract class QueryHandler
     return lengthNoAddedPrefixes;
   }
 
-  public String getToolName()
-  {
-    return toolName;
+  /**
+   * assuming that, if there is a tool comment at all, it is the first comment
+   * in the query and that it start with a #TOOL: and that the tool name is then
+   * everything until the end of that line
+   */
+  private void computeTool() {
+    if(validityStatus != 1) {
+      return;
+    }
+    if (this.queryStringWithoutPrefixes.startsWith("#TOOL:")) {
+      this.toolCommentInfo = this.queryStringWithoutPrefixes.substring(6, this.queryStringWithoutPrefixes.indexOf("\n"));
+      this.toolName = this.toolCommentInfo;
+    }
+
+    this.toolComputed = true;
   }
 
-  public void setToolName(String toolName)
+  public String getToolName()
   {
-    this.toolName = toolName;
+    if(!toolComputed) {
+      this.computeTool();
+    }
+    return toolName;
   }
 
   public String getToolVersion()
   {
+    if(!toolComputed) {
+      this.computeTool();
+    }
     return toolVersion;
-  }
-
-  public void setToolVersion(String toolVersion)
-  {
-    this.toolVersion = toolVersion;
   }
 
   public String getToolCommentInfo()
   {
+    if(!toolComputed) {
+      this.computeTool();
+    }
     return toolCommentInfo;
-  }
-
-  public void setToolCommentInfo(String toolCommentInfo)
-  {
-    this.toolCommentInfo = toolCommentInfo;
   }
 }
