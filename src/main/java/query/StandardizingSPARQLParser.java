@@ -67,7 +67,12 @@ public class StandardizingSPARQLParser extends SPARQLParser
   }
 
   /**
-   * Normalizes a query by replacing all variables with var1, var2 and so on.
+   * Normalizes a query by:
+   *  - replacing all variables with var1, var2 ...
+   *  - replacing all strings with string1, string2 ...
+   *  - replacing all limits with 1, 2 ...
+   *  - replacing all numeric literals with 1, 2 ...
+   *  - replacing all rdfLiterals with rdfLiteral1, rdfLiteral2 ...
    *
    * @param queryContainer The query to be normalized
    * @throws MalformedQueryException if the query was malformed
@@ -76,7 +81,9 @@ public class StandardizingSPARQLParser extends SPARQLParser
   {
     final Map<String, Integer> variables = new HashMap<String, Integer>();
     final Map<String, Integer> strings = new HashMap<String, Integer>();
-    final Map<String, Integer> qnames = new HashMap<String, Integer>();
+    final Map<Long, Long> limits = new HashMap<Long, Long>();
+    final Map<String, Integer> numericLiterals = new HashMap<String, Integer>();
+    final Map<String, Integer> rdfLiterals = new HashMap<String, Integer>();
     try {
       queryContainer.jjtAccept(new ASTVisitorBase()
       {
@@ -101,6 +108,37 @@ public class StandardizingSPARQLParser extends SPARQLParser
         }
 
         @Override
+        public Object visit(ASTLimit limit, Object data) throws VisitorException
+        {
+          if (!limits.containsKey(limit.getValue())) {
+            limits.put(limit.getValue(), Long.valueOf(strings.keySet().size() + 1));
+          }
+          limit.setValue(Long.valueOf(limits.get(limit.getValue())));
+          return super.visit(limit, data);
+        }
+
+        @Override
+        public Object visit(ASTNumericLiteral numericLiteral, Object data) throws VisitorException
+        {
+          if (!numericLiterals.containsKey(numericLiteral.getValue())) {
+            numericLiterals.put(numericLiteral.getValue(), strings.keySet().size() + 1);
+          }
+          numericLiteral.setValue(numericLiterals.get(numericLiteral.getValue()).toString());
+          return super.visit(numericLiteral, data);
+        }
+
+        @Override
+        public Object visit(ASTRDFLiteral rdfLiteral, Object data) throws VisitorException
+        {
+          if (!rdfLiterals.containsKey(rdfLiteral.getLang())) {
+            rdfLiterals.put(rdfLiteral.getLang(), strings.keySet().size() + 1);
+          }
+          rdfLiteral.setLang("rdfLiteral" + rdfLiterals.get(rdfLiteral.getLang()).toString());
+          return super.visit(rdfLiteral, data);
+        }
+
+
+/*        @Override
         public Object visit(ASTQName qname, Object data) throws VisitorException
         {
           if (!qnames.containsKey(qname.getValue())) {
@@ -108,7 +146,7 @@ public class StandardizingSPARQLParser extends SPARQLParser
           }
           qname.setValue(qname.getValue().split(":")[0] + ":qname" + qnames.get(qname.getValue()));
           return super.visit(qname, data);
-        }
+        }*/
       }, null);
     } catch (TokenMgrError e) {
       throw new MalformedQueryException(e);
