@@ -90,6 +90,11 @@ public abstract class QueryHandler
   private boolean toolComputed = false;
 
   /**
+   * The userAgent string which executed this query
+   */
+  private String userAgent;
+
+  /**
    *
    */
   public QueryHandler()
@@ -311,34 +316,38 @@ public abstract class QueryHandler
    */
   private void computeTool()
   {
+    this.toolComputed = true;
+
     if (validityStatus != 1) {
       return;
+
     }
 
-    //default values in case we don't find anything for compution
+    //default values in case we don't find anything for computation
     this.toolName = "0";
     this.toolVersion = "0";
 
-    //first check if there is a toolComment
+    //first check if there is a toolComment, if so we don't need to use
+    // queryTypes and userAgents
     //assuming that if there is a tool comment at all, it is the first comment
     // in the query and that it start with a #TOOL: and that the tool name is then
     // everything until the end of that line
     if (this.queryStringWithoutPrefixes.startsWith("#TOOL:")) {
       this.toolName = this.queryStringWithoutPrefixes.substring(6, this.queryStringWithoutPrefixes.indexOf("\n"));
       this.toolVersion = "0.1";
+      return;
     }
 
-    //could be defined somewhere else (maybe hardcoding isn't the best idea?)
-    Map<Integer, Tuple2<String, String>> queryTypeToToolMapping = new HashMap<>();
-    queryTypeToToolMapping.put(8, new Tuple2<String, String>("auxiliary_matcher", "1.5"));
-    queryTypeToToolMapping.put(561, new Tuple2<String, String>("thorough_name_match", "3.5.2.1"));
+    //could be defined somewhere else
+    Map<Tuple2<Integer, String>, Tuple2<String, String>> queryTypeToToolMapping = new HashMap<>();
+    queryTypeToToolMapping.put(new Tuple2<Integer, String>(8, "Ruby"), new Tuple2<String, String>("auxiliary_matcher", "1.5"));
+    queryTypeToToolMapping.put(new Tuple2<Integer, String>(561, "Python"), new Tuple2<String, String>("thorough_name_match", "3.5.2.1"));
 
-    if(queryTypeToToolMapping.containsKey(this.getQueryType())) {
+    if(queryTypeToToolMapping.containsKey(new Tuple2<Integer, String>(this.getQueryType(), this.getUserAgent()))) {
       this.toolName = queryTypeToToolMapping.get(this.getQueryType())._1;
       this.toolVersion = queryTypeToToolMapping.get(this.getQueryType())._2;
     }
 
-    this.toolComputed = true;
   }
 
   public String getToolName()
@@ -357,4 +366,13 @@ public abstract class QueryHandler
     return toolVersion;
   }
 
+  public String getUserAgent()
+  {
+    return userAgent;
+  }
+
+  public void setUserAgent(String userAgent)
+  {
+    this.userAgent = userAgent;
+  }
 }

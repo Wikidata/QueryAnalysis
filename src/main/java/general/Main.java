@@ -76,7 +76,7 @@ public final class Main
    */
   public static void main(String[] args) throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException
   {
-    args = new String[] {"-olt", "-file test/test/test/QueryCntSept", "-n1"};
+    //args = new String[] {"-olt", "-file test/test/test/QueryCntDec", "-n1"};
 
     Options options = new Options();
     options.addOption("l", "logging", false, "enables file logging");
