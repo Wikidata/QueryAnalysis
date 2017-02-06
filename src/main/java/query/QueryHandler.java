@@ -340,10 +340,11 @@ public abstract class QueryHandler
 
     //could be defined somewhere else
     Map<Tuple2<Integer, String>, Tuple2<String, String>> queryTypeToToolMapping = new HashMap<>();
-    queryTypeToToolMapping.put(new Tuple2<Integer, String>(8, "Ruby"), new Tuple2<String, String>("auxiliary_matcher", "1.5"));
-    queryTypeToToolMapping.put(new Tuple2<Integer, String>(561, "Python"), new Tuple2<String, String>("thorough_name_match", "3.5.2.1"));
+    //Example usage
+    //queryTypeToToolMapping.put(new Tuple2<>(8, "Ruby"), new Tuple2<>("auxiliary_matcher", "1.5"));
+    //queryTypeToToolMapping.put(new Tuple2<>(561, "Python"), new Tuple2<>("thorough_name_match", "3.5.2.1"));
 
-    if(queryTypeToToolMapping.containsKey(new Tuple2<Integer, String>(this.getQueryType(), this.getUserAgent()))) {
+    if (queryTypeToToolMapping.containsKey(new Tuple2<>(this.getQueryType(), this.getUserAgent()))) {
       this.toolName = queryTypeToToolMapping.get(this.getQueryType())._1;
       this.toolVersion = queryTypeToToolMapping.get(this.getQueryType())._2;
     }
