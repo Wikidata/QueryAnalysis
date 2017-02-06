@@ -27,6 +27,10 @@ import org.openrdf.query.parser.sparql.ast.VisitorException;
 public class OpenRDFQueryHandler extends QueryHandler
 {
   /**
+   * The base URI to resolve any possible relative URIs against.
+   */
+  private String BASE_URI = "https://query.wikidata.org/bigdata/namespace/wdq/sparql";
+  /**
    * The query object created from query-string.
    */
   private ParsedQuery query;
@@ -86,7 +90,7 @@ public class OpenRDFQueryHandler extends QueryHandler
     parser.normalize(queryAST);*/
 
     try {
-      ParsedQuery parsedQuery = parser.parseQuery(queryToParse, "https://query.wikidata.org/bigdata/namespace/wdq/sparql");
+      ParsedQuery parsedQuery = parser.parseQuery(queryToParse, BASE_URI);
       //QueryParserUtil.parseQuery(QueryLanguage.SPARQL, queryToParse, "https://query.wikidata.org/bigdata/namespace/wdq/sparql");
       return parsedQuery;
     } catch (Throwable e) {
@@ -212,13 +216,16 @@ public class OpenRDFQueryHandler extends QueryHandler
    */
   public final Integer getQueryType()
   {
-    if (this.getValidityStatus() != 1) {
+    if (this.getValidityStatus() != 1 || this.getToolCommentInfo().equals("0")) {
       return -1;
     }
 
-    ParsedQuery normalizedQuery = normalize(query);
-
-    if (normalizedQuery == null) {
+    ParsedQuery normalizedQuery;
+    try {
+      normalizedQuery = normalize(query);
+    }
+    catch (MalformedQueryException | VisitorException e) {
+      logger.error("Unexpected error while normalizing " + getQueryString(), e);
       return -1;
     }
 
@@ -241,24 +248,16 @@ public class OpenRDFQueryHandler extends QueryHandler
    *  - replacing all wikidata uris at subject and object positions with sub1, sub2 ... (obj1, obj2 ...).
    * @param queryToNormalize the query to be normalized
    * @return the normalized query
+   * @throws MalformedQueryException If the query was malformed (would be a bug since the input was a parsed query)
+   * @throws VisitorException If there is an error during normalization
    */
-  private ParsedQuery normalize(ParsedQuery queryToNormalize)
+  private ParsedQuery normalize(ParsedQuery queryToNormalize) throws MalformedQueryException, VisitorException
   {
-    ParsedQuery normalizedQuery;
-    try {
-      normalizedQuery = queryToNormalize.getClass().newInstance();
-    }
-    catch (InstantiationException | IllegalAccessException e) {
-      logger.error("Unexpected error while normalizing " + getQueryString(), e);
-      return null;
-    }
-
-    normalizedQuery.setTupleExpr(queryToNormalize.getTupleExpr().clone());
+    ParsedQuery normalizedQuery = new StandardizingSPARQLParser().parseNormalizeQuery(queryToNormalize.getSourceString(), BASE_URI);
 
     final Map<String, Integer> strings = new HashMap<String, Integer>();
 
-    try {
-      normalizedQuery.getTupleExpr().visit(new QueryModelVisitorBase<VisitorException>() {
+    normalizedQuery.getTupleExpr().visit(new QueryModelVisitorBase<VisitorException>() {
 
         @Override
         public void meet(StatementPattern statementPattern)
@@ -267,7 +266,7 @@ public class OpenRDFQueryHandler extends QueryHandler
           statementPattern.setObjectVar(normalizeHelper(statementPattern.getObjectVar(), strings));
         }
       });
-      normalizedQuery.getTupleExpr().visit(new QueryModelVisitorBase<VisitorException>() {
+    normalizedQuery.getTupleExpr().visit(new QueryModelVisitorBase<VisitorException>() {
 
         @Override
         public void meet(ArbitraryLengthPath arbitraryLengthPath)
@@ -276,11 +275,6 @@ public class OpenRDFQueryHandler extends QueryHandler
           arbitraryLengthPath.setObjectVar(normalizeHelper(arbitraryLengthPath.getObjectVar(), strings));
         }
       });
-    }
-    catch (VisitorException e) {
-      logger.error("Unexpected error while normalizing " + getQueryString(), e);
-      return null;
-    }
     return normalizedQuery;
   }
 
