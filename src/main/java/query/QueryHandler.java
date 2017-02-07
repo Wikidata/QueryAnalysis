@@ -1,7 +1,9 @@
 package query;
 
 import org.apache.log4j.Logger;
+import scala.Tuple2;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -15,10 +17,29 @@ public abstract class QueryHandler
    * Define a static logger variable.
    */
   protected static Logger logger = Logger.getLogger(QueryHandler.class);
+
   /**
-   * Saves the query-string handed to the constructor.
+   * A pattern of a SPARQL query where all "parameter" information is removed from
+   * the query
+   * Helpful for similarity comparisons between two Queries
+   * The query type as a number referencing a file containing the queryTypePattern.
+   * <p>
+   * -1 means uninitialized or that the query is or that the queryType could not
+   * be computed
+   */
+
+  protected String queryType = "-1";
+
+  /**
+   * Saves the query-string with added prefixes
    */
   private String queryString;
+
+  /**
+   * Saves the query-string without prefixes
+   */
+  private String queryStringWithoutPrefixes;
+
   /**
    * Saves if queryString is a valid query, and if not, why
    * 2 -> valid, but empty query
@@ -54,21 +75,24 @@ public abstract class QueryHandler
    * 0 for user querys
    * -1 for unknown tool
    */
-  private String toolName = "0";
+  private String toolName;
 
   /**
    * the version of the tool which created the query
-   * 0 for unknown
    * -1 for unknown tool
    */
-  private String toolVersion = "0";
+  private String toolVersion;
 
   /**
-   * the tool name from the query comment
-   * 0 if undefined
-   * -1 for unknown tool
+   * true if the tool information got already computed
+   * useful for lazy-loading of tool information
    */
-  private String toolCommentInfo = "0";
+  private boolean toolComputed = false;
+
+  /**
+   * The userAgent string which executed this query
+   */
+  private String userAgent;
 
   /**
    *
@@ -108,19 +132,10 @@ public abstract class QueryHandler
     if (queryStringToSet.equals("")) {
       this.validityStatus = 2;
     } else if (validityStatus > -1) {
+      this.queryStringWithoutPrefixes = queryStringToSet;
       this.queryString = this.addMissingPrefixesToQuery(queryStringToSet);
       update();
     }
-
-    //assuming that, if there is a tool comment at all, it is the first comment
-    //in the query and that it start with a #TOOL: and that the tool name is then
-    //everything until the end of that line
-    if(queryStringToSet.startsWith("#TOOL:")) {
-      this.setToolCommentInfo(queryStringToSet.substring(6, queryStringToSet.indexOf("\n")));
-      this.setToolName(this.getToolCommentInfo());
-    }
-
-    return;
   }
 
   /**
@@ -204,7 +219,9 @@ public abstract class QueryHandler
    */
   public final Integer getStringLength()
   {
-    if (queryString == null) return -1;
+    if (queryString == null) {
+      return -1;
+    }
     return queryString.length();
   }
 
@@ -232,10 +249,30 @@ public abstract class QueryHandler
    */
   public abstract Integer getTripleCountWithService();
 
+
+  /**
+   * Computes the query type
+   *
+   * @throws IllegalStateException
+   */
+  public abstract void computeQueryType() throws IllegalStateException;
+
+
   /**
    * @return Returns the query type as a number referencing a file containing the queryTypePattern.
    */
-  public abstract String getQueryType();
+  public final String getQueryType()
+  {
+    //lazy loading of queryType
+    if (queryType == "-1") {
+      try {
+        this.computeQueryType();
+      } catch (IllegalStateException e) {
+        return "-1";
+      }
+    }
+    return this.queryType;
+  }
 
   /**
    * @return the line the query originated from
@@ -274,33 +311,68 @@ public abstract class QueryHandler
     return lengthNoAddedPrefixes;
   }
 
-  public String getToolName()
+  /**
+   * Sets the toolName and version
+   */
+  private void computeTool()
   {
-    return toolName;
+    this.toolComputed = true;
+
+    //default values in case we don't find anything for computation
+    this.toolName = "0";
+    this.toolVersion = "0";
+
+    if (validityStatus != 1) {
+      return;
+    }
+
+    //first check if there is a toolComment, if so we don't need to use
+    // queryTypes and userAgents
+    //assuming that if there is a tool comment at all, it is the first comment
+    // in the query and that it start with a #TOOL: and that the tool name is then
+    // everything until the end of that line
+    if (this.queryStringWithoutPrefixes.startsWith("#TOOL:")) {
+      this.toolName = this.queryStringWithoutPrefixes.substring(6, this.queryStringWithoutPrefixes.indexOf("\n"));
+      this.toolVersion = "0.1";
+      return;
+    }
+
+    //could be defined somewhere else
+    Map<Tuple2<Integer, String>, Tuple2<String, String>> queryTypeToToolMapping = new HashMap<>();
+    //Example usage
+    //queryTypeToToolMapping.put(new Tuple2<>(8, "Ruby"), new Tuple2<>("auxiliary_matcher", "1.5"));
+    //queryTypeToToolMapping.put(new Tuple2<>(561, "Python"), new Tuple2<>("thorough_name_match", "3.5.2.1"));
+
+    if (queryTypeToToolMapping.containsKey(new Tuple2<>(this.getQueryType(), this.getUserAgent()))) {
+      this.toolName = queryTypeToToolMapping.get(this.getQueryType())._1;
+      this.toolVersion = queryTypeToToolMapping.get(this.getQueryType())._2;
+    }
+
   }
 
-  public void setToolName(String toolName)
+  public String getToolName()
   {
-    this.toolName = toolName;
+    if (!toolComputed) {
+      this.computeTool();
+    }
+    return toolName;
   }
 
   public String getToolVersion()
   {
+    if (!toolComputed) {
+      this.computeTool();
+    }
     return toolVersion;
   }
 
-  public void setToolVersion(String toolVersion)
+  public String getUserAgent()
   {
-    this.toolVersion = toolVersion;
+    return userAgent;
   }
 
-  public String getToolCommentInfo()
+  public void setUserAgent(String userAgent)
   {
-    return toolCommentInfo;
-  }
-
-  public void setToolCommentInfo(String toolCommentInfo)
-  {
-    this.toolCommentInfo = toolCommentInfo;
+    this.userAgent = userAgent;
   }
 }

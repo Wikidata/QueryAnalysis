@@ -70,7 +70,6 @@ public class OutputHandlerTSV extends OutputHandler
     header.add("#TripleCountNoService");
     header.add("#ToolName");
     header.add("#ToolVersion");
-    header.add("#ToolCommentInfo");
     header.add("#QueryType");
     header.add("#uri_path");
     header.add("#user_agent");
@@ -126,6 +125,7 @@ public class OutputHandlerTSV extends OutputHandler
       logger.error("Failed to create query handler object" + e);
     }
     queryHandler.setValidityStatus(validityStatus);
+    queryHandler.setUserAgent(row[2].toString());
     queryHandler.setQueryString(queryToAnalyze);
     queryHandler.setCurrentLine(currentLine);
     queryHandler.setCurrentFile(currentFile);
@@ -133,7 +133,6 @@ public class OutputHandlerTSV extends OutputHandler
 
     List<Object> line = new ArrayList<Object>();
     line.add(queryHandler.getValidityStatus());
-
     line.add(queryHandler.getStringLength());
     line.add(queryHandler.getStringLengthNoComments());
     line.add(queryHandler.getVariableCountHead());
@@ -142,7 +141,6 @@ public class OutputHandlerTSV extends OutputHandler
     line.add(-1);
     line.add(queryHandler.getToolName());
     line.add(queryHandler.getToolVersion());
-    line.add(queryHandler.getToolCommentInfo());
     line.add(queryHandler.getQueryType());
     for (int i = 1; i < row.length; i++) {
       line.add(row[i]);
