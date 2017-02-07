@@ -5,7 +5,6 @@ import input.InputHandler;
 import org.apache.log4j.Logger;
 import org.apache.spark.sql.AnalysisException;
 import output.OutputHandlerTSV;
-import query.QueryHandler;
 
 import java.io.FileNotFoundException;
 import java.lang.reflect.InvocationTargetException;

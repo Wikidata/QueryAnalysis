@@ -1,14 +1,6 @@
 package query;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import general.Main;
-
 import org.openrdf.model.Value;
 import org.openrdf.model.impl.URIImpl;
 import org.openrdf.query.MalformedQueryException;
@@ -20,6 +12,8 @@ import org.openrdf.query.algebra.helpers.QueryModelVisitorBase;
 import org.openrdf.query.algebra.helpers.StatementPatternCollector;
 import org.openrdf.query.parser.ParsedQuery;
 import org.openrdf.query.parser.sparql.ast.VisitorException;
+
+import java.util.*;
 
 /**
  * @author jgonsior
@@ -214,11 +208,12 @@ public class OpenRDFQueryHandler extends QueryHandler
   /**
    * {@inheritDoc}
    */
-  public final String getQueryType()
+  public final void computeQueryType() throws IllegalStateException
   {
-    if (this.getValidityStatus() != 1 || !this.getToolCommentInfo().equals("0")) {
-      return "-1";
+    if (this.getValidityStatus() != 1 || !this.getToolName().equals("0")) {
+      throw new IllegalStateException();
     }
+
 
     ParsedQuery normalizedQuery;
     try {
@@ -226,7 +221,7 @@ public class OpenRDFQueryHandler extends QueryHandler
     }
     catch (MalformedQueryException | VisitorException e) {
       logger.error("Unexpected error while normalizing " + getQueryString(), e);
-      return "-1";
+      throw new IllegalStateException();
     }
 
     synchronized (Main.queryTypes) {
@@ -234,12 +229,14 @@ public class OpenRDFQueryHandler extends QueryHandler
       while (iterator.hasNext()) {
         ParsedQuery next = iterator.next();
         if (next.getTupleExpr().equals(normalizedQuery.getTupleExpr())) {
-          return Main.queryTypes.get(next);
+          this.queryType = Main.queryTypes.get(next);
+          return;
         }
       }
     }
     Main.queryTypes.put(normalizedQuery, String.valueOf(Main.queryTypes.size()));
-    return Main.queryTypes.get(normalizedQuery);
+    this.queryType = Main.queryTypes.get(normalizedQuery);
+    return;
   }
 
   /**
@@ -257,7 +254,8 @@ public class OpenRDFQueryHandler extends QueryHandler
 
   /**
    * Normalizes a given query by:
-   *  - replacing all wikidata uris at subject and object positions with sub1, sub2 ... (obj1, obj2 ...).
+   * - replacing all wikidata uris at subject and object positions with sub1, sub2 ... (obj1, obj2 ...).
+   *
    * @param queryToNormalize the query to be normalized
    * @return the normalized query
    * @throws MalformedQueryException If the query was malformed (would be a bug since the input was a parsed query)
@@ -292,7 +290,8 @@ public class OpenRDFQueryHandler extends QueryHandler
 
   /**
    * A helper function to find the fitting replacement value for wikidata uri normalization.
-   * @param var The variable to be normalized
+   *
+   * @param var        The variable to be normalized
    * @param foundNames The list of already found names
    * @return the normalized name (if applicable)
    */
