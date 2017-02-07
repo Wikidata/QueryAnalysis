@@ -1,6 +1,8 @@
 package query;
 
 import org.apache.log4j.Logger;
+
+import general.Main;
 import scala.Tuple2;
 
 import java.util.HashMap;
@@ -31,12 +33,12 @@ public abstract class QueryHandler
   protected String queryType = "-1";
 
   /**
-   * Saves the query-string with added prefixes
+   * Saves the query-string with added prefixes.
    */
   private String queryString;
 
   /**
-   * Saves the query-string without prefixes
+   * Saves the query-string without prefixes.
    */
   private String queryStringWithoutPrefixes;
 
@@ -61,36 +63,36 @@ public abstract class QueryHandler
   private long currentLine;
 
   /**
-   * saves the current file the query was from
+   * Saves the current file the query was from.
    */
   private String currentFile;
 
   /**
-   * contains the length of the Query without added prefixes
+   * Contains the length of the Query without added prefixes.
    */
   private int lengthNoAddedPrefixes;
 
   /**
-   * the name of the tool which created the query
+   * The name of the tool which created the query.
    * 0 for user querys
    * -1 for unknown tool
    */
   private String toolName;
 
   /**
-   * the version of the tool which created the query
+   * The version of the tool which created the query.
    * -1 for unknown tool
    */
   private String toolVersion;
 
   /**
-   * true if the tool information got already computed
+   * True if the tool information got already computed.
    * useful for lazy-loading of tool information
    */
   private boolean toolComputed = false;
 
   /**
-   * The userAgent string which executed this query
+   * The userAgent string which executed this query.
    */
   private String userAgent;
 
@@ -144,8 +146,8 @@ public abstract class QueryHandler
    * we need to add them manually (but only if they aren't already inside of the queries)
    * -> this method is here to achieve exactly this.
    *
-   * @param queryWithoutPrefixes
-   * @return
+   * @param queryWithoutPrefixes the query the missing prefixes should be added to
+   * @return the query with all standard prefixes
    */
   public final String addMissingPrefixesToQuery(String queryWithoutPrefixes)
   {
@@ -251,7 +253,7 @@ public abstract class QueryHandler
 
 
   /**
-   * Computes the query type
+   * Computes the query type.
    *
    * @throws IllegalStateException
    */
@@ -264,7 +266,7 @@ public abstract class QueryHandler
   public final String getQueryType()
   {
     //lazy loading of queryType
-    if (queryType == "-1") {
+    if (queryType.equals("-1")) {
       try {
         this.computeQueryType();
       } catch (IllegalStateException e) {
@@ -277,7 +279,7 @@ public abstract class QueryHandler
   /**
    * @return the line the query originated from
    */
-  public long getCurrentLine()
+  public final long getCurrentLine()
   {
     return currentLine;
   }
@@ -285,7 +287,7 @@ public abstract class QueryHandler
   /**
    * @param currentLine the current line the query was from
    */
-  public void setCurrentLine(long currentLine)
+  public final void setCurrentLine(long currentLine)
   {
     this.currentLine = currentLine;
   }
@@ -293,7 +295,7 @@ public abstract class QueryHandler
   /**
    * @return the file the query originated from
    */
-  public String getCurrentFile()
+  public final String getCurrentFile()
   {
     return currentFile;
   }
@@ -301,18 +303,18 @@ public abstract class QueryHandler
   /**
    * @param currentFile the current file the query originated from
    */
-  public void setCurrentFile(String currentFile)
+  public final void setCurrentFile(String currentFile)
   {
     this.currentFile = currentFile;
   }
 
-  public int getLengthNoAddedPrefixes()
+  public final int getLengthNoAddedPrefixes()
   {
     return lengthNoAddedPrefixes;
   }
 
   /**
-   * Sets the toolName and version
+   * Sets the toolName and version.
    */
   private void computeTool()
   {
@@ -338,19 +340,23 @@ public abstract class QueryHandler
     }
 
     //could be defined somewhere else
-    Map<Tuple2<Integer, String>, Tuple2<String, String>> queryTypeToToolMapping = new HashMap<>();
     //Example usage
     //queryTypeToToolMapping.put(new Tuple2<>(8, "Ruby"), new Tuple2<>("auxiliary_matcher", "1.5"));
     //queryTypeToToolMapping.put(new Tuple2<>(561, "Python"), new Tuple2<>("thorough_name_match", "3.5.2.1"));
 
-    if (queryTypeToToolMapping.containsKey(new Tuple2<>(this.getQueryType(), this.getUserAgent()))) {
-      this.toolName = queryTypeToToolMapping.get(this.getQueryType())._1;
-      this.toolVersion = queryTypeToToolMapping.get(this.getQueryType())._2;
+    Tuple2<String, String> key = new Tuple2<String, String>(this.getQueryType(), this.getUserAgent());
+    if (Main.queryTypeToToolMapping.containsKey(key)) {
+      Tuple2<String, String> value = Main.queryTypeToToolMapping.get(key);
+      this.toolName = value._1;
+      this.toolVersion = value._2;
     }
 
   }
 
-  public String getToolName()
+  /**
+   * @return The name of the tool that posed this query (if any)
+   */
+  public final String getToolName()
   {
     if (!toolComputed) {
       this.computeTool();
@@ -358,7 +364,10 @@ public abstract class QueryHandler
     return toolName;
   }
 
-  public String getToolVersion()
+  /**
+   * @return The version of the tool that posed this query (if any)
+   */
+  public final String getToolVersion()
   {
     if (!toolComputed) {
       this.computeTool();
@@ -366,12 +375,18 @@ public abstract class QueryHandler
     return toolVersion;
   }
 
-  public String getUserAgent()
+  /**
+   * @return The user agent that posed this query.
+   */
+  public final String getUserAgent()
   {
     return userAgent;
   }
 
-  public void setUserAgent(String userAgent)
+  /**
+   * @param userAgent The user agent that posed this query.
+   */
+  public final void setUserAgent(String userAgent)
   {
     this.userAgent = userAgent;
   }
