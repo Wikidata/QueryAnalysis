@@ -1,5 +1,3 @@
-import glob
-from pprint import pprint
 import csv
 import os
 from collections import defaultdict

@@ -1,11 +1,9 @@
 package query;
 
-import org.apache.log4j.Logger;
-
 import general.Main;
+import org.apache.log4j.Logger;
 import scala.Tuple2;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
