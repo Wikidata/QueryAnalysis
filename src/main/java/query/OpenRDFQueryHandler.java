@@ -29,7 +29,7 @@ public class OpenRDFQueryHandler extends QueryHandler
   /**
    * The base URI to resolve any possible relative URIs against.
    */
-  private String BASE_URI = "https://query.wikidata.org/bigdata/namespace/wdq/sparql";
+  public static String BASE_URI = "https://query.wikidata.org/bigdata/namespace/wdq/sparql";
   /**
    * The query object created from query-string.
    */
@@ -214,10 +214,10 @@ public class OpenRDFQueryHandler extends QueryHandler
   /**
    * {@inheritDoc}
    */
-  public final Integer getQueryType()
+  public final String getQueryType()
   {
-    if (this.getValidityStatus() != 1 || this.getToolCommentInfo().equals("0")) {
-      return -1;
+    if (this.getValidityStatus() != 1 || !this.getToolCommentInfo().equals("0")) {
+      return "-1";
     }
 
     ParsedQuery normalizedQuery;
@@ -226,21 +226,33 @@ public class OpenRDFQueryHandler extends QueryHandler
     }
     catch (MalformedQueryException | VisitorException e) {
       logger.error("Unexpected error while normalizing " + getQueryString(), e);
-      return -1;
+      return "-1";
     }
 
-    int indexOf = 0;
     synchronized (Main.queryTypes) {
-      Iterator<ParsedQuery> iterator = Main.queryTypes.iterator();
+      Iterator<ParsedQuery> iterator = Main.queryTypes.keySet().iterator();
       while (iterator.hasNext()) {
-        if (iterator.next().getTupleExpr().equals(normalizedQuery.getTupleExpr())) {
-          return indexOf;
+        ParsedQuery next = iterator.next();
+        if (next.getTupleExpr().equals(normalizedQuery.getTupleExpr())) {
+          return Main.queryTypes.get(next);
         }
-        indexOf++;
       }
     }
-    Main.queryTypes.add(normalizedQuery);
-    return Main.queryTypes.size() - 1;
+    Main.queryTypes.put(normalizedQuery, String.valueOf(Main.queryTypes.size()));
+    return Main.queryTypes.get(normalizedQuery);
+  }
+
+  /**
+   * @return the represented query normalized or null if the represented query was not valid
+   */
+  public final ParsedQuery getNormalizedQuery()
+  {
+    try {
+      return normalize(this.query);
+    }
+    catch (MalformedQueryException | VisitorException e) {
+      return null;
+    }
   }
 
   /**
