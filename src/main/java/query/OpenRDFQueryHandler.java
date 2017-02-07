@@ -1,19 +1,25 @@
 package query;
 
-import general.Main;
-import org.openrdf.query.MalformedQueryException;
-import org.openrdf.query.algebra.StatementPattern;
-import org.openrdf.query.algebra.TupleExpr;
-import org.openrdf.query.algebra.Var;
-import org.openrdf.query.algebra.helpers.StatementPatternCollector;
-import org.openrdf.query.parser.ParsedQuery;
-import org.openrdf.query.parser.sparql.ast.ASTQueryContainer;
-
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import general.Main;
+
+import org.openrdf.model.Value;
+import org.openrdf.model.impl.URIImpl;
+import org.openrdf.query.MalformedQueryException;
+import org.openrdf.query.algebra.ArbitraryLengthPath;
+import org.openrdf.query.algebra.StatementPattern;
+import org.openrdf.query.algebra.TupleExpr;
+import org.openrdf.query.algebra.Var;
+import org.openrdf.query.algebra.helpers.QueryModelVisitorBase;
+import org.openrdf.query.algebra.helpers.StatementPatternCollector;
+import org.openrdf.query.parser.ParsedQuery;
+import org.openrdf.query.parser.sparql.ast.VisitorException;
 
 /**
  * @author jgonsior
@@ -21,13 +27,13 @@ import java.util.Set;
 public class OpenRDFQueryHandler extends QueryHandler
 {
   /**
+   * The base URI to resolve any possible relative URIs against.
+   */
+  public static String BASE_URI = "https://query.wikidata.org/bigdata/namespace/wdq/sparql";
+  /**
    * The query object created from query-string.
    */
   private ParsedQuery query;
-  /**
-   * The normalized query AST.
-   */
-  private ASTQueryContainer queryAST;
 
   /**
    * {@inheritDoc}
@@ -84,7 +90,7 @@ public class OpenRDFQueryHandler extends QueryHandler
     parser.normalize(queryAST);*/
 
     try {
-      ParsedQuery parsedQuery = parser.parseQuery(queryToParse, "https://query.wikidata.org/bigdata/namespace/wdq/sparql");
+      ParsedQuery parsedQuery = parser.parseQuery(queryToParse, BASE_URI);
       //QueryParserUtil.parseQuery(QueryLanguage.SPARQL, queryToParse, "https://query.wikidata.org/bigdata/namespace/wdq/sparql");
       return parsedQuery;
     } catch (Throwable e) {
@@ -208,22 +214,106 @@ public class OpenRDFQueryHandler extends QueryHandler
   /**
    * {@inheritDoc}
    */
-  public final Integer getQueryType()
+  public final String getQueryType()
   {
-    if (this.getValidityStatus() != 1) {
-      return -1;
+    if (this.getValidityStatus() != 1 || !this.getToolCommentInfo().equals("0")) {
+      return "-1";
     }
-    int indexOf = 0;
+
+    ParsedQuery normalizedQuery;
+    try {
+      normalizedQuery = normalize(query);
+    }
+    catch (MalformedQueryException | VisitorException e) {
+      logger.error("Unexpected error while normalizing " + getQueryString(), e);
+      return "-1";
+    }
+
     synchronized (Main.queryTypes) {
-      Iterator<ParsedQuery> iterator = Main.queryTypes.iterator();
+      Iterator<ParsedQuery> iterator = Main.queryTypes.keySet().iterator();
       while (iterator.hasNext()) {
-        if (iterator.next().getTupleExpr().equals(query.getTupleExpr())) {
-          return indexOf;
+        ParsedQuery next = iterator.next();
+        if (next.getTupleExpr().equals(normalizedQuery.getTupleExpr())) {
+          return Main.queryTypes.get(next);
         }
-        indexOf++;
       }
     }
-    Main.queryTypes.add(query);
-    return Main.queryTypes.size() - 1;
+    Main.queryTypes.put(normalizedQuery, String.valueOf(Main.queryTypes.size()));
+    return Main.queryTypes.get(normalizedQuery);
+  }
+
+  /**
+   * @return the represented query normalized or null if the represented query was not valid
+   */
+  public final ParsedQuery getNormalizedQuery()
+  {
+    try {
+      return normalize(this.query);
+    }
+    catch (MalformedQueryException | VisitorException e) {
+      return null;
+    }
+  }
+
+  /**
+   * Normalizes a given query by:
+   *  - replacing all wikidata uris at subject and object positions with sub1, sub2 ... (obj1, obj2 ...).
+   * @param queryToNormalize the query to be normalized
+   * @return the normalized query
+   * @throws MalformedQueryException If the query was malformed (would be a bug since the input was a parsed query)
+   * @throws VisitorException If there is an error during normalization
+   */
+  private ParsedQuery normalize(ParsedQuery queryToNormalize) throws MalformedQueryException, VisitorException
+  {
+    ParsedQuery normalizedQuery = new StandardizingSPARQLParser().parseNormalizeQuery(queryToNormalize.getSourceString(), BASE_URI);
+
+    final Map<String, Integer> strings = new HashMap<String, Integer>();
+
+    normalizedQuery.getTupleExpr().visit(new QueryModelVisitorBase<VisitorException>() {
+
+        @Override
+        public void meet(StatementPattern statementPattern)
+        {
+          statementPattern.setSubjectVar(normalizeHelper(statementPattern.getSubjectVar(), strings));
+          statementPattern.setObjectVar(normalizeHelper(statementPattern.getObjectVar(), strings));
+        }
+      });
+    normalizedQuery.getTupleExpr().visit(new QueryModelVisitorBase<VisitorException>() {
+
+        @Override
+        public void meet(ArbitraryLengthPath arbitraryLengthPath)
+        {
+          arbitraryLengthPath.setSubjectVar(normalizeHelper(arbitraryLengthPath.getSubjectVar(), strings));
+          arbitraryLengthPath.setObjectVar(normalizeHelper(arbitraryLengthPath.getObjectVar(), strings));
+        }
+      });
+    return normalizedQuery;
+  }
+
+  /**
+   * A helper function to find the fitting replacement value for wikidata uri normalization.
+   * @param var The variable to be normalized
+   * @param foundNames The list of already found names
+   * @return the normalized name (if applicable)
+   */
+  private Var normalizeHelper(Var var, Map<String, Integer> foundNames)
+  {
+    if (var != null) {
+      Value value = var.getValue();
+      if (value != null) {
+        if (value.getClass().equals(URIImpl.class)) {
+          String subjectString = value.stringValue();
+          if (subjectString.startsWith("http://www.wikidata.org/")) {
+            if (!foundNames.containsKey(subjectString)) {
+              foundNames.put(subjectString, foundNames.size() + 1);
+            }
+            String uri = subjectString.substring(0, subjectString.lastIndexOf("/")) + "/QName" + foundNames.get(subjectString);
+            String name = "-const-" + uri + "-uri";
+            return new Var(name, new URIImpl(uri));
+          }
+        }
+      }
+    }
+    return var;
   }
 }

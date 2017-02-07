@@ -235,7 +235,7 @@ public abstract class QueryHandler
   /**
    * @return Returns the query type as a number referencing a file containing the queryTypePattern.
    */
-  public abstract Integer getQueryType();
+  public abstract String getQueryType();
 
   /**
    * @return the line the query originated from

@@ -67,7 +67,12 @@ public class StandardizingSPARQLParser extends SPARQLParser
   }
 
   /**
-   * Normalizes a query by replacing all variables with var1, var2 and so on.
+   * Normalizes a query by:
+   *  - replacing all variables with var1, var2 ...
+   *  - replacing all strings with string1, string2 ...
+   *  - replacing all limits with 1, 2 ...
+   *  - replacing all numeric literals with 1, 2 ...
+   *  - replacing all rdfLiterals with rdfLiteral1, rdfLiteral2 ...
    *
    * @param queryContainer The query to be normalized
    * @throws MalformedQueryException if the query was malformed
@@ -76,7 +81,9 @@ public class StandardizingSPARQLParser extends SPARQLParser
   {
     final Map<String, Integer> variables = new HashMap<String, Integer>();
     final Map<String, Integer> strings = new HashMap<String, Integer>();
-    final Map<String, Integer> qnames = new HashMap<String, Integer>();
+    final Map<Long, Long> limits = new HashMap<Long, Long>();
+    final Map<String, Integer> numericLiterals = new HashMap<String, Integer>();
+    final Map<String, Integer> rdfLiterals = new HashMap<String, Integer>();
     try {
       queryContainer.jjtAccept(new ASTVisitorBase()
       {
@@ -101,6 +108,37 @@ public class StandardizingSPARQLParser extends SPARQLParser
         }
 
         @Override
+        public Object visit(ASTLimit limit, Object data) throws VisitorException
+        {
+          if (!limits.containsKey(limit.getValue())) {
+            limits.put(limit.getValue(), Long.valueOf(strings.keySet().size() + 1));
+          }
+          limit.setValue(Long.valueOf(limits.get(limit.getValue())));
+          return super.visit(limit, data);
+        }
+
+        @Override
+        public Object visit(ASTNumericLiteral numericLiteral, Object data) throws VisitorException
+        {
+          if (!numericLiterals.containsKey(numericLiteral.getValue())) {
+            numericLiterals.put(numericLiteral.getValue(), strings.keySet().size() + 1);
+          }
+          numericLiteral.setValue(numericLiterals.get(numericLiteral.getValue()).toString());
+          return super.visit(numericLiteral, data);
+        }
+
+        @Override
+        public Object visit(ASTRDFLiteral rdfLiteral, Object data) throws VisitorException
+        {
+          if (!rdfLiterals.containsKey(rdfLiteral.getLang())) {
+            rdfLiterals.put(rdfLiteral.getLang(), strings.keySet().size() + 1);
+          }
+          rdfLiteral.setLang("rdfLiteral" + rdfLiterals.get(rdfLiteral.getLang()).toString());
+          return super.visit(rdfLiteral, data);
+        }
+
+
+/*        @Override
         public Object visit(ASTQName qname, Object data) throws VisitorException
         {
           if (!qnames.containsKey(qname.getValue())) {
@@ -108,7 +146,7 @@ public class StandardizingSPARQLParser extends SPARQLParser
           }
           qname.setValue(qname.getValue().split(":")[0] + ":qname" + qnames.get(qname.getValue()));
           return super.visit(qname, data);
-        }
+        }*/
       }, null);
     } catch (TokenMgrError e) {
       throw new MalformedQueryException(e);
@@ -118,6 +156,55 @@ public class StandardizingSPARQLParser extends SPARQLParser
     return;
   }
 
+  /**
+   * @param qc The query container to be parsed
+   * @param baseURI The base URI to resolve any possible relative URIs against
+   * @return The parsed query
+   * @throws MalformedQueryException If the query was in any way malformed
+   */
+  public final ParsedQuery parseQuery(ASTQueryContainer qc, String baseURI) throws MalformedQueryException
+  {
+    StringEscapesProcessor.process(qc);
+    BaseDeclProcessor.process(qc, baseURI);
+    Map<String, String> prefixes = PrefixDeclProcessor.process(qc);
+    WildcardProjectionProcessor.process(qc);
+    BlankNodeVarProcessor.process(qc);
+
+    if (qc.containsQuery()) {
+
+      // handle query operation
+
+      TupleExpr tupleExpr = buildQueryModel(qc);
+
+      ParsedQuery query;
+
+      ASTQuery queryNode = qc.getQuery();
+      if (queryNode instanceof ASTSelectQuery) {
+        query = new ParsedTupleQuery(qc.getSourceString(), tupleExpr);
+      } else if (queryNode instanceof ASTConstructQuery) {
+        query = new ParsedGraphQuery(qc.getSourceString(), tupleExpr, prefixes);
+      } else if (queryNode instanceof ASTAskQuery) {
+        query = new ParsedBooleanQuery(qc.getSourceString(), tupleExpr);
+      } else if (queryNode instanceof ASTDescribeQuery) {
+        query = new ParsedGraphQuery(qc.getSourceString(), tupleExpr, prefixes);
+      } else {
+        throw new RuntimeException(
+            "Unexpected query type: " + queryNode.getClass());
+      }
+
+      // Handle dataset declaration
+      Dataset dataset = DatasetDeclProcessor.process(qc);
+      if (dataset != null) {
+        query.setDataset(dataset);
+      }
+
+      return query;
+    } else {
+      throw new IncompatibleOperationException(
+          "supplied string is not a query operation");
+    }
+  }
+
   @Override
   public final ParsedQuery parseQuery(String queryString, String baseURI)
       throws MalformedQueryException
@@ -125,49 +212,35 @@ public class StandardizingSPARQLParser extends SPARQLParser
     try {
       ASTQueryContainer qc = SyntaxTreeBuilder.parseQuery(queryString);
       debug(qc);
-      normalize(qc);
-      StringEscapesProcessor.process(qc);
-      BaseDeclProcessor.process(qc, baseURI);
-      Map<String, String> prefixes = PrefixDeclProcessor.process(qc);
-      WildcardProjectionProcessor.process(qc);
-      BlankNodeVarProcessor.process(qc);
-
-      if (qc.containsQuery()) {
-
-        // handle query operation
-
-        TupleExpr tupleExpr = buildQueryModel(qc);
-
-        ParsedQuery query;
-
-        ASTQuery queryNode = qc.getQuery();
-        if (queryNode instanceof ASTSelectQuery) {
-          query = new ParsedTupleQuery(queryString, tupleExpr);
-        } else if (queryNode instanceof ASTConstructQuery) {
-          query = new ParsedGraphQuery(queryString, tupleExpr, prefixes);
-        } else if (queryNode instanceof ASTAskQuery) {
-          query = new ParsedBooleanQuery(queryString, tupleExpr);
-        } else if (queryNode instanceof ASTDescribeQuery) {
-          query = new ParsedGraphQuery(queryString, tupleExpr, prefixes);
-        } else {
-          throw new RuntimeException(
-              "Unexpected query type: " + queryNode.getClass());
-        }
-
-        // Handle dataset declaration
-        Dataset dataset = DatasetDeclProcessor.process(qc);
-        if (dataset != null) {
-          query.setDataset(dataset);
-        }
-
-        return query;
-      } else {
-        throw new IncompatibleOperationException(
-            "supplied string is not a query operation");
-      }
-    } catch (TokenMgrError e) {
+      return parseQuery(qc, baseURI);
+    }
+    catch (TokenMgrError e) {
       throw new MalformedQueryException(e.getMessage(), e);
-    } catch (ParseException e) {
+    }
+    catch (ParseException e) {
+      throw new MalformedQueryException(e.getMessage(), e);
+    }
+  }
+
+  /**
+   * @param queryString The query to be parsed normalized
+   * @param baseURI The The base URI to resolve any possible relative URIs against
+   * @return The parsed and partially normalized query
+   * @throws MalformedQueryException If the query was in any way malformed
+   */
+  public final ParsedQuery parseNormalizeQuery(String queryString, String baseURI)
+      throws MalformedQueryException
+  {
+    try {
+      ASTQueryContainer qc = SyntaxTreeBuilder.parseQuery(queryString);
+      debug(qc);
+      normalize(qc);
+      return parseQuery(qc, baseURI);
+    }
+    catch (TokenMgrError e) {
+      throw new MalformedQueryException(e.getMessage(), e);
+    }
+    catch (ParseException e) {
       throw new MalformedQueryException(e.getMessage(), e);
     }
   }
