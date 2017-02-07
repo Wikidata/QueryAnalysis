@@ -56,7 +56,7 @@ for file in sorted(files):
                 else:
                     queryTypeUserAgentCombinationsCount[queryType][userAgent]['count'] += 1
                 # search for query
-                originalFileLine = line[15]  # line[16]
+                originalFileLine = line[17]  # line[16]
                 originalFile = os.path.basename(originalFileLine.split("_", 1)[0])
                 originalLine = int(originalFileLine.split("_", 1)[1])
 
