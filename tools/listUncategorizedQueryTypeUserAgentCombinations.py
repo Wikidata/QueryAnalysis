@@ -2,9 +2,7 @@
 
 import csv
 import os
-from collections import defaultdict
 import urlparse
-from pprint import pprint
 
 COMBINATIONS_LIMIT = 10
 
@@ -47,8 +45,8 @@ for file in sorted(files):
             if int(line[0]) != 1:
                 continue
 
-            queryType = line[9]
-            userAgent = line[11]
+            queryType = line[10]  # line[9]
+            userAgent = line[12]  # line[11]
 
             if queryType in queryTypeUserAgentCombinationsCount.keys():
                 if userAgent not in queryTypeUserAgentCombinationsCount[queryType].keys():
@@ -58,9 +56,9 @@ for file in sorted(files):
                 else:
                     queryTypeUserAgentCombinationsCount[queryType][userAgent]['count'] += 1
                 # search for query
-                originalFileLine = line[16]
-                originalFile = os.path.basename(originalFileLine.split("_",1)[0])
-                originalLine = int(originalFileLine.split("_",1)[1])
+                originalFileLine = line[15]  # line[16]
+                originalFile = os.path.basename(originalFileLine.split("_", 1)[0])
+                originalLine = int(originalFileLine.split("_", 1)[1])
 
                 originalF = open(originalFile)
                 l = originalF.readline(originalLine)
@@ -71,8 +69,9 @@ for file in sorted(files):
 
 for queryType, userAgentCountDict in queryTypeUserAgentCombinationsCount.iteritems():
     for userAgent, valueDict in userAgentCountDict.iteritems():
-        path = "queryTypeUserAgentCombinations/" + queryType + "/" + str(valueDict['count']) + "_" + userAgent.replace('/',
-                                                                                                                   'SLASH')
+        path = "queryTypeUserAgentCombinations/" + queryType + "/" + str(valueDict['count']) + "_" + userAgent.replace(
+            '/',
+            'SLASH')
         if not os.path.exists(path):
             os.makedirs(path)
 
