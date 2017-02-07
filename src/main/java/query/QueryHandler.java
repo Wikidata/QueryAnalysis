@@ -28,7 +28,7 @@ public abstract class QueryHandler
    * be computed
    */
 
-  protected Integer queryType = -1;
+  protected String queryType = "-1";
 
   /**
    * Saves the query-string with added prefixes
@@ -261,14 +261,14 @@ public abstract class QueryHandler
   /**
    * @return Returns the query type as a number referencing a file containing the queryTypePattern.
    */
-  public Integer getQueryType()
+  public final String getQueryType()
   {
     //lazy loading of queryType
-    if (queryType == -1) {
+    if (queryType == "-1") {
       try {
         this.computeQueryType();
       } catch (IllegalStateException e) {
-        return -1;
+        return "-1";
       }
     }
     return this.queryType;
@@ -318,14 +318,13 @@ public abstract class QueryHandler
   {
     this.toolComputed = true;
 
-    if (validityStatus != 1) {
-      return;
-
-    }
-
     //default values in case we don't find anything for computation
     this.toolName = "0";
     this.toolVersion = "0";
+
+    if (validityStatus != 1) {
+      return;
+    }
 
     //first check if there is a toolComment, if so we don't need to use
     // queryTypes and userAgents

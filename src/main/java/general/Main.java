@@ -19,32 +19,51 @@ package general;
  * #L%
  */
 
-import input.InputHandlerParquet;
-import input.InputHandlerTSV;
-import logging.LoggingHandler;
-import org.apache.commons.cli.*;
-import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-import org.apache.spark.SparkConf;
-import org.apache.spark.api.java.JavaSparkContext;
-import org.openrdf.query.parser.ParsedQuery;
-import org.openrdf.queryrender.sparql.SPARQLQueryRenderer;
-import query.OpenRDFQueryHandler;
 
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+
+import static java.nio.file.Files.readAllBytes;
+
+import input.InputHandlerParquet;
+import input.InputHandlerTSV;
+import logging.LoggingHandler;
+
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
+import org.apache.commons.cli.UnrecognizedOptionException;
+import org.apache.commons.io.FileUtils;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+import org.apache.spark.SparkConf;
+import org.apache.spark.api.java.JavaSparkContext;
+import org.openrdf.query.MalformedQueryException;
+import org.openrdf.query.parser.ParsedQuery;
+import org.openrdf.queryrender.sparql.SPARQLQueryRenderer;
+import query.OpenRDFQueryHandler;
+import query.StandardizingSPARQLParser;
+import scala.Tuple2;
 
 
 /**
@@ -55,7 +74,7 @@ public final class Main
   /**
    * Saves the encountered queryTypes.
    */
-  public static List<ParsedQuery> queryTypes = Collections.synchronizedList(new ArrayList<ParsedQuery>());
+  public static Map<ParsedQuery, String> queryTypes = Collections.synchronizedMap(new HashMap<ParsedQuery, String>());
   /**
    * Define a static logger variable.
    */
@@ -149,6 +168,8 @@ public final class Main
 
     LoggingHandler.initConsoleLog();
 
+    loadPreBuildQueryTypes();
+
     long startTime = System.nanoTime();
 
     ExecutorService executor = Executors.newFixedThreadPool(numberOfThreads);
@@ -172,9 +193,10 @@ public final class Main
     new File(outputFolderName).mkdir();
     SPARQLQueryRenderer renderer = new SPARQLQueryRenderer();
     String currentOutputFolderName = outputFolderName;
-    for (int i = 0; i < queryTypes.size(); i++) {
+    int i = 0;
+    for (ParsedQuery parsedQuery : queryTypes.keySet()) {
 
-      int padding = String.valueOf(queryTypes.size()).length();
+/*      int padding = String.valueOf(queryTypes.size()).length();
 
       if (i % 1000 == 0) {
         int upperEnd;
@@ -185,15 +207,18 @@ public final class Main
         }
         currentOutputFolderName = outputFolderName + String.format("%0" + padding + "d", i) + "-" + String.format("%0" + padding + "d", upperEnd) + "/";
         new File(currentOutputFolderName).mkdir();
-      }
-      try (BufferedWriter bw = new BufferedWriter(new FileWriter(currentOutputFolderName + String.format("%0" + padding + "d", i) + ".queryType"))) {
-        bw.write(renderer.render(queryTypes.get(i)));
-        bw.write("\n" + queryTypes.get(i).toString());
+      }*/
+
+      String queryType = queryTypes.get(parsedQuery);
+      try (BufferedWriter bw = new BufferedWriter(new FileWriter(currentOutputFolderName + queryType + ".queryType"))) {
+        bw.write(renderer.render(parsedQuery));
+        bw.write("\n" + parsedQuery.toString());
       } catch (IOException e) {
-        logger.error("Could not write the query type " + i + ".", e);
+        logger.error("Could not write the query type " + queryType + ".", e);
       } catch (Exception e) {
-        logger.error("Error while rendering query type " + i + ".", e);
+        logger.error("Error while rendering query type " + queryType + ".", e);
       }
+      i++;
     }
 
     long stopTime = System.nanoTime();
@@ -202,5 +227,32 @@ public final class Main
     System.out.println("Finished executing with all threads: " + new SimpleDateFormat("mm-dd HH:mm:ss:SSSSSSS").format(date));
   }
 
+  /**
+   * Loads all pre-build query types.
+   */
+  private static void loadPreBuildQueryTypes()
+  {
+    try (DirectoryStream<Path> directoryStream =
+        Files.newDirectoryStream(Paths.get("inputData/queryType/preBuildQueryTypeFiles"))) {
+      for (Path filePath : directoryStream) {
+        if (Files.isRegularFile(filePath) &&
+            filePath.toString().endsWith(".preBuildQueryType")) {
+          String queryString = new String(readAllBytes(filePath));
+          OpenRDFQueryHandler queryHandler = new OpenRDFQueryHandler();
+          queryHandler.setValidityStatus(1);
+          queryHandler.setQueryString(queryString);
+          ParsedQuery normalizedPreBuildQuery = queryHandler.getNormalizedQuery();
+          if (normalizedPreBuildQuery != null) {
+            String queryTypeName = filePath.toString().substring(filePath.toString().lastIndexOf("/"), filePath.toString().lastIndexOf("."));
+            queryTypes.put(normalizedPreBuildQuery, queryTypeName);
+          }
+        }
+      }
+
+    }
+    catch (IOException e) {
+      logger.error("Could not read from inputData/queryType/premadeQueryTypeFiles-Directory", e);
+    }
+  }
 }
 
