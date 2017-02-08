@@ -1,14 +1,16 @@
 import csv
+
+import matplotlib
 import matplotlib.pyplot as plt
-import matplotlib.ticker as ticker
 
 matplotlib.use("Agg")
 
 folder = "userAgent"
 metric = "UserAgentCount"
 
+
 def plotHist(X, Y, title):
-    plt.figure(figsize=(10,6))
+    plt.figure(figsize=(10, 6))
     plt.subplot(111)
     plt.grid(True)
 
@@ -22,33 +24,34 @@ def plotHist(X, Y, title):
     plt.bar(X, Y, facecolor='#9999ff', edgecolor='#9999ff')
 
     plt.xlim(0)
-    #plt.show()
+    # plt.show()
     plt.savefig(folder + "/figures/" + title + ".png", dpi=100)
     plt.close()
 
-for j in xrange(0,2):
-	files = []
-	for i in xrange(1, 31):
-        	if j == 0:
-            		files.append(folder + "/QueryProcessedJena" + "%02d" % i + metric + "Spider.tsv")
-		elif j == 1:
-			files.append(folder + "/QueryProcessedJena" + "%02d" % i + metric + "User.tsv")
 
-	files.append(folder + "TotalUserAgentCountSpider.tsv")
-	files.append(folder + "TotalUserAgentCountUser.tsv")
+for j in xrange(0, 2):
+    files = []
+    for i in xrange(1, 31):
+        if j == 0:
+            files.append(folder + "/QueryProcessedJena" + "%02d" % i + metric + "Spider.tsv")
+        elif j == 1:
+            files.append(folder + "/QueryProcessedJena" + "%02d" % i + metric + "User.tsv")
 
-	for file in sorted(files):
-		print "Working on: " + file
-		with open(file) as tsvFile:
-			tsvFile = csv.reader(tsvFile, delimiter='\t')
+    files.append(folder + "TotalUserAgentCountSpider.tsv")
+    files.append(folder + "TotalUserAgentCountUser.tsv")
 
-			# skip tsv header
-			next(tsvFile, None)
+    for file in sorted(files):
+        print "Working on: " + file
+        with open(file) as tsvFile:
+            tsvFile = csv.reader(tsvFile, delimiter='\t')
 
-			X = []
-			Y = []
-			for row in tsvFile:
-				X.append(row[0])
-				Y.append(int(row[1]))
+            # skip tsv header
+            next(tsvFile, None)
 
-			plotHist(X, Y, file[file.rfind("/"):])
+            X = []
+            Y = []
+            for row in tsvFile:
+                X.append(row[0])
+                Y.append(int(row[1]))
+
+            plotHist(X, Y, file[file.rfind("/"):])

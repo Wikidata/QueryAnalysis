@@ -20,6 +20,24 @@ package general;
  */
 
 
+import com.univocity.parsers.common.ParsingContext;
+import com.univocity.parsers.common.processor.ObjectRowProcessor;
+import com.univocity.parsers.tsv.TsvParser;
+import com.univocity.parsers.tsv.TsvParserSettings;
+import input.InputHandlerParquet;
+import input.InputHandlerTSV;
+import logging.LoggingHandler;
+import org.apache.commons.cli.*;
+import org.apache.commons.io.FileUtils;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+import org.apache.spark.SparkConf;
+import org.apache.spark.api.java.JavaSparkContext;
+import org.openrdf.query.parser.ParsedQuery;
+import org.openrdf.queryrender.sparql.SPARQLQueryRenderer;
+import query.OpenRDFQueryHandler;
+import scala.Tuple2;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -30,46 +48,15 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import static java.nio.file.Files.readAllBytes;
-
-import input.InputHandlerParquet;
-import input.InputHandlerTSV;
-import logging.LoggingHandler;
-
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
-import org.apache.commons.cli.UnrecognizedOptionException;
-import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-import org.apache.spark.SparkConf;
-import org.apache.spark.api.java.JavaSparkContext;
-import org.openrdf.query.MalformedQueryException;
-import org.openrdf.query.parser.ParsedQuery;
-import org.openrdf.queryrender.sparql.SPARQLQueryRenderer;
-
-import com.univocity.parsers.common.ParsingContext;
-import com.univocity.parsers.common.processor.ObjectRowProcessor;
-import com.univocity.parsers.tsv.TsvParser;
-import com.univocity.parsers.tsv.TsvParserSettings;
-
-import query.OpenRDFQueryHandler;
-import query.StandardizingSPARQLParser;
-import scala.Tuple2;
 
 
 /**
@@ -209,7 +196,7 @@ public final class Main
   private static void loadPreBuildQueryTypes()
   {
     try (DirectoryStream<Path> directoryStream =
-        Files.newDirectoryStream(Paths.get("inputData/queryType/preBuildQueryTypeFiles"))) {
+             Files.newDirectoryStream(Paths.get("inputData/queryType/preBuildQueryTypeFiles"))) {
       for (Path filePath : directoryStream) {
         if (Files.isRegularFile(filePath)) {
           if (filePath.toString().endsWith(".preBuildQueryType")) {
@@ -259,14 +246,14 @@ public final class Main
 
       }
 
-    }
-    catch (IOException e) {
+    } catch (IOException e) {
       logger.error("Could not read from directory inputData/queryType/premadeQueryTypeFiles", e);
     }
   }
 
   /**
    * Writes all found query Types to queryType/queryTypeFiles/.
+   *
    * @param inputFilePrefix The location of the input data
    */
   private static void writeQueryTypes(String inputFilePrefix)
