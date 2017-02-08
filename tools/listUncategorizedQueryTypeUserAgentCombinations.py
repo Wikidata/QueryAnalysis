@@ -4,6 +4,8 @@ import csv
 import os
 import urlparse
 from pprint import pprint
+import linecache
+
 
 
 #TODO: filter out those combinations with tool comment!
@@ -68,8 +70,10 @@ for file in sorted(files):
                 originalFile = os.path.basename(originalFileLine.split("_", 1)[0])
                 originalLine = int(originalFileLine.split("_", 1)[1])
 
-                originalF = open(originalFile)
-                l = originalF.readline(originalLine)
+                l = linecache.getline(originalFile, originalLine)
+
+                #remove everything after first tab charachter
+                l = l.partition("\t")[0]
 
                 d = dict(urlparse.parse_qsl(urlparse.urlsplit(l).query))
                 if 'query' in d.keys():
