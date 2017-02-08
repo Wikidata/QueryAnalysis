@@ -7,7 +7,6 @@ from pprint import pprint
 
 
 #TODO: filter out those combinations with tool comment!
-#filename too long -> extra file mit infos wie welchen platz im ranking (user 9) es hatte und was der user agent war
 #--> testen ob die queries richtig geparsed werden!
 
 
@@ -34,6 +33,9 @@ for file in files:
                 break
             queryType = line[0]
             queryTypeUserAgentCombinationsCount[queryType] = dict()
+            queryTypeUserAgentCombinationsCount[queryType]['agent'] = file
+            queryTypeUserAgentCombinationsCount[queryType]['rank'] = line_no
+
 
 # grep QueryProcessedOpenRDFXX.tsv for these queryTypes and the respective userAgents and create a directory for
 # each of these found userAgents and put all found querys in it
@@ -55,11 +57,12 @@ for file in sorted(files):
 
             if queryType in queryTypeUserAgentCombinationsCount.keys():
                 if userAgent not in queryTypeUserAgentCombinationsCount[queryType].keys():
-                    queryTypeUserAgentCombinationsCount[queryType][userAgent] = dict()
-                    queryTypeUserAgentCombinationsCount[queryType][userAgent]['count'] = 0
-                    queryTypeUserAgentCombinationsCount[queryType][userAgent]['queries'] = set()
+                    queryTypeUserAgentCombinationsCount[queryType]['userAgent'] = dict()
+                    queryTypeUserAgentCombinationsCount[queryType]['userAgent'][userAgent] = dict()
+                    queryTypeUserAgentCombinationsCount[queryType]['userAgent'][userAgent]['count'] = 0
+                    queryTypeUserAgentCombinationsCount[queryType]['userAgent'][userAgent]['queries'] = set()
                 else:
-                    queryTypeUserAgentCombinationsCount[queryType][userAgent]['count'] += 1
+                    queryTypeUserAgentCombinationsCount[queryType]['userAgent'][userAgent]['count'] += 1
                 # search for query
                 originalFileLine = line['#original_line(filename_line)']
                 originalFile = os.path.basename(originalFileLine.split("_", 1)[0])
@@ -70,11 +73,15 @@ for file in sorted(files):
 
                 d = dict(urlparse.parse_qsl(urlparse.urlsplit(l).query))
                 if 'query' in d.keys():
-                    queryTypeUserAgentCombinationsCount[queryType][userAgent]['queries'].add(d['query'])
+                    queryTypeUserAgentCombinationsCount[queryType]['userAgent'][userAgent]['queries'].add(d['query'])
+
+
+
 
 for queryType, userAgentCountDict in queryTypeUserAgentCombinationsCount.iteritems():
-    for userAgent, valueDict in userAgentCountDict.iteritems():
-        path = "queryTypeUserAgentCombinations/" + queryType + "/" + str(valueDict['count']) + "_" + userAgent.replace(
+    for userAgent, valueDict in userAgentCountDict['userAgent'].iteritems():
+        path = "queryTypeUserAgentCombinations/" + queryType + "/" + str(valueDict['count']) + "_" \
+               + str(userAgent).replace(
             '/',
             'SLASH')[:100]
         if not os.path.exists(path):
@@ -82,7 +89,7 @@ for queryType, userAgentCountDict in queryTypeUserAgentCombinationsCount.iterite
 
         # save userAgent etc. in extra file
         with open(path + "/info.txt", "w") as info_file:
-            info_file.write("#UserAgent:\n" + userAgent + "\n\n");
+            info_file.write("#UserAgent:\n" + userAgent + "\n#Agent: " + queryTypeUserAgentCombinationsCount[queryType]['agent'] + "\n#Rank: " + str(queryTypeUserAgentCombinationsCount[queryType]['rank']) );
 
 
         i = 0
