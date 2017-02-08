@@ -55,11 +55,14 @@ for file in sorted(files):
             if queryType in queryTypeUserAgentCombinationsCount.keys():
                 if userAgent not in queryTypeUserAgentCombinationsCount[queryType]['userAgent'].keys():
                     queryTypeUserAgentCombinationsCount[queryType]['userAgent'][userAgent] = dict()
-                    queryTypeUserAgentCombinationsCount[queryType]['userAgent'][userAgent]['existingToolName'] = toolName
+                    queryTypeUserAgentCombinationsCount[queryType]['userAgent'][userAgent]['existingToolNames'] = set()
                     queryTypeUserAgentCombinationsCount[queryType]['userAgent'][userAgent]['count'] = 0
                     queryTypeUserAgentCombinationsCount[queryType]['userAgent'][userAgent]['queries'] = set()
                 else:
                     queryTypeUserAgentCombinationsCount[queryType]['userAgent'][userAgent]['count'] += 1
+
+                queryTypeUserAgentCombinationsCount[queryType]['userAgent'][userAgent]['existingToolNames'].add(toolName)
+
                 # search for query
                 originalFileLine = line['#original_line(filename_line)']
                 originalFile = os.path.basename(originalFileLine.split("_", 1)[0])
@@ -76,23 +79,17 @@ for file in sorted(files):
 
 for queryType, userAgentCountDict in queryTypeUserAgentCombinationsCount.iteritems():
     for userAgent, valueDict in userAgentCountDict['userAgent'].iteritems():
-        if queryTypeUserAgentCombinationsCount[queryType]['userAgent'][userAgent]['existingToolName'] is not "0":
-            existingToolName = queryTypeUserAgentCombinationsCount[queryType]['userAgent'][userAgent]['existingToolName'] + "_"
-        else:
-            existingToolName = ""
-
-        path = "queryTypeUserAgentCombinations/" + queryType + "/" + existingToolName + str(valueDict['count']) + "_" \
+        path = "queryTypeUserAgentCombinations/" + queryType + "/" +str(valueDict['count']) + "_" \
                + str(userAgent).replace(
             '/',
             'SLASH')[:100]
 
         if not os.path.exists(path):
             os.makedirs(path)
-
         # save userAgent etc. in extra file
         with open(path + "/info.txt", "w") as info_file:
             info_file.write("#UserAgent:\n" + userAgent + "\n#Agent: " + queryTypeUserAgentCombinationsCount[queryType][
-                'agent'] + "\n#ExistingToolName: " +existingToolName + "\n#Rank: " + str(queryTypeUserAgentCombinationsCount[queryType]['rank']));
+                'agent'] + "\n#ExistingToolNames: " + ', '.join(queryTypeUserAgentCombinationsCount[queryType]['userAgent'][userAgent]['existingToolNames']) + "\n#Rank: " + str(queryTypeUserAgentCombinationsCount[queryType]['rank']));
 
         i = 0
         # save all querys in path
