@@ -35,6 +35,7 @@ for file in files:
             queryTypeUserAgentCombinationsCount[queryType] = dict()
             queryTypeUserAgentCombinationsCount[queryType]['agent'] = file
             queryTypeUserAgentCombinationsCount[queryType]['rank'] = line_no
+            queryTypeUserAgentCombinationsCount[queryType]['userAgent'] = dict()
 
 
 # grep QueryProcessedOpenRDFXX.tsv for these queryTypes and the respective userAgents and create a directory for
@@ -56,8 +57,7 @@ for file in sorted(files):
             userAgent = line['#user_agent']
 
             if queryType in queryTypeUserAgentCombinationsCount.keys():
-                if userAgent not in queryTypeUserAgentCombinationsCount[queryType].keys():
-                    queryTypeUserAgentCombinationsCount[queryType]['userAgent'] = dict()
+                if userAgent not in queryTypeUserAgentCombinationsCount[queryType]['userAgent'].keys():
                     queryTypeUserAgentCombinationsCount[queryType]['userAgent'][userAgent] = dict()
                     queryTypeUserAgentCombinationsCount[queryType]['userAgent'][userAgent]['count'] = 0
                     queryTypeUserAgentCombinationsCount[queryType]['userAgent'][userAgent]['queries'] = set()
