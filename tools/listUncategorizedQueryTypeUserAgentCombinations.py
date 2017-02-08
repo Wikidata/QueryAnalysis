@@ -6,7 +6,6 @@ import urlparse
 from pprint import pprint
 
 
-#das parsen scheint noch nicht so ganz zu funktionieren!
 #TODO: filter out those combinations with tool comment!
 #filename too long -> extra file mit infos wie welchen platz im ranking (user 9) es hatte und was der user agent war
 #--> testen ob die queries richtig geparsed werden!
@@ -77,9 +76,14 @@ for queryType, userAgentCountDict in queryTypeUserAgentCombinationsCount.iterite
     for userAgent, valueDict in userAgentCountDict.iteritems():
         path = "queryTypeUserAgentCombinations/" + queryType + "/" + str(valueDict['count']) + "_" + userAgent.replace(
             '/',
-            'SLASH')
+            'SLASH')[:100]
         if not os.path.exists(path):
             os.makedirs(path)
+
+        # save userAgent etc. in extra file
+        with open(path + "/info.txt", "w") as info_file:
+            info_file.write("#UserAgent:\n" + userAgent + "\n\n");
+
 
         i = 0
         # save all querys in path
