@@ -1,16 +1,9 @@
 # lists the top 10 queryPatterns with their respective user agents and some example queries which haven't been classified
 
 import csv
+import linecache
 import os
 import urlparse
-from pprint import pprint
-import linecache
-
-
-
-#TODO: filter out those combinations with tool comment!
-#--> testen ob die queries richtig geparsed werden!
-
 
 COMBINATIONS_LIMIT = 10
 
@@ -38,7 +31,6 @@ for file in files:
             queryTypeUserAgentCombinationsCount[queryType]['agent'] = file
             queryTypeUserAgentCombinationsCount[queryType]['rank'] = line_no
             queryTypeUserAgentCombinationsCount[queryType]['userAgent'] = dict()
-
 
 # grep QueryProcessedOpenRDFXX.tsv for these queryTypes and the respective userAgents and create a directory for
 # each of these found userAgents and put all found querys in it
@@ -72,15 +64,12 @@ for file in sorted(files):
 
                 l = linecache.getline(originalFile, originalLine)
 
-                #remove everything after first tab charachter
+                # remove everything after first tab charachter
                 l = l.partition("\t")[0]
 
                 d = dict(urlparse.parse_qsl(urlparse.urlsplit(l).query))
                 if 'query' in d.keys():
                     queryTypeUserAgentCombinationsCount[queryType]['userAgent'][userAgent]['queries'].add(d['query'])
-
-
-
 
 for queryType, userAgentCountDict in queryTypeUserAgentCombinationsCount.iteritems():
     for userAgent, valueDict in userAgentCountDict['userAgent'].iteritems():
@@ -93,8 +82,8 @@ for queryType, userAgentCountDict in queryTypeUserAgentCombinationsCount.iterite
 
         # save userAgent etc. in extra file
         with open(path + "/info.txt", "w") as info_file:
-            info_file.write("#UserAgent:\n" + userAgent + "\n#Agent: " + queryTypeUserAgentCombinationsCount[queryType]['agent'] + "\n#Rank: " + str(queryTypeUserAgentCombinationsCount[queryType]['rank']) );
-
+            info_file.write("#UserAgent:\n" + userAgent + "\n#Agent: " + queryTypeUserAgentCombinationsCount[queryType][
+                'agent'] + "\n#Rank: " + str(queryTypeUserAgentCombinationsCount[queryType]['rank']));
 
         i = 0
         # save all querys in path
