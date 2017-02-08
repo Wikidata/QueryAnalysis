@@ -49,10 +49,13 @@ for file in sorted(files):
 
             queryType = line['#QueryType']
             userAgent = line['#user_agent']
+            toolName = line['#ToolName']
+
 
             if queryType in queryTypeUserAgentCombinationsCount.keys():
                 if userAgent not in queryTypeUserAgentCombinationsCount[queryType]['userAgent'].keys():
                     queryTypeUserAgentCombinationsCount[queryType]['userAgent'][userAgent] = dict()
+                    queryTypeUserAgentCombinationsCount[queryType]['userAgent'][userAgent]['existingToolName'] = toolName
                     queryTypeUserAgentCombinationsCount[queryType]['userAgent'][userAgent]['count'] = 0
                     queryTypeUserAgentCombinationsCount[queryType]['userAgent'][userAgent]['queries'] = set()
                 else:
@@ -73,17 +76,23 @@ for file in sorted(files):
 
 for queryType, userAgentCountDict in queryTypeUserAgentCombinationsCount.iteritems():
     for userAgent, valueDict in userAgentCountDict['userAgent'].iteritems():
-        path = "queryTypeUserAgentCombinations/" + queryType + "/" + str(valueDict['count']) + "_" \
+        if queryTypeUserAgentCombinationsCount[queryType]['userAgent'][userAgent]['existingToolName'] is not "0":
+            existingToolName = queryTypeUserAgentCombinationsCount[queryType]['userAgent'][userAgent]['existingToolName'] + "_"
+        else:
+            existingToolName = ""
+
+        path = "queryTypeUserAgentCombinations/" + queryType + "/" + existingToolName + str(valueDict['count']) + "_" \
                + str(userAgent).replace(
             '/',
             'SLASH')[:100]
+
         if not os.path.exists(path):
             os.makedirs(path)
 
         # save userAgent etc. in extra file
         with open(path + "/info.txt", "w") as info_file:
             info_file.write("#UserAgent:\n" + userAgent + "\n#Agent: " + queryTypeUserAgentCombinationsCount[queryType][
-                'agent'] + "\n#Rank: " + str(queryTypeUserAgentCombinationsCount[queryType]['rank']));
+                'agent'] + "\n#ExistingToolName: " +existingToolName + "\n#Rank: " + str(queryTypeUserAgentCombinationsCount[queryType]['rank']));
 
         i = 0
         # save all querys in path
