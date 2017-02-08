@@ -3,6 +3,14 @@
 import csv
 import os
 import urlparse
+from pprint import pprint
+
+
+#das parsen scheint noch nicht so ganz zu funktionieren!
+#TODO: filter out those combinations with tool comment!
+#filename too long -> extra file mit infos wie welchen platz im ranking (user 9) es hatte und was der user agent war
+#--> testen ob die queries richtig geparsed werden!
+
 
 COMBINATIONS_LIMIT = 10
 
@@ -37,16 +45,14 @@ for i in xrange(1, 2):
 for file in sorted(files):
     print "Working on: " + file
     with open(file) as f:
-        for line_no, line in enumerate(csv.reader(f, delimiter="\t")):
-            # skip header
-            if line_no == 0:
-                continue
+        reader = csv.DictReader(f, delimiter="\t")
+        for line in reader:
             # skip invalid ones
-            if int(line[0]) != 1:
+            if int(line['#Valid']) != 1:
                 continue
 
-            queryType = line[10]  # line[9]
-            userAgent = line[12]  # line[11]
+            queryType = line['#QueryType']
+            userAgent = line['#user_agent']
 
             if queryType in queryTypeUserAgentCombinationsCount.keys():
                 if userAgent not in queryTypeUserAgentCombinationsCount[queryType].keys():
@@ -56,7 +62,7 @@ for file in sorted(files):
                 else:
                     queryTypeUserAgentCombinationsCount[queryType][userAgent]['count'] += 1
                 # search for query
-                originalFileLine = line[17]  # line[16]
+                originalFileLine = line['#original_line(filename_line)']
                 originalFile = os.path.basename(originalFileLine.split("_", 1)[0])
                 originalLine = int(originalFileLine.split("_", 1)[1])
 
