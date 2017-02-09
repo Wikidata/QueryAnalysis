@@ -4,6 +4,8 @@ import csv
 import linecache
 import os
 import urlparse
+import collections
+from pprint import pprint
 
 COMBINATIONS_LIMIT = 10
 
@@ -97,3 +99,23 @@ for queryType, userAgentCountDict in queryTypeUserAgentCombinationsCount.iterite
             with open(path + "/" + str(i) + ".sparql", "w") as text_file:
                 text_file.write(query)
             i += 1
+
+combinations = dict()
+
+# rank queryTypeUserAgentCombinations
+for queryType, userAgentCountDict in queryTypeUserAgentCombinationsCount.iteritems():
+    for userAgent, valueDict in userAgentCountDict['userAgent'].iteritems():
+        combinations[valueDict['count']] = queryType + "/" +str(valueDict['count']) + "_" \
+                                           + str(userAgent).replace(
+            '/',
+            'SLASH')[:100]
+
+sortedCombinations = collections.OrderedDict(sorted(combinations.items(), reverse=True))
+
+ranking = str()
+
+for rank, combination in sortedCombinations.iteritems():
+    ranking += str(rank) + ":\t\t" + combination + "\n"
+
+with open("queryTypeUserAgentCombinations/ranking.txt", "w") as ranking_file:
+    ranking_file.write(ranking)
