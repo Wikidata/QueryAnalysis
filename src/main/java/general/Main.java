@@ -209,7 +209,7 @@ public final class Main
   private static void loadPreBuildQueryTypes()
   {
     try (DirectoryStream<Path> directoryStream =
-        Files.newDirectoryStream(Paths.get("inputData/queryType/preBuildQueryTypeFiles"))) {
+        Files.newDirectoryStream(Paths.get("preBuildQueryTypeFiles"))) {
       for (Path filePath : directoryStream) {
         if (Files.isRegularFile(filePath)) {
           if (filePath.toString().endsWith(".preBuildQueryType")) {
@@ -218,9 +218,11 @@ public final class Main
             queryHandler.setValidityStatus(1);
             queryHandler.setQueryString(queryString);
             ParsedQuery normalizedPreBuildQuery = queryHandler.getNormalizedQuery();
+            String queryTypeName = filePath.toString().substring(filePath.toString().lastIndexOf("/") + 1, filePath.toString().lastIndexOf("."));
             if (normalizedPreBuildQuery != null) {
-              String queryTypeName = filePath.toString().substring(filePath.toString().lastIndexOf("/") + 1, filePath.toString().lastIndexOf("."));
               queryTypes.put(normalizedPreBuildQuery, queryTypeName);
+            } else {
+              logger.info("Pre-build query " + queryTypeName + " could not be parsed.");
             }
           }
           if (filePath.toString().endsWith(".tsv")) {
@@ -239,7 +241,7 @@ public final class Main
                   logger.warn("Ignoring line without tab while parsing.");
                   return;
                 }
-                if (row.length == 4) {
+                if (row.length == 5) {
                   queryTypeToToolMapping.put(new Tuple2<>(row[0].toString(), row[1].toString()), new Tuple2<>(row[2].toString(), row[3].toString()));
                   return;
                 }

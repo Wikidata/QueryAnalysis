@@ -85,7 +85,7 @@ public class OutputHandlerTSV extends OutputHandler
    */
   public final void closeFiles()
   {
-    try {
+/*    try {
       FileOutputStream outputHourly = new FileOutputStream(file + "HourlyAgentCount.tsv");
       TsvWriter hourlyWriter = new TsvWriter(outputHourly, new TsvWriterSettings());
       hourlyWriter.writeHeaders("hour", "user_count", "spider_count");
@@ -95,7 +95,8 @@ public class OutputHandlerTSV extends OutputHandler
       hourlyWriter.close();
     } catch (FileNotFoundException e) {
       logger.error("Could not write the hourly agent_type count.", e);
-    }
+    }*/
+
     writer.close();
   }
 

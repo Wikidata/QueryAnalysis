@@ -1,0 +1,3 @@
+PREFIX wdt: <http://www.wikidata.org/prop/direct/>
+SELECT *
+WHERE {?gene wdt:P686 "GO:0044341"}
