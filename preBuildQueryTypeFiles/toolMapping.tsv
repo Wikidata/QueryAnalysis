@@ -1,0 +1,12 @@
+queryType	userAgent	tool	version	comment
+thisInstanceOf	Apache-Jena-ARQ/3.0.1	toolUsingJenaARQ	3.0.1	needs more data
+thisTransfermarktFootballerID	Java/1.7.0_80	toolUsingJavaForTransfermarkt	1.7.0_80	needs more data
+thisTransfermarktFootballerID	Java/1.7.0_121	toolUsingJavaForTransfermarkt	1.7.0_121	needs more data
+thisTransfermarktFootballerID	Java/1.7.0_79	toolUsingJavaForTransfermarkt	1.7.0_79	needs more data
+thisTransfermarktFootballerID	Java/1.7.0_04	toolUsingJavaForTransfermarkt	1.7.0_04	needs more data
+thisGeneOntologyID	sparqlwrapper 1.7.6 (rdflib.github.ioSLASHsparqlwrapper)	toolUsingSparqlwrapperPythonForGeneOntology	1.7.6	needs more data
+thisIMDbID	Mozilla/5.0 (Windows NT; Windows NT 10.0; es-ES) WindowsPowerShell/5.1.14393.479	toolUsingWindowsPowerShellForIMDb	5.1.14393.479	needs more data
+thisIMDbID	MovieGuide-wikidata/0.1	movieguide	0.1	Probably: https://github.com/nandhp/movieguide/blob/master/wikidata.py
+thisIMDbID	Mozilla/5.0 (Windows NT; Windows NT 10.0; es-ES) WindowsPowerShell/5.1.14393.576	toolUsingWindowsPowerShellForIMDb	5.1.14393.576	needs more data
+thisIMDbID	Mozilla/5.0 (Windows NT; Windows NT 10.0; es-ES) WindowsPowerShell/5.1.14393.576	toolUsingWindowsPowerShellForIMDb	5.1.14393.576	needs more data
+thisIMDbID	Mozilla/5.0 (Windows NT; Windows NT 10.0; es-ES) WindowsPowerShell/5.1.14393.206	toolUsingWindowsPowerShellForIMDb	5.1.14393.206	needs more data
