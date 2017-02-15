@@ -125,6 +125,14 @@ public abstract class QueryHandler
   {
     return queryString;
   }
+  
+  /**
+   * @return Returns the original query-string represented by this handler.
+   */
+  public final String getQueryStringWithoutPrefixes()
+  {
+    return queryStringWithoutPrefixes;
+  }
 
   /**
    * @param queryStringToSet query to set the variable queryString to
