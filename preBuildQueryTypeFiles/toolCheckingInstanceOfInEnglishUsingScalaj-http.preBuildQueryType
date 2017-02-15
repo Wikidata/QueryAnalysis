@@ -1,0 +1,1 @@
+SELECT ?x ?y WHERE{      wd:Q15265463 wdt:P31 ?x. SERVICE wikibase:label {    bd:serviceParam wikibase:language "en". ?x rdfs:label ?y.   }}

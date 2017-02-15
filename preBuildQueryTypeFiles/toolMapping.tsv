@@ -10,3 +10,15 @@ thisIMDbID	MovieGuide-wikidata/0.1	movieguide	0.1	Probably: https://github.com/n
 thisIMDbID	Mozilla/5.0 (Windows NT; Windows NT 10.0; es-ES) WindowsPowerShell/5.1.14393.576	toolUsingWindowsPowerShellForIMDb	5.1.14393.576	needs more data
 thisIMDbID	Mozilla/5.0 (Windows NT; Windows NT 10.0; es-ES) WindowsPowerShell/5.1.14393.576	toolUsingWindowsPowerShellForIMDb	5.1.14393.576	needs more data
 thisIMDbID	Mozilla/5.0 (Windows NT; Windows NT 10.0; es-ES) WindowsPowerShell/5.1.14393.206	toolUsingWindowsPowerShellForIMDb	5.1.14393.206	needs more data
+bot2 Magnus labs tools  bot2    0.1?    some queries from bot2 contain a toolComment, some not
+toolCheckingInstanceOfUsingJena Apache-Jena-ARQ/3.0.1   toolCheckingInstanceOfUsingJena 3.0.1   not sure who is creating these queries
+toolLookingForTransfermarktDOTcomDatabaseIdForAllFootballPlayers    Java/1.7.0_79   toolLookingForTransfermarktDOTcomDatabaseIdForAllFootballPlayers    1.7.0_79    not sure who is creating these queries
+toolLookingForTransfermarktDOTcomDatabaseIdForAllFootballPlayers    Java/1.7.0_121   toolLookingForTransfermarktDOTcomDatabaseIdForAllFootballPlayers    1.7.0_121    not sure who is creating these queries
+toolLookingForTransfermarktDOTcomDatabaseIdForAllFootballPlayers    Java/1.7.0_80   toolLookingForTransfermarktDOTcomDatabaseIdForAllFootballPlayers    1.7.0_80    not sure who is creating these queries
+toolCheckingInstanceOfInEnglishUsingScalaj-http scalaj-http/1.0 toolCheckingInstanceOfInEnglishUsingScalaj-http 1.0 not sure who is creating these queries
+toolListingAllClubsAndTheRespectiveYearsAFootballPlayerWasInATeam   Java/1.7.0_79   toolListingAllClubsAndTheRespectiveYearsAFootballPlayerWasInATeam   1.7.0_79    not sure who is creating these queries, but could be the same as the transfermarkt.com queries
+toolListingAllClubsAndTheRespectiveYearsAFootballPlayerWasInATeam   Java/1.7.0_121   toolListingAllClubsAndTheRespectiveYearsAFootballPlayerWasInATeam   1.7.0_121    not sure who is creating these queries, but could be the same as the transfermarkt.com queries
+toolListingAllClubsAndTheRespectiveYearsAFootballPlayerWasInATeam   Java/1.7.0_80   toolListingAllClubsAndTheRespectiveYearsAFootballPlayerWasInATeam   1.7.0_80    not sure who is creating these queries, but could be the same as the transfermarkt.com queries
+toolLookingForNNDBIdForAllFootballPlayers   Java/1.7.0_121  toolLookingForNNDBIdForAllFootballPlayers   1.7.0_121   not sure who is creating these queries, but could be the same as the transfermarkt.com queries
+toolLookingForNNDBIdForAllFootballPlayers   Java/1.7.0_79  toolLookingForNNDBIdForAllFootballPlayers   1.7.0_79   not sure who is creating these queries, but could be the same as the transfermarkt.com queries
+toolLookingForNNDBIdForAllFootballPlayers   Java/1.7.0_80  toolLookingForNNDBIdForAllFootballPlayers   1.7.0_80   not sure who is creating these queries, but could be the same as the transfermarkt.com queries
