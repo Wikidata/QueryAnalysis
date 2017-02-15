@@ -1,0 +1,13 @@
+SELECT ?entityLabel ?wikiLink ?linkLanguage
+WHERE
+{
+        ?entity wdt:P691 "ph119753" .
+
+        ?wikiLink a schema:Article ;
+                schema:about ?entity ;
+                schema:inLanguage ?linkLanguage .
+
+    SERVICE wikibase:label {
+                bd:serviceParam wikibase:language "cs" .
+        }
+}

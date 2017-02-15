@@ -1,0 +1,16 @@
+select DISTINCT ?country ?countryLabel ?coords ?countryDescription ?article
+where {
+    ?type wdt:P279* wd:Q6256 .
+    ?country wdt:P31 ?type .
+    MINUS { ?country wdt:P31 wd:Q3024240 } .
+    {?country skos:altLabel "Eger"@en} UNION { ?country rdfs:label "Eger"@en } .
+    ?country wdt:P625 ?coords .
+        OPTIONAL {
+            ?article schema:about ?country .
+            ?article schema:inLanguage "en" .
+            ?article schema:isPartOf <https://en.wikipedia.org/>.
+        }
+    SERVICE wikibase:label {
+        bd:serviceParam wikibase:language "en" .
+    }
+} LIMIT 50
