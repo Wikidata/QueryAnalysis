@@ -1,0 +1,20 @@
+SELECT DISTINCT ?next ?nextLabel ?prev ?prevLabel
+WHERE{
+  ?film wdt:P31 wd:Q11424;
+        rdfs:label "Transformers"@fr.
+  OPTIONAL{
+    ?film p:P179 ?serieStmt .
+    OPTIONAL{
+      ?serieStmt pq:P155 ?prev
+    } .
+    OPTIONAL{
+      ?serieStmt pq:P156 ?next
+    }
+  } 
+  OPTIONAL{
+  ?film wdt:P156 ?next
+  }
+  OPTIONAL{
+    ?film wdt:P155 ?prev
+  }
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "fr" }}

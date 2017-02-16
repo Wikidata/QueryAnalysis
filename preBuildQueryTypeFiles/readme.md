@@ -14,3 +14,4 @@ user agents that are probably too broad:
 
 NOTES ON POSSIBLY SEMI-AUTOMATED SOURCES:
 - query type 12 comes from a lot of different browsers but is about when something was most recently modified, so it might be called each time someone opens e.g. a wikipedia page
+- processed including 23324 in TotalQueryTypeCountUser.tsv
