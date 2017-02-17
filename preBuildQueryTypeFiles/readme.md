@@ -9,7 +9,7 @@ NOTES ON QUERY TYPES:
 user agents that are probably too broad:
 - Apache-Jena-ARQ
 - Java
-- sparqlwrapper
+- [sparqlwrapper](http://rdflib.github.io/sparqlwrapper/)
 - Ruby
 
 NOTES ON POSSIBLY SEMI-AUTOMATED SOURCES:
