@@ -1,0 +1,4 @@
+SELECT DISTINCT ?s
+WHERE {
+  ?s wdt:P2186 "0630583456"
+}
