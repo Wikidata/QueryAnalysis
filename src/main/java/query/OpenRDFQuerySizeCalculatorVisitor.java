@@ -24,11 +24,13 @@ public class OpenRDFQuerySizeCalculatorVisitor extends QueryModelVisitorBase
 
   /**
    * default method which get's called by all meet statements
+   *
    * @param node
    * @throws Exception
    */
   @Override
-  public void meetNode(QueryModelNode node ) throws Exception{
+  public void meetNode(QueryModelNode node) throws Exception
+  {
     size++;
     super.meetNode(node);
   }

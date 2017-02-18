@@ -1,10 +1,10 @@
 # lists the top 10 queryPatterns with their respective user agents and some example queries which haven't been classified
 
+import collections
 import csv
 import linecache
 import os
 import urlparse
-import collections
 from pprint import pprint
 
 COMBINATIONS_LIMIT = 10
@@ -53,7 +53,6 @@ for file in sorted(files):
             userAgent = line['#user_agent']
             toolName = line['#ToolName']
 
-
             if queryType in queryTypeUserAgentCombinationsCount.keys():
                 if userAgent not in queryTypeUserAgentCombinationsCount[queryType]['userAgent'].keys():
                     queryTypeUserAgentCombinationsCount[queryType]['userAgent'][userAgent] = dict()
@@ -63,7 +62,8 @@ for file in sorted(files):
                 else:
                     queryTypeUserAgentCombinationsCount[queryType]['userAgent'][userAgent]['count'] += 1
 
-                queryTypeUserAgentCombinationsCount[queryType]['userAgent'][userAgent]['existingToolNames'].add(toolName)
+                queryTypeUserAgentCombinationsCount[queryType]['userAgent'][userAgent]['existingToolNames'].add(
+                    toolName)
 
                 # search for query
                 originalFileLine = line['#original_line(filename_line)']
@@ -81,7 +81,7 @@ for file in sorted(files):
 
 for queryType, userAgentCountDict in queryTypeUserAgentCombinationsCount.iteritems():
     for userAgent, valueDict in userAgentCountDict['userAgent'].iteritems():
-        path = "queryTypeUserAgentCombinations/" + queryType + "/" +str(valueDict['count']) + "_" \
+        path = "queryTypeUserAgentCombinations/" + queryType + "/" + str(valueDict['count']) + "_" \
                + str(userAgent).replace(
             '/',
             'SLASH')[:100]
@@ -91,7 +91,9 @@ for queryType, userAgentCountDict in queryTypeUserAgentCombinationsCount.iterite
         # save userAgent etc. in extra file
         with open(path + "/info.txt", "w") as info_file:
             info_file.write("#UserAgent:\n" + userAgent + "\n#Agent: " + queryTypeUserAgentCombinationsCount[queryType][
-                'agent'] + "\n#ExistingToolNames: " + ', '.join(queryTypeUserAgentCombinationsCount[queryType]['userAgent'][userAgent]['existingToolNames']) + "\n#Rank: " + str(queryTypeUserAgentCombinationsCount[queryType]['rank']));
+                'agent'] + "\n#ExistingToolNames: " + ', '.join(
+                queryTypeUserAgentCombinationsCount[queryType]['userAgent'][userAgent][
+                    'existingToolNames']) + "\n#Rank: " + str(queryTypeUserAgentCombinationsCount[queryType]['rank']));
 
         i = 0
         # save all querys in path
@@ -105,7 +107,7 @@ combinations = dict()
 # rank queryTypeUserAgentCombinations
 for queryType, userAgentCountDict in queryTypeUserAgentCombinationsCount.iteritems():
     for userAgent, valueDict in userAgentCountDict['userAgent'].iteritems():
-        combinations[valueDict['count']] = queryType + "/" +str(valueDict['count']) + "_" \
+        combinations[valueDict['count']] = queryType + "/" + str(valueDict['count']) + "_" \
                                            + str(userAgent).replace(
             '/',
             'SLASH')[:100]

@@ -306,7 +306,6 @@ public abstract class QueryHandler
     this.currentFile = currentFile;
   }
 
-  public final int getLengthNoAddedPrefixes()
   /**
    * @return the length of the query without the added prefixes
    */

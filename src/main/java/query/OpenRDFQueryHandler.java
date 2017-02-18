@@ -1,7 +1,7 @@
 package query;
 
-import org.apache.log4j.Logger;
 import general.Main;
+import org.apache.log4j.Logger;
 import org.openrdf.model.Value;
 import org.openrdf.model.impl.URIImpl;
 import org.openrdf.query.MalformedQueryException;
@@ -22,14 +22,13 @@ import java.util.*;
 public class OpenRDFQueryHandler extends QueryHandler
 {
   /**
-   * Define a static logger variable.
-   */
-  protected static Logger logger = Logger.getLogger(OpenRDFQueryHandler.class);
-
-  /**
    * The base URI to resolve any possible relative URIs against.
    */
   public static String BASE_URI = "https://query.wikidata.org/bigdata/namespace/wdq/sparql";
+  /**
+   * Define a static logger variable.
+   */
+  protected static Logger logger = Logger.getLogger(OpenRDFQueryHandler.class);
   /**
    * The query object created from query-string.
    */
