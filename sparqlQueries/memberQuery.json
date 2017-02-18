@@ -1,8 +1,8 @@
 {
-  "StringLength": 2470,
+  "StringLength": 2460,
   "StringLengthNoComments": 2121,
   "CountVariablesHead": 1,
   "CountVariablesPattern": 3,
   "CountTriplesWithService": 3,
-  "QuerySize": 1
+  "QuerySize": 19
 }
