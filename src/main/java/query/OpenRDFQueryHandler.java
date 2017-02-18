@@ -165,8 +165,6 @@ public class OpenRDFQueryHandler extends QueryHandler
 
     OpenRDFQuerySizeCalculatorVisitor openRDFQueryLengthVisitor = new OpenRDFQuerySizeCalculatorVisitor();
 
-    logger.info("ast tree: \n" + this.query.getTupleExpr());
-
     try {
       this.query.getTupleExpr().visit(openRDFQueryLengthVisitor);
     } catch (Exception e) {
