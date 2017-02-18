@@ -225,8 +225,7 @@ public class OpenRDFQueryHandler extends QueryHandler
     ParsedQuery normalizedQuery;
     try {
       normalizedQuery = normalize(query);
-    }
-    catch (MalformedQueryException | VisitorException e) {
+    } catch (MalformedQueryException | VisitorException e) {
       logger.error("Unexpected error while normalizing " + getQueryString(), e);
       throw new IllegalStateException();
     }
@@ -253,8 +252,7 @@ public class OpenRDFQueryHandler extends QueryHandler
   {
     try {
       return normalize(this.query);
-    }
-    catch (MalformedQueryException | VisitorException e) {
+    } catch (MalformedQueryException | VisitorException e) {
       return null;
     }
   }
@@ -266,7 +264,7 @@ public class OpenRDFQueryHandler extends QueryHandler
    * @param queryToNormalize the query to be normalized
    * @return the normalized query
    * @throws MalformedQueryException If the query was malformed (would be a bug since the input was a parsed query)
-   * @throws VisitorException If there is an error during normalization
+   * @throws VisitorException        If there is an error during normalization
    */
   private ParsedQuery normalize(ParsedQuery queryToNormalize) throws MalformedQueryException, VisitorException
   {
@@ -274,24 +272,26 @@ public class OpenRDFQueryHandler extends QueryHandler
 
     final Map<String, Integer> strings = new HashMap<String, Integer>();
 
-    normalizedQuery.getTupleExpr().visit(new QueryModelVisitorBase<VisitorException>() {
+    normalizedQuery.getTupleExpr().visit(new QueryModelVisitorBase<VisitorException>()
+    {
 
-        @Override
-        public void meet(StatementPattern statementPattern)
-        {
-          statementPattern.setSubjectVar(normalizeHelper(statementPattern.getSubjectVar(), strings));
-          statementPattern.setObjectVar(normalizeHelper(statementPattern.getObjectVar(), strings));
-        }
-      });
-    normalizedQuery.getTupleExpr().visit(new QueryModelVisitorBase<VisitorException>() {
+      @Override
+      public void meet(StatementPattern statementPattern)
+      {
+        statementPattern.setSubjectVar(normalizeHelper(statementPattern.getSubjectVar(), strings));
+        statementPattern.setObjectVar(normalizeHelper(statementPattern.getObjectVar(), strings));
+      }
+    });
+    normalizedQuery.getTupleExpr().visit(new QueryModelVisitorBase<VisitorException>()
+    {
 
-        @Override
-        public void meet(ArbitraryLengthPath arbitraryLengthPath)
-        {
-          arbitraryLengthPath.setSubjectVar(normalizeHelper(arbitraryLengthPath.getSubjectVar(), strings));
-          arbitraryLengthPath.setObjectVar(normalizeHelper(arbitraryLengthPath.getObjectVar(), strings));
-        }
-      });
+      @Override
+      public void meet(ArbitraryLengthPath arbitraryLengthPath)
+      {
+        arbitraryLengthPath.setSubjectVar(normalizeHelper(arbitraryLengthPath.getSubjectVar(), strings));
+        arbitraryLengthPath.setObjectVar(normalizeHelper(arbitraryLengthPath.getObjectVar(), strings));
+      }
+    });
     return normalizedQuery;
   }
 
