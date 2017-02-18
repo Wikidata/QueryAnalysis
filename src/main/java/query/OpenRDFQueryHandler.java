@@ -1,19 +1,20 @@
 package query;
 
 import org.apache.log4j.Logger;
+import general.Main;
+import org.openrdf.model.Value;
+import org.openrdf.model.impl.URIImpl;
 import org.openrdf.query.MalformedQueryException;
-import org.openrdf.query.QueryLanguage;
+import org.openrdf.query.algebra.ArbitraryLengthPath;
 import org.openrdf.query.algebra.StatementPattern;
 import org.openrdf.query.algebra.TupleExpr;
 import org.openrdf.query.algebra.Var;
+import org.openrdf.query.algebra.helpers.QueryModelVisitorBase;
 import org.openrdf.query.algebra.helpers.StatementPatternCollector;
 import org.openrdf.query.parser.ParsedQuery;
-import org.openrdf.query.parser.QueryParserUtil;
+import org.openrdf.query.parser.sparql.ast.VisitorException;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
+import java.util.*;
 
 /**
  * @author jgonsior
@@ -25,6 +26,10 @@ public class OpenRDFQueryHandler extends QueryHandler
    */
   protected static Logger logger = Logger.getLogger(OpenRDFQueryHandler.class);
 
+  /**
+   * The base URI to resolve any possible relative URIs against.
+   */
+  public static String BASE_URI = "https://query.wikidata.org/bigdata/namespace/wdq/sparql";
   /**
    * The query object created from query-string.
    */
@@ -46,8 +51,10 @@ public class OpenRDFQueryHandler extends QueryHandler
         }
 
         if (message.contains("Not a valid (absolute) URI:")) {
+          logger.warn("This shoud not happen anymore: " + e.getMessage());
           setValidityStatus(-3);
         } else if (message.contains("BIND clause alias '{}' was previously used")) {
+          logger.warn("This shoud not happen anymore: " + e.getMessage());
           setValidityStatus(-5);
         } else if (message.contains("Multiple prefix declarations for prefix")) {
           setValidityStatus(-6);
@@ -71,11 +78,23 @@ public class OpenRDFQueryHandler extends QueryHandler
    */
   private ParsedQuery parseQuery(String queryToParse) throws MalformedQueryException
   {
-    //the third argument is the basURI to resolve any relative URIs that are in
+    //the third argument is the baseURI to resolve any relative URIs that are in
     //the query against, but it can be NULL as well
+    StandardizingSPARQLParser parser = new StandardizingSPARQLParser();
+/*  try {
+      queryAST = SyntaxTreeBuilder.parseQuery(queryToParse);
+    }
+    catch (TokenMgrError | ParseException e1) {
+      throw new MalformedQueryException(e1.getMessage());
+    }
+    parser.normalize(queryAST);*/
+
     try {
-      return QueryParserUtil.parseQuery(QueryLanguage.SPARQL, queryToParse, "https://query.wikidata.org/bigdata/namespace/wdq/sparql");
-    } catch (Throwable e) { // kind of a dirty hack to catch an java.lang.error which occurs when trying to parse a query which contains f.e. the following string: "jul\ius" where the \ is an invalid escape charachter
+      ParsedQuery parsedQuery = parser.parseQuery(queryToParse, BASE_URI);
+      //QueryParserUtil.parseQuery(QueryLanguage.SPARQL, queryToParse, "https://query.wikidata.org/bigdata/namespace/wdq/sparql");
+      return parsedQuery;
+    } catch (Throwable e) {
+      // kind of a dirty hack to catch an java.lang.error which occurs when trying to parse a query which contains f.e. the following string: "jul\ius" where the \ is an invalid escape charachter
       //because this error is kind of an MalformedQueryException we will just throw it as one
       throw new MalformedQueryException(e.getMessage());
     }
@@ -209,5 +228,116 @@ public class OpenRDFQueryHandler extends QueryHandler
     StatementPatternCollector collector = new StatementPatternCollector();
     expr.visit(collector);
     return collector.getStatementPatterns().size();
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public final void computeQueryType() throws IllegalStateException
+  {
+    if (this.getValidityStatus() != 1 || !this.getToolName().equals("0")) {
+      throw new IllegalStateException();
+    }
+
+
+    ParsedQuery normalizedQuery;
+    try {
+      normalizedQuery = normalize(query);
+    } catch (MalformedQueryException | VisitorException e) {
+      logger.error("Unexpected error while normalizing " + getQueryString(), e);
+      throw new IllegalStateException();
+    }
+
+    synchronized (Main.queryTypes) {
+      Iterator<ParsedQuery> iterator = Main.queryTypes.keySet().iterator();
+      while (iterator.hasNext()) {
+        ParsedQuery next = iterator.next();
+        if (next.getTupleExpr().equals(normalizedQuery.getTupleExpr())) {
+          this.queryType = Main.queryTypes.get(next);
+          return;
+        }
+      }
+    }
+    Main.queryTypes.put(normalizedQuery, String.valueOf(Main.queryTypes.size()));
+    this.queryType = Main.queryTypes.get(normalizedQuery);
+    return;
+  }
+
+  /**
+   * @return the represented query normalized or null if the represented query was not valid
+   */
+  public final ParsedQuery getNormalizedQuery()
+  {
+    try {
+      return normalize(this.query);
+    } catch (MalformedQueryException | VisitorException e) {
+      return null;
+    }
+  }
+
+  /**
+   * Normalizes a given query by:
+   * - replacing all wikidata uris at subject and object positions with sub1, sub2 ... (obj1, obj2 ...).
+   *
+   * @param queryToNormalize the query to be normalized
+   * @return the normalized query
+   * @throws MalformedQueryException If the query was malformed (would be a bug since the input was a parsed query)
+   * @throws VisitorException        If there is an error during normalization
+   */
+  private ParsedQuery normalize(ParsedQuery queryToNormalize) throws MalformedQueryException, VisitorException
+  {
+    ParsedQuery normalizedQuery = new StandardizingSPARQLParser().parseNormalizeQuery(queryToNormalize.getSourceString(), BASE_URI);
+
+    final Map<String, Integer> strings = new HashMap<String, Integer>();
+
+    normalizedQuery.getTupleExpr().visit(new QueryModelVisitorBase<VisitorException>()
+    {
+
+      @Override
+      public void meet(StatementPattern statementPattern)
+      {
+        statementPattern.setSubjectVar(normalizeHelper(statementPattern.getSubjectVar(), strings));
+        statementPattern.setObjectVar(normalizeHelper(statementPattern.getObjectVar(), strings));
+      }
+    });
+    normalizedQuery.getTupleExpr().visit(new QueryModelVisitorBase<VisitorException>()
+    {
+
+      @Override
+      public void meet(ArbitraryLengthPath arbitraryLengthPath)
+      {
+        arbitraryLengthPath.setSubjectVar(normalizeHelper(arbitraryLengthPath.getSubjectVar(), strings));
+        arbitraryLengthPath.setObjectVar(normalizeHelper(arbitraryLengthPath.getObjectVar(), strings));
+      }
+    });
+    return normalizedQuery;
+  }
+
+  /**
+   * A helper function to find the fitting replacement value for wikidata uri normalization.
+   *
+   * @param var        The variable to be normalized
+   * @param foundNames The list of already found names
+   * @return the normalized name (if applicable)
+   */
+  private Var normalizeHelper(Var var, Map<String, Integer> foundNames)
+  {
+    if (var != null) {
+      Value value = var.getValue();
+      if (value != null) {
+        if (value.getClass().equals(URIImpl.class)) {
+          String subjectString = value.stringValue();
+          if (subjectString.startsWith("http://www.wikidata.org/")) {
+            if (!foundNames.containsKey(subjectString)) {
+              foundNames.put(subjectString, foundNames.size() + 1);
+            }
+            String uri = subjectString.substring(0, subjectString.lastIndexOf("/")) + "/QName" + foundNames.get(subjectString);
+            String name = "-const-" + uri + "-uri";
+            return new Var(name, new URIImpl(uri));
+          }
+        }
+      }
+    }
+    return var;
   }
 }
