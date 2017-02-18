@@ -23,7 +23,7 @@ public class InputHandlerTSV extends InputHandler
    * Define a static logger variable so that it references the
    * Logger instance named "InputHandler".
    */
-  private static Logger logger = Logger.getLogger(InputHandlerTSV.class);
+  private static final Logger logger = Logger.getLogger(InputHandlerTSV.class);
 
   /**
    * The reader the parse()-method should read from.
@@ -35,9 +35,8 @@ public class InputHandlerTSV extends InputHandler
    * @throws FileNotFoundException If the file does not exist,
    *                               is a directory rather than a regular file,
    *                               or for some other reason cannot be opened for reading.
-   * @throws AnalysisException     If the file cannot be found, may not be read or is damaged in some way.
    */
-  public void setInputFile(String fileToRead) throws FileNotFoundException, AnalysisException
+  public void setInputFile(String fileToRead) throws FileNotFoundException
   {
     this.inputFile = fileToRead;
     this.reader = new InputStreamReader(new FileInputStream(fileToRead));

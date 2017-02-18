@@ -67,15 +67,15 @@ public final class Main
   /**
    * Saves the encountered queryTypes.
    */
-  public static Map<ParsedQuery, String> queryTypes = Collections.synchronizedMap(new HashMap<ParsedQuery, String>());
+  public static final Map<ParsedQuery, String> queryTypes = Collections.synchronizedMap(new HashMap<ParsedQuery, String>());
   /**
    * Saves the mapping of query type and user agent to tool name and version.
    */
-  public static Map<Tuple2<String, String>, Tuple2<String, String>> queryTypeToToolMapping = new HashMap<Tuple2<String, String>, Tuple2<String, String>>();
+  public static final Map<Tuple2<String, String>, Tuple2<String, String>> queryTypeToToolMapping = new HashMap<>();
   /**
    * Define a static logger variable.
    */
-  private static Logger logger = Logger.getLogger(Main.class);
+  private static final Logger logger = Logger.getLogger(Main.class);
 
   /**
    * Since this is a utility class, it should not be instantiated.

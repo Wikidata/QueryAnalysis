@@ -9,6 +9,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -23,7 +24,7 @@ public class OutputHandlerTSV extends OutputHandler
   /**
    * Define a static logger variable.
    */
-  private static Logger logger = Logger.getLogger(OutputHandlerTSV.class);
+  private static final Logger logger = Logger.getLogger(OutputHandlerTSV.class);
 
   /**
    * the class of wich a queryHandlerObject should be created
@@ -34,10 +35,6 @@ public class OutputHandlerTSV extends OutputHandler
    * A writer created at object creation to be used in line-by-line writing.
    */
   private TsvWriter writer;
-  /**
-   * The file to write the data to.
-   */
-  private String file;
 
   /**
    * Creates the file specified in the constructor and writes the header.
@@ -50,7 +47,6 @@ public class OutputHandlerTSV extends OutputHandler
    */
   public OutputHandlerTSV(String fileToWrite, Class queryHandlerClass) throws FileNotFoundException
   {
-    this.file = fileToWrite;
     FileOutputStream outputWriter = new FileOutputStream(fileToWrite + ".tsv");
     writer = new TsvWriter(outputWriter, new TsvWriterSettings());
     for (int i = 0; i < hourly_user.length; i++) {
@@ -60,7 +56,7 @@ public class OutputHandlerTSV extends OutputHandler
 
     this.queryHandlerClass = queryHandlerClass;
 
-    List<String> header = new ArrayList<String>();
+    List<String> header = new ArrayList<>();
     header.add("#Valid");
     header.add("#StringLengthWithComments");
     header.add("#StringLengthNoComments");
@@ -117,13 +113,7 @@ public class OutputHandlerTSV extends OutputHandler
     QueryHandler queryHandler = null;
     try {
       queryHandler = (QueryHandler) queryHandlerClass.getConstructor().newInstance();
-    } catch (InstantiationException e) {
-      logger.error("Failed to create query handler object" + e);
-    } catch (IllegalAccessException e) {
-      logger.error("Failed to create query handler object" + e);
-    } catch (InvocationTargetException e) {
-      logger.error("Failed to create query handler object" + e);
-    } catch (NoSuchMethodException e) {
+    } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
       logger.error("Failed to create query handler object" + e);
     }
     queryHandler.setValidityStatus(validityStatus);
@@ -133,7 +123,7 @@ public class OutputHandlerTSV extends OutputHandler
     queryHandler.setCurrentFile(currentFile);
 
 
-    List<Object> line = new ArrayList<Object>();
+    List<Object> line = new ArrayList<>();
     line.add(queryHandler.getValidityStatus());
     line.add(queryHandler.getStringLength());
     line.add(queryHandler.getQuerySize());
@@ -144,9 +134,8 @@ public class OutputHandlerTSV extends OutputHandler
     line.add(queryHandler.getToolName());
     line.add(queryHandler.getToolVersion());
     line.add(queryHandler.getQueryType());
-    for (int i = 1; i < row.length; i++) {
-      line.add(row[i]);
-    }
+    //add existing lines
+    line.addAll(Arrays.asList(row).subList(1, row.length));
     line.add(currentFile + "_" + currentLine);
     int hour = -1;
 

@@ -31,7 +31,7 @@ public class InputHandlerParquet extends InputHandler implements Serializable
   /**
    * A map to save the index of a field name.
    */
-  private Map<String, Integer> columnNames = new HashMap<String, Integer>();
+  private final Map<String, Integer> columnNames = new HashMap<>();
   /**
    * A SparkSession for reading .parquet files and executing transformations on them.
    */
@@ -46,9 +46,8 @@ public class InputHandlerParquet extends InputHandler implements Serializable
    * @throws FileNotFoundException If the file does not exist,
    *                               is a directory rather than a regular file,
    *                               or for some other reason cannot be opened for reading.
-   * @throws AnalysisException     If the file cannot be found, may not be read or is damaged in some way.
    */
-  public void setInputFile(String fileToRead) throws FileNotFoundException, AnalysisException
+  public void setInputFile(String fileToRead) throws FileNotFoundException
   {
     this.inputFile = fileToRead;
 

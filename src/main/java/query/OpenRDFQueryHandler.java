@@ -27,11 +27,11 @@ public class OpenRDFQueryHandler extends QueryHandler
   /**
    * The base URI to resolve any possible relative URIs against.
    */
-  public static String BASE_URI = "https://query.wikidata.org/bigdata/namespace/wdq/sparql";
+  private static final String BASE_URI = "https://query.wikidata.org/bigdata/namespace/wdq/sparql";
   /**
    * Define a static logger variable.
    */
-  protected static Logger logger = Logger.getLogger(OpenRDFQueryHandler.class);
+  private static final Logger logger = Logger.getLogger(OpenRDFQueryHandler.class);
   /**
    * The query object created from query-string.
    */
@@ -100,60 +100,6 @@ public class OpenRDFQueryHandler extends QueryHandler
       //because this error is kind of an MalformedQueryException we will just throw it as one
       throw new MalformedQueryException(e.getMessage());
     }
-  }
-
-  /**
-   * The function returns the length of the query as a string
-   * without comments and formatting.
-   * <p>
-   * Unfortunately I couldn't find any OpenRDF method for removing the comments
-   * --> it needs to be done in a cumbersome manual way…
-   *
-   * @return Returns the length of the query without comments (-1 if invalid).
-   * and make sure it cannot break the query.
-   */
-  public final Integer getStringLengthNoComments()
-  {
-    if (getValidityStatus() != 1) {
-      return -1;
-    }
-    String sourceQuery = query.getSourceString();
-    String uncommented = "";
-
-    //if there is a < or a " then there can't be a comment anymore until we reach a > or another "
-    boolean canFindComments = true;
-    boolean commentFound = false;
-
-    //ignore all # that are inside <> or ""
-    for (int i = 0; i < sourceQuery.length(); i++) {
-      Character character = sourceQuery.charAt(i);
-
-      if (character == '#' && canFindComments) {
-        commentFound = true;
-      } else if (character == '\n') {
-        // in a new line everything is possible again
-        commentFound = false;
-        canFindComments = true;
-      } else if (canFindComments && (character == '<' || character == '"')) {
-        canFindComments = false;
-      } else if (character == '>' || character == '"') {
-        // now we can find comments again
-        canFindComments = true;
-      }
-
-      //finally keep only characters that are NOT inside a comment
-      if (!commentFound) {
-        uncommented = uncommented + character;
-      }
-    }
-
-    try {
-      this.parseQuery(uncommented);
-    } catch (MalformedQueryException e) {
-      getLogger().warn("Tried to remove formatting from a valid string " + "but broke it while doing so.\n" + e.getLocalizedMessage() + "\n\n" + e.getMessage());
-      return -1;
-    }
-    return uncommented.length();
   }
 
   @Override
@@ -249,9 +195,7 @@ public class OpenRDFQueryHandler extends QueryHandler
     }
 
     synchronized (Main.queryTypes) {
-      Iterator<ParsedQuery> iterator = Main.queryTypes.keySet().iterator();
-      while (iterator.hasNext()) {
-        ParsedQuery next = iterator.next();
+      for (ParsedQuery next : Main.queryTypes.keySet()) {
         if (next.getTupleExpr().equals(normalizedQuery.getTupleExpr())) {
           this.queryType = Main.queryTypes.get(next);
           return;
@@ -260,7 +204,6 @@ public class OpenRDFQueryHandler extends QueryHandler
     }
     Main.queryTypes.put(normalizedQuery, String.valueOf(Main.queryTypes.size()));
     this.queryType = Main.queryTypes.get(normalizedQuery);
-    return;
   }
 
   /**
@@ -288,7 +231,7 @@ public class OpenRDFQueryHandler extends QueryHandler
   {
     ParsedQuery normalizedQuery = new StandardizingSPARQLParser().parseNormalizeQuery(queryToNormalize.getSourceString(), BASE_URI);
 
-    final Map<String, Integer> strings = new HashMap<String, Integer>();
+    final Map<String, Integer> strings = new HashMap<>();
 
     normalizedQuery.getTupleExpr().visit(new QueryModelVisitorBase<VisitorException>()
     {

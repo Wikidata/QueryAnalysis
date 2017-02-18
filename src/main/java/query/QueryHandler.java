@@ -16,7 +16,7 @@ public abstract class QueryHandler
   /**
    * Define a static logger variable.
    */
-  protected static Logger logger = Logger.getLogger(QueryHandler.class);
+  private static final Logger logger = Logger.getLogger(QueryHandler.class);
 
   /**
    * A pattern of a SPARQL query where all "parameter" information is removed from
@@ -106,7 +106,7 @@ public abstract class QueryHandler
   /**
    * Update the handler to represent the string in queryString.
    */
-  public abstract void update();
+  protected abstract void update();
 
   /**
    * @return The logger to write messages to.
@@ -155,7 +155,7 @@ public abstract class QueryHandler
    * @param queryWithoutPrefixes the query the missing prefixes should be added to
    * @return the query with all standard prefixes
    */
-  public final String addMissingPrefixesToQuery(String queryWithoutPrefixes)
+  private String addMissingPrefixesToQuery(String queryWithoutPrefixes)
   {
     this.lengthNoAddedPrefixes = queryWithoutPrefixes.length();
     String toBeAddedPrefixes = "";
@@ -234,14 +234,6 @@ public abstract class QueryHandler
   }
 
   /**
-   * The function returns the length of the query as a string
-   * without comments and formatting.
-   *
-   * @return Returns the length of the query without comments (-1 if invalid).
-   */
-  public abstract Integer getStringLengthNoComments();
-
-  /**
    * @return Returns the number of variables in the query head.
    */
   public abstract Integer getVariableCountHead();
@@ -263,7 +255,7 @@ public abstract class QueryHandler
    *
    * @throws IllegalStateException
    */
-  public abstract void computeQueryType() throws IllegalStateException;
+  protected abstract void computeQueryType() throws IllegalStateException;
 
 
   /**
@@ -361,7 +353,7 @@ public abstract class QueryHandler
       return;
     }
 
-    Tuple2<String, String> key = new Tuple2<String, String>(this.getQueryType(), this.getUserAgent());
+    Tuple2<String, String> key = new Tuple2<>(this.getQueryType(), this.getUserAgent());
     if (Main.queryTypeToToolMapping.containsKey(key)) {
       Tuple2<String, String> value = Main.queryTypeToToolMapping.get(key);
       this.toolName = value._1;
@@ -395,7 +387,7 @@ public abstract class QueryHandler
   /**
    * @return The user agent that posed this query.
    */
-  public final String getUserAgent()
+  private String getUserAgent()
   {
     return userAgent;
   }
