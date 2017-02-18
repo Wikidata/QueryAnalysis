@@ -1,6 +1,7 @@
 package query;
 
 import general.Main;
+import org.apache.log4j.Logger;
 import org.openrdf.model.Value;
 import org.openrdf.model.impl.URIImpl;
 import org.openrdf.query.MalformedQueryException;
@@ -31,6 +32,10 @@ public class OpenRDFQueryHandler extends QueryHandler
    * The base URI to resolve any possible relative URIs against.
    */
   public static String BASE_URI = "https://query.wikidata.org/bigdata/namespace/wdq/sparql";
+  /**
+   * Define a static logger variable.
+   */
+  protected static Logger logger = Logger.getLogger(OpenRDFQueryHandler.class);
   /**
    * The query object created from query-string.
    */
@@ -155,6 +160,25 @@ public class OpenRDFQueryHandler extends QueryHandler
     return uncommented.length();
   }
 
+  @Override
+  public Integer getQuerySize()
+  {
+    if (getValidityStatus() != 1) {
+      return -1;
+    }
+
+    OpenRDFQuerySizeCalculatorVisitor openRDFQueryLengthVisitor = new OpenRDFQuerySizeCalculatorVisitor();
+
+    logger.info("ast tree: \n" + this.query.getTupleExpr());
+
+    try {
+      this.query.getTupleExpr().visit(openRDFQueryLengthVisitor);
+    } catch (Exception e) {
+      logger.error("An unknown error occured while calculating the query size: ", e);
+    }
+
+    return openRDFQueryLengthVisitor.getSize();
+  }
 
   /**
    * @return Returns the number of variables in the query pattern.

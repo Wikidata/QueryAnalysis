@@ -173,4 +173,20 @@ public class SparqlQueryMetricsTest
         "CountTriplesWithService").toString());
     assertEquals(expectedInteger, queryHandler.getTripleCountWithService());
   }
+
+
+  /**
+   * Tests if the CountTriples-metric returns the correct
+   * number of triples.
+   */
+  @Test
+  public final void querySize()
+  {
+    OpenRDFQueryHandler queryHandler = new OpenRDFQueryHandler();
+    queryHandler.setQueryString(query);
+
+    Integer expectedInteger = Integer.parseInt(expected.get(
+        "QuerySize").toString());
+    assertEquals(expectedInteger, queryHandler.getQuerySize());
+  }
 }

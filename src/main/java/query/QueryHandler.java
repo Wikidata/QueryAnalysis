@@ -314,10 +314,18 @@ public abstract class QueryHandler
     this.currentFile = currentFile;
   }
 
-  public final int getLengthNoAddedPrefixes()
+  /**
+   * @return the length of the query without the added prefixes
+   */
+  public int getLengthNoAddedPrefixes()
   {
     return lengthNoAddedPrefixes;
   }
+
+  /**
+   * @return kind of the complexity of the SPARQL query
+   */
+  public abstract Integer getQuerySize();
 
   /**
    * Sets the toolName and version.
