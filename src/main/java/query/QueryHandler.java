@@ -123,14 +123,6 @@ public abstract class QueryHandler
   {
     return queryString;
   }
-  
-  /**
-   * @return Returns the original query-string represented by this handler.
-   */
-  public final String getQueryStringWithoutPrefixes()
-  {
-    return queryStringWithoutPrefixes;
-  }
 
   /**
    * @param queryStringToSet query to set the variable queryString to
@@ -144,6 +136,14 @@ public abstract class QueryHandler
       this.queryString = this.addMissingPrefixesToQuery(queryStringToSet);
       update();
     }
+  }
+
+  /**
+   * @return Returns the original query-string represented by this handler.
+   */
+  public final String getQueryStringWithoutPrefixes()
+  {
+    return queryStringWithoutPrefixes;
   }
 
   /**
@@ -349,14 +349,14 @@ public abstract class QueryHandler
     // and that it start with #TOOL: or #Tool: or #tool: and that the tool name is then
     // everything until the end of that line
     int toolIndex = this.queryStringWithoutPrefixes.indexOf("#TOOL:");
-    if(toolIndex == -1){
+    if (toolIndex == -1) {
       toolIndex = this.queryStringWithoutPrefixes.indexOf("#Tool:");
     }
-    if(toolIndex == -1){
+    if (toolIndex == -1) {
       toolIndex = this.queryStringWithoutPrefixes.indexOf("#tool:");
     }
     if (toolIndex != -1) {
-      this.toolName = this.queryStringWithoutPrefixes.substring(toolIndex + 6, this.queryStringWithoutPrefixes.indexOf("\n", toolIndex+6));
+      this.toolName = this.queryStringWithoutPrefixes.substring(toolIndex + 6, this.queryStringWithoutPrefixes.indexOf("\n", toolIndex + 6));
       this.toolVersion = "0.1";
       return;
     }

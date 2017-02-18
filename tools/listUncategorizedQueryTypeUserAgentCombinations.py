@@ -5,7 +5,6 @@ import csv
 import linecache
 import os
 import urlparse
-from pprint import pprint
 
 COMBINATIONS_LIMIT = 10
 

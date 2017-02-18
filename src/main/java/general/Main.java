@@ -195,7 +195,7 @@ public final class Main
   private static void loadPreBuildQueryTypes()
   {
     try (DirectoryStream<Path> directoryStream =
-        Files.newDirectoryStream(Paths.get("preBuildQueryTypeFiles"))) {
+             Files.newDirectoryStream(Paths.get("preBuildQueryTypeFiles"))) {
       for (Path filePath : directoryStream) {
         if (Files.isRegularFile(filePath)) {
           if (filePath.toString().endsWith(".preBuildQueryType")) {
