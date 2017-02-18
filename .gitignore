@@ -43,7 +43,11 @@ fabric.properties
 *.tsv
 test/
 
+#but allow preBuildQueryConfig
+!toolMapping.tsv
+
 #error logs
 /logs/
 /logsExperimental/
 /inputData/
+

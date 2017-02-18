@@ -1,0 +1,21 @@
+PREFIX wd: <http://www.wikidata.org/entity/>
+PREFIX wdt: <http://www.wikidata.org/prop/direct/>
+PREFIX wikibase: <http://wikiba.se/ontology#>
+PREFIX p: <http://www.wikidata.org/prop/>
+PREFIX ps: <http://www.wikidata.org/prop/statement/>
+PREFIX pq: <http://www.wikidata.org/prop/qualifier/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX bd: <http://www.bigdata.com/rdf#>
+PREFIX pr: <http://www.wikidata.org/prop/reference/>
+PREFIX prov: <http://www.w3.org/ns/prov#>
+
+SELECT ?item ?taxonName ?taxonRank ?parentName ?parentRank ?higherParent WHERE {
+  BIND("Nocardioides sp. 11683779" AS ?taxonName) .
+  BIND(wd:Q7432 AS ?taxonRank) .
+  BIND(wd:Q10876 AS ?higherParent) .
+  ?item wdt:P225 ?taxonName .
+  ?item wdt:P105 ?taxonRank .
+  ?item wdt:P171/wdt:P225 ?parentName .
+  ?item wdt:P171/wdt:P105 ?parentRank .
+  ?item (wdt:P171)* ?higherParent .
+}

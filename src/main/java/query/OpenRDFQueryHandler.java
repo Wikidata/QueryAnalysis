@@ -11,6 +11,13 @@ import org.openrdf.query.algebra.Var;
 import org.openrdf.query.algebra.helpers.QueryModelVisitorBase;
 import org.openrdf.query.algebra.helpers.StatementPatternCollector;
 import org.openrdf.query.parser.ParsedQuery;
+import org.openrdf.query.parser.sparql.BaseDeclProcessor;
+import org.openrdf.query.parser.sparql.PrefixDeclProcessor;
+import org.openrdf.query.parser.sparql.StringEscapesProcessor;
+import org.openrdf.query.parser.sparql.ast.ASTQueryContainer;
+import org.openrdf.query.parser.sparql.ast.ParseException;
+import org.openrdf.query.parser.sparql.ast.SyntaxTreeBuilder;
+import org.openrdf.query.parser.sparql.ast.TokenMgrError;
 import org.openrdf.query.parser.sparql.ast.VisitorException;
 
 import java.util.*;
@@ -314,5 +321,25 @@ public class OpenRDFQueryHandler extends QueryHandler
       }
     }
     return var;
+  }
+
+  /**
+   * @return The prefixed defined in the original query represented by this handler.
+   */
+  private Map<String, String> getOriginalPrefixes()
+  {
+    if (this.getValidityStatus() == -1) {
+      return null;
+    }
+    try {
+      ASTQueryContainer qc = SyntaxTreeBuilder.parseQuery(this.getQueryStringWithoutPrefixes());
+      StringEscapesProcessor.process(qc);
+      BaseDeclProcessor.process(qc, BASE_URI);
+      return PrefixDeclProcessor.process(qc);
+    }
+    catch (TokenMgrError | ParseException | MalformedQueryException e) {
+      logger.error("Unexpected error finding prefixes in query " + this.getQueryStringWithoutPrefixes(), e);
+      return null;
+    }
   }
 }

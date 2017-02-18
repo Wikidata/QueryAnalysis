@@ -123,6 +123,14 @@ public abstract class QueryHandler
   {
     return queryString;
   }
+  
+  /**
+   * @return Returns the original query-string represented by this handler.
+   */
+  public final String getQueryStringWithoutPrefixes()
+  {
+    return queryStringWithoutPrefixes;
+  }
 
   /**
    * @param queryStringToSet query to set the variable queryString to
@@ -328,19 +336,22 @@ public abstract class QueryHandler
 
     //first check if there is a toolComment, if so we don't need to use
     // queryTypes and userAgents
-    //assuming that if there is a tool comment at all, it is the first comment
-    // in the query and that it start with a #TOOL: and that the tool name is then
+    //assuming that if there is a tool comment at all, it is before the query,
+    // but can be after the namespace the first comment
+    // and that it start with #TOOL: or #Tool: or #tool: and that the tool name is then
     // everything until the end of that line
-    if (this.queryStringWithoutPrefixes.startsWith("#TOOL:")) {
-      this.toolName = this.queryStringWithoutPrefixes.substring(6, this.queryStringWithoutPrefixes.indexOf("\n"));
+    int toolIndex = this.queryStringWithoutPrefixes.indexOf("#TOOL:");
+    if(toolIndex == -1){
+      toolIndex = this.queryStringWithoutPrefixes.indexOf("#Tool:");
+    }
+    if(toolIndex == -1){
+      toolIndex = this.queryStringWithoutPrefixes.indexOf("#tool:");
+    }
+    if (toolIndex != -1) {
+      this.toolName = this.queryStringWithoutPrefixes.substring(toolIndex + 6, this.queryStringWithoutPrefixes.indexOf("\n", toolIndex+6));
       this.toolVersion = "0.1";
       return;
     }
-
-    //could be defined somewhere else
-    //Example usage
-    //queryTypeToToolMapping.put(new Tuple2<>(8, "Ruby"), new Tuple2<>("auxiliary_matcher", "1.5"));
-    //queryTypeToToolMapping.put(new Tuple2<>(561, "Python"), new Tuple2<>("thorough_name_match", "3.5.2.1"));
 
     Tuple2<String, String> key = new Tuple2<String, String>(this.getQueryType(), this.getUserAgent());
     if (Main.queryTypeToToolMapping.containsKey(key)) {
