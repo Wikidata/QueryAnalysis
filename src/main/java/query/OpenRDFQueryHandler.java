@@ -184,8 +184,6 @@ public class OpenRDFQueryHandler extends QueryHandler
     if (this.getValidityStatus() != 1) {
       throw new IllegalStateException();
     }
-
-
     ParsedQuery normalizedQuery;
     try {
       normalizedQuery = normalize(query);
@@ -211,6 +209,9 @@ public class OpenRDFQueryHandler extends QueryHandler
    */
   public final ParsedQuery getNormalizedQuery()
   {
+    if (this.getValidityStatus() != 1) {
+      throw new IllegalStateException();
+    }
     try {
       return normalize(this.query);
     } catch (MalformedQueryException | VisitorException e) {
