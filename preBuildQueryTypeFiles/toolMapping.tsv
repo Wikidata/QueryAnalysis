@@ -27,6 +27,7 @@ thisAllMovieMovieID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:50.0) Gecko/20100
 instanceOfThis	sparqlwrapper 1.8.0 (rdflib.github.io/sparqlwrapper)	toolUsingSparqlwrapperPython	1.8.0	needs more data
 bot2	Magnus labs tools	bot2	0.1?	some queries from bot2 contain a toolComment, some not
 bot22	Magnus labs tools	bot22	0.1?	some queries from bot2 contain a toolComment, some not
+bot222	Magnus labs tools	bot222	0.1?	some queries from bot2 contain a toolComment, some not
 toolCheckingInstanceOfUsingJena	Apache-Jena-ARQ/3.0.1	toolCheckingInstanceOfUsingJena	3.0.1	not sure who is creating these queries
 toolLookingForTransfermarktDOTcomDatabaseIdForAllFootballPlayers	Java/1.7.0_79	footballExplorer	1.7.0_79	not sure who is creating these queries
 toolLookingForTransfermarktDOTcomDatabaseIdForAllFootballPlayers	Java/1.7.0_121	footballExplorer	1.7.0_121	not sure who is creating these queries
@@ -49,9 +50,29 @@ toolLookingForFootballPlayerDeaths	Java/1.7.0_121	footballExplorer	1.7.0_121	not
 toolLookingForFootballPlayerDeaths	Java/1.7.0_80	footballExplorer	1.7.0_80	not sure who is creating these queries, but could be the same as the transfermarkt.com queries
 toolLookingForFootballPlayerDeaths	Java/1.7.0_79	footballExplorer	1.7.0_79	not sure who is creating these queries, but could be the same as the transfermarkt.com queries
 taxonomyInformations	-	taxonomyInformations	?	propbably https://www.wikidata.org/wiki/User:Succu?
+taxonomyInformations2	-	taxonomyInformations	?	propbably https://www.wikidata.org/wiki/User:Succu?
 findWikidataId	Java/1.7.0_121	footballExplorer	1.7.0_121	not sure who is creating these queries, but could be the same as the transfermarkt.com queries
 findWikidataId	Java/1.7.0_80	footballExplorer	1.7.0_80	not sure who is creating these queries, but could be the same as the transfermarkt.com queries
 findWikidataId	Java/1.7.0_79	footballExplorer	1.7.0_79	not sure who is creating these queries, but could be the same as the transfermarkt.com queries
 doesFootballerHasAEnglishWikipediaArticle	Java/1.7.0_121	footballExplorer	1.7.0_121	not sure who is creating these queries, but could be the same as the transfermarkt.com queries
 doesFootballerHasAEnglishWikipediaArticle	Java/1.7.0_80	footballExplorer	1.7.0_80	not sure who is creating these queries, but could be the same as the transfermarkt.com queries
 doesFootballerHasAEnglishWikipediaArticle	Java/1.7.0_79	footballExplorer	2.7.0_79	not sure who is creating these queries, but could be the same as the transfermarkt.com queries
+toolLookingForFootballPlayerBirths	Java/1.7.0_121	footballExplorer	1.7.0_121	not sure who is creating these queries, but could be the same as the transfermarkt.com queries
+toolLookingForFootballPlayerBirths	Java/1.7.0_80	footballExplorer	1.7.0_80	not sure who is creating these queries, but could be the same as the transfermarkt.com queries
+toolLookingForFootballPlayerBirths	Java/1.7.0_79	footballExplorer	2.7.0_79	not sure who is creating these queries, but could be the same as the transfermarkt.com queries
+toolLookingForFootballPlayerGender	Java/1.7.0_121	footballExplorer	1.7.0_121	not sure who is creating these queries, but could be the same as the transfermarkt.com queries
+toolLookingForFootballPlayerGender	Java/1.7.0_80	footballExplorer	1.7.0_80	not sure who is creating these queries, but could be the same as the transfermarkt.com queries
+toolLookingForFootballPlayerGender	Java/1.7.0_79	footballExplorer	2.7.0_79	not sure who is creating these queries, but could be the same as the transfermarkt.com queries
+toolLookingForWikidataIdBasedOnTwitterUsername	python-requests/2.11.1	toolLookingForWikidataIdBasedOnTwitterUsername	2.11.1	it is probably NOT this one, even though it looks similar: https://github.com/fnielsen/scholia/blob/5094353127cd929585fab6b2cf1b0047353d9162/scholia/query.py#L223-L224
+toolLookingForWikidataIdBasedOnTwitterUsername	python-requests/2.12.3	toolLookingForWikidataIdBasedOnTwitterUsername	2.12.3	it is probably NOT this one, even though it looks similar: https://github.com/fnielsen/scholia/blob/5094353127cd929585fab6b2cf1b0047353d9162/scholia/query.py#L223-L224
+toolLookingForEnglishNameOfHistoricalPerson	Apache-Jena-ARQ/3.1.1	toolLookingForEnglishNameOfHistoricalPerson	3.1.1	not sure who is creating these queries
+toolLookingForEnglishNameOfHistoricalPerson	Apache-Jena-ARQ/3.0.1	toolLookingForEnglishNameOfHistoricalPerson	3.0.1	not sure who is creating these queries
+toolLookingForGeoInformation	Java/1.8.0_45	toolLookingForGeoInformation	1.8.0_45	170.000 queries in total, but only 200 distinct ones!
+toolLookingForGeoInformation	Java/1.8.0_111	toolLookingForGeoInformation	1.8.0_111	170.000 queries in total, but only 200 distinct ones!
+toolLookingForGeoInformation2	Java/1.8.0_45	toolLookingForGeoInformation	1.8.0_45	170.000 queries in total, but only 5 distinct ones!
+toolLookingForGeoInformation2	Java/1.8.0_111	toolLookingForGeoInformation	1.8.0_111	170.000 queries in total, but only 5 distinct ones!
+toolLookingForGeoInformationClasses	Java/1.8.0_45	toolLookingForGeoInformation	1.8.0_45	170.000 queries in total, but only 5 distinct ones!
+toolLookingForGeoInformationClasses	Java/1.8.0_111	toolLookingForGeoInformation	1.8.0_111	170.000 queries in total, but only 5 distinct ones!
+toolLookingForFottballPlayerEnglishWikipediaPage	Java/1.7.0_121	footballExplorer	1.7.0_121	not sure who is creating these queries, but could be the same as the transfermarkt.com queries
+toolLookingForFottballPlayerEnglishWikipediaPage	Java/1.7.0_80	footballExplorer	1.7.0_80	not sure who is creating these queries, but could be the same as the transfermarkt.com queries
+toolLookingForFottballPlayerEnglishWikipediaPage	Java/1.7.0_79	footballExplorer	2.7.0_79	not sure who is creating these queries, but could be the same as the transfermarkt.com queries
