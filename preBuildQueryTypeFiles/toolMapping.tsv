@@ -28,16 +28,16 @@ instanceOfThis	sparqlwrapper 1.8.0 (rdflib.github.io/sparqlwrapper)	toolUsingSpa
 bot2	Magnus labs tools	bot2	0.1?	some queries from bot2 contain a toolComment, some not
 bot22	Magnus labs tools	bot22	0.1?	some queries from bot2 contain a toolComment, some not
 toolCheckingInstanceOfUsingJena	Apache-Jena-ARQ/3.0.1	toolCheckingInstanceOfUsingJena	3.0.1	not sure who is creating these queries
-toolLookingForTransfermarktDOTcomDatabaseIdForAllFootballPlayers	Java/1.7.0_79	toolLookingForTransfermarktDOTcomDatabaseIdForAllFootballPlayers	1.7.0_79	not sure who is creating these queries
-toolLookingForTransfermarktDOTcomDatabaseIdForAllFootballPlayers	Java/1.7.0_121	toolLookingForTransfermarktDOTcomDatabaseIdForAllFootballPlayers	1.7.0_121	not sure who is creating these queries
-toolLookingForTransfermarktDOTcomDatabaseIdForAllFootballPlayers	Java/1.7.0_80	toolLookingForTransfermarktDOTcomDatabaseIdForAllFootballPlayers	1.7.0_80	not sure who is creating these queries
+toolLookingForTransfermarktDOTcomDatabaseIdForAllFootballPlayers	Java/1.7.0_79	footballExplorer	1.7.0_79	not sure who is creating these queries
+toolLookingForTransfermarktDOTcomDatabaseIdForAllFootballPlayers	Java/1.7.0_121	footballExplorer	1.7.0_121	not sure who is creating these queries
+toolLookingForTransfermarktDOTcomDatabaseIdForAllFootballPlayers	Java/1.7.0_80	footballExplorer	1.7.0_80	not sure who is creating these queries
 toolCheckingInstanceOfInEnglishUsingScalaj-http	scalaj-http/1.0	toolCheckingInstanceOfInEnglishUsingScalaj-http	1	not sure who is creating these queries
-toolListingAllClubsAndTheRespectiveYearsAFootballPlayerWasInATeam	Java/1.7.0_79	toolListingAllClubsAndTheRespectiveYearsAFootballPlayerWasInATeam	1.7.0_79	not sure who is creating these queries, but could be the same as the transfermarkt.com queries
-toolListingAllClubsAndTheRespectiveYearsAFootballPlayerWasInATeam	Java/1.7.0_121	toolListingAllClubsAndTheRespectiveYearsAFootballPlayerWasInATeam	1.7.0_121	not sure who is creating these queries, but could be the same as the transfermarkt.com queries
-toolListingAllClubsAndTheRespectiveYearsAFootballPlayerWasInATeam	Java/1.7.0_80	toolListingAllClubsAndTheRespectiveYearsAFootballPlayerWasInATeam	1.7.0_80	not sure who is creating these queries, but could be the same as the transfermarkt.com queries
-toolLookingForNNDBIdForAllFootballPlayers	Java/1.7.0_121	toolLookingForNNDBIdForAllFootballPlayers	1.7.0_121	not sure who is creating these queries, but could be the same as the transfermarkt.com queries
-toolLookingForNNDBIdForAllFootballPlayers	Java/1.7.0_79	toolLookingForNNDBIdForAllFootballPlayers	1.7.0_79	not sure who is creating these queries, but could be the same as the transfermarkt.com queries
-toolLookingForNNDBIdForAllFootballPlayers	Java/1.7.0_80	toolLookingForNNDBIdForAllFootballPlayers	1.7.0_80	not sure who is creating these queries, but could be the same as the transfermarkt.com queries
+toolListingAllClubsAndTheRespectiveYearsAFootballPlayerWasInATeam	Java/1.7.0_79	footballExplorer	1.7.0_79	not sure who is creating these queries, but could be the same as the transfermarkt.com queries
+toolListingAllClubsAndTheRespectiveYearsAFootballPlayerWasInATeam	Java/1.7.0_121	footballExplorer	1.7.0_121	not sure who is creating these queries, but could be the same as the transfermarkt.com queries
+toolListingAllClubsAndTheRespectiveYearsAFootballPlayerWasInATeam	Java/1.7.0_80	footballExplorer	1.7.0_80	not sure who is creating these queries, but could be the same as the transfermarkt.com queries
+toolLookingForNNDBIdForAllFootballPlayers	Java/1.7.0_121	footballExplorer	1.7.0_121	not sure who is creating these queries, but could be the same as the transfermarkt.com queries
+toolLookingForNNDBIdForAllFootballPlayers	Java/1.7.0_79	footballExplorer	1.7.0_79	not sure who is creating these queries, but could be the same as the transfermarkt.com queries
+toolLookingForNNDBIdForAllFootballPlayers	Java/1.7.0_80	footballExplorer	1.7.0_80	not sure who is creating these queries, but could be the same as the transfermarkt.com queries
 thisWikiLovesMonumentsID	sparqlwrapper 1.8.0 (rdflib.github.io/sparqlwrapper)	toolUsingSparqlwrapperPythonForWikiLovesMonumentsID	1.8.0	needs more data
 prevAndNextFilmInSeries	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:11.0) Gecko/20100101 Firefox/11.0	toolSearchingForPrevAndNexrFilm	-1	needs more data
 thisTaxonRankParentTaxon	Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36	toolSearchingForTaxonsOfParentTaxon	-1	needs more data
@@ -45,13 +45,13 @@ entityAllPropertiesAndObjects	sparqlwrapper 1.7.6 (rdflib.github.io/sparqlwrappe
 thisDerivedFromStatedInPaper	Mozilla/5.0 (Windows; U; WindowsNT 5.1; en-US; rv1.8.1.6) Gecko/20070725 Firefox/2.0.0.6	toolSearchingForRelationToPaperStatements	-1	needs more data
 geneAndInformationWithConstraints	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.98 Safari/537.36	toolExtractingGeneWithInformationUnderConstraints	-1	needs more data
 geneAndInformationWithConstraints	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.95 Safari/537.36	toolExtractingGeneWithInformationUnderConstraints	-1	needs more data
-toolLookingForFootballPlayerDeaths	Java/1.7.0_121	toolLookingForFootballPlayerDeaths	1.7.0_121	not sure who is creating these queries, but could be the same as the transfermarkt.com queries
-toolLookingForFootballPlayerDeaths	Java/1.7.0_80	toolLookingForFootballPlayerDeaths	1.7.0_80	not sure who is creating these queries, but could be the same as the transfermarkt.com queries
-toolLookingForFootballPlayerDeaths	Java/1.7.0_79	toolLookingForFootballPlayerDeaths	1.7.0_79	not sure who is creating these queries, but could be the same as the transfermarkt.com queries
+toolLookingForFootballPlayerDeaths	Java/1.7.0_121	footballExplorer	1.7.0_121	not sure who is creating these queries, but could be the same as the transfermarkt.com queries
+toolLookingForFootballPlayerDeaths	Java/1.7.0_80	footballExplorer	1.7.0_80	not sure who is creating these queries, but could be the same as the transfermarkt.com queries
+toolLookingForFootballPlayerDeaths	Java/1.7.0_79	footballExplorer	1.7.0_79	not sure who is creating these queries, but could be the same as the transfermarkt.com queries
 taxonomyInformations	-	taxonomyInformations	?	propbably https://www.wikidata.org/wiki/User:Succu?
-findWikidataId	Java/1.7.0_121	findWikidataId	1.7.0_121	not sure who is creating these queries, but could be the same as the transfermarkt.com queries
-findWikidataId	Java/1.7.0_80	findWikidataId	1.7.0_80	not sure who is creating these queries, but could be the same as the transfermarkt.com queries
-findWikidataId	Java/1.7.0_79	findWikidataId	1.7.0_79	not sure who is creating these queries, but could be the same as the transfermarkt.com queries
-doesFootballerHasAEnglishWikipediaArticle	Java/1.7.0_121	doesFootballerHasAEnglishWikipediaArticle	1.7.0_121	not sure who is creating these queries, but could be the same as the transfermarkt.com queries
-doesFootballerHasAEnglishWikipediaArticle	Java/1.7.0_80	doesFootballerHasAEnglishWikipediaArticle	1.7.0_80	not sure who is creating these queries, but could be the same as the transfermarkt.com queries
-doesFootballerHasAEnglishWikipediaArticle	Java/1.7.0_79	doesFootballerHasAEnglishWikipediaArticle	2.7.0_79	not sure who is creating these queries, but could be the same as the transfermarkt.com queries
+findWikidataId	Java/1.7.0_121	footballExplorer	1.7.0_121	not sure who is creating these queries, but could be the same as the transfermarkt.com queries
+findWikidataId	Java/1.7.0_80	footballExplorer	1.7.0_80	not sure who is creating these queries, but could be the same as the transfermarkt.com queries
+findWikidataId	Java/1.7.0_79	footballExplorer	1.7.0_79	not sure who is creating these queries, but could be the same as the transfermarkt.com queries
+doesFootballerHasAEnglishWikipediaArticle	Java/1.7.0_121	footballExplorer	1.7.0_121	not sure who is creating these queries, but could be the same as the transfermarkt.com queries
+doesFootballerHasAEnglishWikipediaArticle	Java/1.7.0_80	footballExplorer	1.7.0_80	not sure who is creating these queries, but could be the same as the transfermarkt.com queries
+doesFootballerHasAEnglishWikipediaArticle	Java/1.7.0_79	footballExplorer	2.7.0_79	not sure who is creating these queries, but could be the same as the transfermarkt.com queries
