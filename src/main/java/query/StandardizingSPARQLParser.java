@@ -157,7 +157,7 @@ public class StandardizingSPARQLParser extends SPARQLParser
   }
 
   /**
-   * @param qc The query container to be parsed
+   * @param qc      The query container to be parsed
    * @param baseURI The base URI to resolve any possible relative URIs against
    * @return The parsed query
    * @throws MalformedQueryException If the query was in any way malformed
@@ -213,18 +213,16 @@ public class StandardizingSPARQLParser extends SPARQLParser
       ASTQueryContainer qc = SyntaxTreeBuilder.parseQuery(queryString);
       debug(qc);
       return parseQuery(qc, baseURI);
-    }
-    catch (TokenMgrError e) {
+    } catch (TokenMgrError e) {
       throw new MalformedQueryException(e.getMessage(), e);
-    }
-    catch (ParseException e) {
+    } catch (ParseException e) {
       throw new MalformedQueryException(e.getMessage(), e);
     }
   }
 
   /**
    * @param queryString The query to be parsed normalized
-   * @param baseURI The The base URI to resolve any possible relative URIs against
+   * @param baseURI     The The base URI to resolve any possible relative URIs against
    * @return The parsed and partially normalized query
    * @throws MalformedQueryException If the query was in any way malformed
    */
@@ -236,11 +234,9 @@ public class StandardizingSPARQLParser extends SPARQLParser
       debug(qc);
       normalize(qc);
       return parseQuery(qc, baseURI);
-    }
-    catch (TokenMgrError e) {
+    } catch (TokenMgrError e) {
       throw new MalformedQueryException(e.getMessage(), e);
-    }
-    catch (ParseException e) {
+    } catch (ParseException e) {
       throw new MalformedQueryException(e.getMessage(), e);
     }
   }

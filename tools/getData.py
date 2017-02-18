@@ -1,10 +1,8 @@
-import glob
-import pprint
 import csv
 import os
 from collections import defaultdict
+
 from dateutil import parser
-from pprint import pprint
 
 outputDirectory = "dayTriple/"
 
@@ -25,8 +23,8 @@ data["spider"] = dict()
 
 day = False
 
-#metricName = "tripleCount"
-#metricRow = 5
+# metricName = "tripleCount"
+# metricRow = 5
 
 
 metricName = "stringLengthNoComments"

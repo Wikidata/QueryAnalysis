@@ -76,6 +76,7 @@ public class OutputHandlerTSV extends OutputHandler
     header.add("#ts");
     header.add("#agent_type");
     header.add("#hour");
+    header.add("#httpStatusCode");
     header.add("#original_line(filename_line)");
     writer.writeHeaders(header);
   }

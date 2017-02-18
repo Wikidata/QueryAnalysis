@@ -1,9 +1,11 @@
 import csv
+
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 
+
 def plotHist(X, Y, title):
-    plt.figure(figsize=(10,6))
+    plt.figure(figsize=(10, 6))
     plt.subplot(111)
     plt.grid(True)
 
@@ -23,7 +25,8 @@ def plotHist(X, Y, title):
     plt.savefig('tripleCount/figures/' + title + ".png", dpi=100)
     plt.close()
 
-for j in xrange(1,3):
+
+for j in xrange(1, 3):
     files = []
     for i in xrange(1, 31):
         if j == 1:
