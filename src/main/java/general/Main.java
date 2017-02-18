@@ -73,6 +73,10 @@ public final class Main
    */
   public static final Map<Tuple2<String, String>, Tuple2<String, String>> queryTypeToToolMapping = new HashMap<>();
   /**
+   * Saves if metrics should be calculated for bot queries.
+   */
+  public static boolean withBots = false;
+  /**
    * Define a static logger variable.
    */
   private static final Logger logger = Logger.getLogger(Main.class);
@@ -101,6 +105,7 @@ public final class Main
     options.addOption("t", "tsv", false, "reads from .tsv-files");
     options.addOption("p", "parquet", false, "read from .parquet-files");
     options.addOption("n", "numberOfThreads", true, "number of used threads, default 1");
+    options.addOption("b", "withBots", false, "enables metric calculation for bot queries+");
 
     //some parameters which can be changed through parameters
     //QueryHandler queryHandler = new OpenRDFQueryHandler();
@@ -149,6 +154,9 @@ public final class Main
       }
       if (cmd.hasOption("numberOfThreads")) {
         numberOfThreads = Integer.parseInt(cmd.getOptionValue("numberOfThreads"));
+      }
+      if (cmd.hasOption("withBots")) {
+        withBots = true;
       }
     } catch (UnrecognizedOptionException e) {
       System.out.println("Unrecognized commandline option: " + e.getOption());

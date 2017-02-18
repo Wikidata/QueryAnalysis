@@ -2,6 +2,9 @@ package output;
 
 import com.univocity.parsers.tsv.TsvWriter;
 import com.univocity.parsers.tsv.TsvWriterSettings;
+
+import general.Main;
+
 import org.apache.log4j.Logger;
 import query.QueryHandler;
 
@@ -58,14 +61,14 @@ public class OutputHandlerTSV extends OutputHandler
 
     List<String> header = new ArrayList<>();
     header.add("#Valid");
+    header.add("#ToolName");
+    header.add("#ToolVersion");
     header.add("#StringLengthWithComments");
     header.add("#StringLengthNoComments");
     header.add("#VariableCountHead");
     header.add("#VariableCountPattern");
     header.add("#TripleCountWithService");
     header.add("#TripleCountNoService");
-    header.add("#ToolName");
-    header.add("#ToolVersion");
     header.add("#QueryType");
     header.add("#uri_path");
     header.add("#user_agent");
@@ -125,35 +128,25 @@ public class OutputHandlerTSV extends OutputHandler
 
     List<Object> line = new ArrayList<>();
     line.add(queryHandler.getValidityStatus());
-    line.add(queryHandler.getStringLength());
-    line.add(queryHandler.getQuerySize());
-    line.add(queryHandler.getVariableCountHead());
-    line.add(queryHandler.getVariableCountPattern());
-    line.add(queryHandler.getTripleCountWithService());
-    line.add(-1);
     line.add(queryHandler.getToolName());
     line.add(queryHandler.getToolVersion());
-    line.add(queryHandler.getQueryType());
+    if (Main.withBots || queryHandler.getToolName().equals("0")) {
+      line.add(queryHandler.getStringLength());
+      line.add(queryHandler.getQuerySize());
+      line.add(queryHandler.getVariableCountHead());
+      line.add(queryHandler.getVariableCountPattern());
+      line.add(queryHandler.getTripleCountWithService());
+      line.add(-1);
+      line.add(queryHandler.getQueryType());
+    } else {
+      for (int i = 0; i < 7; i++) {
+        line.add(-1);
+      }
+    }
     //add existing lines
     line.addAll(Arrays.asList(row).subList(1, row.length));
     line.add(currentFile + "_" + currentLine);
-    int hour = -1;
 
-    try {
-      hour = Integer.parseInt(row[5].toString());
-    } catch (NumberFormatException e) {
-      logger.error("Hour field is not parsable as integer.", e);
-    }
-    if (0 <= hour && hour < 24) {
-      if (row[4].toString().equals("user")) {
-        hourly_user[Integer.parseInt(row[5].toString())] += 1L;
-      }
-      if (row[4].toString().equals("spider")) {
-        hourly_spider[Integer.parseInt(row[5].toString())] += 1L;
-      }
-    } else {
-      logger.error("Hour field " + hour + " is not between 0 and 24.");
-    }
     writer.writeRow(line);
   }
 }
