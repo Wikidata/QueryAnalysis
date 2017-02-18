@@ -235,7 +235,7 @@ public class OpenRDFQueryHandler extends QueryHandler
    */
   public final void computeQueryType() throws IllegalStateException
   {
-    if (this.getValidityStatus() != 1 || !this.getToolName().equals("0")) {
+    if (this.getValidityStatus() != 1) {
       throw new IllegalStateException();
     }
 
