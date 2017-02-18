@@ -348,7 +348,13 @@ public abstract class QueryHandler
       toolIndex = this.queryStringWithoutPrefixes.indexOf("#tool:");
     }
     if (toolIndex != -1) {
-      this.toolName = this.queryStringWithoutPrefixes.substring(toolIndex + 6, this.queryStringWithoutPrefixes.indexOf("\n", toolIndex + 6));
+      int toolCommentLineEndIndex = this.queryStringWithoutPrefixes.indexOf("\n", toolIndex+6);
+
+      //in case the index is at the end of the query, looking at you developer of Histropedia-WQT !!!
+      if(toolCommentLineEndIndex == -1) {
+        toolCommentLineEndIndex = queryStringWithoutPrefixes.length();
+      }
+      this.toolName = this.queryStringWithoutPrefixes.substring(toolIndex + 6, toolCommentLineEndIndex);
       this.toolVersion = "0.1";
       return;
     }
