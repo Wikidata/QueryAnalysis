@@ -27,7 +27,7 @@ monthlyFieldValues = set()
 
 monthlyData = dict()
 
-for i in xrange(1, 3):
+for i in xrange(1, 32):
 	with open("QueryProcessedOpenRDF" + "%02d"%i + ".tsv") as f:
 		dailyFieldValues = set()
 
