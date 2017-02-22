@@ -16,7 +16,7 @@ def writeOut(fieldValues, file, dictionary):
                 line += "\t0"
         file.write(line + "\n")
 
-metrics = ['ToolName', 'StringLengthNoComments', 'VariableCountPattern']
+metrics = ['ToolName', 'StringLengthNoComments']
 for metric in metrics:
     pathBase = metric
 
