@@ -1,43 +1,76 @@
 import csv
-import os
-from collections import defaultdict
+import matplotlib.pyplot as plt
+import matplotlib.ticker as ticker
+from matplotlib.pyplot import cm
+import numpy as np
+import matplotlib.colors as mcolors
 from pprint import pprint
 
-#X = hour
-#Y = count
-#Z (stacked X) = ToolName
+
+def plotHist(data, title, countTools):
+    plt.figure()
+    plt.subplot(111)
+    plt.subplots_adjust(right=0.7)
+    plt.grid(True)
+
+    plt.title(title)
+    plt.xlabel("hour")
+    plt.ylabel("count")
+
+    axes = plt.axes()
+    axes.xaxis.set_major_locator(ticker.MultipleLocator(1))
+
+    #axes.set_yscale('log')
+
+    color = iter(cm.rainbow(np.linspace(0, 1, countTools)))
+
+    for toolName, XY in data.iteritems():
+        c = next((color))
+        try:
+            plt.bar(XY["X"], XY["Y"], align='center', color=c, edgecolor=c, label=toolName + str(XY["Y"]))
+        except ValueError:
+            pass
+
+    plt.legend(bbox_to_anchor=(1, 1), loc='upper left', ncol=1, prop={'size':6})
 
 
+    plt.xlim(0, 25)
+    plt.xticks(fontsize=9)
+    plt.savefig("classifiedBotsData/" + title + ".png", dpi=120)
+    plt.close()
 
-if not os.path.exists("classifiedBotsData"):
-    os.makedirs("classifiedBotsData")
 
+inputDirectory = "dayTriple/"
 
-for i in xrange(1, 2):
-    with open("../test/test/test/QueryProcessedOpenRDF" + "%02d" % i + ".tsv") as f:
+files = []
+for i in xrange(1,2):
+    files.append("classifiedBotsData/" + "%02d"%i + "ClassifiedBotsData.tsv")
+files.append("classifiedBotsData/TotalClassifiedBotsData.tsv")
+
+for file in files:
+    print "Working on: " + file
+    with open(file) as f:
         reader = csv.DictReader(f, delimiter="\t")
 
-        data = dict()
+        hours = []
+        toolNames = []
+        counts = []
 
         for line in reader:
-            if int(line["#Valid"]) != 1:
-                continue
+            hours.append(int(line['hour']))
+            toolNames.append(line['ToolName'])
+            counts.append(int(line['count']))
 
-            if line['#hour'] not in data:
-                data[line['#hour']] = defaultdict(int)
+        #divide data into "stacks"
 
-            data[line['#hour']][line['#ToolName']] += 1
+        data = {}
+        for toolName in toolNames:
+            data[toolName] = {}
+            data[toolName]["X"] = list()
+            data[toolName]["Y"] = list()
 
-        header = "hour\tToolName\tcount\n"
-        with open("classifiedBotsData/"+"%02d" %i + "ClassifiedBotsData.tsv", "w") as outputFile:
-            outputFile.write(header)
-            for hour, toolNameDict in data.iteritems():
-                for toolName in toolNameDict.iterkeys():
-                    outputFile.write(str(hour) + "\t" + str(toolName) + "\t" + str(data[hour][toolName]) + "\n")
+        for hour, toolName, count in zip(hours, toolNames, counts):
+            data[toolName]["X"].append(hour)
+            data[toolName]["Y"].append(count)
 
-    with open("classifiedBotsData/TotalClassifiedBotsData.tsv", "w") as outputFile:
-        outputFile.write(header)
-        for hour, toolNameDict in data.iteritems():
-            for toolName in toolNameDict.iterkeys():
-                outputFile.write(str(hour) + "\t" + str(toolName) + "\t" + str(data[hour][toolName]) + "\n")
-
+        plotHist(data, file[file.rfind("/"):], len(toolNames))
