@@ -42,6 +42,7 @@ fabric.properties
 #wikidata logs
 *.tsv
 test/
+!test/java*
 
 #but allow preBuildQueryConfig
 !toolMapping.tsv
