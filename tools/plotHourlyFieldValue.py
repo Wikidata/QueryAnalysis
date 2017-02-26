@@ -21,26 +21,33 @@ def plotHist(X, Y, title, xlabel="x", ylabel= "count of queries", log=False):
 
     axes = plt.axes()
 
-    if xlabel is "Hour":
-        axes.xaxis.set_major_locator(ticker.MultipleLocator(1))
-
     if log:
         axes.set_yscale('log')
 
+    if X is None:
+        X = range(len(Y))
+        Y = Y.values()
 
-    if X is not None:
-        plt.bar(X, Y, align='center', facecolor='#9999ff', edgecolor='#9999ff')
-        #axes.set_ylim([0,50000])
-    else:
-        plt.bar(range(len(Y)), Y.values(), facecolor='#9999ff', edgecolor='#9999ff')
+    minX = min(X)
+    maxX = max(X)
+    plt.bar(X, Y, align='center', facecolor='#9999ff', edgecolor='#9999ff')
 
-    plt.xlim(0)
+    plt.xlim(minX -1, maxX +1)
+
+    if xlabel is "Hour" or xlabel is "Day":
+        axes.xaxis.set_major_locator(ticker.MultipleLocator(1))
+
+    #plt.xlim(0)
     # plt.show()
     plt.savefig(title + ".png")
     plt.close()
 
 
 metrics = ['VariableCountPattern', 'StringLengthNoComments']
+
+
+
+
 for metric in metrics:
 
     if not os.path.exists(metric + '/plots/log'):
@@ -52,12 +59,16 @@ for metric in metrics:
         files.append(metric + '/Day' + "%02d" % i + "Hourly" + metric + ".tsv")
 
     totalHours = []
-    totalQueryCountPerHour = defaultdict(int)
 
     totalMetrics =[]
-    totalQueryCountPerMetric = defaultdict(int)
+    totalQueryCountPerDay = defaultdict(int)
+    totalTotalQueryCountPerMetric = defaultdict(int)
+
 
     for file in files:
+        totalQueryCountPerHour = defaultdict(int)
+        totalQueryCountPerMetric = defaultdict(int)
+
         print "Working on: " + file
 
         day = file.replace(metric + '/Day', '').replace("Hourly" + metric + ".tsv", '')
@@ -78,7 +89,24 @@ for metric in metrics:
                     totalQueryCountPerHour[int(line['hour'])] += int(line[x])
                     totalQueryCountPerMetric[int(x)] += int(line[x])
 
-                #plotHist(X,Y, metric + '/plots/day' + day + '/hour' + line['hour'], xlabel=metric)
-                #plotHist(X,Y, metric + '/plots/day'+ day +  '/log/hour' + line['hour'], xlabel=metric, log=True)
-    plotHist(None, totalQueryCountPerHour, metric + '/plots/totalQueryCountPerHour', xlabel="Hour")
-    plotHist(None, totalQueryCountPerMetric, metric + '/plots/totalQueryCountPer' + metric, xlabel=metric)
+                plotHist(X,Y, metric + '/plots/day' + day + '/hour' + line['hour'], xlabel=metric)
+                plotHist(X,Y, metric + '/plots/day'+ day +  '/log/hour' + line['hour'], xlabel=metric, log=True)
+
+        sum = 0
+        for hour in totalQueryCountPerHour:
+            sum += totalQueryCountPerHour[hour]
+        totalQueryCountPerDay[int(day)] += sum
+
+        for m in totalQueryCountPerMetric:
+            totalTotalQueryCountPerMetric[m] += totalQueryCountPerMetric[m]
+
+
+        plotHist(None, totalQueryCountPerHour, metric + '/plots/day'+ day+'/totalQueryCountPerHour', xlabel="Hour")
+        plotHist(None, totalQueryCountPerMetric, metric + '/plots/day'+ day+'/totalQueryCountPer' + metric, xlabel=metric)
+
+    pprint(totalQueryCountPerMetric)
+    pprint(totalTotalQueryCountPerMetric)
+
+    plotHist(None, totalTotalQueryCountPerMetric, metric + '/plots/totalQueryCountPer' + metric, xlabel=metric)
+    plotHist(None, totalQueryCountPerDay, metric + '/plots/totalQueryCountPerDay', xlabel="Day")
+
