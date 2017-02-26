@@ -83,11 +83,14 @@ for metric in metrics:
 
                 totalMetrics = X
 
+
                 Y = []
                 for x in X:
                     Y.append(int(line[x]))
                     totalQueryCountPerHour[int(line['hour'])] += int(line[x])
                     totalQueryCountPerMetric[int(x)] += int(line[x])
+
+                X=[int(x) for x in X]
 
                 plotHist(X,Y, metric + '/plots/day' + day + '/hour' + line['hour'], xlabel=metric)
                 plotHist(X,Y, metric + '/plots/day'+ day +  '/log/hour' + line['hour'], xlabel=metric, log=True)
