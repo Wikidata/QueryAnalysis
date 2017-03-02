@@ -76,3 +76,9 @@ toolLookingForGeoInformationClasses	Java/1.8.0_111	toolLookingForGeoInformation	
 toolLookingForFottballPlayerEnglishWikipediaPage	Java/1.7.0_121	footballExplorer	1.7.0_121	not sure who is creating these queries, but could be the same as the transfermarkt.com queries
 toolLookingForFottballPlayerEnglishWikipediaPage	Java/1.7.0_80	footballExplorer	1.7.0_80	not sure who is creating these queries, but could be the same as the transfermarkt.com queries
 toolLookingForFottballPlayerEnglishWikipediaPage	Java/1.7.0_79	footballExplorer	2.7.0_79	not sure who is creating these queries, but could be the same as the transfermarkt.com queries
+thisPubMedID	Magnus labs tools	toolUsingMagnusLabsForPubMedID	-1	needs more data
+thisInstanceOfWithSubclass	Java/1.8.0_91	toolSearchingForUndefinedEnglishLabel	1.8.0_91	needs more data (multiple versions at the same time)
+thisInstanceOfWithSubclass	Java/1.8.0_111	toolSearchingForUndefinedEnglishLabel	1.8.0_111	needs more data (multiple versions at the same time)
+gasProgramSSSP	Java/1.8.0_91	toolUsingSSSP	1.8.0_91	needs more data (multiple versions at the same time)
+gasProgramSSSP	Java/1.8.0_111	toolUsingSSSP	1.8.0_111	needs more data (multiple versions at the same time)
+gasProgramSSSP	Java/1.8.0_71	toolUsingSSSP	1.8.0_71	needs more data (multiple versions at the same time)
