@@ -133,6 +133,7 @@ public abstract class QueryHandler
       this.validityStatus = 2;
     } else if (validityStatus > -1) {
       this.queryStringWithoutPrefixes = queryStringToSet;
+      this.lengthNoAddedPrefixes = queryStringToSet.length();
       this.queryString = this.addMissingPrefixesToQuery(queryStringToSet);
       update();
     }
@@ -155,9 +156,8 @@ public abstract class QueryHandler
    * @param queryWithoutPrefixes the query the missing prefixes should be added to
    * @return the query with all standard prefixes
    */
-  private String addMissingPrefixesToQuery(String queryWithoutPrefixes)
+  public static String addMissingPrefixesToQuery(String queryWithoutPrefixes)
   {
-    this.lengthNoAddedPrefixes = queryWithoutPrefixes.length();
     String toBeAddedPrefixes = "";
     Map<String, String> prefixes = new LinkedHashMap<>();
 

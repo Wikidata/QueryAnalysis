@@ -4,15 +4,25 @@ import com.univocity.parsers.common.ParsingContext;
 import com.univocity.parsers.common.processor.ObjectRowProcessor;
 import com.univocity.parsers.tsv.TsvParser;
 import com.univocity.parsers.tsv.TsvParserSettings;
+import com.univocity.parsers.tsv.TsvWriter;
+import com.univocity.parsers.tsv.TsvWriterSettings;
+
+import general.Main;
+
 import org.apache.log4j.Logger;
 import org.apache.spark.sql.AnalysisException;
 import output.OutputHandler;
+import query.QueryHandler;
 import scala.Tuple2;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * @author adrian
@@ -29,6 +39,11 @@ public class InputHandlerTSV extends InputHandler
    * The reader the parse()-method should read from.
    */
   private Reader reader;
+
+  /**
+   * The file for writing the pre-processed data.
+   */
+  private TsvWriter preprocessedWriter;
 
   /**
    * @param fileToRead The file the parse()-method should read from.
@@ -56,8 +71,22 @@ public class InputHandlerTSV extends InputHandler
     parserSettings.setSkipEmptyLines(true);
     parserSettings.setReadInputOnSeparateThread(true);
 
+    if (!Main.readPreprocessed) {
+      try {
+        String file = inputFile.substring(0, inputFile.lastIndexOf("/") + 1) + "Preprocessed" + inputFile.substring(inputFile.lastIndexOf("/") + 1);
+        FileOutputStream tempFile = new FileOutputStream(file);
+        preprocessedWriter = new TsvWriter(tempFile, new TsvWriterSettings());
+      }
+      catch (FileNotFoundException e) {
+        logger.error("Could not create temporary file for adding prefixes", e);
+      }
+    }
+
     ObjectRowProcessor rowProcessor = new ObjectRowProcessor()
     {
+
+      private boolean headersWritten;
+
       @Override
       public void rowProcessed(Object[] row, ParsingContext parsingContext)
       {
@@ -65,8 +94,34 @@ public class InputHandlerTSV extends InputHandler
           logger.warn("Ignoring line without tab while parsing.");
           return;
         }
-        Tuple2<String, Integer> queryTuple = decode(row[0].toString(), inputFile, parsingContext.currentLine());
-        outputHandler.writeLine(queryTuple._1, queryTuple._2, row, parsingContext.currentLine(), inputFile);
+
+        if (Main.readPreprocessed) {
+          String preprocessedQuery = row[0].toString();
+          Integer preprocessedValidity = Integer.valueOf(row[1].toString());
+          outputHandler.writeLine(preprocessedQuery, preprocessedValidity, Arrays.copyOfRange(row, 2, row.length), parsingContext.currentLine(), inputFile);
+        } else {
+          Tuple2<String, Integer> queryTuple = decode(row[0].toString(), inputFile, parsingContext.currentLine());
+
+          if (preprocessedWriter != null) {
+
+            if (!headersWritten) {
+              ArrayList<String> headers = new ArrayList<String>();
+              headers.add("preprocessed_query");
+              headers.add("temp_validity");
+              String[] parsedHeaders = parsingContext.parsedHeaders();
+              headers.addAll(Arrays.asList(parsedHeaders).subList(1, parsedHeaders.length));
+              preprocessedWriter.writeHeaders(headers);
+              headersWritten = true;
+            }
+
+            ArrayList<Object> rowToWrite = new ArrayList<Object>();
+            rowToWrite.add(QueryHandler.addMissingPrefixesToQuery(queryTuple._1));
+            rowToWrite.add(queryTuple._2);
+            rowToWrite.addAll(Arrays.asList(row).subList(1, row.length));
+            preprocessedWriter.writeRow(rowToWrite);
+          }
+          outputHandler.writeLine(queryTuple._1, queryTuple._2, row, parsingContext.currentLine(), inputFile);
+        }
       }
 
     };
@@ -77,7 +132,10 @@ public class InputHandlerTSV extends InputHandler
 
     parser.parse(reader);
 
-
     outputHandler.closeFiles();
+    
+    if (preprocessedWriter != null) {
+      preprocessedWriter.close();
+    }
   }
 }

@@ -144,7 +144,7 @@ public class OutputHandlerTSV extends OutputHandler
       }
     }
     //add existing lines
-    line.addAll(Arrays.asList(row).subList(1, row.length));
+    line.addAll(Arrays.asList(row));
     line.add(currentFile + "_" + currentLine);
 
     writer.writeRow(line);
