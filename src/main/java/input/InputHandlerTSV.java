@@ -97,7 +97,14 @@ public class InputHandlerTSV extends InputHandler
 
         if (Main.readPreprocessed) {
           String preprocessedQuery = row[0].toString();
-          Integer preprocessedValidity = Integer.valueOf(row[1].toString());
+          Integer preprocessedValidity;
+          try {
+            preprocessedValidity = Integer.valueOf(row[1].toString());
+          }
+          catch (NumberFormatException e) {
+            logger.warn("Could not parse temp_validity, is the file preprocessed?", e);
+            return;
+          }
           outputHandler.writeLine(preprocessedQuery, preprocessedValidity, Arrays.copyOfRange(row, 2, row.length), parsingContext.currentLine(), inputFile);
         } else {
           Tuple2<String, Integer> queryTuple = decode(row[0].toString(), inputFile, parsingContext.currentLine());
@@ -133,7 +140,7 @@ public class InputHandlerTSV extends InputHandler
     parser.parse(reader);
 
     outputHandler.closeFiles();
-    
+
     if (preprocessedWriter != null) {
       preprocessedWriter.close();
     }
