@@ -75,7 +75,11 @@ public final class Main
   /**
    * Saves if metrics should be calculated for bot queries.
    */
-  public static boolean withBots = false;
+  public static boolean withBots;
+  /**
+   * Saves if the input files should be modified with additional prefixes.
+   */
+  public static boolean readPreprocessed;
   /**
    * Define a static logger variable.
    */
@@ -103,9 +107,10 @@ public final class Main
     options.addOption("f", "file", true, "defines the input file prefix");
     options.addOption("h", "help", false, "displays this help");
     options.addOption("t", "tsv", false, "reads from .tsv-files");
-    options.addOption("p", "parquet", false, "read from .parquet-files");
+    // options.addOption("p", "parquet", false, "read from .parquet-files");
     options.addOption("n", "numberOfThreads", true, "number of used threads, default 1");
     options.addOption("b", "withBots", false, "enables metric calculation for bot queries+");
+    options.addOption("p", "readPreprocessed", false, "enables reading of preprocessed files");
 
     //some parameters which can be changed through parameters
     //QueryHandler queryHandler = new OpenRDFQueryHandler();
@@ -157,6 +162,9 @@ public final class Main
       }
       if (cmd.hasOption("withBots")) {
         withBots = true;
+      }
+      if (cmd.hasOption("readPreprocessed")) {
+        readPreprocessed = true;
       }
     } catch (UnrecognizedOptionException e) {
       System.out.println("Unrecognized commandline option: " + e.getOption());
