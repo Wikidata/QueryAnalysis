@@ -1,0 +1,11 @@
+PREFIX  wikibase: <http://wikiba.se/ontology#>
+PREFIX  wdt:  <http://www.wikidata.org/prop/direct/>
+PREFIX  wd:   <http://www.wikidata.org/entity/>
+PREFIX  bd:   <http://www.bigdata.com/rdf#>
+
+SELECT  ?propertyIdLabel
+WHERE
+  { wd:Q16917929 wdt:P915 ?propertyId
+    SERVICE wikibase:label
+      { bd:serviceParam wikibase:language "en" }
+  }

@@ -1,0 +1,15 @@
+PREFIX  rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX  wikibase: <http://wikiba.se/ontology#>
+PREFIX  p:    <http://www.wikidata.org/prop/>
+PREFIX  wdt:  <http://www.wikidata.org/prop/direct/>
+PREFIX  wd:   <http://www.wikidata.org/entity/>
+PREFIX  bd:   <http://www.bigdata.com/rdf#>
+
+SELECT  ?genre_name
+WHERE
+  { wd:Q936900 wdt:P136 ?genre
+    SERVICE wikibase:label      
+      { bd:serviceParam wikibase:language "en" .
+        ?genre rdfs:label ?genre_name
+      }
+}

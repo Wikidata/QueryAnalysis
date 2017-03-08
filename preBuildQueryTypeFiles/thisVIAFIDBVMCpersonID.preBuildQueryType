@@ -1,0 +1,19 @@
+PREFIX  wdt:  <http://www.wikidata.org/prop/direct/>
+
+SELECT  *
+WHERE
+  {   { ?agent  wdt:P214  "" .}
+    UNION
+      { ?agent  wdt:P2799  "11893" .}
+    OPTIONAL
+      { ?agent  wdt:P20  ?deathplace .}
+    OPTIONAL
+      { ?agent  wdt:P19  ?birthplace .}
+    OPTIONAL
+      { ?agent  wdt:P103  ?language .}
+    OPTIONAL
+      { ?agent  wdt:P18  ?image .}
+    OPTIONAL
+      { ?agent  wdt:P27  ?nationality .}
+  }
+LIMIT   100

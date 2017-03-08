@@ -1,0 +1,30 @@
+PREFIX  ff:   <http://factforge.net>
+PREFIX  bd:   <http://www.bigdata.com/rdf#>
+PREFIX  owl:  <http://www.w3.org/2002/07/owl#>
+PREFIX  wdt:  <http://www.wikidata.org/prop/direct/>
+PREFIX  wikibase: <http://wikiba.se/ontology#>
+PREFIX  skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX  rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX  ogc:  <http://www.opengis.net/ont/geosparql#>
+PREFIX  dbpedia: <http://dbpedia.org/resource/>
+PREFIX  lexinfo: <http://www.lexinfo.net/ontology/2.0/lexinfo#>
+PREFIX  geom: <http://geovocab.org/geometry#>
+PREFIX  wd:   <http://www.wikidata.org/entity/>
+PREFIX  dbo:  <http://dbpedia.org/ontology/>
+PREFIX  lemon: <http://www.lemon-model.net/lemon#>
+PREFIX  lgdo: <http://linkedgeodata.org/ontology/>
+PREFIX  rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX  geo-pos: <http://w3.org/2003/01/geo/wgs84_pos#>
+PREFIX  lgdr: <http://linkedgeodata.org/triplify/>
+PREFIX  omgeo: <http://www.ontotext.com/owlim/geo#>
+PREFIX  foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX  bn-lemon: <http://babelnet.org/model/babelnet#>
+PREFIX  om:   <http://www.ontotext.com/owlim>
+
+SELECT DISTINCT  ?class ?classLabel
+WHERE
+  { ?class rdfs:label "Cat"@en .
+    ?class wdt:P279 ?super
+    SERVICE wikibase:label
+      { bd:serviceParam wikibase:language "de" }
+  }
