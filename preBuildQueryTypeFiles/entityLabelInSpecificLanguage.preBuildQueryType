@@ -1,0 +1,5 @@
+SELECT ?serieLabel
+WHERE {
+  wd:Q2655470 rdfs:label ?serieLabel .
+  FILTER(LANG(?serieLabel) = "pt")
+}

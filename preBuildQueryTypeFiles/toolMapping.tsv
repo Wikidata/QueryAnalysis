@@ -82,3 +82,39 @@ thisInstanceOfWithSubclass	Java/1.8.0_111	toolSearchingForUndefinedEnglishLabel	
 gasProgramSSSP	Java/1.8.0_91	toolUsingSSSP	1.8.0_91	needs more data (multiple versions at the same time)
 gasProgramSSSP	Java/1.8.0_111	toolUsingSSSP	1.8.0_111	needs more data (multiple versions at the same time)
 gasProgramSSSP	Java/1.8.0_71	toolUsingSSSP	1.8.0_71	needs more data (multiple versions at the same time)
+wikidataLastModified	Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36	toolWikidataLastModified	-1	could be semi-automated (possible source 2)
+wikidataLastModified	Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36	toolWikidataLastModified	-1	could be semi-automated (possible source 2)
+wikidataLastModified	Mozilla/5.0 (Windows NT 6.1; WOW64; rv:50.0) Gecko/20100101 Firefox/50.0	toolWikidataLastModified	-1	could be semi-automated (possible source 2)
+wikidataLastModified	Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36	toolWikidataLastModified	-1	could be semi-automated (possible source 2)
+wikidataLastModified	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.95 Safari/537.36 	toolWikidataLastModified	-1	could be semi-automated (possible source 2)
+wikidataLastModified	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:50.0) Gecko/20100101 Firefox/50.0	toolWikidataLastModified	-1	could be semi-automated (possible source 2)
+wikidataLastModified	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:50.0) Gecko/20100101 Firefox/50.0	toolWikidataLastModified	-1	could be semi-automated (possible source 2)
+wikidataLastModified	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.95 Safari/537.36	toolWikidataLastModified	-1	could be semi-automated (possible source 2)
+imageToSocialNetworksID	-	toolSearchingForImageToID	-1	needs more data
+hasLabelInstanceOfThis	Apache-HttpClient/4.3.5 (java 1.5)	toolSearchingForSupraInstanceOfWithLabel	-1	needs more data
+thisBasedOn	Java/1.7.0_121	toolSearchingForFilmAndMusicInfo	1.7.0_121	needs more data
+thisBasedOn	Java/1.7.0_80	toolSearchingForFilmAndMusicInfo	1.7.0_80	needs more data
+thisBasedOn	Java/1.7.0_79	toolSearchingForFilmAndMusicInfo	1.7.0_79	needs more data
+thisFilmingLocation	Java/1.7.0_121	toolSearchingForFilmAndMusicInfo	1.7.0_121	needs more data
+thisFilmingLocation	Java/1.7.0_80	toolSearchingForFilmAndMusicInfo	1.7.0_80	needs more data
+thisFilmingLocation	Java/1.7.0_79	toolSearchingForFilmAndMusicInfo	1.7.0_79	needs more data
+thisTransfermarkManagerID	Java/1.7.0_121	footballExplorer	1.7.0_121	needs more data
+thisTransfermarkManagerID	Java/1.7.0_80	footballExplorer	1.7.0_80	needs more data
+thisTransfermarkManagerID	Java/1.7.0_79	footballExplorer	1.7.0_79	needs more data
+thisComposer	Java/1.7.0_121	toolSearchingForFilmAndMusicInfo	1.7.0_121	needs more data
+thisComposer	Java/1.7.0_80	toolSearchingForFilmAndMusicInfo	1.7.0_80	needs more data
+thisComposer	Java/1.7.0_79	toolSearchingForFilmAndMusicInfo	1.7.0_79	needs more data
+thisGenre	Java/1.7.0_121	toolSearchingForFilmAndMusicInfo	1.7.0_121	needs more data
+thisGenre	Java/1.7.0_80	toolSearchingForFilmAndMusicInfo	1.7.0_80	needs more data
+thisGenre	Java/1.7.0_79	toolSearchingForFilmAndMusicInfo	1.7.0_79	needs more data
+infoAboutHuman	ARC Reader (http://arc.semsol.org/)	toolSearchingForInfoAboutHuman	-1	needs more data (link does not exist)
+instanceOfSubclassOfTVSeries	Java/1.7.0_80	toolSearchingForTVSeries	1.7.0_80	needs more data
+thisPMCID	Magnus labs tools	toolUsingMagnusLabsForPubMedID	-1	needs more data
+thisVIAFIDBVMCpersonID	Java/1.8.0_111	toolSearchingForPeopleByMultipleIDs	1.8.0_111	needs more data
+thisGenreWithEnglishLabel	-	toolSearchingForGenre	-1	needs more data
+hasLabelThisIsSubclass	Java/1.8.0_111	toolSearchingForLabel	1.8.0_111	needs more data
+hasLabelThisIsSubclass	Java/1.8.0_45	toolSearchingForLabel	1.8.0_45	needs more data
+entityLabelInSpecificLanguage	-	toolSearchingForLabelInLanguage	-1	needs more data
+entityLabelInSpecificLanguage	Apache-Jena-ARQ/${project.version}	otherToolSearchingForLabelInLanguage	-1	needs more data
+hasLabel	Java/1.8.0_111	toolSearchingForLabel	1.8.0_111	needs more data
+hasLabel	Java/1.8.0_45	toolSearchingForLabel	1.8.0_45	needs more data
