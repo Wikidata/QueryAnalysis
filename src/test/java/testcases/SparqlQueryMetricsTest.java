@@ -42,12 +42,12 @@ public class SparqlQueryMetricsTest
   /**
    * The expected input query for one test run.
    */
-  private String query;
+  private final String query;
 
   /**
    * The expected output for one test run.
    */
-  private JSONObject expected;
+  private final JSONObject expected;
 
   /**
    * JUNit uses this constructor to give the test cases the input and expected
@@ -91,9 +91,7 @@ public class SparqlQueryMetricsTest
             array[1] = parser.parse(new FileReader("sparqlQueries/" +
                 FilenameUtils.getBaseName(filePath.toString()) + ".json"));
             sparqlQueriesAndExpectedOutput.add(array);
-          } catch (IOException e) {
-            e.printStackTrace();
-          } catch (ParseException e) {
+          } catch (IOException | ParseException e) {
             e.printStackTrace();
           }
         }
@@ -116,20 +114,6 @@ public class SparqlQueryMetricsTest
     Integer expectedInteger = Integer.parseInt(expected.get(
         "StringLength").toString());
     assertEquals(expectedInteger, queryHandler.getStringLength());
-  }
-
-  /**
-   * Test if the getStringLengthNoComments()-metric returns the correct
-   * length.
-   */
-  @Test
-  public final void stringLengthNoComments()
-  {
-    OpenRDFQueryHandler queryHandler = new OpenRDFQueryHandler();
-    queryHandler.setQueryString(query);
-    Integer expectedInteger = Integer.parseInt(expected.get(
-        "StringLengthNoComments").toString());
-    assertEquals(expectedInteger, queryHandler.getStringLengthNoComments());
   }
 
   /**
@@ -172,5 +156,21 @@ public class SparqlQueryMetricsTest
     Integer expectedInteger = Integer.parseInt(expected.get(
         "CountTriplesWithService").toString());
     assertEquals(expectedInteger, queryHandler.getTripleCountWithService());
+  }
+
+
+  /**
+   * Tests if the CountTriples-metric returns the correct
+   * number of triples.
+   */
+  @Test
+  public final void querySize()
+  {
+    OpenRDFQueryHandler queryHandler = new OpenRDFQueryHandler();
+    queryHandler.setQueryString(query);
+
+    Integer expectedInteger = Integer.parseInt(expected.get(
+        "QuerySize").toString());
+    assertEquals(expectedInteger, queryHandler.getQuerySize());
   }
 }

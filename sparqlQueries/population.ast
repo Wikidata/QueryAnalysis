@@ -1,0 +1,28 @@
+Distinct
+   Projection
+      ProjectionElemList
+         ProjectionElem "countryLabel"
+         ProjectionElem "population"
+      Order
+         OrderElem (DESC)
+            Var (name=population)
+         Extension
+            ExtensionElem (countryLabel)
+               Var (name=countryLabel)
+            Group (population, countryLabel)
+               Join
+                  Join
+                     StatementPattern
+                        Var (name=country)
+                        Var (name=-const-http://www.wikidata.org/prop/direct/P31-uri, value=http://www.wikidata.org/prop/direct/P31, anonymous)
+                        Var (name=-const-http://www.wikidata.org/entity/Q6256-uri, value=http://www.wikidata.org/entity/Q6256, anonymous)
+                     StatementPattern
+                        Var (name=country)
+                        Var (name=-const-http://www.wikidata.org/prop/direct/P1082-uri, value=http://www.wikidata.org/prop/direct/P1082, anonymous)
+                        Var (name=population)
+                  Service
+                     Var (name=-const-http://wikiba.se/ontology#label-uri, value=http://wikiba.se/ontology#label, anonymous)
+                     StatementPattern
+                        Var (name=-const-http://www.bigdata.com/rdf#serviceParam-uri, value=http://www.bigdata.com/rdf#serviceParam, anonymous)
+                        Var (name=-const-http://wikiba.se/ontology#language-uri, value=http://wikiba.se/ontology#language, anonymous)
+                        Var (name=-const-en-lit, value="en", anonymous)

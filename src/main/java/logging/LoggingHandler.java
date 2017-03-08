@@ -36,7 +36,7 @@ public final class LoggingHandler
   {
     TimestampFileAppender fileAppender = new TimestampFileAppender();
     fileAppender.setName("FileLogger");
-    fileAppender.setLayout(new PatternLayout("%-4r [%t] %-5p %c %x - %m%n"));
+    fileAppender.setLayout(new PatternLayout(" [%p] %d [%t] %x %c %M - %m%n"));
     fileAppender.setFile(fileToWrite);
     fileAppender.setThreshold(levelToWrite);
     fileAppender.activateOptions();
@@ -50,7 +50,7 @@ public final class LoggingHandler
   {
     ConsoleAppender consoleAppender = new ConsoleAppender();
     consoleAppender.setName("ConsoleLogger");
-    consoleAppender.setLayout(new PatternLayout("%-4r [%t] %-5p %c %x - %m%n"));
+    consoleAppender.setLayout(new PatternLayout(" [%p] %d [%t] %x %c %M - %m%n"));
     LevelRangeFilter levelRangeFilter = new LevelRangeFilter();
     levelRangeFilter.setLevelMax(Level.INFO);
     levelRangeFilter.setLevelMin(Level.INFO);

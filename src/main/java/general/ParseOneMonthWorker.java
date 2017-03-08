@@ -3,7 +3,6 @@ package general;
 
 import input.InputHandler;
 import org.apache.log4j.Logger;
-import org.apache.spark.sql.AnalysisException;
 import output.OutputHandlerTSV;
 
 import java.io.FileNotFoundException;
@@ -17,9 +16,9 @@ public class ParseOneMonthWorker implements Runnable
   /**
    * Define a static logger variable.
    */
-  private static Logger logger = Logger.getLogger(ParseOneMonthWorker.class);
-  private String inputFile;
-  private String inputFilePrefix;
+  private static final Logger logger = Logger.getLogger(ParseOneMonthWorker.class);
+  private final String inputFile;
+  private final String inputFilePrefix;
   private InputHandler inputHandler;
   private String queryParserName;
   private Class queryHandlerClass;
@@ -58,8 +57,6 @@ public class ParseOneMonthWorker implements Runnable
         logger.error("File " + outputFile + "could not be created or written to.", e);
       }
     } catch (FileNotFoundException e) {
-      logger.warn("File " + inputFile + " could not be found.");
-    } catch (AnalysisException e) {
       logger.warn("File " + inputFile + " could not be found.");
     }
   }

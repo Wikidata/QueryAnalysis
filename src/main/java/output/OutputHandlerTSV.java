@@ -2,6 +2,9 @@ package output;
 
 import com.univocity.parsers.tsv.TsvWriter;
 import com.univocity.parsers.tsv.TsvWriterSettings;
+
+import general.Main;
+
 import org.apache.log4j.Logger;
 import query.QueryHandler;
 
@@ -9,6 +12,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -23,7 +27,7 @@ public class OutputHandlerTSV extends OutputHandler
   /**
    * Define a static logger variable.
    */
-  private static Logger logger = Logger.getLogger(OutputHandlerTSV.class);
+  private static final Logger logger = Logger.getLogger(OutputHandlerTSV.class);
 
   /**
    * the class of wich a queryHandlerObject should be created
@@ -34,10 +38,6 @@ public class OutputHandlerTSV extends OutputHandler
    * A writer created at object creation to be used in line-by-line writing.
    */
   private TsvWriter writer;
-  /**
-   * The file to write the data to.
-   */
-  private String file;
 
   /**
    * Creates the file specified in the constructor and writes the header.
@@ -50,7 +50,6 @@ public class OutputHandlerTSV extends OutputHandler
    */
   public OutputHandlerTSV(String fileToWrite, Class queryHandlerClass) throws FileNotFoundException
   {
-    this.file = fileToWrite;
     FileOutputStream outputWriter = new FileOutputStream(fileToWrite + ".tsv");
     writer = new TsvWriter(outputWriter, new TsvWriterSettings());
     for (int i = 0; i < hourly_user.length; i++) {
@@ -60,16 +59,16 @@ public class OutputHandlerTSV extends OutputHandler
 
     this.queryHandlerClass = queryHandlerClass;
 
-    List<String> header = new ArrayList<String>();
+    List<String> header = new ArrayList<>();
     header.add("#Valid");
+    header.add("#ToolName");
+    header.add("#ToolVersion");
     header.add("#StringLengthWithComments");
     header.add("#StringLengthNoComments");
     header.add("#VariableCountHead");
     header.add("#VariableCountPattern");
     header.add("#TripleCountWithService");
     header.add("#TripleCountNoService");
-    header.add("#ToolName");
-    header.add("#ToolVersion");
     header.add("#QueryType");
     header.add("#uri_path");
     header.add("#user_agent");
@@ -117,13 +116,7 @@ public class OutputHandlerTSV extends OutputHandler
     QueryHandler queryHandler = null;
     try {
       queryHandler = (QueryHandler) queryHandlerClass.getConstructor().newInstance();
-    } catch (InstantiationException e) {
-      logger.error("Failed to create query handler object" + e);
-    } catch (IllegalAccessException e) {
-      logger.error("Failed to create query handler object" + e);
-    } catch (InvocationTargetException e) {
-      logger.error("Failed to create query handler object" + e);
-    } catch (NoSuchMethodException e) {
+    } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
       logger.error("Failed to create query handler object" + e);
     }
     queryHandler.setValidityStatus(validityStatus);
@@ -133,38 +126,27 @@ public class OutputHandlerTSV extends OutputHandler
     queryHandler.setCurrentFile(currentFile);
 
 
-    List<Object> line = new ArrayList<Object>();
+    List<Object> line = new ArrayList<>();
     line.add(queryHandler.getValidityStatus());
-    line.add(queryHandler.getStringLength());
-    line.add(queryHandler.getStringLengthNoComments());
-    line.add(queryHandler.getVariableCountHead());
-    line.add(queryHandler.getVariableCountPattern());
-    line.add(queryHandler.getTripleCountWithService());
-    line.add(-1);
     line.add(queryHandler.getToolName());
     line.add(queryHandler.getToolVersion());
-    line.add(queryHandler.getQueryType());
-    for (int i = 1; i < row.length; i++) {
-      line.add(row[i]);
-    }
-    line.add(currentFile + "_" + currentLine);
-    int hour = -1;
-
-    try {
-      hour = Integer.parseInt(row[5].toString());
-    } catch (NumberFormatException e) {
-      logger.error("Hour field is not parsable as integer.", e);
-    }
-    if (0 <= hour && hour < 24) {
-      if (row[4].toString().equals("user")) {
-        hourly_user[Integer.parseInt(row[5].toString())] += 1L;
-      }
-      if (row[4].toString().equals("spider")) {
-        hourly_spider[Integer.parseInt(row[5].toString())] += 1L;
-      }
+    if (Main.withBots || queryHandler.getToolName().equals("0")) {
+      line.add(queryHandler.getStringLength());
+      line.add(queryHandler.getQuerySize());
+      line.add(queryHandler.getVariableCountHead());
+      line.add(queryHandler.getVariableCountPattern());
+      line.add(queryHandler.getTripleCountWithService());
+      line.add(-1);
+      line.add(queryHandler.getQueryType());
     } else {
-      logger.error("Hour field " + hour + " is not between 0 and 24.");
+      for (int i = 0; i < 7; i++) {
+        line.add(-1);
+      }
     }
+    //add existing lines
+    line.addAll(Arrays.asList(row));
+    line.add(currentFile + "_" + currentLine);
+
     writer.writeRow(line);
   }
 }

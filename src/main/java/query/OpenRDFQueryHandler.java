@@ -1,6 +1,7 @@
 package query;
 
 import general.Main;
+import org.apache.log4j.Logger;
 import org.openrdf.model.Value;
 import org.openrdf.model.impl.URIImpl;
 import org.openrdf.query.MalformedQueryException;
@@ -14,11 +15,7 @@ import org.openrdf.query.parser.ParsedQuery;
 import org.openrdf.query.parser.sparql.BaseDeclProcessor;
 import org.openrdf.query.parser.sparql.PrefixDeclProcessor;
 import org.openrdf.query.parser.sparql.StringEscapesProcessor;
-import org.openrdf.query.parser.sparql.ast.ASTQueryContainer;
-import org.openrdf.query.parser.sparql.ast.ParseException;
-import org.openrdf.query.parser.sparql.ast.SyntaxTreeBuilder;
-import org.openrdf.query.parser.sparql.ast.TokenMgrError;
-import org.openrdf.query.parser.sparql.ast.VisitorException;
+import org.openrdf.query.parser.sparql.ast.*;
 
 import java.util.*;
 
@@ -30,7 +27,11 @@ public class OpenRDFQueryHandler extends QueryHandler
   /**
    * The base URI to resolve any possible relative URIs against.
    */
-  public static String BASE_URI = "https://query.wikidata.org/bigdata/namespace/wdq/sparql";
+  private static final String BASE_URI = "https://query.wikidata.org/bigdata/namespace/wdq/sparql";
+  /**
+   * Define a static logger variable.
+   */
+  private static final Logger logger = Logger.getLogger(OpenRDFQueryHandler.class);
   /**
    * The query object created from query-string.
    */
@@ -101,60 +102,23 @@ public class OpenRDFQueryHandler extends QueryHandler
     }
   }
 
-  /**
-   * The function returns the length of the query as a string
-   * without comments and formatting.
-   * <p>
-   * Unfortunately I couldn't find any OpenRDF method for removing the comments
-   * --> it needs to be done in a cumbersome manual way…
-   *
-   * @return Returns the length of the query without comments (-1 if invalid).
-   * and make sure it cannot break the query.
-   */
-  public final Integer getStringLengthNoComments()
+  @Override
+  public Integer getQuerySize()
   {
     if (getValidityStatus() != 1) {
       return -1;
     }
-    String sourceQuery = query.getSourceString();
-    String uncommented = "";
 
-    //if there is a < or a " then there can't be a comment anymore until we reach a > or another "
-    boolean canFindComments = true;
-    boolean commentFound = false;
-
-    //ignore all # that are inside <> or ""
-    for (int i = 0; i < sourceQuery.length(); i++) {
-      Character character = sourceQuery.charAt(i);
-
-      if (character == '#' && canFindComments) {
-        commentFound = true;
-      } else if (character == '\n') {
-        // in a new line everything is possible again
-        commentFound = false;
-        canFindComments = true;
-      } else if (canFindComments && (character == '<' || character == '"')) {
-        canFindComments = false;
-      } else if (character == '>' || character == '"') {
-        // now we can find comments again
-        canFindComments = true;
-      }
-
-      //finally keep only characters that are NOT inside a comment
-      if (!commentFound) {
-        uncommented = uncommented + character;
-      }
-    }
+    OpenRDFQuerySizeCalculatorVisitor openRDFQueryLengthVisitor = new OpenRDFQuerySizeCalculatorVisitor();
 
     try {
-      this.parseQuery(uncommented);
-    } catch (MalformedQueryException e) {
-      getLogger().warn("Tried to remove formatting from a valid string " + "but broke it while doing so.\n" + e.getLocalizedMessage() + "\n\n" + e.getMessage());
-      return -1;
+      this.query.getTupleExpr().visit(openRDFQueryLengthVisitor);
+    } catch (Exception e) {
+      logger.error("An unknown error occured while calculating the query size: ", e);
     }
-    return uncommented.length();
-  }
 
+    return openRDFQueryLengthVisitor.getSize();
+  }
 
   /**
    * @return Returns the number of variables in the query pattern.
@@ -217,11 +181,9 @@ public class OpenRDFQueryHandler extends QueryHandler
    */
   public final void computeQueryType() throws IllegalStateException
   {
-    if (this.getValidityStatus() != 1 || !this.getToolName().equals("0")) {
+    if (this.getValidityStatus() != 1) {
       throw new IllegalStateException();
     }
-
-
     ParsedQuery normalizedQuery;
     try {
       normalizedQuery = normalize(query);
@@ -231,9 +193,7 @@ public class OpenRDFQueryHandler extends QueryHandler
     }
 
     synchronized (Main.queryTypes) {
-      Iterator<ParsedQuery> iterator = Main.queryTypes.keySet().iterator();
-      while (iterator.hasNext()) {
-        ParsedQuery next = iterator.next();
+      for (ParsedQuery next : Main.queryTypes.keySet()) {
         if (next.getTupleExpr().equals(normalizedQuery.getTupleExpr())) {
           this.queryType = Main.queryTypes.get(next);
           return;
@@ -242,7 +202,6 @@ public class OpenRDFQueryHandler extends QueryHandler
     }
     Main.queryTypes.put(normalizedQuery, String.valueOf(Main.queryTypes.size()));
     this.queryType = Main.queryTypes.get(normalizedQuery);
-    return;
   }
 
   /**
@@ -250,6 +209,9 @@ public class OpenRDFQueryHandler extends QueryHandler
    */
   public final ParsedQuery getNormalizedQuery()
   {
+    if (this.getValidityStatus() != 1) {
+      throw new IllegalStateException();
+    }
     try {
       return normalize(this.query);
     } catch (MalformedQueryException | VisitorException e) {
@@ -270,7 +232,7 @@ public class OpenRDFQueryHandler extends QueryHandler
   {
     ParsedQuery normalizedQuery = new StandardizingSPARQLParser().parseNormalizeQuery(queryToNormalize.getSourceString(), BASE_URI);
 
-    final Map<String, Integer> strings = new HashMap<String, Integer>();
+    final Map<String, Integer> strings = new HashMap<>();
 
     normalizedQuery.getTupleExpr().visit(new QueryModelVisitorBase<VisitorException>()
     {
@@ -336,8 +298,7 @@ public class OpenRDFQueryHandler extends QueryHandler
       StringEscapesProcessor.process(qc);
       BaseDeclProcessor.process(qc, BASE_URI);
       return PrefixDeclProcessor.process(qc);
-    }
-    catch (TokenMgrError | ParseException | MalformedQueryException e) {
+    } catch (TokenMgrError | ParseException | MalformedQueryException e) {
       logger.error("Unexpected error finding prefixes in query " + this.getQueryStringWithoutPrefixes(), e);
       return null;
     }

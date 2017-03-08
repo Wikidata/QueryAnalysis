@@ -1,9 +1,9 @@
 queryType	userAgent	tool	version	comment
 thisInstanceOf	Apache-Jena-ARQ/3.0.1	toolUsingJenaARQ	3.0.1	needs more data
-thisTransfermarktFootballerID	Java/1.7.0_80	toolUsingJavaForTransfermarkt	1.7.0_80	probably www.transfermarkt.com
-thisTransfermarktFootballerID	Java/1.7.0_121	toolUsingJavaForTransfermarkt	1.7.0_121	probably www.transfermarkt.com
-thisTransfermarktFootballerID	Java/1.7.0_79	toolUsingJavaForTransfermarkt	1.7.0_79	probably www.transfermarkt.com
-thisTransfermarktFootballerID	Java/1.7.0_04	toolUsingJavaForTransfermarkt	1.7.0_04	probably www.transfermarkt.com
+thisTransfermarktFootballerID	Java/1.7.0_80	footballExplorer	1.7.0_80	probably www.transfermarkt.com
+thisTransfermarktFootballerID	Java/1.7.0_121	footballExplorer	1.7.0_121	probably www.transfermarkt.com
+thisTransfermarktFootballerID	Java/1.7.0_79	footballExplorer	1.7.0_79	probably www.transfermarkt.com
+thisTransfermarktFootballerID	Java/1.7.0_04	footballExplorer	1.7.0_04	probably www.transfermarkt.com
 thisGeneOntologyID	sparqlwrapper 1.7.6 (rdflib.github.ioSLASHsparqlwrapper)	toolUsingSparqlwrapperPythonForGeneOntology	1.7.6	needs more data
 thisIMDbID	Mozilla/5.0 (Windows NT; Windows NT 10.0; es-ES) WindowsPowerShell/5.1.14393.206	toolUsingWindowsPowerShellForIMDb	5.1.14393.206	needs more data (possible Source: 0)
 thisIMDbID	Mozilla/5.0 (Windows NT; Windows NT 10.0; es-ES) WindowsPowerShell/5.1.14393.576	toolUsingWindowsPowerShellForIMDb	5.1.14393.576	needs more data (possible Source: 0)
@@ -76,3 +76,9 @@ toolLookingForGeoInformationClasses	Java/1.8.0_111	toolLookingForGeoInformation	
 toolLookingForFottballPlayerEnglishWikipediaPage	Java/1.7.0_121	footballExplorer	1.7.0_121	not sure who is creating these queries, but could be the same as the transfermarkt.com queries
 toolLookingForFottballPlayerEnglishWikipediaPage	Java/1.7.0_80	footballExplorer	1.7.0_80	not sure who is creating these queries, but could be the same as the transfermarkt.com queries
 toolLookingForFottballPlayerEnglishWikipediaPage	Java/1.7.0_79	footballExplorer	2.7.0_79	not sure who is creating these queries, but could be the same as the transfermarkt.com queries
+thisPubMedID	Magnus labs tools	toolUsingMagnusLabsForPubMedID	-1	needs more data
+thisInstanceOfWithSubclass	Java/1.8.0_91	toolSearchingForUndefinedEnglishLabel	1.8.0_91	needs more data (multiple versions at the same time)
+thisInstanceOfWithSubclass	Java/1.8.0_111	toolSearchingForUndefinedEnglishLabel	1.8.0_111	needs more data (multiple versions at the same time)
+gasProgramSSSP	Java/1.8.0_91	toolUsingSSSP	1.8.0_91	needs more data (multiple versions at the same time)
+gasProgramSSSP	Java/1.8.0_111	toolUsingSSSP	1.8.0_111	needs more data (multiple versions at the same time)
+gasProgramSSSP	Java/1.8.0_71	toolUsingSSSP	1.8.0_71	needs more data (multiple versions at the same time)

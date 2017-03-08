@@ -1,0 +1,93 @@
+Distinct
+   Projection
+      ProjectionElemList
+         ProjectionElem "item"
+         ProjectionElem "itemLabel"
+         ProjectionElem "ed"
+         ProjectionElem "edLabel"
+         ProjectionElem "auteurLabel"
+         ProjectionElem "AnneeCreation"
+         ProjectionElem "lieuLabel"
+         ProjectionElem "coord"
+         ProjectionElem "lien"
+      Order
+         OrderElem (ASC)
+            Var (name=dateCreation)
+         Extension
+            ExtensionElem (itemLabel)
+               Var (name=itemLabel)
+            ExtensionElem (edLabel)
+               Var (name=edLabel)
+            ExtensionElem (auteurLabel)
+               Var (name=auteurLabel)
+            ExtensionElem (AnneeCreation)
+               FunctionCall
+                  Var (name=dateCreation)
+            ExtensionElem (lieuLabel)
+               Var (name=lieuLabel)
+            Join
+               Join
+                  Join
+                     Difference
+                        Join
+                           LeftJoin
+                              LeftJoin
+                                 Join
+                                    StatementPattern
+                                       Var (name=item)
+                                       Var (name=-const-http://www.wikidata.org/prop/direct/P136-uri, value=http://www.wikidata.org/prop/direct/P136, anonymous)
+                                       Var (name=-const-http://www.wikidata.org/entity/Q1164267-uri, value=http://www.wikidata.org/entity/Q1164267, anonymous)
+                                    StatementPattern
+                                       Var (name=item)
+                                       Var (name=-const-http://www.wikidata.org/prop/direct/P31-uri, value=http://www.wikidata.org/prop/direct/P31, anonymous)
+                                       Var (name=-const-http://www.wikidata.org/entity/Q571-uri, value=http://www.wikidata.org/entity/Q571, anonymous)
+                                 StatementPattern
+                                    Var (name=item)
+                                    Var (name=-const-http://www.wikidata.org/prop/direct/P50-uri, value=http://www.wikidata.org/prop/direct/P50, anonymous)
+                                    Var (name=auteur)
+                              StatementPattern
+                                 Var (name=item)
+                                 Var (name=-const-http://www.wikidata.org/prop/direct/P571-uri, value=http://www.wikidata.org/prop/direct/P571, anonymous)
+                                 Var (name=dateCreation)
+                           StatementPattern
+                              Var (name=item)
+                              Var (name=-const-http://www.wikidata.org/prop/direct/P840-uri, value=http://www.wikidata.org/prop/direct/P840, anonymous)
+                              Var (name=lieu)
+                        StatementPattern
+                           Var (name=item)
+                           Var (name=-const-http://www.wikidata.org/prop/direct/P840-uri, value=http://www.wikidata.org/prop/direct/P840, anonymous)
+                           Var (name=-const-http://www.wikidata.org/entity/Q933-uri, value=http://www.wikidata.org/entity/Q933, anonymous)
+                     StatementPattern
+                        Var (name=lieu)
+                        Var (name=-const-http://www.wikidata.org/prop/direct/P625-uri, value=http://www.wikidata.org/prop/direct/P625, anonymous)
+                        Var (name=coord)
+                  Union
+                     Join
+                        StatementPattern
+                           Var (name=item)
+                           Var (name=-const-http://www.wikidata.org/prop/direct/P953-uri, value=http://www.wikidata.org/prop/direct/P953, anonymous)
+                           Var (name=lien)
+                        StatementPattern
+                           Var (name=item)
+                           Var (name=-const-http://www.wikidata.org/prop/direct/P364-uri, value=http://www.wikidata.org/prop/direct/P364, anonymous)
+                           Var (name=-const-http://www.wikidata.org/entity/Q150-uri, value=http://www.wikidata.org/entity/Q150, anonymous)
+                     Join
+                        Join
+                           StatementPattern
+                              Var (name=ed)
+                              Var (name=-const-http://www.wikidata.org/prop/direct/P629-uri, value=http://www.wikidata.org/prop/direct/P629, anonymous)
+                              Var (name=item)
+                           StatementPattern
+                              Var (name=ed)
+                              Var (name=-const-http://www.wikidata.org/prop/direct/P953-uri, value=http://www.wikidata.org/prop/direct/P953, anonymous)
+                              Var (name=lien)
+                        StatementPattern
+                           Var (name=ed)
+                           Var (name=-const-http://www.wikidata.org/prop/direct/P407-uri, value=http://www.wikidata.org/prop/direct/P407, anonymous)
+                           Var (name=-const-http://www.wikidata.org/entity/Q150-uri, value=http://www.wikidata.org/entity/Q150, anonymous)
+               Service
+                  Var (name=-const-http://wikiba.se/ontology#label-uri, value=http://wikiba.se/ontology#label, anonymous)
+                  StatementPattern
+                     Var (name=-const-http://www.bigdata.com/rdf#serviceParam-uri, value=http://www.bigdata.com/rdf#serviceParam, anonymous)
+                     Var (name=-const-http://wikiba.se/ontology#language-uri, value=http://wikiba.se/ontology#language, anonymous)
+                     Var (name=-const-fr,ar,be,bg,bn,ca,cs,da,de,el,en,es,et,fa,fi,he,hi,hu,hy,id,it,ja,jv,ko,nb,nl,eo,pa,pl,pt,ro,ru,sh,sk,sr,sv,sw,te,th,tr,uk,yue,vec,vi,zh-lit, value="fr,ar,be,bg,bn,ca,cs,da,de,el,en,es,et,fa,fi,he,hi,hu,hy,id,it,ja,jv,ko,nb,nl,eo,pa,pl,pt,ro,ru,sh,sk,sr,sv,sw,te,th,tr,uk,yue,vec,vi,zh", anonymous)

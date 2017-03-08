@@ -67,15 +67,23 @@ public final class Main
   /**
    * Saves the encountered queryTypes.
    */
-  public static Map<ParsedQuery, String> queryTypes = Collections.synchronizedMap(new HashMap<ParsedQuery, String>());
+  public static final Map<ParsedQuery, String> queryTypes = Collections.synchronizedMap(new HashMap<ParsedQuery, String>());
   /**
    * Saves the mapping of query type and user agent to tool name and version.
    */
-  public static Map<Tuple2<String, String>, Tuple2<String, String>> queryTypeToToolMapping = new HashMap<Tuple2<String, String>, Tuple2<String, String>>();
+  public static final Map<Tuple2<String, String>, Tuple2<String, String>> queryTypeToToolMapping = new HashMap<>();
+  /**
+   * Saves if metrics should be calculated for bot queries.
+   */
+  public static boolean withBots;
+  /**
+   * Saves if the input files should be modified with additional prefixes.
+   */
+  public static boolean readPreprocessed;
   /**
    * Define a static logger variable.
    */
-  private static Logger logger = Logger.getLogger(Main.class);
+  private static final Logger logger = Logger.getLogger(Main.class);
 
   /**
    * Since this is a utility class, it should not be instantiated.
@@ -94,12 +102,15 @@ public final class Main
   {
     Options options = new Options();
     options.addOption("l", "logging", false, "enables file logging");
+    options.addOption("j", "jena", false, "uses the Jena SPARQL Parser");
     options.addOption("o", "openrdf", false, "uses the OpenRDF SPARQL Parser");
     options.addOption("f", "file", true, "defines the input file prefix");
     options.addOption("h", "help", false, "displays this help");
     options.addOption("t", "tsv", false, "reads from .tsv-files");
-    options.addOption("p", "parquet", false, "read from .parquet-files");
+    // options.addOption("p", "parquet", false, "read from .parquet-files");
     options.addOption("n", "numberOfThreads", true, "number of used threads, default 1");
+    options.addOption("b", "withBots", false, "enables metric calculation for bot queries+");
+    options.addOption("p", "readPreprocessed", false, "enables reading of preprocessed files");
 
     //some parameters which can be changed through parameters
     //QueryHandler queryHandler = new OpenRDFQueryHandler();
@@ -149,6 +160,12 @@ public final class Main
       if (cmd.hasOption("numberOfThreads")) {
         numberOfThreads = Integer.parseInt(cmd.getOptionValue("numberOfThreads"));
       }
+      if (cmd.hasOption("withBots")) {
+        withBots = true;
+      }
+      if (cmd.hasOption("readPreprocessed")) {
+        readPreprocessed = true;
+      }
     } catch (UnrecognizedOptionException e) {
       System.out.println("Unrecognized commandline option: " + e.getOption());
       HelpFormatter formatter = new HelpFormatter();
@@ -194,14 +211,18 @@ public final class Main
   private static void loadPreBuildQueryTypes()
   {
     try (DirectoryStream<Path> directoryStream =
-        Files.newDirectoryStream(Paths.get("preBuildQueryTypeFiles"))) {
+             Files.newDirectoryStream(Paths.get("preBuildQueryTypeFiles"))) {
       for (Path filePath : directoryStream) {
         if (Files.isRegularFile(filePath)) {
           if (filePath.toString().endsWith(".preBuildQueryType")) {
             String queryString = new String(readAllBytes(filePath));
             OpenRDFQueryHandler queryHandler = new OpenRDFQueryHandler();
-            queryHandler.setValidityStatus(1);
+            //queryHandler.setValidityStatus(1);
             queryHandler.setQueryString(queryString);
+            if(queryHandler.getValidityStatus() != 1) {
+              logger.info("The Pre-build query " + filePath + " is no valid SPARQL");
+              continue;
+            }
             ParsedQuery normalizedPreBuildQuery = queryHandler.getNormalizedQuery();
             String queryTypeName = filePath.toString().substring(filePath.toString().lastIndexOf("/") + 1, filePath.toString().lastIndexOf("."));
             if (normalizedPreBuildQuery != null) {

@@ -16,7 +16,7 @@ public abstract class QueryHandler
   /**
    * Define a static logger variable.
    */
-  protected static Logger logger = Logger.getLogger(QueryHandler.class);
+  private static final Logger logger = Logger.getLogger(QueryHandler.class);
 
   /**
    * A pattern of a SPARQL query where all "parameter" information is removed from
@@ -106,7 +106,7 @@ public abstract class QueryHandler
   /**
    * Update the handler to represent the string in queryString.
    */
-  public abstract void update();
+  protected abstract void update();
 
   /**
    * @return The logger to write messages to.
@@ -123,14 +123,6 @@ public abstract class QueryHandler
   {
     return queryString;
   }
-  
-  /**
-   * @return Returns the original query-string represented by this handler.
-   */
-  public final String getQueryStringWithoutPrefixes()
-  {
-    return queryStringWithoutPrefixes;
-  }
 
   /**
    * @param queryStringToSet query to set the variable queryString to
@@ -141,9 +133,18 @@ public abstract class QueryHandler
       this.validityStatus = 2;
     } else if (validityStatus > -1) {
       this.queryStringWithoutPrefixes = queryStringToSet;
+      this.lengthNoAddedPrefixes = queryStringToSet.length();
       this.queryString = this.addMissingPrefixesToQuery(queryStringToSet);
       update();
     }
+  }
+
+  /**
+   * @return Returns the original query-string represented by this handler.
+   */
+  public final String getQueryStringWithoutPrefixes()
+  {
+    return queryStringWithoutPrefixes;
   }
 
   /**
@@ -155,9 +156,8 @@ public abstract class QueryHandler
    * @param queryWithoutPrefixes the query the missing prefixes should be added to
    * @return the query with all standard prefixes
    */
-  public final String addMissingPrefixesToQuery(String queryWithoutPrefixes)
+  public static String addMissingPrefixesToQuery(String queryWithoutPrefixes)
   {
-    this.lengthNoAddedPrefixes = queryWithoutPrefixes.length();
     String toBeAddedPrefixes = "";
     Map<String, String> prefixes = new LinkedHashMap<>();
 
@@ -234,14 +234,6 @@ public abstract class QueryHandler
   }
 
   /**
-   * The function returns the length of the query as a string
-   * without comments and formatting.
-   *
-   * @return Returns the length of the query without comments (-1 if invalid).
-   */
-  public abstract Integer getStringLengthNoComments();
-
-  /**
    * @return Returns the number of variables in the query head.
    */
   public abstract Integer getVariableCountHead();
@@ -263,7 +255,7 @@ public abstract class QueryHandler
    *
    * @throws IllegalStateException
    */
-  public abstract void computeQueryType() throws IllegalStateException;
+  protected abstract void computeQueryType() throws IllegalStateException;
 
 
   /**
@@ -314,10 +306,18 @@ public abstract class QueryHandler
     this.currentFile = currentFile;
   }
 
-  public final int getLengthNoAddedPrefixes()
+  /**
+   * @return the length of the query without the added prefixes
+   */
+  public int getLengthNoAddedPrefixes()
   {
     return lengthNoAddedPrefixes;
   }
+
+  /**
+   * @return kind of the complexity of the SPARQL query
+   */
+  public abstract Integer getQuerySize();
 
   /**
    * Sets the toolName and version.
@@ -341,19 +341,25 @@ public abstract class QueryHandler
     // and that it start with #TOOL: or #Tool: or #tool: and that the tool name is then
     // everything until the end of that line
     int toolIndex = this.queryStringWithoutPrefixes.indexOf("#TOOL:");
-    if(toolIndex == -1){
+    if (toolIndex == -1) {
       toolIndex = this.queryStringWithoutPrefixes.indexOf("#Tool:");
     }
-    if(toolIndex == -1){
+    if (toolIndex == -1) {
       toolIndex = this.queryStringWithoutPrefixes.indexOf("#tool:");
     }
     if (toolIndex != -1) {
-      this.toolName = this.queryStringWithoutPrefixes.substring(toolIndex + 6, this.queryStringWithoutPrefixes.indexOf("\n", toolIndex+6));
+      int toolCommentLineEndIndex = this.queryStringWithoutPrefixes.indexOf("\n", toolIndex+6);
+
+      //in case the index is at the end of the query, looking at you developer of Histropedia-WQT !!!
+      if(toolCommentLineEndIndex == -1) {
+        toolCommentLineEndIndex = queryStringWithoutPrefixes.length();
+      }
+      this.toolName = this.queryStringWithoutPrefixes.substring(toolIndex + 6, toolCommentLineEndIndex);
       this.toolVersion = "0.1";
       return;
     }
 
-    Tuple2<String, String> key = new Tuple2<String, String>(this.getQueryType(), this.getUserAgent());
+    Tuple2<String, String> key = new Tuple2<>(this.getQueryType(), this.getUserAgent());
     if (Main.queryTypeToToolMapping.containsKey(key)) {
       Tuple2<String, String> value = Main.queryTypeToToolMapping.get(key);
       this.toolName = value._1;
@@ -387,7 +393,7 @@ public abstract class QueryHandler
   /**
    * @return The user agent that posed this query.
    */
-  public final String getUserAgent()
+  private String getUserAgent()
   {
     return userAgent;
   }

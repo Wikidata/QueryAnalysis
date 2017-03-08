@@ -31,7 +31,7 @@ public class StandardizingSPARQLParser extends SPARQLParser
    *
    * @param queryToBeDebugged The query to be debugged
    */
-  public final void debug(ASTQueryContainer queryToBeDebugged)
+  private void debug(ASTQueryContainer queryToBeDebugged)
   {
     try {
       queryToBeDebugged.jjtAccept(new ASTVisitorBase()
@@ -39,8 +39,8 @@ public class StandardizingSPARQLParser extends SPARQLParser
         public Object visit(ASTBind node, Object data) throws VisitorException
         {
           Node parent = node.jjtGetParent();
-          List<Node> siblings = new ArrayList<Node>();
-          List<Node> binds = new ArrayList<Node>();
+          List<Node> siblings = new ArrayList<>();
+          List<Node> binds = new ArrayList<>();
           for (int i = 0; i < parent.jjtGetNumChildren(); i++) {
             Node child = parent.jjtGetChild(i);
             if (child.getClass().equals(ASTBind.class)) {
@@ -77,13 +77,13 @@ public class StandardizingSPARQLParser extends SPARQLParser
    * @param queryContainer The query to be normalized
    * @throws MalformedQueryException if the query was malformed
    */
-  public final void normalize(ASTQueryContainer queryContainer) throws MalformedQueryException
+  private void normalize(ASTQueryContainer queryContainer) throws MalformedQueryException
   {
-    final Map<String, Integer> variables = new HashMap<String, Integer>();
-    final Map<String, Integer> strings = new HashMap<String, Integer>();
-    final Map<Long, Long> limits = new HashMap<Long, Long>();
-    final Map<String, Integer> numericLiterals = new HashMap<String, Integer>();
-    final Map<String, Integer> rdfLiterals = new HashMap<String, Integer>();
+    final Map<String, Integer> variables = new HashMap<>();
+    final Map<String, Integer> strings = new HashMap<>();
+    final Map<Long, Long> limits = new HashMap<>();
+    final Map<String, Integer> numericLiterals = new HashMap<>();
+    final Map<String, Integer> rdfLiterals = new HashMap<>();
     try {
       queryContainer.jjtAccept(new ASTVisitorBase()
       {
@@ -111,9 +111,9 @@ public class StandardizingSPARQLParser extends SPARQLParser
         public Object visit(ASTLimit limit, Object data) throws VisitorException
         {
           if (!limits.containsKey(limit.getValue())) {
-            limits.put(limit.getValue(), Long.valueOf(strings.keySet().size() + 1));
+            limits.put(limit.getValue(), (long) (strings.keySet().size() + 1));
           }
-          limit.setValue(Long.valueOf(limits.get(limit.getValue())));
+          limit.setValue(limits.get(limit.getValue()));
           return super.visit(limit, data);
         }
 
@@ -148,12 +148,9 @@ public class StandardizingSPARQLParser extends SPARQLParser
           return super.visit(qname, data);
         }*/
       }, null);
-    } catch (TokenMgrError e) {
-      throw new MalformedQueryException(e);
-    } catch (VisitorException e) {
+    } catch (TokenMgrError | VisitorException e) {
       throw new MalformedQueryException(e);
     }
-    return;
   }
 
   /**
@@ -162,6 +159,7 @@ public class StandardizingSPARQLParser extends SPARQLParser
    * @return The parsed query
    * @throws MalformedQueryException If the query was in any way malformed
    */
+  @SuppressWarnings("WeakerAccess")
   public final ParsedQuery parseQuery(ASTQueryContainer qc, String baseURI) throws MalformedQueryException
   {
     StringEscapesProcessor.process(qc);
@@ -213,9 +211,7 @@ public class StandardizingSPARQLParser extends SPARQLParser
       ASTQueryContainer qc = SyntaxTreeBuilder.parseQuery(queryString);
       debug(qc);
       return parseQuery(qc, baseURI);
-    } catch (TokenMgrError e) {
-      throw new MalformedQueryException(e.getMessage(), e);
-    } catch (ParseException e) {
+    } catch (TokenMgrError | ParseException e) {
       throw new MalformedQueryException(e.getMessage(), e);
     }
   }
@@ -234,9 +230,7 @@ public class StandardizingSPARQLParser extends SPARQLParser
       debug(qc);
       normalize(qc);
       return parseQuery(qc, baseURI);
-    } catch (TokenMgrError e) {
-      throw new MalformedQueryException(e.getMessage(), e);
-    } catch (ParseException e) {
+    } catch (TokenMgrError | ParseException e) {
       throw new MalformedQueryException(e.getMessage(), e);
     }
   }
