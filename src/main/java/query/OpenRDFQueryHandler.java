@@ -200,8 +200,13 @@ public class OpenRDFQueryHandler extends QueryHandler
         }
       }
     }
-    Main.queryTypes.put(normalizedQuery, String.valueOf(Main.queryTypes.size()));
-    this.queryType = Main.queryTypes.get(normalizedQuery);
+    if (Main.dynamicQueryTypes) {
+      Main.queryTypes.put(normalizedQuery, String.valueOf(Main.queryTypes.size()));
+      this.queryType = Main.queryTypes.get(normalizedQuery);
+    } else {
+      this.queryType = "-1";
+    }
+
   }
 
   /**

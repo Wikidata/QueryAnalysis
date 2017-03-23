@@ -81,6 +81,10 @@ public final class Main
    */
   public static boolean readPreprocessed;
   /**
+   * Saves if the query types should be generated dynamically.
+   */
+  public static boolean dynamicQueryTypes;
+  /**
    * Define a static logger variable.
    */
   private static final Logger logger = Logger.getLogger(Main.class);
@@ -111,6 +115,8 @@ public final class Main
     options.addOption("n", "numberOfThreads", true, "number of used threads, default 1");
     options.addOption("b", "withBots", false, "enables metric calculation for bot queries+");
     options.addOption("p", "readPreprocessed", false, "enables reading of preprocessed files");
+    options.addOption("d", "dynamicQueryTypes", false, "enables dynamic generation of query types");
+
 
     //some parameters which can be changed through parameters
     //QueryHandler queryHandler = new OpenRDFQueryHandler();
@@ -165,6 +171,9 @@ public final class Main
       }
       if (cmd.hasOption("readPreprocessed")) {
         readPreprocessed = true;
+      }
+      if (cmd.hasOption("dynamicQueryTypes")) {
+        dynamicQueryTypes = true;
       }
     } catch (UnrecognizedOptionException e) {
       System.out.println("Unrecognized commandline option: " + e.getOption());
@@ -283,7 +292,9 @@ public final class Main
     new File(outputFolderName).mkdir();
     outputFolderName += "queryTypeFiles/";
     File outputFolderFile = new File(outputFolderName);
-    FileUtils.deleteQuietly(outputFolderFile);
+    if (dynamicQueryTypes) {
+      FileUtils.deleteQuietly(outputFolderFile);
+    }
     new File(outputFolderName).mkdir();
     SPARQLQueryRenderer renderer = new SPARQLQueryRenderer();
     String currentOutputFolderName = outputFolderName;
