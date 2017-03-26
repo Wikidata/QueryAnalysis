@@ -1,14 +1,11 @@
 import csv
 import os
-from gtk._gtk import Item
 
-pathBase = "../inputData/"
-
-if not os.path.exists(pathBase + "userData"):
-		os.makedirs(pathBase + "userData")
+if not os.path.exists("userData"):
+		os.makedirs("userData")
 
 for i in xrange(1, 2):
-	with open(pathBase + "QueryProcessedOpenRDF" + "%02d" % i + ".tsv") as p, open(pathBase + "QueryCnt" + "%02d" % i + ".tsv") as s, open(pathBase + "/userData/QueryProcessedOpenRDF" + "%02d" % i + ".tsv", "w") as user_p, open(pathBase + "/userData/QueryCnt" + "%02d" % i + ".tsv", "w") as user_s:		
+	with open("QueryProcessedOpenRDF" + "%02d" % i + ".tsv") as p, open("QueryCnt" + "%02d" % i + ".tsv") as s, open("userData/QueryProcessedOpenRDF" + "%02d" % i + ".tsv", "w") as user_p, open("userData/QueryCnt" + "%02d" % i + ".tsv", "w") as user_s:		
 		pReader = csv.DictReader(p, delimiter="\t")
 		sReader = csv.DictReader(s, delimiter="\t")
 		

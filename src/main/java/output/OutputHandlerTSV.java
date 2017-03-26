@@ -64,7 +64,7 @@ public class OutputHandlerTSV extends OutputHandler
     header.add("#ToolName");
     header.add("#ToolVersion");
     header.add("#StringLengthWithComments");
-    header.add("#StringLengthNoComments");
+    header.add("#QuerySize");
     header.add("#VariableCountHead");
     header.add("#VariableCountPattern");
     header.add("#TripleCountWithService");
