@@ -259,6 +259,7 @@ public class OpenRDFQueryHandler extends QueryHandler
         arbitraryLengthPath.setObjectVar(normalizeHelper(arbitraryLengthPath.getObjectVar(), strings));
       }
     });
+    this.setqIDs(strings.keySet());
     return normalizedQuery;
   }
 
