@@ -105,7 +105,7 @@ public class InputHandlerTSV extends InputHandler
             logger.warn("Could not parse temp_validity, is the file preprocessed?", e);
             return;
           }
-          outputHandler.writeLine(preprocessedQuery, preprocessedValidity, Arrays.copyOfRange(row, 2, row.length), parsingContext.currentLine(), inputFile);
+          outputHandler.writeLine(preprocessedQuery, preprocessedValidity, row[3].toString(), parsingContext.currentLine(), inputFile);
         } else {
           Tuple2<String, Integer> queryTuple = decode(row[0].toString(), inputFile, parsingContext.currentLine());
 
@@ -127,7 +127,7 @@ public class InputHandlerTSV extends InputHandler
             rowToWrite.addAll(Arrays.asList(row).subList(1, row.length));
             preprocessedWriter.writeRow(rowToWrite);
           }
-          outputHandler.writeLine(queryTuple._1, queryTuple._2, Arrays.copyOfRange(row, 1, row.length), parsingContext.currentLine(), inputFile);
+          outputHandler.writeLine(queryTuple._1, queryTuple._2, row[2].toString(), parsingContext.currentLine(), inputFile);
         }
       }
 
