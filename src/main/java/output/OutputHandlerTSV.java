@@ -30,7 +30,7 @@ public class OutputHandlerTSV extends OutputHandler
   private static final Logger logger = Logger.getLogger(OutputHandlerTSV.class);
 
   /**
-   * the class of wich a queryHandlerObject should be created
+   * The class of which a queryHandlerObject should be created.
    */
   private final Class queryHandlerClass;
 
@@ -70,6 +70,7 @@ public class OutputHandlerTSV extends OutputHandler
     header.add("#TripleCountWithService");
     header.add("#TripleCountNoService");
     header.add("#QueryType");
+    header.add("#QIDs");
     header.add("#uri_path");
     header.add("#user_agent");
     header.add("#ts");
@@ -125,7 +126,6 @@ public class OutputHandlerTSV extends OutputHandler
     queryHandler.setCurrentLine(currentLine);
     queryHandler.setCurrentFile(currentFile);
 
-
     List<Object> line = new ArrayList<>();
     line.add(queryHandler.getValidityStatus());
     line.add(queryHandler.getToolName());
@@ -138,8 +138,9 @@ public class OutputHandlerTSV extends OutputHandler
       line.add(queryHandler.getTripleCountWithService());
       line.add(-1);
       line.add(queryHandler.getQueryType());
+      line.add(queryHandler.getqIDString());
     } else {
-      for (int i = 0; i < 7; i++) {
+      for (int i = 0; i < 8; i++) {
         line.add(-1);
       }
     }

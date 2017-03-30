@@ -4,8 +4,11 @@ import general.Main;
 import org.apache.log4j.Logger;
 import scala.Tuple2;
 
+import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 /**
@@ -27,8 +30,12 @@ public abstract class QueryHandler
    * -1 means uninitialized or that the query is or that the queryType could not
    * be computed
    */
-
   protected String queryType = "-1";
+
+  /**
+   * The Q-IDs used in this query.
+   */
+  protected Set<String> qIDs;
 
   /**
    * Saves the query-string with added prefixes.
@@ -404,5 +411,50 @@ public abstract class QueryHandler
   public final void setUserAgent(String userAgent)
   {
     this.userAgent = userAgent;
+  }
+
+  /**
+   * @return The Q-IDs contained in this query
+   */
+  public Set<String> getqIDs()
+  {
+    if (queryType.equals("-1") && qIDs == null) {
+      try {
+        this.computeQueryType();
+      } catch (IllegalStateException e) {
+        return null;
+      }
+    }
+    return qIDs;
+  }
+
+  /**
+   * @return the Q-IDs as a string of comma separated values.
+   */
+  public String getqIDString()
+  {
+    if (qIDs == null) {
+      return "D";
+    }
+    if (qIDs.size() == 0) {
+      return "D";
+    }
+    String qIDString = "";
+    for (String qID : qIDs) {
+      qIDString += qID + ",";
+    }
+    return qIDString.substring(0, qIDString.lastIndexOf(","));
+  }
+
+  /**
+   * Sets the Q-IDs, removing http://www.wikidata.org/entity/ if necessary.
+   * @param qIDstoSet the Q-IDs to set
+   */
+  protected void setqIDs(Set<String> qIDstoSet)
+  {
+    qIDs = new HashSet<String>();
+    for (String qID : qIDstoSet) {
+      qIDs.add(qID.replaceAll("http://www.wikidata.org/entity/", ""));
+    }
   }
 }
