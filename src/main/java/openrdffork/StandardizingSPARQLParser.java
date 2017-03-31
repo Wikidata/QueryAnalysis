@@ -1,7 +1,7 @@
 /**
  *
  */
-package query;
+package openrdffork;
 
 import org.openrdf.model.impl.ValueFactoryImpl;
 import org.openrdf.query.Dataset;
@@ -164,7 +164,7 @@ public class StandardizingSPARQLParser extends SPARQLParser
   {
     StringEscapesProcessor.process(qc);
     BaseDeclProcessor.process(qc, baseURI);
-    Map<String, String> prefixes = PrefixDeclProcessor.process(qc);
+    Map<String, String> prefixes = StandardizingPrefixDeclProcessor.process(qc);
     WildcardProjectionProcessor.process(qc);
     BlankNodeVarProcessor.process(qc);
 

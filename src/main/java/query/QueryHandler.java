@@ -141,7 +141,8 @@ public abstract class QueryHandler
     } else if (validityStatus > -1) {
       this.queryStringWithoutPrefixes = queryStringToSet;
       this.lengthNoAddedPrefixes = queryStringToSet.length();
-      this.queryString = this.addMissingPrefixesToQuery(queryStringToSet);
+      // this.queryString = this.addMissingPrefixesToQuery(queryStringToSet);
+      this.queryString = queryStringToSet;
       update();
     }
   }
