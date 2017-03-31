@@ -1,8 +1,14 @@
 import csv
 import os
 
-if not os.path.exists("userData"):
-		os.makedirs("userData")
+from shutil import copyfile
+
+subfolder = "userData/"
+
+if not os.path.exists(subfolder):
+		os.makedirs(subfolder)
+		
+queryTypes = set()
 
 for i in xrange(1, 2):
 	with open("QueryProcessedOpenRDF" + "%02d" % i + ".tsv") as p, open("QueryCnt" + "%02d" % i + ".tsv") as s, open("userData/QueryProcessedOpenRDF" + "%02d" % i + ".tsv", "w") as user_p, open("userData/QueryCnt" + "%02d" % i + ".tsv", "w") as user_s:		
@@ -26,5 +32,17 @@ for i in xrange(1, 2):
 			if (processed["#ToolName"] == "0"):
 				pWriter.writerow(processed)
 				sWriter.writerow(source)
+				queryTypes.add(processed["#QueryType"])
+				
+queryTypeFolder = "queryType/queryTypeFiles/"
 
+if not os.path.exists(subfolder + queryTypeFolder):
+	os.makedirs(subfolder + queryTypeFolder)
+
+for queryType in queryTypes:
+	original = queryTypeFolder + queryType + ".queryType"
+	try:
+		copyfile(original, "userData/" + original)
+	except:
+		print original + " does not exist."
 	
