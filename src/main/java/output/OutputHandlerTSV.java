@@ -71,12 +71,6 @@ public class OutputHandlerTSV extends OutputHandler
     header.add("#TripleCountNoService");
     header.add("#QueryType");
     header.add("#QIDs");
-    header.add("#uri_path");
-    header.add("#user_agent");
-    header.add("#ts");
-    header.add("#agent_type");
-    header.add("#hour");
-    header.add("#httpStatusCode");
     header.add("#original_line(filename_line)");
     writer.writeHeaders(header);
   }
@@ -112,7 +106,7 @@ public class OutputHandlerTSV extends OutputHandler
    * @param currentFile    The file from which the data to be written originates.
    */
   @Override
-  public final void writeLine(String queryToAnalyze, Integer validityStatus, Object[] row, long currentLine, String currentFile)
+  public final void writeLine(String queryToAnalyze, Integer validityStatus, String userAgent, long currentLine, String currentFile)
   {
     QueryHandler queryHandler = null;
     try {
@@ -121,7 +115,7 @@ public class OutputHandlerTSV extends OutputHandler
       logger.error("Failed to create query handler object" + e);
     }
     queryHandler.setValidityStatus(validityStatus);
-    queryHandler.setUserAgent(row[2].toString());
+    queryHandler.setUserAgent(userAgent);
     queryHandler.setQueryString(queryToAnalyze);
     queryHandler.setCurrentLine(currentLine);
     queryHandler.setCurrentFile(currentFile);
@@ -144,8 +138,6 @@ public class OutputHandlerTSV extends OutputHandler
         line.add(-1);
       }
     }
-    //add existing lines
-    line.addAll(Arrays.asList(row));
     line.add(currentFile + "_" + currentLine);
 
     writer.writeRow(line);
