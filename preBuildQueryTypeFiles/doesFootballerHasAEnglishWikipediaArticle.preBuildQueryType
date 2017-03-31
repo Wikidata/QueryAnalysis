@@ -1,0 +1,9 @@
+PREFIX  schema: <http://schema.org/>
+PREFIX  wd:   <http://www.wikidata.org/entity/>
+
+SELECT  *
+WHERE
+  { ?wikipediaLink schema:about wd:Q11948 .
+    ?wikipediaLink schema:inLanguage "en" .
+    ?wikipediaLink schema:isPartOf <https://en.wikipedia.org/>
+  }

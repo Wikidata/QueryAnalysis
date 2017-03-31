@@ -1,7 +1,6 @@
 package input;
 
 import org.apache.log4j.Logger;
-import org.apache.spark.sql.AnalysisException;
 import output.OutputHandler;
 import scala.Tuple2;
 
@@ -19,7 +18,7 @@ public abstract class InputHandler
   /**
    * Define a static logger variable.
    */
-  private static Logger logger = Logger.getLogger(InputHandler.class);
+  private static final Logger logger = Logger.getLogger(InputHandler.class);
   /**
    * The name of the input file for referencing in the output file.
    */
@@ -32,7 +31,7 @@ public abstract class InputHandler
    */
   public abstract void parseTo(OutputHandler outputHandler);
 
-  public abstract void setInputFile(String fileToRead) throws FileNotFoundException, AnalysisException;
+  public abstract void setInputFile(String fileToRead) throws FileNotFoundException;
 
   /**
    * @param uriQuery  The uri_query entry from the logs.

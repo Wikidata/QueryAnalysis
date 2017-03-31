@@ -1,10 +1,15 @@
 package query;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.regex.Pattern;
-
+import general.Main;
 import org.apache.log4j.Logger;
+import scala.Tuple2;
+
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.regex.Pattern;
 
 /**
  * @author adrian
@@ -14,11 +19,34 @@ public abstract class QueryHandler
   /**
    * Define a static logger variable.
    */
-  protected static Logger logger = Logger.getLogger(QueryHandler.class);
+  private static final Logger logger = Logger.getLogger(QueryHandler.class);
+
   /**
-   * Saves the query-string handed to the constructor.
+   * A pattern of a SPARQL query where all "parameter" information is removed from
+   * the query
+   * Helpful for similarity comparisons between two Queries
+   * The query type as a number referencing a file containing the queryTypePattern.
+   * <p>
+   * -1 means uninitialized or that the query is or that the queryType could not
+   * be computed
+   */
+  protected String queryType = "-1";
+
+  /**
+   * The Q-IDs used in this query.
+   */
+  protected Set<String> qIDs;
+
+  /**
+   * Saves the query-string with added prefixes.
    */
   private String queryString;
+
+  /**
+   * Saves the query-string without prefixes.
+   */
+  private String queryStringWithoutPrefixes;
+
   /**
    * Saves if queryString is a valid query, and if not, why
    * 2 -> valid, but empty query
@@ -40,14 +68,38 @@ public abstract class QueryHandler
   private long currentLine;
 
   /**
-   * saves the current file the query was from
+   * Saves the current file the query was from.
    */
   private String currentFile;
 
   /**
-   * contains the length of the Query without added prefixes
+   * Contains the length of the Query without added prefixes.
    */
   private int lengthNoAddedPrefixes;
+
+  /**
+   * The name of the tool which created the query.
+   * 0 for user querys
+   * -1 for unknown tool
+   */
+  private String toolName;
+
+  /**
+   * The version of the tool which created the query.
+   * -1 for unknown tool
+   */
+  private String toolVersion;
+
+  /**
+   * True if the tool information got already computed.
+   * useful for lazy-loading of tool information
+   */
+  private boolean toolComputed = false;
+
+  /**
+   * The userAgent string which executed this query.
+   */
+  private String userAgent;
 
   /**
    *
@@ -59,9 +111,9 @@ public abstract class QueryHandler
   }
 
   /**
-   * Updated the handler to represent the string in queryString.
+   * Update the handler to represent the string in queryString.
    */
-  public abstract void update();
+  protected abstract void update();
 
   /**
    * @return The logger to write messages to.
@@ -87,10 +139,19 @@ public abstract class QueryHandler
     if (queryStringToSet.equals("")) {
       this.validityStatus = 2;
     } else if (validityStatus > -1) {
+      this.queryStringWithoutPrefixes = queryStringToSet;
+      this.lengthNoAddedPrefixes = queryStringToSet.length();
       this.queryString = this.addMissingPrefixesToQuery(queryStringToSet);
       update();
     }
-    return;
+  }
+
+  /**
+   * @return Returns the original query-string represented by this handler.
+   */
+  public final String getQueryStringWithoutPrefixes()
+  {
+    return queryStringWithoutPrefixes;
   }
 
   /**
@@ -99,12 +160,11 @@ public abstract class QueryHandler
    * we need to add them manually (but only if they aren't already inside of the queries)
    * -> this method is here to achieve exactly this.
    *
-   * @param queryWithoutPrefixes
-   * @return
+   * @param queryWithoutPrefixes the query the missing prefixes should be added to
+   * @return the query with all standard prefixes
    */
-  public final String addMissingPrefixesToQuery(String queryWithoutPrefixes)
+  public static String addMissingPrefixesToQuery(String queryWithoutPrefixes)
   {
-    this.lengthNoAddedPrefixes = queryWithoutPrefixes.length();
     String toBeAddedPrefixes = "";
     Map<String, String> prefixes = new LinkedHashMap<>();
 
@@ -174,17 +234,11 @@ public abstract class QueryHandler
    */
   public final Integer getStringLength()
   {
-    if (queryString == null) return -1;
+    if (queryString == null) {
+      return -1;
+    }
     return queryString.length();
   }
-
-  /**
-   * The function returns the length of the query as a string
-   * without comments and formatting.
-   *
-   * @return Returns the length of the query without comments (-1 if invalid).
-   */
-  public abstract Integer getStringLengthNoComments();
 
   /**
    * @return Returns the number of variables in the query head.
@@ -202,15 +256,35 @@ public abstract class QueryHandler
    */
   public abstract Integer getTripleCountWithService();
 
+
+  /**
+   * Computes the query type.
+   *
+   * @throws IllegalStateException
+   */
+  protected abstract void computeQueryType() throws IllegalStateException;
+
+
   /**
    * @return Returns the query type as a number referencing a file containing the queryTypePattern.
    */
-  public abstract Integer getQueryType();
-  
+  public final String getQueryType()
+  {
+    //lazy loading of queryType
+    if (queryType.equals("-1")) {
+      try {
+        this.computeQueryType();
+      } catch (IllegalStateException e) {
+        return "-1";
+      }
+    }
+    return this.queryType;
+  }
+
   /**
    * @return the line the query originated from
    */
-  public long getCurrentLine()
+  public final long getCurrentLine()
   {
     return currentLine;
   }
@@ -218,7 +292,7 @@ public abstract class QueryHandler
   /**
    * @param currentLine the current line the query was from
    */
-  public void setCurrentLine(long currentLine)
+  public final void setCurrentLine(long currentLine)
   {
     this.currentLine = currentLine;
   }
@@ -226,7 +300,7 @@ public abstract class QueryHandler
   /**
    * @return the file the query originated from
    */
-  public String getCurrentFile()
+  public final String getCurrentFile()
   {
     return currentFile;
   }
@@ -234,13 +308,153 @@ public abstract class QueryHandler
   /**
    * @param currentFile the current file the query originated from
    */
-  public void setCurrentFile(String currentFile)
+  public final void setCurrentFile(String currentFile)
   {
     this.currentFile = currentFile;
   }
 
+  /**
+   * @return the length of the query without the added prefixes
+   */
   public int getLengthNoAddedPrefixes()
   {
     return lengthNoAddedPrefixes;
+  }
+
+  /**
+   * @return kind of the complexity of the SPARQL query
+   */
+  public abstract Integer getQuerySize();
+
+  /**
+   * Sets the toolName and version.
+   */
+  private void computeTool()
+  {
+    this.toolComputed = true;
+
+    //default values in case we don't find anything for computation
+    this.toolName = "0";
+    this.toolVersion = "0";
+
+    if (validityStatus != 1) {
+      return;
+    }
+
+    //first check if there is a toolComment, if so we don't need to use
+    // queryTypes and userAgents
+    //assuming that if there is a tool comment at all, it is before the query,
+    // but can be after the namespace the first comment
+    // and that it start with #TOOL: or #Tool: or #tool: and that the tool name is then
+    // everything until the end of that line
+    int toolIndex = this.queryStringWithoutPrefixes.indexOf("#TOOL:");
+    if (toolIndex == -1) {
+      toolIndex = this.queryStringWithoutPrefixes.indexOf("#Tool:");
+    }
+    if (toolIndex == -1) {
+      toolIndex = this.queryStringWithoutPrefixes.indexOf("#tool:");
+    }
+    if (toolIndex != -1) {
+      int toolCommentLineEndIndex = this.queryStringWithoutPrefixes.indexOf("\n", toolIndex+6);
+
+      //in case the index is at the end of the query, looking at you developer of Histropedia-WQT !!!
+      if(toolCommentLineEndIndex == -1) {
+        toolCommentLineEndIndex = queryStringWithoutPrefixes.length();
+      }
+      this.toolName = this.queryStringWithoutPrefixes.substring(toolIndex + 6, toolCommentLineEndIndex);
+      this.toolVersion = "0.1";
+      return;
+    }
+
+    Tuple2<String, String> key = new Tuple2<>(this.getQueryType(), this.getUserAgent());
+    if (Main.queryTypeToToolMapping.containsKey(key)) {
+      Tuple2<String, String> value = Main.queryTypeToToolMapping.get(key);
+      this.toolName = value._1;
+      this.toolVersion = value._2;
+    }
+
+  }
+
+  /**
+   * @return The name of the tool that posed this query (if any)
+   */
+  public final String getToolName()
+  {
+    if (!toolComputed) {
+      this.computeTool();
+    }
+    return toolName;
+  }
+
+  /**
+   * @return The version of the tool that posed this query (if any)
+   */
+  public final String getToolVersion()
+  {
+    if (!toolComputed) {
+      this.computeTool();
+    }
+    return toolVersion;
+  }
+
+  /**
+   * @return The user agent that posed this query.
+   */
+  private String getUserAgent()
+  {
+    return userAgent;
+  }
+
+  /**
+   * @param userAgent The user agent that posed this query.
+   */
+  public final void setUserAgent(String userAgent)
+  {
+    this.userAgent = userAgent;
+  }
+
+  /**
+   * @return The Q-IDs contained in this query
+   */
+  public Set<String> getqIDs()
+  {
+    if (queryType.equals("-1") && qIDs == null) {
+      try {
+        this.computeQueryType();
+      } catch (IllegalStateException e) {
+        return null;
+      }
+    }
+    return qIDs;
+  }
+
+  /**
+   * @return the Q-IDs as a string of comma separated values.
+   */
+  public String getqIDString()
+  {
+    if (qIDs == null) {
+      return "D";
+    }
+    if (qIDs.size() == 0) {
+      return "D";
+    }
+    String qIDString = "";
+    for (String qID : qIDs) {
+      qIDString += qID + ",";
+    }
+    return qIDString.substring(0, qIDString.lastIndexOf(","));
+  }
+
+  /**
+   * Sets the Q-IDs, removing http://www.wikidata.org/entity/ if necessary.
+   * @param qIDstoSet the Q-IDs to set
+   */
+  protected void setqIDs(Set<String> qIDstoSet)
+  {
+    qIDs = new HashSet<String>();
+    for (String qID : qIDstoSet) {
+      qIDs.add(qID.replaceAll("http://www.wikidata.org/entity/", ""));
+    }
   }
 }

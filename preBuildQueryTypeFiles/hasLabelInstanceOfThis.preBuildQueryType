@@ -1,0 +1,21 @@
+PREFIX wd: <http://www.wikidata.org/entity/>
+PREFIX wdt: <http://www.wikidata.org/prop/direct/>
+
+SELECT distinct ?cat WHERE {
+
+{
+  Optional{
+  ?cid wdt:P31 ?cat .
+  ?cid rdfs:label "cat"@en .}
+}
+UNION
+ { Optional{
+  ?cid wdt:P31 ?cat .
+  ?cid rdfs:label "CAT"@en . }
+  }
+UNION{
+Optional{
+  ?cid wdt:P31 ?cat .
+  ?cid rdfs:label "Cat"@en . }
+  }
+}

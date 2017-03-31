@@ -1,0 +1,120 @@
+queryType	userAgent	tool	version	comment
+thisInstanceOf	Apache-Jena-ARQ/3.0.1	toolUsingJenaARQ	3.0.1	needs more data
+thisTransfermarktFootballerID	Java/1.7.0_80	footballExplorer	1.7.0_80	probably www.transfermarkt.com
+thisTransfermarktFootballerID	Java/1.7.0_121	footballExplorer	1.7.0_121	probably www.transfermarkt.com
+thisTransfermarktFootballerID	Java/1.7.0_79	footballExplorer	1.7.0_79	probably www.transfermarkt.com
+thisTransfermarktFootballerID	Java/1.7.0_04	footballExplorer	1.7.0_04	probably www.transfermarkt.com
+thisGeneOntologyID	sparqlwrapper 1.7.6 (rdflib.github.ioSLASHsparqlwrapper)	toolUsingSparqlwrapperPythonForGeneOntology	1.7.6	needs more data
+thisIMDbID	Mozilla/5.0 (Windows NT; Windows NT 10.0; es-ES) WindowsPowerShell/5.1.14393.206	toolUsingWindowsPowerShellForIMDb	5.1.14393.206	needs more data (possible Source: 0)
+thisIMDbID	Mozilla/5.0 (Windows NT; Windows NT 10.0; es-ES) WindowsPowerShell/5.1.14393.576	toolUsingWindowsPowerShellForIMDb	5.1.14393.576	needs more data (possible Source: 0)
+thisIMDbID	Mozilla/5.0 (Windows NT; Windows NT 10.0; es-ES) WindowsPowerShell/5.1.14393.479	toolUsingWindowsPowerShellForIMDb	5.1.14393.479	needs more data (possible Source: 0)
+thisIMDbID	MovieGuide-wikidata/0.1	movieguide	0.1	https://github.com/nandhp/movieguide
+thisIMDbID	sparqlwrapper 1.7.6 (rdflib.github.ioSLASHsparqlwrapper)	toolUsingSparqlwrapperPythonForIMDb	1.7.6	needs more data
+thisIMDbID	Ruby	toolUsingRubyForIMDb	-1	needs more data
+thisUniProtID	sparqlwrapper 1.7.6 (rdflib.github.ioSLASHsparqlwrapper)	toolUsingSparqlwrapperPythonForUniProtID	1.7.6	needs more data
+thisNKCRAUTIDAboutAndLanguage	NK2WP/2.0 (nkp.cz linker service, run by <petr.kadlec@gmail.com>)	linkerForCzechNationalLibrary	2	linker for http://www.nkp.cz/
+thisHasLabel_existingCountries	Mozilla/5.0 (Windows NT 6.1; WOW64; rv:35.0) Gecko/20100101 Firefox/35.0	toolSearchingForHasLabelWithConstraints	-1	needs more data (possible Source: 1)
+thisHasLabel_cityOrRegion	Mozilla/5.0 (Windows NT 6.1; WOW64; rv:35.0) Gecko/20100101 Firefox/35.0	toolSearchingForHasLabelWithConstraints	-1	needs more data (possible Source: 1)
+thisHasLabel_geographicalObjects	Mozilla/5.0 (Windows NT 6.1; WOW64; rv:35.0) Gecko/20100101 Firefox/35.0	toolSearchingForHasLabelWithConstraints	-1	needs more data (possible Source: 1)
+thisEntrezGeneID	sparqlwrapper 1.7.6 (rdflib.github.io/sparqlwrapper)	toolUsingSparqlwrapperPythonForEntrezGeneID	1.7.6	possibly https://www.ncbi.nlm.nih.gov/
+thisEntrezGeneIDFoundInTaxon	sparqlwrapper 1.7.6 (rdflib.github.io/sparqlwrapper)	toolUsingSparqlwrapperPythonForEntrezGeneID	1.7.6	possibly https://www.ncbi.nlm.nih.gov/
+thisKinopoiskFilmID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:50.0) Gecko/20100101 Firefox/50.0	toolSearchingForMovieDatabaseID	-1	needs more data
+thisCSFDFilmID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:50.0) Gecko/20100101 Firefox/50.0	toolSearchingForMovieDatabaseID	-1	needs more data
+thisElFilmFilmID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:50.0) Gecko/20100101 Firefox/50.0	toolSearchingForMovieDatabaseID	-1	needs more data
+thisOFDbID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:50.0) Gecko/20100101 Firefox/50.0	toolSearchingForMovieDatabaseID	-1	needs more data
+thisMovieMeterMovieID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:50.0) Gecko/20100101 Firefox/50.0	toolSearchingForMovieDatabaseID	-1	needs more data
+thisAllMovieMovieID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:50.0) Gecko/20100101 Firefox/50.0	toolSearchingForMovieDatabaseID	-1	needs more data
+instanceOfThis	sparqlwrapper 1.8.0 (rdflib.github.io/sparqlwrapper)	toolUsingSparqlwrapperPython	1.8.0	needs more data
+bot2	Magnus labs tools	bot2	0.1?	some queries from bot2 contain a toolComment, some not
+bot22	Magnus labs tools	bot22	0.1?	some queries from bot2 contain a toolComment, some not
+bot222	Magnus labs tools	bot222	0.1?	some queries from bot2 contain a toolComment, some not
+toolCheckingInstanceOfUsingJena	Apache-Jena-ARQ/3.0.1	toolCheckingInstanceOfUsingJena	3.0.1	not sure who is creating these queries
+toolLookingForTransfermarktDOTcomDatabaseIdForAllFootballPlayers	Java/1.7.0_79	footballExplorer	1.7.0_79	not sure who is creating these queries
+toolLookingForTransfermarktDOTcomDatabaseIdForAllFootballPlayers	Java/1.7.0_121	footballExplorer	1.7.0_121	not sure who is creating these queries
+toolLookingForTransfermarktDOTcomDatabaseIdForAllFootballPlayers	Java/1.7.0_80	footballExplorer	1.7.0_80	not sure who is creating these queries
+toolCheckingInstanceOfInEnglishUsingScalaj-http	scalaj-http/1.0	toolCheckingInstanceOfInEnglishUsingScalaj-http	1	not sure who is creating these queries
+toolListingAllClubsAndTheRespectiveYearsAFootballPlayerWasInATeam	Java/1.7.0_79	footballExplorer	1.7.0_79	not sure who is creating these queries, but could be the same as the transfermarkt.com queries
+toolListingAllClubsAndTheRespectiveYearsAFootballPlayerWasInATeam	Java/1.7.0_121	footballExplorer	1.7.0_121	not sure who is creating these queries, but could be the same as the transfermarkt.com queries
+toolListingAllClubsAndTheRespectiveYearsAFootballPlayerWasInATeam	Java/1.7.0_80	footballExplorer	1.7.0_80	not sure who is creating these queries, but could be the same as the transfermarkt.com queries
+toolLookingForNNDBIdForAllFootballPlayers	Java/1.7.0_121	footballExplorer	1.7.0_121	not sure who is creating these queries, but could be the same as the transfermarkt.com queries
+toolLookingForNNDBIdForAllFootballPlayers	Java/1.7.0_79	footballExplorer	1.7.0_79	not sure who is creating these queries, but could be the same as the transfermarkt.com queries
+toolLookingForNNDBIdForAllFootballPlayers	Java/1.7.0_80	footballExplorer	1.7.0_80	not sure who is creating these queries, but could be the same as the transfermarkt.com queries
+thisWikiLovesMonumentsID	sparqlwrapper 1.8.0 (rdflib.github.io/sparqlwrapper)	toolUsingSparqlwrapperPythonForWikiLovesMonumentsID	1.8.0	needs more data
+prevAndNextFilmInSeries	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:11.0) Gecko/20100101 Firefox/11.0	toolSearchingForPrevAndNexrFilm	-1	needs more data
+thisTaxonRankParentTaxon	Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36	toolSearchingForTaxonsOfParentTaxon	-1	needs more data
+entityAllPropertiesAndObjects	sparqlwrapper 1.7.6 (rdflib.github.io/sparqlwrapper)	toolSearchingEverythingForEntity	1.7.6	needs more data
+thisDerivedFromStatedInPaper	Mozilla/5.0 (Windows; U; WindowsNT 5.1; en-US; rv1.8.1.6) Gecko/20070725 Firefox/2.0.0.6	toolSearchingForRelationToPaperStatements	-1	needs more data
+geneAndInformationWithConstraints	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.98 Safari/537.36	toolExtractingGeneWithInformationUnderConstraints	-1	needs more data
+geneAndInformationWithConstraints	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.95 Safari/537.36	toolExtractingGeneWithInformationUnderConstraints	-1	needs more data
+toolLookingForFootballPlayerDeaths	Java/1.7.0_121	footballExplorer	1.7.0_121	not sure who is creating these queries, but could be the same as the transfermarkt.com queries
+toolLookingForFootballPlayerDeaths	Java/1.7.0_80	footballExplorer	1.7.0_80	not sure who is creating these queries, but could be the same as the transfermarkt.com queries
+toolLookingForFootballPlayerDeaths	Java/1.7.0_79	footballExplorer	1.7.0_79	not sure who is creating these queries, but could be the same as the transfermarkt.com queries
+taxonomyInformations	-	taxonomyInformations	?	propbably https://www.wikidata.org/wiki/User:Succu?
+taxonomyInformations2	-	taxonomyInformations	?	propbably https://www.wikidata.org/wiki/User:Succu?
+findWikidataId	Java/1.7.0_121	footballExplorer	1.7.0_121	not sure who is creating these queries, but could be the same as the transfermarkt.com queries
+findWikidataId	Java/1.7.0_80	footballExplorer	1.7.0_80	not sure who is creating these queries, but could be the same as the transfermarkt.com queries
+findWikidataId	Java/1.7.0_79	footballExplorer	1.7.0_79	not sure who is creating these queries, but could be the same as the transfermarkt.com queries
+doesFootballerHasAEnglishWikipediaArticle	Java/1.7.0_121	footballExplorer	1.7.0_121	not sure who is creating these queries, but could be the same as the transfermarkt.com queries
+doesFootballerHasAEnglishWikipediaArticle	Java/1.7.0_80	footballExplorer	1.7.0_80	not sure who is creating these queries, but could be the same as the transfermarkt.com queries
+doesFootballerHasAEnglishWikipediaArticle	Java/1.7.0_79	footballExplorer	2.7.0_79	not sure who is creating these queries, but could be the same as the transfermarkt.com queries
+toolLookingForFootballPlayerBirths	Java/1.7.0_121	footballExplorer	1.7.0_121	not sure who is creating these queries, but could be the same as the transfermarkt.com queries
+toolLookingForFootballPlayerBirths	Java/1.7.0_80	footballExplorer	1.7.0_80	not sure who is creating these queries, but could be the same as the transfermarkt.com queries
+toolLookingForFootballPlayerBirths	Java/1.7.0_79	footballExplorer	2.7.0_79	not sure who is creating these queries, but could be the same as the transfermarkt.com queries
+toolLookingForFootballPlayerGender	Java/1.7.0_121	footballExplorer	1.7.0_121	not sure who is creating these queries, but could be the same as the transfermarkt.com queries
+toolLookingForFootballPlayerGender	Java/1.7.0_80	footballExplorer	1.7.0_80	not sure who is creating these queries, but could be the same as the transfermarkt.com queries
+toolLookingForFootballPlayerGender	Java/1.7.0_79	footballExplorer	2.7.0_79	not sure who is creating these queries, but could be the same as the transfermarkt.com queries
+toolLookingForWikidataIdBasedOnTwitterUsername	python-requests/2.11.1	toolLookingForWikidataIdBasedOnTwitterUsername	2.11.1	it is probably NOT this one, even though it looks similar: https://github.com/fnielsen/scholia/blob/5094353127cd929585fab6b2cf1b0047353d9162/scholia/query.py#L223-L224
+toolLookingForWikidataIdBasedOnTwitterUsername	python-requests/2.12.3	toolLookingForWikidataIdBasedOnTwitterUsername	2.12.3	it is probably NOT this one, even though it looks similar: https://github.com/fnielsen/scholia/blob/5094353127cd929585fab6b2cf1b0047353d9162/scholia/query.py#L223-L224
+toolLookingForEnglishNameOfHistoricalPerson	Apache-Jena-ARQ/3.1.1	toolLookingForEnglishNameOfHistoricalPerson	3.1.1	not sure who is creating these queries
+toolLookingForEnglishNameOfHistoricalPerson	Apache-Jena-ARQ/3.0.1	toolLookingForEnglishNameOfHistoricalPerson	3.0.1	not sure who is creating these queries
+toolLookingForGeoInformation	Java/1.8.0_45	toolLookingForGeoInformation	1.8.0_45	170.000 queries in total, but only 200 distinct ones!
+toolLookingForGeoInformation	Java/1.8.0_111	toolLookingForGeoInformation	1.8.0_111	170.000 queries in total, but only 200 distinct ones!
+toolLookingForGeoInformation2	Java/1.8.0_45	toolLookingForGeoInformation	1.8.0_45	170.000 queries in total, but only 5 distinct ones!
+toolLookingForGeoInformation2	Java/1.8.0_111	toolLookingForGeoInformation	1.8.0_111	170.000 queries in total, but only 5 distinct ones!
+toolLookingForGeoInformationClasses	Java/1.8.0_45	toolLookingForGeoInformation	1.8.0_45	170.000 queries in total, but only 5 distinct ones!
+toolLookingForGeoInformationClasses	Java/1.8.0_111	toolLookingForGeoInformation	1.8.0_111	170.000 queries in total, but only 5 distinct ones!
+toolLookingForFottballPlayerEnglishWikipediaPage	Java/1.7.0_121	footballExplorer	1.7.0_121	not sure who is creating these queries, but could be the same as the transfermarkt.com queries
+toolLookingForFottballPlayerEnglishWikipediaPage	Java/1.7.0_80	footballExplorer	1.7.0_80	not sure who is creating these queries, but could be the same as the transfermarkt.com queries
+toolLookingForFottballPlayerEnglishWikipediaPage	Java/1.7.0_79	footballExplorer	2.7.0_79	not sure who is creating these queries, but could be the same as the transfermarkt.com queries
+thisPubMedID	Magnus labs tools	toolUsingMagnusLabsForPubMedID	-1	needs more data
+thisInstanceOfWithSubclass	Java/1.8.0_91	toolSearchingForUndefinedEnglishLabel	1.8.0_91	needs more data (multiple versions at the same time)
+thisInstanceOfWithSubclass	Java/1.8.0_111	toolSearchingForUndefinedEnglishLabel	1.8.0_111	needs more data (multiple versions at the same time)
+gasProgramSSSP	Java/1.8.0_91	toolUsingSSSP	1.8.0_91	needs more data (multiple versions at the same time)
+gasProgramSSSP	Java/1.8.0_111	toolUsingSSSP	1.8.0_111	needs more data (multiple versions at the same time)
+gasProgramSSSP	Java/1.8.0_71	toolUsingSSSP	1.8.0_71	needs more data (multiple versions at the same time)
+wikidataLastModified	Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36	toolWikidataLastModified	-1	could be semi-automated (possible source 2)
+wikidataLastModified	Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36	toolWikidataLastModified	-1	could be semi-automated (possible source 2)
+wikidataLastModified	Mozilla/5.0 (Windows NT 6.1; WOW64; rv:50.0) Gecko/20100101 Firefox/50.0	toolWikidataLastModified	-1	could be semi-automated (possible source 2)
+wikidataLastModified	Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36	toolWikidataLastModified	-1	could be semi-automated (possible source 2)
+wikidataLastModified	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.95 Safari/537.36 	toolWikidataLastModified	-1	could be semi-automated (possible source 2)
+wikidataLastModified	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:50.0) Gecko/20100101 Firefox/50.0	toolWikidataLastModified	-1	could be semi-automated (possible source 2)
+wikidataLastModified	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:50.0) Gecko/20100101 Firefox/50.0	toolWikidataLastModified	-1	could be semi-automated (possible source 2)
+wikidataLastModified	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.95 Safari/537.36	toolWikidataLastModified	-1	could be semi-automated (possible source 2)
+imageToSocialNetworksID	-	toolSearchingForImageToID	-1	needs more data
+hasLabelInstanceOfThis	Apache-HttpClient/4.3.5 (java 1.5)	toolSearchingForSupraInstanceOfWithLabel	-1	needs more data
+thisBasedOn	Java/1.7.0_121	toolSearchingForFilmAndMusicInfo	1.7.0_121	needs more data
+thisBasedOn	Java/1.7.0_80	toolSearchingForFilmAndMusicInfo	1.7.0_80	needs more data
+thisBasedOn	Java/1.7.0_79	toolSearchingForFilmAndMusicInfo	1.7.0_79	needs more data
+thisFilmingLocation	Java/1.7.0_121	toolSearchingForFilmAndMusicInfo	1.7.0_121	needs more data
+thisFilmingLocation	Java/1.7.0_80	toolSearchingForFilmAndMusicInfo	1.7.0_80	needs more data
+thisFilmingLocation	Java/1.7.0_79	toolSearchingForFilmAndMusicInfo	1.7.0_79	needs more data
+thisTransfermarkManagerID	Java/1.7.0_121	footballExplorer	1.7.0_121	needs more data
+thisTransfermarkManagerID	Java/1.7.0_80	footballExplorer	1.7.0_80	needs more data
+thisTransfermarkManagerID	Java/1.7.0_79	footballExplorer	1.7.0_79	needs more data
+thisComposer	Java/1.7.0_121	toolSearchingForFilmAndMusicInfo	1.7.0_121	needs more data
+thisComposer	Java/1.7.0_80	toolSearchingForFilmAndMusicInfo	1.7.0_80	needs more data
+thisComposer	Java/1.7.0_79	toolSearchingForFilmAndMusicInfo	1.7.0_79	needs more data
+thisGenre	Java/1.7.0_121	toolSearchingForFilmAndMusicInfo	1.7.0_121	needs more data
+thisGenre	Java/1.7.0_80	toolSearchingForFilmAndMusicInfo	1.7.0_80	needs more data
+thisGenre	Java/1.7.0_79	toolSearchingForFilmAndMusicInfo	1.7.0_79	needs more data
+infoAboutHuman	ARC Reader (http://arc.semsol.org/)	toolSearchingForInfoAboutHuman	-1	needs more data (link does not exist)
+instanceOfSubclassOfTVSeries	Java/1.7.0_80	toolSearchingForTVSeries	1.7.0_80	needs more data
+thisPMCID	Magnus labs tools	toolUsingMagnusLabsForPubMedID	-1	needs more data
+thisVIAFIDBVMCpersonID	Java/1.8.0_111	toolSearchingForPeopleByMultipleIDs	1.8.0_111	needs more data
+thisGenreWithEnglishLabel	-	toolSearchingForGenre	-1	needs more data
+hasLabelThisIsSubclass	Java/1.8.0_111	toolSearchingForLabel	1.8.0_111	needs more data
+hasLabelThisIsSubclass	Java/1.8.0_45	toolSearchingForLabel	1.8.0_45	needs more data
+entityLabelInSpecificLanguage	-	toolSearchingForLabelInLanguage	-1	needs more data
+entityLabelInSpecificLanguage	Apache-Jena-ARQ/${project.version}	otherToolSearchingForLabelInLanguage	-1	needs more data
+hasLabel	Java/1.8.0_111	toolSearchingForLabel	1.8.0_111	needs more data
+hasLabel	Java/1.8.0_45	toolSearchingForLabel	1.8.0_45	needs more data

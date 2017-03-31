@@ -1,0 +1,15 @@
+SELECT  ?s ?prof ?viaf ?gnd ?repec WHERE {
+?s <http://www.wikidata.org/prop/direct/P31><http://www.wikidata.org/entity/Q5> .
+?s ?label "Tim Berners-Lee"@en .
+OPTIONAL {
+        ?s ?label "Tim Berners-Lee"@de.
+}
+OPTIONAL {
+        ?s ?label "Tim Berners-Lee".
+}
+OPTIONAL {      ?s <http://www.wikidata.org/prop/direct/P106> ?prof .}
+OPTIONAL { ?s <http://www.wikidata.org/prop/direct/P214> ?viaf. }
+  OPTIONAL { ?s <http://www.wikidata.org/prop/direct/P227> ?gnd. }
+  OPTIONAL { ?s <http://www.wikidata.org/prop/direct/P2428> ?repec. }
+
+}

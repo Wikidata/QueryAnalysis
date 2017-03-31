@@ -1,0 +1,17 @@
+PREFIX  wikibase: <http://wikiba.se/ontology#>
+PREFIX  p:    <http://www.wikidata.org/prop/>
+PREFIX  wd:   <http://www.wikidata.org/entity/>
+PREFIX  pq:   <http://www.wikidata.org/prop/qualifier/>
+PREFIX  bd:   <http://www.bigdata.com/rdf#>
+PREFIX  ps:   <http://www.wikidata.org/prop/statement/>
+
+SELECT  (year(?start_time) AS ?start_year) (year(?end_time) AS ?end_year) ?team ?teamLabel
+WHERE
+  { wd:Q11948 p:P54 ?team_prop .
+    ?team_prop ps:P54 ?team .
+    ?team_prop pq:P580 ?start_time
+    OPTIONAL
+      { ?team_prop pq:P582 ?end_time }
+    SERVICE wikibase:label
+      { bd:serviceParam wikibase:language "en" }
+  }

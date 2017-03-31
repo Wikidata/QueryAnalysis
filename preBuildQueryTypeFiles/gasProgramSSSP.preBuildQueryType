@@ -1,0 +1,14 @@
+PREFIX gas: <http://www.bigdata.com/rdf/gas#>
+SELECT ?item ?linkTo ?depth {
+  SERVICE gas:service {
+    gas:program gas:gasClass "com.bigdata.rdf.graph.analytics.SSSP";
+                gas:in wd:Q1133482;
+                gas:traversalDirection "Forward";
+                gas:out ?item;
+                gas:out1 ?depth;
+                gas:linkType wdt:P279 .
+  }
+  OPTIONAL {
+    ?item wdt:P279 ?linkTo
+  }
+}

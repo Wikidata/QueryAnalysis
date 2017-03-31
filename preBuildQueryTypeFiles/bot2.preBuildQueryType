@@ -1,0 +1,5 @@
+PREFIX v: <http://www.wikidata.org/prop/statement/>
+PREFIX q: <http://www.wikidata.org/prop/qualifier/>
+PREFIX ps: <http://www.wikidata.org/prop/statement/>
+PREFIX pq: <http://www.wikidata.org/prop/qualifier/>
+SELECT ?q ?x { wd:Q2557017 wdt:P131* ?q . ?q wdt:P300 ?x }

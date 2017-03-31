@@ -3,9 +3,7 @@ package general;
 
 import input.InputHandler;
 import org.apache.log4j.Logger;
-import org.apache.spark.sql.AnalysisException;
 import output.OutputHandlerTSV;
-import query.QueryHandler;
 
 import java.io.FileNotFoundException;
 import java.lang.reflect.InvocationTargetException;
@@ -18,12 +16,12 @@ public class ParseOneMonthWorker implements Runnable
   /**
    * Define a static logger variable.
    */
-  private static Logger logger = Logger.getLogger(ParseOneMonthWorker.class);
-  private String inputFile;
-  private String inputFilePrefix;
+  private static final Logger logger = Logger.getLogger(ParseOneMonthWorker.class);
+  private final String inputFile;
+  private final String inputFilePrefix;
   private InputHandler inputHandler;
   private String queryParserName;
-  private QueryHandler queryHandler;
+  private Class queryHandlerClass;
   private int day;
 
   public ParseOneMonthWorker(String inputFile, String inputFilePrefix, Class inputHandlerClass, String queryParserName, Class queryHandlerClass, int day) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException
@@ -32,7 +30,7 @@ public class ParseOneMonthWorker implements Runnable
     this.inputFilePrefix = inputFilePrefix;
     this.inputHandler = (InputHandler) inputHandlerClass.getConstructor().newInstance();
     this.queryParserName = queryParserName;
-    this.queryHandler = (QueryHandler) queryHandlerClass.getConstructor().newInstance();
+    this.queryHandlerClass = queryHandlerClass;
     this.day = day;
   }
 
@@ -48,7 +46,7 @@ public class ParseOneMonthWorker implements Runnable
 
       logger.info("Start processing " + inputFile);
       try {
-        OutputHandlerTSV outputHandler = new OutputHandlerTSV(outputFile, queryHandler);
+        OutputHandlerTSV outputHandler = new OutputHandlerTSV(outputFile, queryHandlerClass);
         //try {
         inputHandler.parseTo(outputHandler);
         logger.info("Done processing " + inputFile + " to " + outputFile + ".");
@@ -59,8 +57,6 @@ public class ParseOneMonthWorker implements Runnable
         logger.error("File " + outputFile + "could not be created or written to.", e);
       }
     } catch (FileNotFoundException e) {
-      logger.warn("File " + inputFile + " could not be found.");
-    } catch (AnalysisException e) {
       logger.warn("File " + inputFile + " could not be found.");
     }
   }

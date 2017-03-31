@@ -1,0 +1,5 @@
+PREFIX wdt: <http://www.wikidata.org/prop/direct/>
+SELECT *
+WHERE {
+    ?gene wdt:P351 "3092928"
+}

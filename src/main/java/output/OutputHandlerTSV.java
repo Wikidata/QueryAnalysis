@@ -2,12 +2,17 @@ package output;
 
 import com.univocity.parsers.tsv.TsvWriter;
 import com.univocity.parsers.tsv.TsvWriterSettings;
+
+import general.Main;
+
 import org.apache.log4j.Logger;
 import query.QueryHandler;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -22,33 +27,29 @@ public class OutputHandlerTSV extends OutputHandler
   /**
    * Define a static logger variable.
    */
-  private static Logger logger = Logger.getLogger(OutputHandlerTSV.class);
+  private static final Logger logger = Logger.getLogger(OutputHandlerTSV.class);
+
   /**
-   * The handler used to process the rows to output.
+   * The class of which a queryHandlerObject should be created.
    */
-  private QueryHandler queryHandler;
+  private final Class queryHandlerClass;
+
   /**
    * A writer created at object creation to be used in line-by-line writing.
    */
   private TsvWriter writer;
-  /**
-   * The file to write the data to.
-   */
-  private String file;
 
   /**
    * Creates the file specified in the constructor and writes the header.
    *
-   * @param queryHandlerToUse The handler used to analyze the query string that will be written
    * @param fileToWrite       location of the file to write the received values to
+   * @param queryHandlerClass handler class used to analyze the query string that will be written
    * @throws FileNotFoundException if the file exists but is a directory
    *                               rather than a regular file, does not exist but cannot be created,
    *                               or cannot be opened for any other reason
    */
-  public OutputHandlerTSV(String fileToWrite, QueryHandler queryHandlerToUse) throws FileNotFoundException
+  public OutputHandlerTSV(String fileToWrite, Class queryHandlerClass) throws FileNotFoundException
   {
-    this.queryHandler = queryHandlerToUse;
-    this.file = fileToWrite;
     FileOutputStream outputWriter = new FileOutputStream(fileToWrite + ".tsv");
     writer = new TsvWriter(outputWriter, new TsvWriterSettings());
     for (int i = 0; i < hourly_user.length; i++) {
@@ -56,20 +57,20 @@ public class OutputHandlerTSV extends OutputHandler
       hourly_spider[i] = 0L;
     }
 
-    List<String> header = new ArrayList<String>();
+    this.queryHandlerClass = queryHandlerClass;
+
+    List<String> header = new ArrayList<>();
     header.add("#Valid");
+    header.add("#ToolName");
+    header.add("#ToolVersion");
     header.add("#StringLengthWithComments");
-    header.add("#StringLengthNoComments");
+    header.add("#QuerySize");
     header.add("#VariableCountHead");
     header.add("#VariableCountPattern");
     header.add("#TripleCountWithService");
     header.add("#TripleCountNoService");
     header.add("#QueryType");
-    header.add("#uri_path");
-    header.add("#user_agent");
-    header.add("#ts");
-    header.add("#agent_type");
-    header.add("#hour");
+    header.add("#QIDs");
     header.add("#original_line(filename_line)");
     writer.writeHeaders(header);
   }
@@ -79,7 +80,7 @@ public class OutputHandlerTSV extends OutputHandler
    */
   public final void closeFiles()
   {
-    try {
+/*    try {
       FileOutputStream outputHourly = new FileOutputStream(file + "HourlyAgentCount.tsv");
       TsvWriter hourlyWriter = new TsvWriter(outputHourly, new TsvWriterSettings());
       hourlyWriter.writeHeaders("hour", "user_count", "spider_count");
@@ -89,7 +90,8 @@ public class OutputHandlerTSV extends OutputHandler
       hourlyWriter.close();
     } catch (FileNotFoundException e) {
       logger.error("Could not write the hourly agent_type count.", e);
-    }
+    }*/
+
     writer.close();
   }
 
@@ -104,45 +106,40 @@ public class OutputHandlerTSV extends OutputHandler
    * @param currentFile    The file from which the data to be written originates.
    */
   @Override
-  public final void writeLine(String queryToAnalyze, Integer validityStatus, Object[] row, long currentLine, String currentFile)
+  public final void writeLine(String queryToAnalyze, Integer validityStatus, String userAgent, long currentLine, String currentFile)
   {
+    QueryHandler queryHandler = null;
+    try {
+      queryHandler = (QueryHandler) queryHandlerClass.getConstructor().newInstance();
+    } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+      logger.error("Failed to create query handler object" + e);
+    }
     queryHandler.setValidityStatus(validityStatus);
+    queryHandler.setUserAgent(userAgent);
     queryHandler.setQueryString(queryToAnalyze);
     queryHandler.setCurrentLine(currentLine);
     queryHandler.setCurrentFile(currentFile);
 
-
-    List<Object> line = new ArrayList<Object>();
+    List<Object> line = new ArrayList<>();
     line.add(queryHandler.getValidityStatus());
-
-    line.add(queryHandler.getStringLength());
-    line.add(queryHandler.getStringLengthNoComments());
-    line.add(queryHandler.getVariableCountHead());
-    line.add(queryHandler.getVariableCountPattern());
-    line.add(queryHandler.getTripleCountWithService());
-    line.add(-1);
-    line.add(queryHandler.getQueryType());
-    for (int i = 1; i < row.length; i++) {
-      line.add(row[i]);
+    line.add(queryHandler.getToolName());
+    line.add(queryHandler.getToolVersion());
+    if (Main.withBots || queryHandler.getToolName().equals("0")) {
+      line.add(queryHandler.getStringLength());
+      line.add(queryHandler.getQuerySize());
+      line.add(queryHandler.getVariableCountHead());
+      line.add(queryHandler.getVariableCountPattern());
+      line.add(queryHandler.getTripleCountWithService());
+      line.add(-1);
+      line.add(queryHandler.getQueryType());
+      line.add(queryHandler.getqIDString());
+    } else {
+      for (int i = 0; i < 8; i++) {
+        line.add(-1);
+      }
     }
     line.add(currentFile + "_" + currentLine);
-    int hour = -1;
 
-    try {
-      hour = Integer.parseInt(row[5].toString());
-    } catch (NumberFormatException e) {
-      logger.error("Hour field is not parsable as integer.", e);
-    }
-    if (0 <= hour && hour < 24) {
-      if (row[4].toString().equals("user")) {
-        hourly_user[Integer.parseInt(row[5].toString())] += 1L;
-      }
-      if (row[4].toString().equals("spider")) {
-        hourly_spider[Integer.parseInt(row[5].toString())] += 1L;
-      }
-    } else {
-      logger.error("Hour field " + hour + " is not between 0 and 24.");
-    }
     writer.writeRow(line);
   }
 }

@@ -1,0 +1,7 @@
+        PREFIX wd: <http://www.wikidata.org/entity/>
+        PREFIX wdt: <http://www.wikidata.org/prop/direct/>
+
+        SELECT ?ID ?Genre WHERE {
+            wd:Q664787 wdt:P136 ?ID.
+            ?ID rdfs:label ?Genre filter (lang(?Genre) = "en")
+        }

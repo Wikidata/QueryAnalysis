@@ -19,46 +19,44 @@ package general;
  * #L%
  */
 
+
+import com.univocity.parsers.common.ParsingContext;
+import com.univocity.parsers.common.processor.ObjectRowProcessor;
+import com.univocity.parsers.tsv.TsvParser;
+import com.univocity.parsers.tsv.TsvParserSettings;
+import input.InputHandlerParquet;
+import input.InputHandlerTSV;
+import logging.LoggingHandler;
+import org.apache.commons.cli.*;
+import org.apache.commons.io.FileUtils;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+import org.apache.spark.SparkConf;
+import org.apache.spark.api.java.JavaSparkContext;
+import org.openrdf.query.parser.ParsedQuery;
+import org.openrdf.queryrender.sparql.SPARQLQueryRenderer;
+import query.OpenRDFQueryHandler;
+import scala.Tuple2;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import input.InputHandlerParquet;
-import input.InputHandlerTSV;
-import logging.LoggingHandler;
-
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
-import org.apache.commons.cli.UnrecognizedOptionException;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-import org.apache.spark.SparkConf;
-import org.apache.spark.api.java.JavaSparkContext;
-import org.openrdf.query.algebra.TupleExpr;
-import org.openrdf.query.parser.ParsedQuery;
-import org.openrdf.queryrender.sparql.SPARQLQueryRenderer;
-
-import query.JenaQueryHandler;
-import query.OpenRDFQueryHandler;
-
-
-
+import static java.nio.file.Files.readAllBytes;
 
 
 /**
@@ -69,11 +67,27 @@ public final class Main
   /**
    * Saves the encountered queryTypes.
    */
-  public static List<ParsedQuery> queryTypes = Collections.synchronizedList(new ArrayList<ParsedQuery>());
+  public static final Map<ParsedQuery, String> queryTypes = Collections.synchronizedMap(new HashMap<ParsedQuery, String>());
+  /**
+   * Saves the mapping of query type and user agent to tool name and version.
+   */
+  public static final Map<Tuple2<String, String>, Tuple2<String, String>> queryTypeToToolMapping = new HashMap<>();
+  /**
+   * Saves if metrics should be calculated for bot queries.
+   */
+  public static boolean withBots;
+  /**
+   * Saves if the input files should be modified with additional prefixes.
+   */
+  public static boolean readPreprocessed;
+  /**
+   * Saves if the query types should be generated dynamically.
+   */
+  public static boolean dynamicQueryTypes;
   /**
    * Define a static logger variable.
    */
-  private static Logger logger = Logger.getLogger(Main.class);
+  private static final Logger logger = Logger.getLogger(Main.class);
 
   /**
    * Since this is a utility class, it should not be instantiated.
@@ -90,8 +104,6 @@ public final class Main
    */
   public static void main(String[] args) throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException
   {
-    //args = new String[] {"-olt", "-file test/test/test/QueryCntSept", "-n5"};
-
     Options options = new Options();
     options.addOption("l", "logging", false, "enables file logging");
     options.addOption("j", "jena", false, "uses the Jena SPARQL Parser");
@@ -99,8 +111,12 @@ public final class Main
     options.addOption("f", "file", true, "defines the input file prefix");
     options.addOption("h", "help", false, "displays this help");
     options.addOption("t", "tsv", false, "reads from .tsv-files");
-    options.addOption("p", "parquet", false, "read from .parquet-files");
+    // options.addOption("p", "parquet", false, "read from .parquet-files");
     options.addOption("n", "numberOfThreads", true, "number of used threads, default 1");
+    options.addOption("b", "withBots", false, "enables metric calculation for bot queries+");
+    options.addOption("p", "readPreprocessed", false, "enables reading of preprocessed files");
+    options.addOption("d", "dynamicQueryTypes", false, "enables dynamic generation of query types");
+
 
     //some parameters which can be changed through parameters
     //QueryHandler queryHandler = new OpenRDFQueryHandler();
@@ -119,10 +135,6 @@ public final class Main
         HelpFormatter formatter = new HelpFormatter();
         formatter.printHelp("help", options);
         return;
-      }
-      if (cmd.hasOption("jena")) {
-        queryHandlerClass = JenaQueryHandler.class;
-        queryParserName = "Jena";
       }
       if (cmd.hasOption("openrdf")) {
         queryHandlerClass = OpenRDFQueryHandler.class;
@@ -154,6 +166,15 @@ public final class Main
       if (cmd.hasOption("numberOfThreads")) {
         numberOfThreads = Integer.parseInt(cmd.getOptionValue("numberOfThreads"));
       }
+      if (cmd.hasOption("withBots")) {
+        withBots = true;
+      }
+      if (cmd.hasOption("readPreprocessed")) {
+        readPreprocessed = true;
+      }
+      if (cmd.hasOption("dynamicQueryTypes")) {
+        dynamicQueryTypes = true;
+      }
     } catch (UnrecognizedOptionException e) {
       System.out.println("Unrecognized commandline option: " + e.getOption());
       HelpFormatter formatter = new HelpFormatter();
@@ -167,6 +188,8 @@ public final class Main
     }
 
     LoggingHandler.initConsoleLog();
+
+    loadPreBuildQueryTypes();
 
     long startTime = System.nanoTime();
 
@@ -183,19 +206,7 @@ public final class Main
       //wait until all workers are finished
     }
 
-    String outputFolderName = inputFilePrefix.substring(0, inputFilePrefix.lastIndexOf('/') + 1) + "queryType/queryTypeFiles/";
-    new File(outputFolderName).mkdir();
-    SPARQLQueryRenderer renderer = new SPARQLQueryRenderer();
-    for (int i = 0; i < queryTypes.size(); i++) {
-      try (BufferedWriter bw = new BufferedWriter(new FileWriter(outputFolderName + i + ".queryType"))) {
-        bw.write(renderer.render(queryTypes.get(i)));
-      } catch (IOException e) {
-        logger.error("Could not write the query type " + i + ".", e);
-      }
-      catch (Exception e) {
-        logger.error("Error while rendering query type " + i + ".", e);
-      }
-    }
+    writeQueryTypes(inputFilePrefix);
 
     long stopTime = System.nanoTime();
     long millis = TimeUnit.MILLISECONDS.convert(stopTime - startTime, TimeUnit.NANOSECONDS);
@@ -203,5 +214,102 @@ public final class Main
     System.out.println("Finished executing with all threads: " + new SimpleDateFormat("mm-dd HH:mm:ss:SSSSSSS").format(date));
   }
 
+  /**
+   * Loads all pre-build query types.
+   */
+  private static void loadPreBuildQueryTypes()
+  {
+    try (DirectoryStream<Path> directoryStream =
+             Files.newDirectoryStream(Paths.get("preBuildQueryTypeFiles"))) {
+      for (Path filePath : directoryStream) {
+        if (Files.isRegularFile(filePath)) {
+          if (filePath.toString().endsWith(".preBuildQueryType")) {
+            String queryString = new String(readAllBytes(filePath));
+            OpenRDFQueryHandler queryHandler = new OpenRDFQueryHandler();
+            //queryHandler.setValidityStatus(1);
+            queryHandler.setQueryString(queryString);
+            if(queryHandler.getValidityStatus() != 1) {
+              logger.info("The Pre-build query " + filePath + " is no valid SPARQL");
+              continue;
+            }
+            ParsedQuery normalizedPreBuildQuery = queryHandler.getNormalizedQuery();
+            String queryTypeName = filePath.toString().substring(filePath.toString().lastIndexOf("/") + 1, filePath.toString().lastIndexOf("."));
+            if (normalizedPreBuildQuery != null) {
+              queryTypes.put(normalizedPreBuildQuery, queryTypeName);
+            } else {
+              logger.info("Pre-build query " + queryTypeName + " could not be parsed.");
+            }
+          }
+          if (filePath.toString().endsWith(".tsv")) {
+            TsvParserSettings parserSettings = new TsvParserSettings();
+            parserSettings.setLineSeparatorDetectionEnabled(true);
+            parserSettings.setHeaderExtractionEnabled(true);
+            parserSettings.setSkipEmptyLines(true);
+            parserSettings.setReadInputOnSeparateThread(true);
+
+            ObjectRowProcessor rowProcessor = new ObjectRowProcessor()
+            {
+              @Override
+              public void rowProcessed(Object[] row, ParsingContext parsingContext)
+              {
+                if (row.length <= 1) {
+                  logger.warn("Ignoring line without tab while parsing.");
+                  return;
+                }
+                if (row.length == 5) {
+                  queryTypeToToolMapping.put(new Tuple2<>(row[0].toString(), row[1].toString()), new Tuple2<>(row[2].toString(), row[3].toString()));
+                  return;
+                }
+                logger.warn("Line with row length " + row.length + " found. Is the formatting of toolMapping.tsv correct?");
+                return;
+              }
+
+            };
+
+            parserSettings.setProcessor(rowProcessor);
+
+            TsvParser parser = new TsvParser(parserSettings);
+
+            parser.parse(filePath.toFile());
+          }
+        }
+
+      }
+
+    } catch (IOException e) {
+      logger.error("Could not read from directory inputData/queryType/premadeQueryTypeFiles", e);
+    }
+  }
+
+  /**
+   * Writes all found query Types to queryType/queryTypeFiles/.
+   *
+   * @param inputFilePrefix The location of the input data
+   */
+  private static void writeQueryTypes(String inputFilePrefix)
+  {
+    String outputFolderName = inputFilePrefix.substring(0, inputFilePrefix.lastIndexOf('/') + 1) + "queryType/";
+    new File(outputFolderName).mkdir();
+    outputFolderName += "queryTypeFiles/";
+    File outputFolderFile = new File(outputFolderName);
+    if (dynamicQueryTypes) {
+      FileUtils.deleteQuietly(outputFolderFile);
+    }
+    new File(outputFolderName).mkdir();
+    SPARQLQueryRenderer renderer = new SPARQLQueryRenderer();
+    String currentOutputFolderName = outputFolderName;
+    for (ParsedQuery parsedQuery : queryTypes.keySet()) {
+
+      String queryType = queryTypes.get(parsedQuery);
+      try (BufferedWriter bw = new BufferedWriter(new FileWriter(currentOutputFolderName + queryType + ".queryType"))) {
+        bw.write(renderer.render(parsedQuery));
+        bw.write("\n" + parsedQuery.toString());
+      } catch (IOException e) {
+        logger.error("Could not write the query type " + queryType + ".", e);
+      } catch (Exception e) {
+        logger.error("Error while rendering query type " + queryType + ".", e);
+      }
+    }
+  }
 }
 

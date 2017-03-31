@@ -1,0 +1,7 @@
+SELECT ?_image
+WHERE {
+  ?q wdt:P3430 "w6wt1qhz".
+  OPTIONAL {
+    ?q wdt:P18 ?_image.
+  }
+}

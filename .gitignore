@@ -42,8 +42,14 @@ fabric.properties
 #wikidata logs
 *.tsv
 test/
+!test/java*
+
+#but allow preBuildQueryConfig
+!toolMapping.tsv
 
 #error logs
 /logs/
 /logsExperimental/
 /inputData/
+
+/.pydevproject

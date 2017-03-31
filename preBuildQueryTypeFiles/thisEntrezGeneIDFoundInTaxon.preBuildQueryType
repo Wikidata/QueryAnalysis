@@ -1,0 +1,13 @@
+SELECT ?article 
+WHERE {
+  ?cid wdt:P351 '83942'.
+  ?cid wdt:P703 wd:Q15978631 .
+  OPTIONAL {
+    ?cid rdfs:label ?label filter (lang(?label) = "en") .
+  }
+  ?article schema:about ?cid .
+  ?article schema:inLanguage "en" .
+  FILTER (SUBSTR(str(?article), 1, 25) = "https://en.wikipedia.org/") .
+  FILTER (SUBSTR(str(?article), 1, 38) != "https://en.wikipedia.org/wiki/Template")
+}
+limit 1

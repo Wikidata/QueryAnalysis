@@ -1,0 +1,18 @@
+select Distinct ?entity ?country ?coords ?image ?entityDescription ?type ?website ?article
+where {
+    {{?entity skos:altLabel "Ryogoku"@en } UNION { ?entity rdfs:label "Ryogoku"@en }} .
+    ?entity wdt:P31 ?type  .
+    {{ ?type wdt:P279* wd:Q515 } UNION {?type wdt:P279* wd:Q82794}} .
+    ?entity wdt:P625 ?coords .
+    ?entity wdt:P17 ?country .
+    OPTIONAL {
+        ?article schema:about ?entity .
+        ?article schema:inLanguage "en" .
+        ?article schema:isPartOf <https://en.wikipedia.org/>.
+    }
+    OPTIONAL { ?entity wdt:P18 ?image } .
+    OPTIONAL { ?entity wdt:P856 ?website } .
+    SERVICE wikibase:label {
+        bd:serviceParam wikibase:language "en" .
+    }
+} LIMIT 200
