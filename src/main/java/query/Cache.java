@@ -29,7 +29,24 @@ import java.util.Map;
  */
 public class Cache
 {
-  private Map<String, ASTQueryContainer> astQueryContainerLRUMap = (Map<String, ASTQueryContainer>) Collections.synchronizedMap(new LRUMap(10000));
+  private static Cache instance;
+
+  private Map<String, ASTQueryContainer> astQueryContainerLRUMap = (Map<String, ASTQueryContainer>) Collections.synchronizedMap(new LRUMap(1000000));
+
+  /**
+   * exists only to prevent this Class from being instantiated
+   */
+  protected Cache() {
+    //nothing to see here
+  }
+
+  public static Cache getInstance() {
+    if(instance == null) {
+      instance = new Cache();
+    }
+    return instance;
+  }
+
   /**
    * @param queryString   the queryString which should be converted to an ASTQueryContainer
    * @return ASTQueryContainer object
@@ -45,6 +62,7 @@ public class Cache
         throw new MalformedQueryException(e.getMessage(), e);
       }
     }
+
     //and return it
     return astQueryContainerLRUMap.get(queryString);
   }
