@@ -71,22 +71,8 @@ public class InputHandlerTSV extends InputHandler
     parserSettings.setSkipEmptyLines(true);
     parserSettings.setReadInputOnSeparateThread(true);
 
-    if (!Main.readPreprocessed) {
-      try {
-        String file = inputFile.substring(0, inputFile.lastIndexOf("/") + 1) + "Preprocessed" + inputFile.substring(inputFile.lastIndexOf("/") + 1);
-        FileOutputStream tempFile = new FileOutputStream(file);
-        preprocessedWriter = new TsvWriter(tempFile, new TsvWriterSettings());
-      }
-      catch (FileNotFoundException e) {
-        logger.error("Could not create temporary file for adding prefixes", e);
-      }
-    }
-
     ObjectRowProcessor rowProcessor = new ObjectRowProcessor()
     {
-
-      private boolean headersWritten;
-
       @Override
       public void rowProcessed(Object[] row, ParsingContext parsingContext)
       {
@@ -94,43 +80,10 @@ public class InputHandlerTSV extends InputHandler
           logger.warn("Ignoring line without tab while parsing.");
           return;
         }
+        Tuple2<String, Integer> queryTuple = decode(row[0].toString(), inputFile, parsingContext.currentLine());
 
-        if (Main.readPreprocessed) {
-          String preprocessedQuery = row[0].toString();
-          Integer preprocessedValidity;
-          try {
-            preprocessedValidity = Integer.valueOf(row[1].toString());
-          }
-          catch (NumberFormatException e) {
-            logger.warn("Could not parse temp_validity, is the file preprocessed?", e);
-            return;
-          }
-          outputHandler.writeLine(preprocessedQuery, preprocessedValidity, row[3].toString(), parsingContext.currentLine(), inputFile);
-        } else {
-          Tuple2<String, Integer> queryTuple = decode(row[0].toString(), inputFile, parsingContext.currentLine());
-
-          if (preprocessedWriter != null) {
-
-            if (!headersWritten) {
-              ArrayList<String> headers = new ArrayList<String>();
-              headers.add("preprocessed_query");
-              headers.add("temp_validity");
-              String[] parsedHeaders = parsingContext.parsedHeaders();
-              headers.addAll(Arrays.asList(parsedHeaders).subList(1, parsedHeaders.length));
-              preprocessedWriter.writeHeaders(headers);
-              headersWritten = true;
-            }
-
-            ArrayList<Object> rowToWrite = new ArrayList<Object>();
-            rowToWrite.add(QueryHandler.addMissingPrefixesToQuery(queryTuple._1));
-            rowToWrite.add(queryTuple._2);
-            rowToWrite.addAll(Arrays.asList(row).subList(1, row.length));
-            preprocessedWriter.writeRow(rowToWrite);
-          }
-          outputHandler.writeLine(queryTuple._1, queryTuple._2, row[2].toString(), parsingContext.currentLine(), inputFile);
-        }
+        outputHandler.writeLine(queryTuple._1, queryTuple._2, row[2].toString(), parsingContext.currentLine(), inputFile);
       }
-
     };
 
     parserSettings.setProcessor(rowProcessor);
