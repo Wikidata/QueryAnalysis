@@ -27,7 +27,7 @@ public abstract class OutputHandler implements Serializable
    *
    * @param queryToAnalyze The query that should be analyzed and written.
    * @param validityStatus The validity status which was the result of the decoding process of the URI
-   * @param row            The input data to be written to this line.
+   * @param userAgent      The user agent with which the query was being executed as.
    * @param currentLine    The line from which the data to be written originates.
    * @param currentFile    The file from which the data to be written originates.
    */

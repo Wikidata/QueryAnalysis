@@ -25,6 +25,12 @@ import java.util.Map;
  */
 public class StandardizingSPARQLParser extends SPARQLParser
 {
+  private Cache cache;
+
+  public StandardizingSPARQLParser()
+  {
+    this.cache = new Cache();
+  }
 
   /**
    * Moves BIND()-clauses to the top of the query.
@@ -207,13 +213,9 @@ public class StandardizingSPARQLParser extends SPARQLParser
   public final ParsedQuery parseQuery(String queryString, String baseURI)
       throws MalformedQueryException
   {
-    try {
-      ASTQueryContainer qc = SyntaxTreeBuilder.parseQuery(queryString);
+      ASTQueryContainer qc = cache.getAstQueryContainerObjectFor(queryString);
       debug(qc);
       return parseQuery(qc, baseURI);
-    } catch (TokenMgrError | ParseException e) {
-      throw new MalformedQueryException(e.getMessage(), e);
-    }
   }
 
   /**
@@ -225,14 +227,10 @@ public class StandardizingSPARQLParser extends SPARQLParser
   public final ParsedQuery parseNormalizeQuery(String queryString, String baseURI)
       throws MalformedQueryException
   {
-    try {
-      ASTQueryContainer qc = SyntaxTreeBuilder.parseQuery(queryString);
+      ASTQueryContainer qc = cache.getAstQueryContainerObjectFor(queryString);
       debug(qc);
       normalize(qc);
       return parseQuery(qc, baseURI);
-    } catch (TokenMgrError | ParseException e) {
-      throw new MalformedQueryException(e.getMessage(), e);
-    }
   }
 
   private TupleExpr buildQueryModel(Node qc) throws MalformedQueryException
