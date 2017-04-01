@@ -29,9 +29,10 @@ import java.util.Map;
  */
 public class Cache
 {
+  static int counter = 0;
   private static Cache instance;
 
-  private Map<String, ASTQueryContainer> astQueryContainerLRUMap = (Map<String, ASTQueryContainer>) Collections.synchronizedMap(new LRUMap(1000000));
+  private Map<String, ASTQueryContainer> astQueryContainerLRUMap = (Map<String, ASTQueryContainer>) Collections.synchronizedMap(new LRUMap(100000));
 
   /**
    * exists only to prevent this Class from being instantiated
@@ -53,6 +54,10 @@ public class Cache
    */
   public ASTQueryContainer getAstQueryContainerObjectFor(String queryString) throws MalformedQueryException
   {
+    counter++;
+    if(counter%10000 == 0) {
+      System.out.println("hui");
+    }
     //check if requested object already exists in cache
     if(!astQueryContainerLRUMap.containsKey(queryString)) {
       //if not create a new one
