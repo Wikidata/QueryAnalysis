@@ -6,7 +6,6 @@ import scala.Tuple2;
 
 import java.util.HashSet;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -102,56 +101,17 @@ public abstract class QueryHandler
   private String userAgent;
 
   /**
+   * Kind of the complexity of the query
+   */
+  protected Integer querySize = null;
+
+  /**
    *
    */
   public QueryHandler()
   {
     this.queryString = "";
     this.validityStatus = 0;
-  }
-
-  /**
-   * Update the handler to represent the string in queryString.
-   */
-  protected abstract void update();
-
-  /**
-   * @return The logger to write messages to.
-   */
-  public final Logger getLogger()
-  {
-    return logger;
-  }
-
-  /**
-   * @return Returns the query-string represented by this handler.
-   */
-  public final String getQueryString()
-  {
-    return queryString;
-  }
-
-  /**
-   * @param queryStringToSet query to set the variable queryString to
-   */
-  public final void setQueryString(String queryStringToSet)
-  {
-    if (queryStringToSet.equals("")) {
-      this.validityStatus = 2;
-    } else if (validityStatus > -1) {
-      this.queryStringWithoutPrefixes = queryStringToSet;
-      this.lengthNoAddedPrefixes = queryStringToSet.length();
-      this.queryString = this.addMissingPrefixesToQuery(queryStringToSet);
-      update();
-    }
-  }
-
-  /**
-   * @return Returns the original query-string represented by this handler.
-   */
-  public final String getQueryStringWithoutPrefixes()
-  {
-    return queryStringWithoutPrefixes;
   }
 
   /**
@@ -163,7 +123,7 @@ public abstract class QueryHandler
    * @param queryWithoutPrefixes the query the missing prefixes should be added to
    * @return the query with all standard prefixes
    */
-  public static String addMissingPrefixesToQuery(String queryWithoutPrefixes)
+  public String addMissingPrefixesToQuery(String queryWithoutPrefixes)
   {
     String toBeAddedPrefixes = "";
     Map<String, String> prefixes = new LinkedHashMap<>();
@@ -210,6 +170,50 @@ public abstract class QueryHandler
     }
 
     return toBeAddedPrefixes + queryWithoutPrefixes;
+  }
+
+  /**
+   * Update the handler to represent the string in queryString.
+   */
+  protected abstract void update();
+
+  /**
+   * @return The logger to write messages to.
+   */
+  public final Logger getLogger()
+  {
+    return logger;
+  }
+
+  /**
+   * @return Returns the query-string represented by this handler.
+   */
+  public final String getQueryString()
+  {
+    return queryString;
+  }
+
+  /**
+   * @param queryStringToSet query to set the variable queryString to
+   */
+  public final void setQueryString(String queryStringToSet)
+  {
+    if (queryStringToSet.equals("")) {
+      this.validityStatus = 2;
+    } else if (validityStatus > -1) {
+      this.queryStringWithoutPrefixes = queryStringToSet;
+      this.lengthNoAddedPrefixes = queryStringToSet.length();
+      this.queryString = this.addMissingPrefixesToQuery(queryStringToSet);
+      update();
+    }
+  }
+
+  /**
+   * @return Returns the original query-string represented by this handler.
+   */
+  public final String getQueryStringWithoutPrefixes()
+  {
+    return queryStringWithoutPrefixes;
   }
 
   /**
@@ -321,10 +325,18 @@ public abstract class QueryHandler
     return lengthNoAddedPrefixes;
   }
 
+  public abstract void computeQuerySize();
+
   /**
    * @return kind of the complexity of the SPARQL query
    */
-  public abstract Integer getQuerySize();
+  public Integer getQuerySize()
+  {
+    if (this.querySize == null) {
+      this.computeQuerySize();
+    }
+    return this.querySize;
+  }
 
   /**
    * Sets the toolName and version.
@@ -355,10 +367,10 @@ public abstract class QueryHandler
       toolIndex = this.queryStringWithoutPrefixes.indexOf("#tool:");
     }
     if (toolIndex != -1) {
-      int toolCommentLineEndIndex = this.queryStringWithoutPrefixes.indexOf("\n", toolIndex+6);
+      int toolCommentLineEndIndex = this.queryStringWithoutPrefixes.indexOf("\n", toolIndex + 6);
 
       //in case the index is at the end of the query, looking at you developer of Histropedia-WQT !!!
-      if(toolCommentLineEndIndex == -1) {
+      if (toolCommentLineEndIndex == -1) {
         toolCommentLineEndIndex = queryStringWithoutPrefixes.length();
       }
       this.toolName = this.queryStringWithoutPrefixes.substring(toolIndex + 6, toolCommentLineEndIndex);
@@ -429,6 +441,19 @@ public abstract class QueryHandler
   }
 
   /**
+   * Sets the Q-IDs, removing http://www.wikidata.org/entity/ if necessary.
+   *
+   * @param qIDstoSet the Q-IDs to set
+   */
+  protected void setqIDs(Set<String> qIDstoSet)
+  {
+    qIDs = new HashSet<String>();
+    for (String qID : qIDstoSet) {
+      qIDs.add(qID.replaceAll("http://www.wikidata.org/entity/", ""));
+    }
+  }
+
+  /**
    * @return the Q-IDs as a string of comma separated values.
    */
   public String getqIDString()
@@ -444,17 +469,5 @@ public abstract class QueryHandler
       qIDString += qID + ",";
     }
     return qIDString.substring(0, qIDString.lastIndexOf(","));
-  }
-
-  /**
-   * Sets the Q-IDs, removing http://www.wikidata.org/entity/ if necessary.
-   * @param qIDstoSet the Q-IDs to set
-   */
-  protected void setqIDs(Set<String> qIDstoSet)
-  {
-    qIDs = new HashSet<String>();
-    for (String qID : qIDstoSet) {
-      qIDs.add(qID.replaceAll("http://www.wikidata.org/entity/", ""));
-    }
   }
 }

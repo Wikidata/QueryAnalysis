@@ -103,10 +103,11 @@ public class OpenRDFQueryHandler extends QueryHandler
   }
 
   @Override
-  public Integer getQuerySize()
+  public void computeQuerySize()
   {
     if (getValidityStatus() != 1) {
-      return -1;
+      this.querySize = -1;
+      return;
     }
 
     OpenRDFQuerySizeCalculatorVisitor openRDFQueryLengthVisitor = new OpenRDFQuerySizeCalculatorVisitor();
@@ -117,7 +118,7 @@ public class OpenRDFQueryHandler extends QueryHandler
       logger.error("An unknown error occured while calculating the query size: ", e);
     }
 
-    return openRDFQueryLengthVisitor.getSize();
+    this.querySize = openRDFQueryLengthVisitor.getSize();
   }
 
   /**

@@ -213,9 +213,9 @@ public class StandardizingSPARQLParser extends SPARQLParser
   public final ParsedQuery parseQuery(String queryString, String baseURI)
       throws MalformedQueryException
   {
-      ASTQueryContainer qc = cache.getAstQueryContainerObjectFor(queryString);
-      debug(qc);
-      return parseQuery(qc, baseURI);
+    ASTQueryContainer qc = cache.getAstQueryContainerObjectFor(queryString);
+    debug(qc);
+    return parseQuery(qc, baseURI);
   }
 
   /**
@@ -227,10 +227,10 @@ public class StandardizingSPARQLParser extends SPARQLParser
   public final ParsedQuery parseNormalizeQuery(String queryString, String baseURI)
       throws MalformedQueryException
   {
-      ASTQueryContainer qc = cache.getAstQueryContainerObjectFor(queryString);
-      debug(qc);
-      normalize(qc);
-      return parseQuery(qc, baseURI);
+    ASTQueryContainer qc = cache.getAstQueryContainerObjectFor(queryString);
+    debug(qc);
+    normalize(qc);
+    return parseQuery(qc, baseURI);
   }
 
   private TupleExpr buildQueryModel(Node qc) throws MalformedQueryException
