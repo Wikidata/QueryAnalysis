@@ -24,8 +24,6 @@ public class Cache
    */
   private static final Logger logger = Logger.getLogger(Cache.class);
 
-  static int counter = 0;
-
   /**
    * Singleton instance
    */
@@ -36,7 +34,7 @@ public class Cache
   /**
    * the memory cached query handler objects
    */
-  private Map<Tuple2<Integer, String>, QueryHandler> queryHandlerLRUMap = (Map<Tuple2<Integer, String>, QueryHandler>) Collections.synchronizedMap(new LRUMap(10000));
+  private Map<Tuple2<Integer, String>, QueryHandler> queryHandlerLRUMap = (Map<Tuple2<Integer, String>, QueryHandler>) Collections.synchronizedMap(new LRUMap(100000));
 
   /**
    * exists only to prevent this Class from being instantiated
@@ -88,15 +86,11 @@ public class Cache
    * @param validityStatus The validity status which was the result of the decoding process of the URI
    * @param queryToAnalyze The query that should be analyzed and written.
    * @return QueryHandler a QueryHandler object which was created for the same queryString before
-   * @todo: cache the result of the getters in QueryHandler internally
    */
   public QueryHandler getQueryHandler(Integer validityStatus, String queryToAnalyze, Class queryHandlerClass)
   {
     Tuple2<Integer, String> tuple = new Tuple2<Integer, String>(validityStatus, queryToAnalyze);
-    counter++;
-    if (counter % 10000 == 0) {
-      System.out.println("hui");
-    }
+
     //check if requested object already exists in cache
     if (!queryHandlerLRUMap.containsKey(tuple)) {
       //if not create a new one
