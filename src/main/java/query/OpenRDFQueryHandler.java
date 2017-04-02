@@ -102,6 +102,9 @@ public class OpenRDFQueryHandler extends QueryHandler
     }
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public void computeQuerySize()
   {
@@ -122,12 +125,14 @@ public class OpenRDFQueryHandler extends QueryHandler
   }
 
   /**
-   * @return Returns the number of variables in the query pattern.
+   * {@inheritDoc}
    */
-  public final Integer getVariableCountPattern()
+  @Override
+  protected final void computeVariableCountPattern()
   {
     if (getValidityStatus() != 1) {
-      return -1;
+      this.variableCountPattern = -1;
+      return;
     }
 
     final Set<Var> variables = new HashSet<>();
@@ -147,34 +152,37 @@ public class OpenRDFQueryHandler extends QueryHandler
 
     }
 
-    return variables.size();
+    this.variableCountPattern = variables.size();
   }
 
   /**
-   * @return Returns the number of variables in the query head.
+   * {@inheritDoc}
    */
-  public final Integer getVariableCountHead()
+  @Override
+  protected final void computeVariableCountHead()
   {
     if (getValidityStatus() != 1) {
-      return -1;
+      this.variableCountHead = -1;
+      return;
     }
 
-    return this.query.getTupleExpr().getBindingNames().size();
+    this.variableCountHead = this.query.getTupleExpr().getBindingNames().size();
   }
 
   /**
-   * @return Returns the number of triples in the query pattern
-   * (including triples in SERIVCE blocks).
+   * {@inheritDoc}
    */
-  public final Integer getTripleCountWithService()
+  @Override
+  protected final void computeTripleCountWithService()
   {
     if (getValidityStatus() != 1) {
-      return -1;
+      this.tripleCountWithService = -1;
+      return;
     }
     TupleExpr expr = this.query.getTupleExpr();
     StatementPatternCollector collector = new StatementPatternCollector();
     expr.visit(collector);
-    return collector.getStatementPatterns().size();
+    this.tripleCountWithService = collector.getStatementPatterns().size();
   }
 
   /**

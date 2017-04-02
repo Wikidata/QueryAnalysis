@@ -36,7 +36,7 @@ public class OutputHandlerTSV extends OutputHandler
    */
   private TsvWriter writer;
 
-  private Cache cache;
+  private Cache cache = Cache.getInstance();
 
   /**
    * Creates the file specified in the constructor and writes the header.

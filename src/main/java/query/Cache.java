@@ -36,7 +36,7 @@ public class Cache
   /**
    * the memory cached query handler objects
    */
-  private Map<Tuple2<Integer, String>, QueryHandler> queryHandlerLRUMap = (Map<Tuple2<Integer, String>, QueryHandler>) Collections.synchronizedMap(new LRUMap(100000));
+  private Map<Tuple2<Integer, String>, QueryHandler> queryHandlerLRUMap = (Map<Tuple2<Integer, String>, QueryHandler>) Collections.synchronizedMap(new LRUMap(10000));
 
   /**
    * exists only to prevent this Class from being instantiated

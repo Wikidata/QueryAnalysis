@@ -106,6 +106,27 @@ public abstract class QueryHandler
   protected Integer querySize = null;
 
   /**
+   * The number of variables in the query head
+   */
+  protected Integer variableCountHead = null;
+
+  /**
+   * The number of variables in the pattern.
+   */
+  protected Integer variableCountPattern = null;
+
+  /**
+   * The number of triples in the query pattern
+   * (including triples in SERIVCE blocks).
+   */
+  protected Integer tripleCountWithService = null;
+
+  /**
+   * The Q-IDs as a string of comma separated values.
+   */
+  private String qIDString = null;
+
+  /**
    *
    */
   public QueryHandler()
@@ -123,7 +144,7 @@ public abstract class QueryHandler
    * @param queryWithoutPrefixes the query the missing prefixes should be added to
    * @return the query with all standard prefixes
    */
-  public String addMissingPrefixesToQuery(String queryWithoutPrefixes)
+  public static String addMissingPrefixesToQuery(String queryWithoutPrefixes)
   {
     String toBeAddedPrefixes = "";
     Map<String, String> prefixes = new LinkedHashMap<>();
@@ -203,7 +224,7 @@ public abstract class QueryHandler
     } else if (validityStatus > -1) {
       this.queryStringWithoutPrefixes = queryStringToSet;
       this.lengthNoAddedPrefixes = queryStringToSet.length();
-      this.queryString = this.addMissingPrefixesToQuery(queryStringToSet);
+      this.queryString = addMissingPrefixesToQuery(queryStringToSet);
       update();
     }
   }
@@ -245,20 +266,57 @@ public abstract class QueryHandler
   }
 
   /**
+   * Computes the number of variables in the query head.
+   * Useful for caching.
+   */
+  protected abstract void computeVariableCountHead();
+
+  /**
    * @return Returns the number of variables in the query head.
    */
-  public abstract Integer getVariableCountHead();
+  public Integer getVariableCountHead()
+  {
+    if (this.variableCountHead == null) {
+      this.computeVariableCountHead();
+    }
+    return this.variableCountHead;
+  }
+
+  /**
+   * Computes the number of variables in the query pattern.
+   * Useful for caching.
+   */
+  protected abstract void computeVariableCountPattern();
 
   /**
    * @return Returns the number of variables in the query pattern.
    */
-  public abstract Integer getVariableCountPattern();
+  public Integer getVariableCountPattern()
+  {
+    if (this.variableCountPattern == null) {
+      this.computeVariableCountPattern();
+    }
+    return this.variableCountPattern;
+  }
+
+  /**
+   * Computes the number of triples in the query pattern
+   * (including triples in SERIVCE blocks).
+   * Useful for caching.
+   */
+  protected abstract void computeTripleCountWithService();
 
   /**
    * @return Returns the number of triples in the query pattern
    * (including triples in SERIVCE blocks).
    */
-  public abstract Integer getTripleCountWithService();
+  public Integer getTripleCountWithService()
+  {
+    if (this.tripleCountWithService == null) {
+      this.computeTripleCountWithService();
+    }
+    return this.tripleCountWithService;
+  }
 
 
   /**
@@ -325,7 +383,11 @@ public abstract class QueryHandler
     return lengthNoAddedPrefixes;
   }
 
-  public abstract void computeQuerySize();
+  /**
+   * Computes kind of the query complexity.
+   * Useful for caching.
+   */
+  protected abstract void computeQuerySize();
 
   /**
    * @return kind of the complexity of the SPARQL query
@@ -454,20 +516,34 @@ public abstract class QueryHandler
   }
 
   /**
-   * @return the Q-IDs as a string of comma separated values.
+   * Computes the Q-IDs as a string of comma separated values.
+   * Useful for caching.
    */
-  public String getqIDString()
+  private void computeqIDString()
   {
     if (qIDs == null) {
-      return "D";
+      this.qIDString = "D";
+      return;
     }
     if (qIDs.size() == 0) {
-      return "D";
+      this.qIDString = "D";
+      return;
     }
     String qIDString = "";
     for (String qID : qIDs) {
       qIDString += qID + ",";
     }
-    return qIDString.substring(0, qIDString.lastIndexOf(","));
+    this.qIDString = qIDString.substring(0, qIDString.lastIndexOf(","));
+  }
+
+  /**
+   * @return the Q-IDs as a string of comma separated values.
+   */
+  public String getqIDString()
+  {
+    if (this.qIDString == null) {
+      this.computeqIDString();
+    }
+    return this.qIDString;
   }
 }
