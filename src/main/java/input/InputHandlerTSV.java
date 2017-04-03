@@ -6,21 +6,13 @@ import com.univocity.parsers.tsv.TsvParser;
 import com.univocity.parsers.tsv.TsvParserSettings;
 import com.univocity.parsers.tsv.TsvWriter;
 import com.univocity.parsers.tsv.TsvWriterSettings;
-
 import general.Main;
-
 import org.apache.log4j.Logger;
-import org.apache.spark.sql.AnalysisException;
 import output.OutputHandler;
 import query.QueryHandler;
 import scala.Tuple2;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.net.URLEncoder;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -76,8 +68,7 @@ public class InputHandlerTSV extends InputHandler
         String file = inputFile.substring(0, inputFile.lastIndexOf("/") + 1) + "Preprocessed" + inputFile.substring(inputFile.lastIndexOf("/") + 1);
         FileOutputStream tempFile = new FileOutputStream(file);
         preprocessedWriter = new TsvWriter(tempFile, new TsvWriterSettings());
-      }
-      catch (FileNotFoundException e) {
+      } catch (FileNotFoundException e) {
         logger.error("Could not create temporary file for adding prefixes", e);
       }
     }
@@ -100,8 +91,7 @@ public class InputHandlerTSV extends InputHandler
           Integer preprocessedValidity;
           try {
             preprocessedValidity = Integer.valueOf(row[1].toString());
-          }
-          catch (NumberFormatException e) {
+          } catch (NumberFormatException e) {
             logger.warn("Could not parse temp_validity, is the file preprocessed?", e);
             return;
           }

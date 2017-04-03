@@ -1,15 +1,15 @@
 import csv
-import os
 from collections import defaultdict
 from pprint import pprint
-import matplotlib.ticker as ticker
 
 import matplotlib.pyplot as plt
+import matplotlib.ticker as ticker
+import os
 
 
-def plotHist(X, Y, title, xlabel="x", ylabel= "count of queries", log=False):
-    if not os.path.exists(title[:title.rfind("/")] ):
-        os.makedirs(title[:title.rfind("/")] )
+def plotHist(X, Y, title, xlabel="x", ylabel="count of queries", log=False):
+    if not os.path.exists(title[:title.rfind("/")]):
+        os.makedirs(title[:title.rfind("/")])
 
     plt.figure(figsize=(10, 6))
     plt.subplot(111)
@@ -32,21 +32,18 @@ def plotHist(X, Y, title, xlabel="x", ylabel= "count of queries", log=False):
     maxX = max(X)
     plt.bar(X, Y, align='center', facecolor='#9999ff', edgecolor='#9999ff')
 
-    plt.xlim(minX -1, maxX +1)
+    plt.xlim(minX - 1, maxX + 1)
 
     if xlabel is "Hour" or xlabel is "Day":
         axes.xaxis.set_major_locator(ticker.MultipleLocator(1))
 
-    #plt.xlim(0)
+    # plt.xlim(0)
     # plt.show()
     plt.savefig(title + ".png")
     plt.close()
 
 
 metrics = ['VariableCountPattern', 'StringLengthNoComments']
-
-
-
 
 for metric in metrics:
 
@@ -60,10 +57,9 @@ for metric in metrics:
 
     totalHours = []
 
-    totalMetrics =[]
+    totalMetrics = []
     totalQueryCountPerDay = defaultdict(int)
     totalTotalQueryCountPerMetric = defaultdict(int)
-
 
     for file in files:
         totalQueryCountPerHour = defaultdict(int)
@@ -83,17 +79,16 @@ for metric in metrics:
 
                 totalMetrics = X
 
-
                 Y = []
                 for x in X:
                     Y.append(int(line[x]))
                     totalQueryCountPerHour[int(line['hour'])] += int(line[x])
                     totalQueryCountPerMetric[int(x)] += int(line[x])
 
-                X=[int(x) for x in X]
+                X = [int(x) for x in X]
 
-                plotHist(X,Y, metric + '/plots/day' + day + '/hour' + line['hour'], xlabel=metric)
-                plotHist(X,Y, metric + '/plots/day'+ day +  '/log/hour' + line['hour'], xlabel=metric, log=True)
+                plotHist(X, Y, metric + '/plots/day' + day + '/hour' + line['hour'], xlabel=metric)
+                plotHist(X, Y, metric + '/plots/day' + day + '/log/hour' + line['hour'], xlabel=metric, log=True)
 
         sum = 0
         for hour in totalQueryCountPerHour:
@@ -103,13 +98,12 @@ for metric in metrics:
         for m in totalQueryCountPerMetric:
             totalTotalQueryCountPerMetric[m] += totalQueryCountPerMetric[m]
 
-
-        plotHist(None, totalQueryCountPerHour, metric + '/plots/day'+ day+'/totalQueryCountPerHour', xlabel="Hour")
-        plotHist(None, totalQueryCountPerMetric, metric + '/plots/day'+ day+'/totalQueryCountPer' + metric, xlabel=metric)
+        plotHist(None, totalQueryCountPerHour, metric + '/plots/day' + day + '/totalQueryCountPerHour', xlabel="Hour")
+        plotHist(None, totalQueryCountPerMetric, metric + '/plots/day' + day + '/totalQueryCountPer' + metric,
+                 xlabel=metric)
 
     pprint(totalQueryCountPerMetric)
     pprint(totalTotalQueryCountPerMetric)
 
     plotHist(None, totalTotalQueryCountPerMetric, metric + '/plots/totalQueryCountPer' + metric, xlabel=metric)
     plotHist(None, totalQueryCountPerDay, metric + '/plots/totalQueryCountPerDay', xlabel="Day")
-

@@ -1,4 +1,5 @@
 import csv
+
 import os
 
 
@@ -15,6 +16,7 @@ def writeOut(fieldValues, file, dictionary):
             else:
                 line += "\t0"
         file.write(line + "\n")
+
 
 metrics = ['ToolName', 'StringLengthNoComments']
 for metric in metrics:
@@ -41,7 +43,7 @@ for metric in metrics:
                 if int(line["#Valid"]) != 1:
                     continue
 
-                #onlfy for "user queries"
+                # onlfy for "user queries"
                 if line['#ToolName'] == '0':
                     try:
                         hour = int(line["#hour"])

@@ -11,12 +11,12 @@ import java.lang.reflect.InvocationTargetException;
 /**
  * @author: Julius Gonsior
  */
-public class ParseOneMonthWorker implements Runnable
+public class ParseOneDayWorker implements Runnable
 {
   /**
    * Define a static logger variable.
    */
-  private static final Logger logger = Logger.getLogger(ParseOneMonthWorker.class);
+  private static final Logger logger = Logger.getLogger(ParseOneDayWorker.class);
   private final String inputFile;
   private final String inputFilePrefix;
   private InputHandler inputHandler;
@@ -24,7 +24,7 @@ public class ParseOneMonthWorker implements Runnable
   private Class queryHandlerClass;
   private int day;
 
-  public ParseOneMonthWorker(String inputFile, String inputFilePrefix, Class inputHandlerClass, String queryParserName, Class queryHandlerClass, int day) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException
+  public ParseOneDayWorker(String inputFile, String inputFilePrefix, Class inputHandlerClass, String queryParserName, Class queryHandlerClass, int day) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException
   {
     this.inputFile = inputFile;
     this.inputFilePrefix = inputFilePrefix;

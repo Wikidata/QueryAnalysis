@@ -73,6 +73,10 @@ public final class Main
    */
   public static final Map<Tuple2<String, String>, Tuple2<String, String>> queryTypeToToolMapping = new HashMap<>();
   /**
+   * Define a static logger variable.
+   */
+  private static final Logger logger = Logger.getLogger(Main.class);
+  /**
    * Saves if metrics should be calculated for bot queries.
    */
   public static boolean withBots;
@@ -84,10 +88,6 @@ public final class Main
    * Saves if the query types should be generated dynamically.
    */
   public static boolean dynamicQueryTypes;
-  /**
-   * Define a static logger variable.
-   */
-  private static final Logger logger = Logger.getLogger(Main.class);
 
   /**
    * Since this is a utility class, it should not be instantiated.
@@ -197,7 +197,7 @@ public final class Main
 
     for (int day = 1; day <= 31; day++) {
       String inputFile = inputFilePrefix + String.format("%02d", day) + inputFileSuffix;
-      Runnable parseOneMonthWorker = new ParseOneMonthWorker(inputFile, inputFilePrefix, inputHandlerClass, queryParserName, queryHandlerClass, day);
+      Runnable parseOneMonthWorker = new ParseOneDayWorker(inputFile, inputFilePrefix, inputHandlerClass, queryParserName, queryHandlerClass, day);
       executor.execute(parseOneMonthWorker);
     }
     executor.shutdown();
@@ -228,7 +228,7 @@ public final class Main
             OpenRDFQueryHandler queryHandler = new OpenRDFQueryHandler();
             //queryHandler.setValidityStatus(1);
             queryHandler.setQueryString(queryString);
-            if(queryHandler.getValidityStatus() != 1) {
+            if (queryHandler.getValidityStatus() != 1) {
               logger.info("The Pre-build query " + filePath + " is no valid SPARQL");
               continue;
             }

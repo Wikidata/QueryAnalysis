@@ -6,7 +6,6 @@ import scala.Tuple2;
 
 import java.util.HashSet;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -102,56 +101,38 @@ public abstract class QueryHandler
   private String userAgent;
 
   /**
+   * Kind of the complexity of the query
+   */
+  protected Integer querySize = null;
+
+  /**
+   * The number of variables in the query head
+   */
+  protected Integer variableCountHead = null;
+
+  /**
+   * The number of variables in the pattern.
+   */
+  protected Integer variableCountPattern = null;
+
+  /**
+   * The number of triples in the query pattern
+   * (including triples in SERIVCE blocks).
+   */
+  protected Integer tripleCountWithService = null;
+
+  /**
+   * The Q-IDs as a string of comma separated values.
+   */
+  private String qIDString = null;
+
+  /**
    *
    */
   public QueryHandler()
   {
     this.queryString = "";
     this.validityStatus = 0;
-  }
-
-  /**
-   * Update the handler to represent the string in queryString.
-   */
-  protected abstract void update();
-
-  /**
-   * @return The logger to write messages to.
-   */
-  public final Logger getLogger()
-  {
-    return logger;
-  }
-
-  /**
-   * @return Returns the query-string represented by this handler.
-   */
-  public final String getQueryString()
-  {
-    return queryString;
-  }
-
-  /**
-   * @param queryStringToSet query to set the variable queryString to
-   */
-  public final void setQueryString(String queryStringToSet)
-  {
-    if (queryStringToSet.equals("")) {
-      this.validityStatus = 2;
-    } else if (validityStatus > -1) {
-      this.queryStringWithoutPrefixes = queryStringToSet;
-      this.lengthNoAddedPrefixes = queryStringToSet.length();
-      this.queryString = this.addMissingPrefixesToQuery(queryStringToSet);
-      update();
-    }
-  }
-
-  /**
-   * @return Returns the original query-string represented by this handler.
-   */
-  public final String getQueryStringWithoutPrefixes()
-  {
-    return queryStringWithoutPrefixes;
   }
 
   /**
@@ -213,6 +194,50 @@ public abstract class QueryHandler
   }
 
   /**
+   * Update the handler to represent the string in queryString.
+   */
+  protected abstract void update();
+
+  /**
+   * @return The logger to write messages to.
+   */
+  public final Logger getLogger()
+  {
+    return logger;
+  }
+
+  /**
+   * @return Returns the query-string represented by this handler.
+   */
+  public final String getQueryString()
+  {
+    return queryString;
+  }
+
+  /**
+   * @param queryStringToSet query to set the variable queryString to
+   */
+  public final void setQueryString(String queryStringToSet)
+  {
+    if (queryStringToSet.equals("")) {
+      this.validityStatus = 2;
+    } else if (validityStatus > -1) {
+      this.queryStringWithoutPrefixes = queryStringToSet;
+      this.lengthNoAddedPrefixes = queryStringToSet.length();
+      this.queryString = addMissingPrefixesToQuery(queryStringToSet);
+      update();
+    }
+  }
+
+  /**
+   * @return Returns the original query-string represented by this handler.
+   */
+  public final String getQueryStringWithoutPrefixes()
+  {
+    return queryStringWithoutPrefixes;
+  }
+
+  /**
    * @return Returns the validity status of the query
    */
   public final int getValidityStatus()
@@ -241,20 +266,57 @@ public abstract class QueryHandler
   }
 
   /**
+   * Computes the number of variables in the query head.
+   * Useful for caching.
+   */
+  protected abstract void computeVariableCountHead();
+
+  /**
    * @return Returns the number of variables in the query head.
    */
-  public abstract Integer getVariableCountHead();
+  public Integer getVariableCountHead()
+  {
+    if (this.variableCountHead == null) {
+      this.computeVariableCountHead();
+    }
+    return this.variableCountHead;
+  }
+
+  /**
+   * Computes the number of variables in the query pattern.
+   * Useful for caching.
+   */
+  protected abstract void computeVariableCountPattern();
 
   /**
    * @return Returns the number of variables in the query pattern.
    */
-  public abstract Integer getVariableCountPattern();
+  public Integer getVariableCountPattern()
+  {
+    if (this.variableCountPattern == null) {
+      this.computeVariableCountPattern();
+    }
+    return this.variableCountPattern;
+  }
+
+  /**
+   * Computes the number of triples in the query pattern
+   * (including triples in SERIVCE blocks).
+   * Useful for caching.
+   */
+  protected abstract void computeTripleCountWithService();
 
   /**
    * @return Returns the number of triples in the query pattern
    * (including triples in SERIVCE blocks).
    */
-  public abstract Integer getTripleCountWithService();
+  public Integer getTripleCountWithService()
+  {
+    if (this.tripleCountWithService == null) {
+      this.computeTripleCountWithService();
+    }
+    return this.tripleCountWithService;
+  }
 
 
   /**
@@ -322,9 +384,21 @@ public abstract class QueryHandler
   }
 
   /**
+   * Computes kind of the query complexity.
+   * Useful for caching.
+   */
+  protected abstract void computeQuerySize();
+
+  /**
    * @return kind of the complexity of the SPARQL query
    */
-  public abstract Integer getQuerySize();
+  public Integer getQuerySize()
+  {
+    if (this.querySize == null) {
+      this.computeQuerySize();
+    }
+    return this.querySize;
+  }
 
   /**
    * Sets the toolName and version.
@@ -355,10 +429,10 @@ public abstract class QueryHandler
       toolIndex = this.queryStringWithoutPrefixes.indexOf("#tool:");
     }
     if (toolIndex != -1) {
-      int toolCommentLineEndIndex = this.queryStringWithoutPrefixes.indexOf("\n", toolIndex+6);
+      int toolCommentLineEndIndex = this.queryStringWithoutPrefixes.indexOf("\n", toolIndex + 6);
 
       //in case the index is at the end of the query, looking at you developer of Histropedia-WQT !!!
-      if(toolCommentLineEndIndex == -1) {
+      if (toolCommentLineEndIndex == -1) {
         toolCommentLineEndIndex = queryStringWithoutPrefixes.length();
       }
       this.toolName = this.queryStringWithoutPrefixes.substring(toolIndex + 6, toolCommentLineEndIndex);
@@ -429,25 +503,8 @@ public abstract class QueryHandler
   }
 
   /**
-   * @return the Q-IDs as a string of comma separated values.
-   */
-  public String getqIDString()
-  {
-    if (qIDs == null) {
-      return "D";
-    }
-    if (qIDs.size() == 0) {
-      return "D";
-    }
-    String qIDString = "";
-    for (String qID : qIDs) {
-      qIDString += qID + ",";
-    }
-    return qIDString.substring(0, qIDString.lastIndexOf(","));
-  }
-
-  /**
    * Sets the Q-IDs, removing http://www.wikidata.org/entity/ if necessary.
+   *
    * @param qIDstoSet the Q-IDs to set
    */
   protected void setqIDs(Set<String> qIDstoSet)
@@ -456,5 +513,37 @@ public abstract class QueryHandler
     for (String qID : qIDstoSet) {
       qIDs.add(qID.replaceAll("http://www.wikidata.org/entity/", ""));
     }
+  }
+
+  /**
+   * Computes the Q-IDs as a string of comma separated values.
+   * Useful for caching.
+   */
+  private void computeqIDString()
+  {
+    if (qIDs == null) {
+      this.qIDString = "D";
+      return;
+    }
+    if (qIDs.size() == 0) {
+      this.qIDString = "D";
+      return;
+    }
+    String qIDString = "";
+    for (String qID : qIDs) {
+      qIDString += qID + ",";
+    }
+    this.qIDString = qIDString.substring(0, qIDString.lastIndexOf(","));
+  }
+
+  /**
+   * @return the Q-IDs as a string of comma separated values.
+   */
+  public String getqIDString()
+  {
+    if (this.qIDString == null) {
+      this.computeqIDString();
+    }
+    return this.qIDString;
   }
 }

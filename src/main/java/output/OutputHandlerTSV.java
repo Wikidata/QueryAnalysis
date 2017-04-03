@@ -2,17 +2,14 @@ package output;
 
 import com.univocity.parsers.tsv.TsvWriter;
 import com.univocity.parsers.tsv.TsvWriterSettings;
-
 import general.Main;
-
 import org.apache.log4j.Logger;
+import query.Cache;
 import query.QueryHandler;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -38,6 +35,8 @@ public class OutputHandlerTSV extends OutputHandler
    * A writer created at object creation to be used in line-by-line writing.
    */
   private TsvWriter writer;
+
+  private Cache cache = Cache.getInstance();
 
   /**
    * Creates the file specified in the constructor and writes the header.
@@ -75,6 +74,11 @@ public class OutputHandlerTSV extends OutputHandler
     writer.writeHeaders(header);
   }
 
+  public void OutputHandlerTSV()
+  {
+    cache = Cache.getInstance();
+  }
+
   /**
    * Closes the writer this object was writing to.
    */
@@ -101,22 +105,23 @@ public class OutputHandlerTSV extends OutputHandler
    *
    * @param queryToAnalyze The query that should be analyzed and written.
    * @param validityStatus The validity status which was the result of the decoding process of the URI
-   * @param row            The input data to be written to this line.
+   * @param userAgent      The user agent the query was being executed by.
    * @param currentLine    The line from which the data to be written originates.
    * @param currentFile    The file from which the data to be written originates.
    */
   @Override
   public final void writeLine(String queryToAnalyze, Integer validityStatus, String userAgent, long currentLine, String currentFile)
   {
-    QueryHandler queryHandler = null;
-    try {
+    QueryHandler queryHandler = cache.getQueryHandler(validityStatus, queryToAnalyze, queryHandlerClass);
+    /*try {
       queryHandler = (QueryHandler) queryHandlerClass.getConstructor().newInstance();
     } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
       logger.error("Failed to create query handler object" + e);
     }
     queryHandler.setValidityStatus(validityStatus);
-    queryHandler.setUserAgent(userAgent);
     queryHandler.setQueryString(queryToAnalyze);
+    */
+    queryHandler.setUserAgent(userAgent);
     queryHandler.setCurrentLine(currentLine);
     queryHandler.setCurrentFile(currentFile);
 
