@@ -8,7 +8,7 @@ subfolder = "benchmarkFiles/"
 processedPrefix = "QueryProcessedOpenRDF"
 sourcePrefix = "QueryCnt"
 
-lineNumber = 50000
+lineNumber = 5000
 
 if not os.path.exists(subfolder):
 		os.makedirs(subfolder)
@@ -27,8 +27,6 @@ for i in xrange(1, 2):
 		
 		for processed, source in zip(pReader, sReader):
 			
-			i += 1
-			
 			if pWriter.fieldnames is None:
 				ph = dict((h, h) for h in pReader.fieldnames)
 				pWriter.fieldnames = pReader.fieldnames
@@ -45,6 +43,7 @@ for i in xrange(1, 2):
 				queryTypes.add(processed["#QueryType"])
 				pWriter.writerow(processed)
 				sWriter.writerow(source)
+				i += 1
 				
 			if i > lineNumber:
 				break
