@@ -3,10 +3,12 @@ import os
 
 from shutil import copyfile
 
-subfolder = "userData/"
+subfolder = "benchmarkFiles/"
 
 processedPrefix = "QueryProcessedOpenRDF"
 sourcePrefix = "QueryCnt"
+
+lineNumber = 50000
 
 if not os.path.exists(subfolder):
 		os.makedirs(subfolder)
@@ -21,7 +23,12 @@ for i in xrange(1, 2):
 		pWriter = csv.DictWriter(user_p, None, delimiter = "\t")
 		sWriter = csv.DictWriter(user_s, None, delimiter = "\t")
 		
+		i = 0
+		
 		for processed, source in zip(pReader, sReader):
+			
+			i += 1
+			
 			if pWriter.fieldnames is None:
 				ph = dict((h, h) for h in pReader.fieldnames)
 				pWriter.fieldnames = pReader.fieldnames
@@ -31,21 +38,14 @@ for i in xrange(1, 2):
 				sh = dict((h, h) for h in sReader.fieldnames)
 				sWriter.fieldnames = sReader.fieldnames
 				sWriter.writerow(sh)
-			
-			if (processed["#ToolName"] == "0"):
+				
+			if (processed["#QueryType"] in queryTypes):
+				continue
+			else:
+				queryTypes.add(processed["#QueryType"])
 				pWriter.writerow(processed)
 				sWriter.writerow(source)
-				queryTypes.add(processed["#QueryType"])
 				
-queryTypeFolder = "queryType/queryTypeFiles/"
-
-if not os.path.exists(subfolder + queryTypeFolder):
-	os.makedirs(subfolder + queryTypeFolder)
-
-for queryType in queryTypes:
-	original = queryTypeFolder + queryType + ".queryType"
-	try:
-		copyfile(original, "userData/" + original)
-	except:
-		print original + " does not exist."
+			if i > lineNumber:
+				break
 	
