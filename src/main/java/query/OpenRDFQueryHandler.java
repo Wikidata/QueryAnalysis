@@ -1,6 +1,8 @@
 package query;
 
 import general.Main;
+import openrdffork.StandardizingSPARQLParser;
+
 import org.apache.log4j.Logger;
 import org.openrdf.model.Value;
 import org.openrdf.model.impl.URIImpl;
