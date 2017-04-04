@@ -33,6 +33,7 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
+import org.openrdf.query.algebra.TupleExpr;
 import org.openrdf.query.parser.ParsedQuery;
 import org.openrdf.queryrender.sparql.SPARQLQueryRenderer;
 import query.OpenRDFQueryHandler;
@@ -67,7 +68,7 @@ public final class Main
   /**
    * Saves the encountered queryTypes.
    */
-  public static final Map<ParsedQuery, String> queryTypes = Collections.synchronizedMap(new HashMap<ParsedQuery, String>());
+  public static final Map<TupleExpr, String> queryTypes = Collections.synchronizedMap(new HashMap<TupleExpr, String>());
   /**
    * Saves the mapping of query type and user agent to tool name and version.
    */
@@ -235,7 +236,7 @@ public final class Main
             ParsedQuery normalizedPreBuildQuery = queryHandler.getNormalizedQuery();
             String queryTypeName = filePath.toString().substring(filePath.toString().lastIndexOf("/") + 1, filePath.toString().lastIndexOf("."));
             if (normalizedPreBuildQuery != null) {
-              queryTypes.put(normalizedPreBuildQuery, queryTypeName);
+              queryTypes.put(normalizedPreBuildQuery.getTupleExpr(), queryTypeName);
             } else {
               logger.info("Pre-build query " + queryTypeName + " could not be parsed.");
             }
@@ -298,12 +299,11 @@ public final class Main
     new File(outputFolderName).mkdir();
     SPARQLQueryRenderer renderer = new SPARQLQueryRenderer();
     String currentOutputFolderName = outputFolderName;
-    for (ParsedQuery parsedQuery : queryTypes.keySet()) {
+    for (TupleExpr parsedQuery : queryTypes.keySet()) {
 
       String queryType = queryTypes.get(parsedQuery);
       try (BufferedWriter bw = new BufferedWriter(new FileWriter(currentOutputFolderName + queryType + ".queryType"))) {
-        bw.write(renderer.render(parsedQuery));
-        bw.write("\n" + parsedQuery.toString());
+        bw.write(parsedQuery.toString());
       } catch (IOException e) {
         logger.error("Could not write the query type " + queryType + ".", e);
       } catch (Exception e) {
