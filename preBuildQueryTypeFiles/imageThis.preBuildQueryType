@@ -1,0 +1,4 @@
+SELECT ?image
+WHERE {
+  <http://www.wikidata.org/entity/Q3903892> wdt:P18 ?image
+}

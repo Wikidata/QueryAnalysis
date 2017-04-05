@@ -118,3 +118,19 @@ entityLabelInSpecificLanguage	-	toolSearchingForLabelInLanguage	-1	needs more da
 entityLabelInSpecificLanguage	Apache-Jena-ARQ/${project.version}	otherToolSearchingForLabelInLanguage	-1	needs more data
 hasLabel	Java/1.8.0_111	toolSearchingForLabel	1.8.0_111	needs more data
 hasLabel	Java/1.8.0_45	toolSearchingForLabel	1.8.0_45	needs more data
+thisFreebaseIDWithCompanyTickerExchange	python-requests/2.13.0	toolSearchingForCompanyInformationToProduct	2.13.0	needs more data
+GNDIDThisWithID	Apache-Jena-ARQ/3.1.0	toolSearchingForGNDID	3.1.0	needs more data
+thisTaxonNameTaxonRank	-	toolSearchingForTaxonByNameAndRank	-1	needs more data
+transfermarktPlayerIDtransfermarktManagerIDthis	Java/1.7.0_121	footballExplorer	1.7.0_121	needs more data
+transfermarktPlayerIDtransfermarktManagerIDthis	Java/1.7.0_80	footballExplorer	1.7.0_80	needs more data
+transfermarktPlayerIDtransfermarktManagerIDthis	Java/1.7.0_79	footballExplorer	1.7.0_79	needs more data
+askWhereLocatedInTheAdministrativeTerritorialEntity	constrained_harvest Pywikibot/3.0-dev (g7696) requests/2.13.0 Python/2.7.5.final.0	toolCheckingSingleStatement	g7696	needs more data
+askWhereLocatedInTheAdministrativeTerritorialEntity	constrained_harvest Pywikibot/3.0-dev (g7694) requests/2.13.0 Python/2.7.5.final.0	toolCheckingSingleStatement	g7694	needs more data
+askWhereLocatedInTheAdministrativeTerritorialEntity	constrained_harvest Pywikibot/3.0-dev (g7705) requests/2.2.1 Python/2.7.6.final.0	toolCheckingSingleStatement	g7705	needs more data
+askWhereLocatedInTheAdministrativeTerritorialEntity	constrained_harvest Pywikibot/3.0-dev (g7695) requests/2.13.0 Python/2.7.5.final.0	toolCheckingSingleStatement	g7695	needs more data
+imageThis	Apache-Jena-ARQ/3.0.0	toolGettingImageToEntity	3.0.0	needs more data
+signatureThis	Apache-Jena-ARQ/3.0.0	toolGettingImageToEntity	3.0.0	needs more data
+askWhereInstaceOf	constrained_harvest Pywikibot/3.0-dev (g7694) requests/2.13.0 Python/2.7.5.final.0	toolCheckingSingleStatement	g7694	needs more data
+askWhereInstaceOf	constrained_harvest Pywikibot/3.0-dev (g7705) requests/2.2.1 Python/2.7.6.final.0	toolCheckingSingleStatement	g7705	needs more data
+askWhereInstaceOf	constrained_harvest Pywikibot/3.0-dev (g7695) requests/2.13.0 Python/2.7.5.final.0	toolCheckingSingleStatement	g7695	needs more data
+sameAsThis	Apache-Jena-ARQ/2.12.1	toolCheckingForSameAs	2.12.1	needs more data

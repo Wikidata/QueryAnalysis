@@ -1,0 +1,9 @@
+PREFIX  wdt:  <http://www.wikidata.org/prop/direct/>
+PREFIX  wd:   <http://www.wikidata.org/entity/>
+
+SELECT  *
+WHERE {
+  {wd:Q6800443 wdt:P2446 ?P2446}
+    UNION
+  {wd:Q6800443 wdt:P2447 ?P2447}
+}

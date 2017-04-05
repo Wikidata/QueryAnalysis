@@ -1,0 +1,4 @@
+SELECT  *
+WHERE {
+  <http://www.wikidata.org/entity/Q427249> <http://www.w3.org/2002/07/owl#sameAs> ?s
+}
