@@ -33,6 +33,7 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
+import org.openrdf.query.algebra.TupleExpr;
 import org.openrdf.query.parser.ParsedQuery;
 import org.openrdf.queryrender.sparql.SPARQLQueryRenderer;
 import query.OpenRDFQueryHandler;
@@ -67,11 +68,15 @@ public final class Main
   /**
    * Saves the encountered queryTypes.
    */
-  public static final Map<ParsedQuery, String> queryTypes = Collections.synchronizedMap(new HashMap<ParsedQuery, String>());
+  public static final Map<TupleExpr, String> queryTypes = Collections.synchronizedMap(new HashMap<TupleExpr, String>());
   /**
    * Saves the mapping of query type and user agent to tool name and version.
    */
   public static final Map<Tuple2<String, String>, Tuple2<String, String>> queryTypeToToolMapping = new HashMap<>();
+  /**
+   * Define a static logger variable.
+   */
+  private static final Logger logger = Logger.getLogger(Main.class);
   /**
    * Saves if metrics should be calculated for bot queries.
    */
@@ -81,9 +86,9 @@ public final class Main
    */
   public static boolean readPreprocessed;
   /**
-   * Define a static logger variable.
+   * Saves if the query types should be generated dynamically.
    */
-  private static final Logger logger = Logger.getLogger(Main.class);
+  public static boolean dynamicQueryTypes;
 
   /**
    * Since this is a utility class, it should not be instantiated.
@@ -111,6 +116,8 @@ public final class Main
     options.addOption("n", "numberOfThreads", true, "number of used threads, default 1");
     options.addOption("b", "withBots", false, "enables metric calculation for bot queries+");
     options.addOption("p", "readPreprocessed", false, "enables reading of preprocessed files");
+    options.addOption("d", "dynamicQueryTypes", false, "enables dynamic generation of query types");
+
 
     //some parameters which can be changed through parameters
     //QueryHandler queryHandler = new OpenRDFQueryHandler();
@@ -166,6 +173,9 @@ public final class Main
       if (cmd.hasOption("readPreprocessed")) {
         readPreprocessed = true;
       }
+      if (cmd.hasOption("dynamicQueryTypes")) {
+        dynamicQueryTypes = true;
+      }
     } catch (UnrecognizedOptionException e) {
       System.out.println("Unrecognized commandline option: " + e.getOption());
       HelpFormatter formatter = new HelpFormatter();
@@ -188,7 +198,7 @@ public final class Main
 
     for (int day = 1; day <= 31; day++) {
       String inputFile = inputFilePrefix + String.format("%02d", day) + inputFileSuffix;
-      Runnable parseOneMonthWorker = new ParseOneMonthWorker(inputFile, inputFilePrefix, inputHandlerClass, queryParserName, queryHandlerClass, day);
+      Runnable parseOneMonthWorker = new ParseOneDayWorker(inputFile, inputFilePrefix, inputHandlerClass, queryParserName, queryHandlerClass, day);
       executor.execute(parseOneMonthWorker);
     }
     executor.shutdown();
@@ -219,14 +229,14 @@ public final class Main
             OpenRDFQueryHandler queryHandler = new OpenRDFQueryHandler();
             //queryHandler.setValidityStatus(1);
             queryHandler.setQueryString(queryString);
-            if(queryHandler.getValidityStatus() != 1) {
+            if (queryHandler.getValidityStatus() != 1) {
               logger.info("The Pre-build query " + filePath + " is no valid SPARQL");
               continue;
             }
             ParsedQuery normalizedPreBuildQuery = queryHandler.getNormalizedQuery();
             String queryTypeName = filePath.toString().substring(filePath.toString().lastIndexOf("/") + 1, filePath.toString().lastIndexOf("."));
             if (normalizedPreBuildQuery != null) {
-              queryTypes.put(normalizedPreBuildQuery, queryTypeName);
+              queryTypes.put(normalizedPreBuildQuery.getTupleExpr(), queryTypeName);
             } else {
               logger.info("Pre-build query " + queryTypeName + " could not be parsed.");
             }
@@ -283,16 +293,17 @@ public final class Main
     new File(outputFolderName).mkdir();
     outputFolderName += "queryTypeFiles/";
     File outputFolderFile = new File(outputFolderName);
-    FileUtils.deleteQuietly(outputFolderFile);
+    if (dynamicQueryTypes) {
+      FileUtils.deleteQuietly(outputFolderFile);
+    }
     new File(outputFolderName).mkdir();
     SPARQLQueryRenderer renderer = new SPARQLQueryRenderer();
     String currentOutputFolderName = outputFolderName;
-    for (ParsedQuery parsedQuery : queryTypes.keySet()) {
+    for (TupleExpr parsedQuery : queryTypes.keySet()) {
 
       String queryType = queryTypes.get(parsedQuery);
       try (BufferedWriter bw = new BufferedWriter(new FileWriter(currentOutputFolderName + queryType + ".queryType"))) {
-        bw.write(renderer.render(parsedQuery));
-        bw.write("\n" + parsedQuery.toString());
+        bw.write(parsedQuery.toString());
       } catch (IOException e) {
         logger.error("Could not write the query type " + queryType + ".", e);
       } catch (Exception e) {

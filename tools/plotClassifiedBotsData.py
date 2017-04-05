@@ -1,17 +1,15 @@
 import csv
+
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
-from matplotlib.pyplot import cm
 import numpy as np
-import matplotlib.colors as mcolors
-from pprint import pprint
 import os
-import operator
+from matplotlib.pyplot import cm
 
 
-def plotHist(data, title, countTools, xlabel="hour", ylabel= "count of queries", log=False):
-    if not os.path.exists(title[:title.rfind("/")] ):
-        os.makedirs(title[:title.rfind("/")] )
+def plotHist(data, title, countTools, xlabel="hour", ylabel="count of queries", log=False):
+    if not os.path.exists(title[:title.rfind("/")]):
+        os.makedirs(title[:title.rfind("/")])
     fig = plt.figure(1)
     ax = fig.add_subplot(111)
     plt.grid(True)
@@ -40,13 +38,13 @@ def plotHist(data, title, countTools, xlabel="hour", ylabel= "count of queries",
             pass
 
     handles, labels = ax.get_legend_handles_labels()
-    lgd = ax.legend(handles, labels, bbox_to_anchor=(1, 1), loc='upper left', ncol=1, prop={'size':6})
+    lgd = ax.legend(handles, labels, bbox_to_anchor=(1, 1), loc='upper left', ncol=1, prop={'size': 6})
 
     if xlabel is 'hour':
         plt.xlim(-1, 24)
 
     if xlabel is 'day':
-        plt.xlim(0,32)
+        plt.xlim(0, 32)
 
     plt.xticks(fontsize=9)
     plt.savefig(title + ".png", bbox_extra_artists=(lgd,), bbox_inches='tight')
@@ -56,9 +54,11 @@ def plotHist(data, title, countTools, xlabel="hour", ylabel= "count of queries",
 inputDirectory = "dayTriple/"
 
 files = []
-for i in xrange(1,32):
-    files.append("classifiedBotsData/" + "%02d"%i + "ClassifiedBotsData.tsv")
-#files.append("classifiedBotsData/TotalClassifiedBotsData.tsv")
+for i in xrange(1, 32):
+    files.append("classifiedBotsData/" + "%02d" % i + "ClassifiedBotsData.tsv")
+
+
+# files.append("classifiedBotsData/TotalClassifiedBotsData.tsv")
 
 def compare(item1, item2):
     if max(item1[1]["Y"]) < max(item2[1]["Y"]):
@@ -71,7 +71,6 @@ def compare(item1, item2):
 
 totalDataPerDay = {}
 totalToolNames = set()
-
 
 for file in files:
     print "Working on: " + file
@@ -93,7 +92,7 @@ for file in files:
             totalToolNames.add(line['ToolName'])
             counts.append(int(line['count']))
 
-        #divide data into "stacks"
+        # divide data into "stacks"
 
         data = {}
         for toolName in toolNames:
@@ -110,8 +109,7 @@ for file in files:
             data[toolName]["X"].append(hour)
             data[toolName]["Y"].append(count)
 
-
-        #sort data so that the log graph is kind of useful
+        # sort data so that the log graph is kind of useful
         sorted_data = sorted(data.items(), cmp=compare)
 
         plotHist(sorted_data, 'classifiedBotsData/plots/day' + day, len(set(toolNames)))
@@ -126,9 +124,7 @@ for file in files:
                 sum += count
             totalDataPerDay[toolName]["Y"].append(sum)
 
-
-
 sorted_data = sorted(totalDataPerDay.items(), cmp=compare)
 
-plotHist(sorted_data, "classifiedBotsData/plots/total", len(totalToolNames), xlabel= 'day')
-plotHist(sorted_data, "classifiedBotsData/plots/total_log", len(totalToolNames), xlabel = 'day', log=True)
+plotHist(sorted_data, "classifiedBotsData/plots/total", len(totalToolNames), xlabel='day')
+plotHist(sorted_data, "classifiedBotsData/plots/total_log", len(totalToolNames), xlabel='day', log=True)

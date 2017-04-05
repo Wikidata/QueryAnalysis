@@ -27,11 +27,11 @@ public abstract class OutputHandler implements Serializable
    *
    * @param queryToAnalyze The query that should be analyzed and written.
    * @param validityStatus The validity status which was the result of the decoding process of the URI
-   * @param row            The input data to be written to this line.
+   * @param userAgent      The user agent with which the query was being executed as.
    * @param currentLine    The line from which the data to be written originates.
    * @param currentFile    The file from which the data to be written originates.
    */
-  public abstract void writeLine(String queryToAnalyze, Integer validityStatus, Object[] row, long currentLine, String currentFile);
+  public abstract void writeLine(String queryToAnalyze, Integer validityStatus, String userAgent, long currentLine, String currentFile);
 
   /**
    * Closes any files that might have been opened.

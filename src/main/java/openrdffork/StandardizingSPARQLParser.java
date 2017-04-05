@@ -1,7 +1,7 @@
 /**
  *
  */
-package query;
+package openrdffork;
 
 import org.openrdf.model.impl.ValueFactoryImpl;
 import org.openrdf.query.Dataset;
@@ -25,12 +25,6 @@ import java.util.Map;
  */
 public class StandardizingSPARQLParser extends SPARQLParser
 {
-  private Cache cache;
-
-  public StandardizingSPARQLParser()
-  {
-    this.cache = Cache.getInstance();
-  }
 
   /**
    * Moves BIND()-clauses to the top of the query.
@@ -170,7 +164,7 @@ public class StandardizingSPARQLParser extends SPARQLParser
   {
     StringEscapesProcessor.process(qc);
     BaseDeclProcessor.process(qc, baseURI);
-    Map<String, String> prefixes = PrefixDeclProcessor.process(qc);
+    Map<String, String> prefixes = StandardizingPrefixDeclProcessor.process(qc);
     WildcardProjectionProcessor.process(qc);
     BlankNodeVarProcessor.process(qc);
 
@@ -213,9 +207,13 @@ public class StandardizingSPARQLParser extends SPARQLParser
   public final ParsedQuery parseQuery(String queryString, String baseURI)
       throws MalformedQueryException
   {
-    ASTQueryContainer qc = cache.getAstQueryContainerObjectFor(queryString);
-    debug(qc);
-    return parseQuery(qc, baseURI);
+    try {
+      ASTQueryContainer qc = SyntaxTreeBuilder.parseQuery(queryString);
+      debug(qc);
+      return parseQuery(qc, baseURI);
+    } catch (TokenMgrError | ParseException e) {
+      throw new MalformedQueryException(e.getMessage(), e);
+    }
   }
 
   /**
@@ -227,10 +225,14 @@ public class StandardizingSPARQLParser extends SPARQLParser
   public final ParsedQuery parseNormalizeQuery(String queryString, String baseURI)
       throws MalformedQueryException
   {
-    ASTQueryContainer qc = cache.getAstQueryContainerObjectFor(queryString);
-    debug(qc);
-    normalize(qc);
-    return parseQuery(qc, baseURI);
+    try {
+      ASTQueryContainer qc = SyntaxTreeBuilder.parseQuery(queryString);
+      debug(qc);
+      normalize(qc);
+      return parseQuery(qc, baseURI);
+    } catch (TokenMgrError | ParseException e) {
+      throw new MalformedQueryException(e.getMessage(), e);
+    }
   }
 
   private TupleExpr buildQueryModel(Node qc) throws MalformedQueryException

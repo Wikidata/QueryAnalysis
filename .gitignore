@@ -52,3 +52,5 @@ test/
 /logsExperimental/
 /inputData/
 
+/.pydevproject
+/benchmark/
