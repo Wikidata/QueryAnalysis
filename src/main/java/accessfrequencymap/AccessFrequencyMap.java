@@ -65,11 +65,14 @@ public class AccessFrequencyMap<K, V> implements Map<K, V>
   @Override
   public V get(Object key)
   {
-    for (AccessFrequencyMapEntry<K, V> entry : list) {
+    ListIterator<AccessFrequencyMapEntry<K, V>> iterator = list.listIterator();
+    while (iterator.hasNext()) {
+      AccessFrequencyMapEntry<K, V> entry = iterator.next();
       if (entry.getKey().equals(key)) {
         V value = entry.getValue();
-        // Might be better to replace this since we know only one object changed its timesAccessed
-        Collections.sort(list, Collections.reverseOrder());
+
+        sortFrom(iterator.previousIndex());
+        
         return value;
       }
     }
@@ -103,7 +106,7 @@ public class AccessFrequencyMap<K, V> implements Map<K, V>
         V oldValue = entry.getValue();
         entry.setValue(value);
 
-        Collections.sort(list, Collections.reverseOrder());
+        sortFrom(iterator.previousIndex());
 
         return oldValue;
       }
@@ -146,5 +149,20 @@ public class AccessFrequencyMap<K, V> implements Map<K, V>
       valuesList.add(entry.getValue());
     }
     return valuesList;
+  }
+
+  /**
+   * @param i The position in the list that was changed and whose position should be checked
+   */
+  private void sortFrom(int i)
+  {
+    for (int j = i - 1; j >= 0; j--) {
+      if (list.get(j).compareTo(list.get(i)) >= 0) {
+        Collections.swap(list, j + 1, i);
+        return;
+      }
+    }
+    Collections.swap(list, 0, i);
+    return;
   }
 }
