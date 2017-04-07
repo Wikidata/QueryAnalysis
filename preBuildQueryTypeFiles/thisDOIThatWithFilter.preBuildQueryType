@@ -1,0 +1,7 @@
+PREFIX v: <http://www.wikidata.org/prop/statement/>
+PREFIX q: <http://www.wikidata.org/prop/qualifier/>
+PREFIX ps: <http://www.wikidata.org/prop/statement/>
+PREFIX pq: <http://www.wikidata.org/prop/qualifier/>
+SELECT ?q {
+  ?q wdt:P356 ?o FILTER (lcase(str(?o)) = lcase("10.1529/BIOPHYSJ.106.088203"))
+}

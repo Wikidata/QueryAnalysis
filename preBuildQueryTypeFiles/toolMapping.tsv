@@ -7,10 +7,12 @@ thisTransfermarktFootballerID	Java/1.7.0_04	footballExplorer	1.7.0_04	probably w
 thisGeneOntologyID	sparqlwrapper 1.7.6 (rdflib.github.ioSLASHsparqlwrapper)	toolUsingSparqlwrapperPythonForGeneOntology	1.7.6	needs more data
 thisIMDbID	Mozilla/5.0 (Windows NT; Windows NT 10.0; es-ES) WindowsPowerShell/5.1.14393.206	toolUsingWindowsPowerShellForIMDb	5.1.14393.206	needs more data (possible Source: 0)
 thisIMDbID	Mozilla/5.0 (Windows NT; Windows NT 10.0; es-ES) WindowsPowerShell/5.1.14393.576	toolUsingWindowsPowerShellForIMDb	5.1.14393.576	needs more data (possible Source: 0)
+thisIMDbID	Mozilla/5.0 (Windows NT; Windows NT 10.0; es-ES) WindowsPowerShell/5.1.14393.693	toolUsingWindowsPowerShellForIMDb	5.1.14393.693	needs more data (possible Source: 0)
 thisIMDbID	Mozilla/5.0 (Windows NT; Windows NT 10.0; es-ES) WindowsPowerShell/5.1.14393.479	toolUsingWindowsPowerShellForIMDb	5.1.14393.479	needs more data (possible Source: 0)
 thisIMDbID	MovieGuide-wikidata/0.1	movieguide	0.1	https://github.com/nandhp/movieguide
 thisIMDbID	sparqlwrapper 1.7.6 (rdflib.github.ioSLASHsparqlwrapper)	toolUsingSparqlwrapperPythonForIMDb	1.7.6	needs more data
 thisIMDbID	Ruby	toolUsingRubyForIMDb	-1	needs more data
+thisIMDbID	Mechanize/2.7.5 Ruby/2.2.6p396 (http://github.com/sparklemotion/mechanize/)	toolUsingMechanizeForIMDb	-1	needs more data
 thisUniProtID	sparqlwrapper 1.7.6 (rdflib.github.ioSLASHsparqlwrapper)	toolUsingSparqlwrapperPythonForUniProtID	1.7.6	needs more data
 thisNKCRAUTIDAboutAndLanguage	NK2WP/2.0 (nkp.cz linker service, run by <petr.kadlec@gmail.com>)	linkerForCzechNationalLibrary	2	linker for http://www.nkp.cz/
 thisHasLabel_existingCountries	Mozilla/5.0 (Windows NT 6.1; WOW64; rv:35.0) Gecko/20100101 Firefox/35.0	toolSearchingForHasLabelWithConstraints	-1	needs more data (possible Source: 1)
@@ -24,11 +26,13 @@ thisElFilmFilmID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:50.0) Gecko/20100101
 thisOFDbID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:50.0) Gecko/20100101 Firefox/50.0	toolSearchingForMovieDatabaseID	-1	needs more data
 thisMovieMeterMovieID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:50.0) Gecko/20100101 Firefox/50.0	toolSearchingForMovieDatabaseID	-1	needs more data
 thisAllMovieMovieID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:50.0) Gecko/20100101 Firefox/50.0	toolSearchingForMovieDatabaseID	-1	needs more data
+thisIMDbID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:51.0) Gecko/20100101 Firefox/51.0	toolSearchingForMovieDatabaseID	-1	needs more data
 instanceOfThis	sparqlwrapper 1.8.0 (rdflib.github.io/sparqlwrapper)	toolUsingSparqlwrapperPython	1.8.0	needs more data
 bot2	Magnus labs tools	bot2	0.1?	some queries from bot2 contain a toolComment, some not
 bot22	Magnus labs tools	bot22	0.1?	some queries from bot2 contain a toolComment, some not
 bot222	Magnus labs tools	bot222	0.1?	some queries from bot2 contain a toolComment, some not
 toolCheckingInstanceOfUsingJena	Apache-Jena-ARQ/3.0.1	toolCheckingInstanceOfUsingJena	3.0.1	not sure who is creating these queries
+toolCheckingInstanceOfUsingJena	Apache-Jena-ARQ/2.12.1	toolCheckingInstanceOfUsingJena	2.12.1	not sure who is creating these queries
 toolLookingForTransfermarktDOTcomDatabaseIdForAllFootballPlayers	Java/1.7.0_79	footballExplorer	1.7.0_79	not sure who is creating these queries
 toolLookingForTransfermarktDOTcomDatabaseIdForAllFootballPlayers	Java/1.7.0_121	footballExplorer	1.7.0_121	not sure who is creating these queries
 toolLookingForTransfermarktDOTcomDatabaseIdForAllFootballPlayers	Java/1.7.0_80	footballExplorer	1.7.0_80	not sure who is creating these queries
@@ -77,11 +81,14 @@ toolLookingForFottballPlayerEnglishWikipediaPage	Java/1.7.0_121	footballExplorer
 toolLookingForFottballPlayerEnglishWikipediaPage	Java/1.7.0_80	footballExplorer	1.7.0_80	not sure who is creating these queries, but could be the same as the transfermarkt.com queries
 toolLookingForFottballPlayerEnglishWikipediaPage	Java/1.7.0_79	footballExplorer	2.7.0_79	not sure who is creating these queries, but could be the same as the transfermarkt.com queries
 thisPubMedID	Magnus labs tools	toolUsingMagnusLabsForPubMedID	-1	needs more data
+thisInstanceOfWithSubclass	Java/1.8.0_71	toolSearchingForUndefinedEnglishLabel	1.8.0_71	needs more data (multiple versions at the same time)
 thisInstanceOfWithSubclass	Java/1.8.0_91	toolSearchingForUndefinedEnglishLabel	1.8.0_91	needs more data (multiple versions at the same time)
 thisInstanceOfWithSubclass	Java/1.8.0_111	toolSearchingForUndefinedEnglishLabel	1.8.0_111	needs more data (multiple versions at the same time)
+thisInstanceOfWithSubclass	Java/1.8.0_121	toolSearchingForUndefinedEnglishLabel	1.8.0_121	needs more data (multiple versions at the same time)
 gasProgramSSSP	Java/1.8.0_91	toolUsingSSSP	1.8.0_91	needs more data (multiple versions at the same time)
 gasProgramSSSP	Java/1.8.0_111	toolUsingSSSP	1.8.0_111	needs more data (multiple versions at the same time)
 gasProgramSSSP	Java/1.8.0_71	toolUsingSSSP	1.8.0_71	needs more data (multiple versions at the same time)
+gasProgramSSSP	Java/1.8.0_121	toolUsingSSSP	1.8.0_121	needs more data (only one version in february)
 wikidataLastModified	Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36	toolWikidataLastModified	-1	could be semi-automated (possible source 2)
 wikidataLastModified	Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36	toolWikidataLastModified	-1	could be semi-automated (possible source 2)
 wikidataLastModified	Mozilla/5.0 (Windows NT 6.1; WOW64; rv:50.0) Gecko/20100101 Firefox/50.0	toolWikidataLastModified	-1	could be semi-automated (possible source 2)
@@ -90,6 +97,13 @@ wikidataLastModified	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit
 wikidataLastModified	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:50.0) Gecko/20100101 Firefox/50.0	toolWikidataLastModified	-1	could be semi-automated (possible source 2)
 wikidataLastModified	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:50.0) Gecko/20100101 Firefox/50.0	toolWikidataLastModified	-1	could be semi-automated (possible source 2)
 wikidataLastModified	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.95 Safari/537.36	toolWikidataLastModified	-1	could be semi-automated (possible source 2)
+wikidataLastModified	Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36	toolWikidataLastModified	-1	could be semi-automated (possible source 2)
+wikidataLastModified	Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36	toolWikidataLastModified	-1	could be semi-automated (possible source 2)
+wikidataLastModified	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36	toolWikidataLastModified	-1	could be semi-automated (possible source 2)
+wikidataLastModified	Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36	toolWikidataLastModified	-1	could be semi-automated (possible source 2)
+wikidataLastModified	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:51.0) Gecko/20100101 Firefox/51.0	toolWikidataLastModified	-1	could be semi-automated (possible source 2)
+wikidataLastModified	Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36	toolWikidataLastModified	-1	could be semi-automated (possible source 2)
+wikidataLastModified	Mozilla/5.0 (Windows NT 6.1; WOW64; rv:51.0) Gecko/20100101 Firefox/51.0	toolWikidataLastModified	-1	could be semi-automated (possible source 2)
 imageToSocialNetworksID	-	toolSearchingForImageToID	-1	needs more data
 hasLabelInstanceOfThis	Apache-HttpClient/4.3.5 (java 1.5)	toolSearchingForSupraInstanceOfWithLabel	-1	needs more data
 thisBasedOn	Java/1.7.0_121	toolSearchingForFilmAndMusicInfo	1.7.0_121	needs more data
@@ -126,6 +140,12 @@ thisVIAFIDWithLabel	curl/7.43.0	toolSearchingForVIAFID	7.43.0	needs more data
 totalRevenueWithTotalRevenuePointInTimeLabel	python-requests/2.7.0 CPython/2.7.10 Linux/3.13.0-107-generic	toolSerachingForRevenue	3.13.0-107	needs more data
 totalRevenueWithTotalRevenuePointInTimeLabel	python-requests/2.7.0 CPython/2.7.10 Linux/3.13.0-100-generic	toolSerachingForRevenue	3.13.0-100	needs more data
 totalRevenueWithTotalRevenuePointInTimeLabel	python-requests/2.7.0 CPython/2.7.10 Linux/3.13.0-92-generic	toolSerachingForRevenue	3.13.0-92	needs more data
-thisPMCIDthatWithFilter	Magnus labs tools	toolSearchingForMedicalIDs	-1	needs more data
+thisPMCIDthatWithFilter	Magnus labs tools	toolSearchingForPublicationIDs	-1	needs more data
 thisEditionOrTranslationOf	-	toolSerachingForEdtitionOrTranslationOf	-1	needs more data
-thisPubMedIDthatWithFilter	Magnus labs tools	toolSearchingForMedicalIDs	-1	needs more data
+thisPubMedIDthatWithFilter	Magnus labs tools	toolSearchingForPublicationIDs	-1	needs more data
+thisISSNThatWithFilter	Magnus labs tools	toolSearchingForPublicationIDs	-1	needs more data
+thisDOIThatWithFilter	Magnus labs tools	toolSearchingForPublicationIDs	-1	needs more data
+thisInstanceOfGenderDescription	Mozilla/5.0	toolSearchingForHumans	5.0	needs more data
+entityAllPropertiesAllObjectsWithInstanceAndLabel	sparqlwrapper 1.8.0 (rdflib.github.io/sparqlwrapper)	toolSearchingForInformationAboutEntity	1.8.0	needs more data
+allObjectsAllPropertiesEntityWithInstanceAndLabel	sparqlwrapper 1.8.0 (rdflib.github.io/sparqlwrapper)	toolSearchingForInformationAboutEntity	1.8.0	needs more data
+thisSubclassOfWithLabelOrderByLabel	Mozilla/5.0	toolSearchingForSubclassOf	5.0	needs more data
