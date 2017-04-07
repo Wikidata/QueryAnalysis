@@ -2,6 +2,7 @@ package accessfrequencymap;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -88,7 +89,14 @@ public class AccessFrequencyMap<K, V> implements Map<K, V>
   @Override
   public Set<K> keySet()
   {
-    Set<K> set = new TreeSet<K>();
+    // This is obviously stupid, but since the .hashCode of TupleExpr is broken (and it is not Comparable) we could not use a HashSet either.
+    Set<K> set = new TreeSet<K>(new Comparator<K>() {
+      @Override
+      public int compare(K k1, K k2)
+      {
+        return k1.toString().compareTo(k2.toString());
+      }
+    });
     for (AccessFrequencyMapEntry<K, V> entry : list) {
       set.add(entry.getKey());
     }

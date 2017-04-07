@@ -24,6 +24,8 @@ import com.univocity.parsers.common.ParsingContext;
 import com.univocity.parsers.common.processor.ObjectRowProcessor;
 import com.univocity.parsers.tsv.TsvParser;
 import com.univocity.parsers.tsv.TsvParserSettings;
+
+import accessfrequencymap.AccessFrequencyMap;
 import input.InputHandlerParquet;
 import input.InputHandlerTSV;
 import logging.LoggingHandler;
@@ -68,7 +70,7 @@ public final class Main
   /**
    * Saves the encountered queryTypes.
    */
-  public static final Map<TupleExpr, String> queryTypes = Collections.synchronizedMap(new HashMap<TupleExpr, String>());
+  public static final Map<TupleExpr, String> queryTypes = Collections.synchronizedMap(new AccessFrequencyMap<TupleExpr, String>());
   /**
    * Saves the mapping of query type and user agent to tool name and version.
    */
