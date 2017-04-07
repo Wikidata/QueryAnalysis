@@ -1,0 +1,5 @@
+SELECT ?author ?label
+WHERE {
+	?author wdt:P214 '90305895' .
+	SERVICE wikibase:label { bd:serviceParam wikibase:language 'it' }
+}

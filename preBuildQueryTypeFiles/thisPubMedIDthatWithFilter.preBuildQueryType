@@ -1,0 +1,7 @@
+PREFIX v: <http://www.wikidata.org/prop/statement/>
+PREFIX q: <http://www.wikidata.org/prop/qualifier/>
+PREFIX ps: <http://www.wikidata.org/prop/statement/>
+PREFIX pq: <http://www.wikidata.org/prop/qualifier/>
+SELECT ?q {
+  ?q wdt:P698 ?o FILTER (lcase(str(?o)) = lcase("27500320"))
+}
