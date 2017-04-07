@@ -1,0 +1,19 @@
+PREFIX entity: <http://www.wikidata.org/entity/>
+PREFIX wdt:      <http://www.wikidata.org/prop/direct/>
+PREFIX rdfs:   <http://www.w3.org/2000/01/rdf-schema#>
+
+select ?property ?propertyLabel ?item ?itemLabel ?itemInstanceOf ?itemInstanceOfLabe
+where {
+  hint:Query hint:optimizer "None" .
+  entity:Q402770 ?property ?item .
+  ?prop wikibase:directClaim ?property .
+  ?item wdt:P31 ?itemInstanceOf .
+  
+  ?item rdfs:label ?itemLabel .  
+  ?itemInstanceOf rdfs:label ?itemInstanceOfLabel .
+  ?prop rdfs:label ?propertyLabel .
+  
+  FILTER (lang(?propertyLabel) = "en")
+  FILTER (lang(?itemLabel) = "en")
+  FILTER (lang(?itemInstanceOfLabel) = "en")
+}

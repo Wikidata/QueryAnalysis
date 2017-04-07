@@ -1,0 +1,5 @@
+SELECT ?subject
+WHERE {
+  ?subject wdt:P629 wd:Q1048916 .
+}
+LIMIT 1000

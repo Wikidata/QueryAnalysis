@@ -1,0 +1,5 @@
+SELECT  *
+WHERE {
+	<http://www.wikidata.org/entity/Q21931887> <http://www.wikidata.org/prop/P227> ?gnd .
+	?gnd <http://www.wikidata.org/prop/statement/P227> ?id
+}

@@ -1,0 +1,29 @@
+SELECT ?companyLabel ?rootLabel ?tickerLabel ?exchangeNameLabel
+WHERE {
+  ?entity wdt:P646 "/m/05s8k" .
+  ?entity wdt:P176* ?manufacturer .
+  ?manufacturer wdt:P156* ?company .  {
+    ?company p:P414 ?exchange
+  } UNION  {
+    ?company wdt:P127+ / wdt:P156* ?root .
+    ?root p:P414 ?exchange
+  } UNION  {
+    ?company wdt:P749+ / wdt:P156* ?root .
+    ?root p:P414 ?exchange
+  } .
+  VALUES ?exchanges {
+    wd:Q13677 wd:Q82059
+  } .
+  ?exchange ps:P414 ?exchanges .
+  ?exchange pq:P249 ?ticker .
+  ?exchange ps:P414 ?exchangeName .
+  FILTER NOT EXISTS {
+    ?company wdt:P31 / wdt:P279* wd:Q1616075
+  } .
+  FILTER NOT EXISTS {
+    ?company wdt:P31 / wdt:P279* wd:Q11032
+  } .
+  SERVICE wikibase:label {
+    bd:serviceParam wikibase:language "en" .
+  }
+} GROUP BY ?companyLabel ?rootLabel ?tickerLabel ?exchangeNameLabel

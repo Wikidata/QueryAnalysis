@@ -1,0 +1,7 @@
+SELECT * WHERE {
+  wd:Q18355281 p:P2139 ?revenueStatement.
+  ?revenueStatement ps:P2139 ?statementValue.
+  ?revenueStatement pq:P585 ?statementQualifier.
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "en" }
+}
+ORDER BY DESC (?statementQualifier) LIMIT 1

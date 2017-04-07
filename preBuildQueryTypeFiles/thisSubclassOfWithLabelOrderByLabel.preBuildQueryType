@@ -1,0 +1,6 @@
+SELECT DISTINCT ?s
+WHERE {
+  ?s wdt:P279 wd:Q26944999 .
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "en" }
+}
+ORDER BY ?sLabel

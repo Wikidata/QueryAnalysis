@@ -1,0 +1,8 @@
+SELECT ?item
+WHERE {
+    ?item wdt:P31 wd:Q5 . #instanceof
+    ?item wdt:P21 wd:Q6581097 . #gender
+    ?item schema:description "Honduran choreographer"@en. #description
+    OPTIONAL { ?item schema:description ?itemDescription. FILTER(LANG(?itemDescription) = "gl").  }
+    FILTER (!BOUND(?itemDescription))
+}

@@ -1,0 +1,6 @@
+PREFIX wd: <http://www.wikidata.org/entity/>
+PREFIX wdt: <http://www.wikidata.org/prop/direct/>
+
+Ask Where {
+	wd:Q478031 wdt:P131 wd:Q2574808.
+}

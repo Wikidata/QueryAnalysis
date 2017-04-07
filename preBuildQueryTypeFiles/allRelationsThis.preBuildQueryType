@@ -1,0 +1,12 @@
+PREFIX  bd:   <http://www.bigdata.com/rdf#>
+PREFIX  wdt:  <http://www.wikidata.org/prop/direct/>
+PREFIX  hint: <http://www.bigdata.com/queryHints#>
+PREFIX  wikibase: <http://wikiba.se/ontology#>
+PREFIX  skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX  wd:   <http://www.wikidata.org/entity/>
+
+SELECT  ?relation ?itemLabel ?lang
+WHERE {
+  wd:Q5133110 ?relation ?item
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "en" }
+}
