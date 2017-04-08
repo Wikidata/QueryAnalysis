@@ -25,13 +25,14 @@ then
 	exit
 fi
 
-filePrefix="queryCnt"$2
+filePrefix="queryCnt"
 ext=".tsv"
 
 for i in $(seq -f "%02g" 1 $3)
 do
 	 mkdir temp
 	 hive -e "insert overwrite local directory 'temp' row format delimited fields terminated by '\t' select uri_query, uri_path, user_agent, ts, agent_type, hour, http_status from wmf.wdqs_extract where uri_query<>\"\" and year='$1' and month='$month' and day='$i'"
-	 cat temp/* > $filePrefix$i$ext
+	 echo -e "uri_query\turi_path\tuser_agent\tts\tagent_type\thour\thttp_status" > $filePrefix$i$ext
+	 cat temp/* >> $filePrefix$i$ext 	
 	 rm -r temp
 done
