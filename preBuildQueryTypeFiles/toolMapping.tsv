@@ -145,7 +145,6 @@ thisEditionOrTranslationOf	-	toolSerachingForEdtitionOrTranslationOf	-1	needs mo
 thisPubMedIDthatWithFilter	Magnus labs tools	toolSearchingForPublicationIDs	-1	needs more data
 thisISSNThatWithFilter	Magnus labs tools	toolSearchingForPublicationIDs	-1	needs more data
 thisDOIThatWithFilter	Magnus labs tools	toolSearchingForPublicationIDs	-1	needs more data
-thisInstanceOfGenderDescription	Mozilla/5.0	toolSearchingForHumans	5.0	needs more data
+thisInstanceOfGenderDescription	Mozilla/5.0	toolSearchingForHumans	5	needs more data
 entityAllPropertiesAllObjectsWithInstanceAndLabel	sparqlwrapper 1.8.0 (rdflib.github.io/sparqlwrapper)	toolSearchingForInformationAboutEntity	1.8.0	needs more data
-allObjectsAllPropertiesEntityWithInstanceAndLabel	sparqlwrapper 1.8.0 (rdflib.github.io/sparqlwrapper)	toolSearchingForInformationAboutEntity	1.8.0	needs more data
-thisSubclassOfWithLabelOrderByLabel	Mozilla/5.0	toolSearchingForSubclassOf	5.0	needs more data
+thisSubclassOfWithLabelOrderByLabel	Mozilla/5.0	toolSearchingForSubclassOf	5	needs more data
