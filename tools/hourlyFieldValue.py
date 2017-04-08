@@ -18,7 +18,7 @@ def writeOut(fieldValues, file, dictionary):
         file.write(line + "\n")
 
 
-metrics = ['ToolName', 'StringLengthNoComments']
+metrics = ['ToolName']
 for metric in metrics:
     pathBase = metric
 
@@ -30,7 +30,7 @@ for metric in metrics:
     monthlyData = dict()
 
     for i in xrange(1, 2):
-        with open("../test/test/test/QueryProcessedOpenRDF" + "%02d" % i + ".tsv") as f:
+        with open("QueryProcessedOpenRDF" + "%02d" % i + ".tsv") as p, open("queryCnt" + "%02d" % i + ".tsv") as s:
             dailyFieldValues = set()
 
             dailyData = dict()
@@ -38,21 +38,22 @@ for metric in metrics:
                 dailyData[j] = dict()
                 monthlyData[j + 24 * (i - 1)] = dict()
 
-            reader = csv.DictReader(f, delimiter="\t")
-            for line in reader:
-                if int(line["#Valid"]) != 1:
+            pReader = csv.DictReader(p, delimiter="\t")
+            sReader = csv.DictReader(s, delimiter="\t")
+            for processed, source in zip(pReader, sReader):
+                if int(processed["#Valid"]) != 1:
                     continue
 
                 # onlfy for "user queries"
-                if line['#ToolName'] == '0':
+                if processed['#ToolName'] == '0':
                     try:
-                        hour = int(line["#hour"])
+                        hour = int(source["hour"])
                     except ValueError:
-                        print line["#hour"] + " could not be parsed as integer"
+                        print source["hour"] + " could not be parsed as integer"
                         continue
 
                     if hour in dailyData.keys():
-                        data = line["#" + pathBase]
+                        data = processed["#" + pathBase]
                         dailyFieldValues.add(data)
                         monthlyFieldValues.add(data)
                         if data in dailyData[hour].keys():
