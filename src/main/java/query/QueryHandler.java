@@ -440,6 +440,24 @@ public abstract class QueryHandler
       return;
     }
 
+    //as a last resort use a regex which whitelists all user queries -> all others are bots
+    if (this.userAgent.matches("^Mozilla/[0-9]+\\.[0-9]+.*$\n" +
+        "^.*Firefox/[0-9]+\\.[0-9]+.*$\n" +
+        "^.*Seamonkey/[0-9]+\\.[0-9]+.*$\n" +
+        "^.*Chrome/[0-9]+\\.[0-9]+.*$\n" +
+        "^.*Chromium/[0-9]+\\.[0-9]+.*$\n" +
+        "^.*Safari/[0-9]+\\.[0-9]+.*$\n" +
+        "^.*OPR/[0-9]+\\.[0-9]+.*$\n" +
+        "^Opera/[0-9]+\\.[0-9]+.*$\n" +
+        "^.*Firefox/[0-9]+\\.[0-9]+.*\n" +
+        "^.*UCWEB/[0-9]+\\.[0-9]+.*$\n" +
+        "^; MSIE 0-9]+\\.[0-9]+;.*$")) {
+      logger.info("user query found");
+      this.toolName = "USER";
+      this.toolVersion = "1.0";
+      return;
+    }
+
     Tuple2<String, String> key = new Tuple2<>(this.getQueryType(), this.getUserAgent());
     if (Main.queryTypeToToolMapping.containsKey(key)) {
       Tuple2<String, String> value = Main.queryTypeToToolMapping.get(key);
