@@ -27,7 +27,7 @@ public class AccessFrequencyMap<K, V> implements Map<K, V>
   /**
    * The list containing the mapped data.
    */
-  List<AccessFrequencyMapEntry<K, V>> list = new LinkedList<AccessFrequencyMapEntry<K, V>>();
+  List<AccessFrequencyMapEntry<K, V>> list = new ArrayList<AccessFrequencyMapEntry<K, V>>();
 
   @Override
   public void clear()
