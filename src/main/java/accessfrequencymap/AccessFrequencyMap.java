@@ -66,14 +66,15 @@ public class AccessFrequencyMap<K, V> implements Map<K, V>
   @Override
   public V get(Object key)
   {
-    for (int i = 0; i < list.size(); i++) {
-      AccessFrequencyMapEntry<K, V> entry = list.get(i);
+    int i = 0;
+    for (AccessFrequencyMapEntry<K, V> entry : list) {
       if (entry.getKey().equals(key)) {
         V value = entry.getValue();
 
         sortFrom(i);
         return value;
       }
+      i++;
     }
     return null;
   }
@@ -104,8 +105,8 @@ public class AccessFrequencyMap<K, V> implements Map<K, V>
   @Override
   public V put(K key, V value)
   {
-    for (int i = 0; i < list.size(); i++) {
-      AccessFrequencyMapEntry<K, V> entry = list.get(i);
+    int i = 0;
+    for (AccessFrequencyMapEntry<K, V> entry : list) {
       if (entry.getKey().equals(key)) {
 
         V oldValue = entry.getValue();
@@ -115,6 +116,7 @@ public class AccessFrequencyMap<K, V> implements Map<K, V>
 
         return oldValue;
       }
+      i++;
     }
     list.add(new AccessFrequencyMapEntry<K, V>(key, value));
     return null;
