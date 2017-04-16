@@ -41,8 +41,11 @@ import org.openrdf.queryrender.sparql.SPARQLQueryRenderer;
 import query.OpenRDFQueryHandler;
 import scala.Tuple2;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -51,9 +54,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -75,6 +80,10 @@ public final class Main
    * Saves the mapping of query type and user agent to tool name and version.
    */
   public static final Map<Tuple2<String, String>, Tuple2<String, String>> queryTypeToToolMapping = new HashMap<>();
+  /**
+   * Saves the regular expresions used to identify user queries (via userAgent).
+   */
+  public static final List<String> userAgentRegex = new ArrayList<String>();
   /**
    * Define a static logger variable.
    */
@@ -193,6 +202,7 @@ public final class Main
     LoggingHandler.initConsoleLog();
 
     loadPreBuildQueryTypes();
+    loadUserAgentRegex();
 
     long startTime = System.nanoTime();
 
@@ -284,6 +294,24 @@ public final class Main
     }
   }
 
+  /**
+   * see {@link userAgentRegex}.
+   */
+  private static void loadUserAgentRegex()
+  {
+    try (BufferedReader br = new BufferedReader(new FileReader("userAgentClassification/userAgentRegex.dat"))) {
+      String line;
+      while ((line = br.readLine()) != null) {
+        userAgentRegex.add(line);
+      }
+    }
+    catch (FileNotFoundException e) {
+      logger.error("Could not find userAgentRegex.dat", e);
+    }
+    catch (IOException e) {
+      logger.error("IOError while trying to read userAgentRegex.dat", e);
+    }
+  }
   /**
    * Writes all found query Types to queryType/queryTypeFiles/.
    *
