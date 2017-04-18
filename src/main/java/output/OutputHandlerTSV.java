@@ -129,7 +129,7 @@ public class OutputHandlerTSV extends OutputHandler
     line.add(queryHandler.getValidityStatus());
     line.add(queryHandler.getToolName());
     line.add(queryHandler.getToolVersion());
-    if (Main.withBots || queryHandler.getToolName().equals("0")) {
+    if (Main.withBots || queryHandler.getToolName().equals("0") || queryHandler.getToolName().equals("USER")) {
       line.add(queryHandler.getStringLength());
       line.add(queryHandler.getQuerySize());
       line.add(queryHandler.getVariableCountHead());

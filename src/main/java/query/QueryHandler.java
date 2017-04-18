@@ -440,6 +440,10 @@ public abstract class QueryHandler
       this.toolVersion = value._2;
     }
 
+    if (this.toolName == "0") {
+      logger.info("Tool found which is neither user nor bot - is it really not a bot or a user?: \n" + this.queryString);
+    }
+
   }
 
   /**
