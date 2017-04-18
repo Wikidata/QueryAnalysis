@@ -1,25 +1,15 @@
 package accessfrequencymap;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
+
+import java.util.*;
 
 /**
- * 
+ *
  */
 
 /**
- * @author adrian
  * @param <K>
  * @param <V>
- *
+ * @author adrian
  */
 public class AccessFrequencyMap<K, V> implements Map<K, V>
 {
@@ -89,7 +79,8 @@ public class AccessFrequencyMap<K, V> implements Map<K, V>
   public Set<K> keySet()
   {
     // This is obviously stupid, but since the .hashCode of TupleExpr is broken (and it is not Comparable) we could not use a HashSet either.
-    Set<K> set = new TreeSet<K>(new Comparator<K>() {
+    Set<K> set = new TreeSet<K>(new Comparator<K>()
+    {
       @Override
       public int compare(K k1, K k2)
       {
@@ -123,9 +114,9 @@ public class AccessFrequencyMap<K, V> implements Map<K, V>
   }
 
   @Override
-  public void putAll(Map< ? extends K, ? extends V> m)
+  public void putAll(Map<? extends K, ? extends V> m)
   {
-    for (Entry< ? extends K, ? extends V> entry : m.entrySet()) {
+    for (Entry<? extends K, ? extends V> entry : m.entrySet()) {
       put(entry.getKey(), entry.getValue());
     }
     return;

@@ -1,10 +1,11 @@
 package accessfrequencymap;
+
 import java.util.Map.Entry;
 
 /**
- * @author adrian
  * @param <K>
  * @param <V>
+ * @author adrian
  */
 public class AccessFrequencyMapEntry<K, V> implements Entry<K, V>, Comparable<AccessFrequencyMapEntry<K, V>>
 {
@@ -24,7 +25,7 @@ public class AccessFrequencyMapEntry<K, V> implements Entry<K, V>, Comparable<Ac
   private Integer timesAccessed = 0;
 
   /**
-   * @param key2 The key for this entry
+   * @param key2   The key for this entry
    * @param value2 The value for this entry
    */
   public AccessFrequencyMapEntry(K key2, V value2)

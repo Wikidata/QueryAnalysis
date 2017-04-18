@@ -5,16 +5,14 @@ import com.univocity.parsers.common.processor.ObjectRowProcessor;
 import com.univocity.parsers.tsv.TsvParser;
 import com.univocity.parsers.tsv.TsvParserSettings;
 import com.univocity.parsers.tsv.TsvWriter;
-import com.univocity.parsers.tsv.TsvWriterSettings;
-import general.Main;
 import org.apache.log4j.Logger;
 import output.OutputHandler;
-import query.QueryHandler;
 import scala.Tuple2;
 
-import java.io.*;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStreamReader;
+import java.io.Reader;
 
 /**
  * @author adrian

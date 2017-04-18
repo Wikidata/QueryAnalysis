@@ -35,17 +35,31 @@ public abstract class QueryHandler
    * The Q-IDs used in this query.
    */
   protected Set<String> qIDs;
-
+  /**
+   * Kind of the complexity of the query
+   */
+  protected Integer querySize = null;
+  /**
+   * The number of variables in the query head
+   */
+  protected Integer variableCountHead = null;
+  /**
+   * The number of variables in the pattern.
+   */
+  protected Integer variableCountPattern = null;
+  /**
+   * The number of triples in the query pattern
+   * (including triples in SERIVCE blocks).
+   */
+  protected Integer tripleCountWithService = null;
   /**
    * Saves the query-string with added prefixes.
    */
   private String queryString;
-
   /**
    * Saves the query-string without prefixes.
    */
   private String queryStringWithoutPrefixes;
-
   /**
    * Saves if queryString is a valid query, and if not, why
    * 2 -> valid, but empty query
@@ -60,67 +74,38 @@ public abstract class QueryHandler
    * -11 -> The query string was empty and was therefore not being parsed
    */
   private int validityStatus;
-
   /**
    * Saves the current line the query was from.
    */
   private long currentLine;
-
   /**
    * Saves the current file the query was from.
    */
   private String currentFile;
-
   /**
    * Contains the length of the Query without added prefixes.
    */
   private int lengthNoAddedPrefixes;
-
   /**
    * The name of the tool which created the query.
    * 0 for user querys
    * -1 for unknown tool
    */
   private String toolName;
-
   /**
    * The version of the tool which created the query.
    * -1 for unknown tool
    */
   private String toolVersion;
-
   /**
    * True if the tool information got already computed.
    * useful for lazy-loading of tool information
    */
   private boolean toolComputed = false;
-
   /**
    * The userAgent string which executed this query.
    */
   private String userAgent;
-
-  /**
-   * Kind of the complexity of the query
-   */
-  protected Integer querySize = null;
-
-  /**
-   * The number of variables in the query head
-   */
-  protected Integer variableCountHead = null;
-
-  /**
-   * The number of variables in the pattern.
-   */
-  protected Integer variableCountPattern = null;
-
-  /**
-   * The number of triples in the query pattern
-   * (including triples in SERIVCE blocks).
-   */
-  protected Integer tripleCountWithService = null;
-
   /**
    * The Q-IDs as a string of comma separated values.
    */

@@ -1,5 +1,10 @@
 package openrdffork;
 
+import org.openrdf.query.MalformedQueryException;
+import org.openrdf.query.parser.sparql.ASTVisitorBase;
+import org.openrdf.query.parser.sparql.PrefixDeclProcessor;
+import org.openrdf.query.parser.sparql.ast.*;
+
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -7,29 +12,8 @@ import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.openrdf.model.vocabulary.FN;
-import org.openrdf.model.vocabulary.OWL;
-import org.openrdf.model.vocabulary.RDF;
-import org.openrdf.model.vocabulary.RDFS;
-import org.openrdf.model.vocabulary.SESAME;
-import org.openrdf.model.vocabulary.XMLSchema;
-import org.openrdf.query.MalformedQueryException;
-import org.openrdf.query.parser.sparql.ASTVisitorBase;
-import org.openrdf.query.parser.sparql.PrefixDeclProcessor;
-import org.openrdf.query.parser.sparql.ast.ASTDeleteData;
-import org.openrdf.query.parser.sparql.ast.ASTIRI;
-import org.openrdf.query.parser.sparql.ast.ASTInsertData;
-import org.openrdf.query.parser.sparql.ast.ASTOperationContainer;
-import org.openrdf.query.parser.sparql.ast.ASTPrefixDecl;
-import org.openrdf.query.parser.sparql.ast.ASTQName;
-import org.openrdf.query.parser.sparql.ast.ASTServiceGraphPattern;
-import org.openrdf.query.parser.sparql.ast.ASTUnparsedQuadDataBlock;
-import org.openrdf.query.parser.sparql.ast.SyntaxTreeBuilderTreeConstants;
-import org.openrdf.query.parser.sparql.ast.VisitorException;
-
 /**
  * @author adrian
- *
  */
 public class StandardizingPrefixDeclProcessor extends PrefixDeclProcessor
 {
@@ -40,13 +24,11 @@ public class StandardizingPrefixDeclProcessor extends PrefixDeclProcessor
    * are not redefined and replaces any {@link ASTQName} nodes in the query
    * with equivalent {@link ASTIRI} nodes.
    *
-   * @param qc
-   *        The query that needs to be processed.
+   * @param qc The query that needs to be processed.
    * @return A map containing the prefixes that are declared in the query (key)
-   *         and the namespace they map to (value).
-   * @throws MalformedQueryException
-   *         If the query contains redefined prefixes or qnames that use
-   *         undefined prefixes.
+   * and the namespace they map to (value).
+   * @throws MalformedQueryException If the query contains redefined prefixes or qnames that use
+   *                                 undefined prefixes.
    */
   public static Map<String, String> process(ASTOperationContainer qc) throws MalformedQueryException
   {
@@ -66,7 +48,7 @@ public class StandardizingPrefixDeclProcessor extends PrefixDeclProcessor
       prefixMap.put(prefix, iri);
     }
 
-      // insert some default prefixes (if not explicitly defined in the query)
+    // insert some default prefixes (if not explicitly defined in the query)
     insertDefaultPrefix(prefixMap, "hint", "http://www.bigdata.com/queryHints#");
     insertDefaultPrefix(prefixMap, "hint", "http://www.bigdata.com/queryHints#");
     insertDefaultPrefix(prefixMap, "gas", "http://www.bigdata.com/rdf/gas#");
@@ -105,8 +87,7 @@ public class StandardizingPrefixDeclProcessor extends PrefixDeclProcessor
       ASTInsertData insertData = (ASTInsertData) qc.getOperation();
       dataBlock = insertData.jjtGetChild(ASTUnparsedQuadDataBlock.class);
 
-    }
-    else if (qc.getOperation() instanceof ASTDeleteData) {
+    } else if (qc.getOperation() instanceof ASTDeleteData) {
       ASTDeleteData deleteData = (ASTDeleteData) qc.getOperation();
       dataBlock = deleteData.jjtGetChild(ASTUnparsedQuadDataBlock.class);
     }
@@ -114,13 +95,11 @@ public class StandardizingPrefixDeclProcessor extends PrefixDeclProcessor
     if (dataBlock != null) {
       String prefixes = createPrefixesInSPARQLFormat(prefixMap);
       dataBlock.setDataBlock(prefixes + dataBlock.getDataBlock());
-    }
-    else {
+    } else {
       QNameProcessor visitor = new QNameProcessor(prefixMap);
       try {
         qc.jjtAccept(visitor, null);
-      }
-      catch (VisitorException e) {
+      } catch (VisitorException e) {
         throw new MalformedQueryException(e);
       }
     }
@@ -131,11 +110,13 @@ public class StandardizingPrefixDeclProcessor extends PrefixDeclProcessor
   /**
    * Taken from org.openrdf.query.parser.sparql.PrefixDeclProcessor.
    * Adds a default prefix to the query.
+   *
    * @param prefixMap The prefix map to insert into
-   * @param prefix The prefix to insert
+   * @param prefix    The prefix to insert
    * @param namespace The namespace for this prefix
    */
-  private static void insertDefaultPrefix(Map<String, String> prefixMap, String prefix, String namespace) {
+  private static void insertDefaultPrefix(Map<String, String> prefixMap, String prefix, String namespace)
+  {
     if (!prefixMap.containsKey(prefix) && !prefixMap.containsValue(namespace)) {
       prefixMap.put(prefix, namespace);
     }
@@ -144,10 +125,12 @@ public class StandardizingPrefixDeclProcessor extends PrefixDeclProcessor
   /**
    * Taken from org.openrdf.query.parser.sparql.PrefixDeclProcessor.
    * Turns the prefix-to-namespace map into SPARQL-Code.
+   *
    * @param prefixMap The prefix map to be converted
    * @return The prefixes in valid SPARQL
    */
-  private static String createPrefixesInSPARQLFormat(Map<String, String> prefixMap) {
+  private static String createPrefixesInSPARQLFormat(Map<String, String> prefixMap)
+  {
     StringBuilder sb = new StringBuilder();
     for (Entry<String, String> entry : prefixMap.entrySet()) {
       sb.append("PREFIX");
@@ -174,6 +157,7 @@ public class StandardizingPrefixDeclProcessor extends PrefixDeclProcessor
 
     /**
      * Creates a QNameProcessor for this prefixMap.
+     *
      * @param prefixMapToUse The prefix map to process the QNames with.
      */
     QNameProcessor(Map<String, String> prefixMapToUse)
@@ -209,6 +193,7 @@ public class StandardizingPrefixDeclProcessor extends PrefixDeclProcessor
 
     /**
      * Taken from org.openrdf.query.parser.sparql.PrefixDeclProcessor.
+     *
      * @param localName
      * @return
      */
