@@ -400,6 +400,12 @@ public abstract class QueryHandler
       return;
     }
 
+    if(queryStringWithoutPrefixes == "prefix schema: <http://schema.org/> SELECT * WHERE {<http://www.wikidata.org> schema:dateModified ?y}&nocache=24766318") {
+      toolName = "wikidataLastModified";
+      toolVersion = "1.0";
+      return;
+    }
+
     //first check if there is a toolComment, if so we don't need to use
     // queryTypes and userAgents
     //assuming that if there is a tool comment at all, it is before the query,
@@ -422,6 +428,12 @@ public abstract class QueryHandler
       }
       this.toolName = this.queryStringWithoutPrefixes.substring(toolIndex + 6, toolCommentLineEndIndex);
       this.toolVersion = "0.1";
+      return;
+    }
+
+    if(userAgent == "Mozilla/5.0") {
+      toolName = "feb20descriptions";
+      toolVersion = "0.1";
       return;
     }
 
