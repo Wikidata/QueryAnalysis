@@ -400,7 +400,7 @@ public abstract class QueryHandler
       return;
     }
 
-    if(queryStringWithoutPrefixes == "prefix schema: <http://schema.org/> SELECT * WHERE {<http://www.wikidata.org> schema:dateModified ?y}&nocache=24766318") {
+    if(queryStringWithoutPrefixes == "prefix schema: <http://schema.org/> SELECT * WHERE {<http://www.wikidata.org> schema:dateModified ?y}") {
       toolName = "wikidataLastModified";
       toolVersion = "1.0";
       return;
