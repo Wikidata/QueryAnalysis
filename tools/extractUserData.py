@@ -6,7 +6,7 @@ import os
 subfolder = "userData/"
 
 processedPrefix = "QueryProcessedOpenRDF"
-sourcePrefix = "QueryCnt"
+sourcePrefix = "queryCnt"
 
 if not os.path.exists(subfolder):
     os.makedirs(subfolder)
