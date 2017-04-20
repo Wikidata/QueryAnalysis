@@ -1,0 +1,6 @@
+SELECT DISTINCT ?item ?itemLabel ?coor ?range WHERE {
+ ?item wdt:P131 wd:Q1617681.
+ ?item ?range wd:Q1617681.
+ ?item wdt:P625 ?coor.
+ SERVICE wikibase:label { bd:serviceParam wikibase:language "fr". }
+}

@@ -96,21 +96,6 @@ gasProgramSSSP	Java/1.8.0_91	toolUsingSSSP	1.8.0_91	needs more data (multiple ve
 gasProgramSSSP	Java/1.8.0_111	toolUsingSSSP	1.8.0_111	needs more data (multiple versions at the same time)
 gasProgramSSSP	Java/1.8.0_71	toolUsingSSSP	1.8.0_71	needs more data (multiple versions at the same time)
 gasProgramSSSP	Java/1.8.0_121	toolUsingSSSP	1.8.0_121	needs more data (only one version in february)
-wikidataLastModified	Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36	toolWikidataLastModified	-1	could be semi-automated (possible source 2)
-wikidataLastModified	Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36	toolWikidataLastModified	-1	could be semi-automated (possible source 2)
-wikidataLastModified	Mozilla/5.0 (Windows NT 6.1; WOW64; rv:50.0) Gecko/20100101 Firefox/50.0	toolWikidataLastModified	-1	could be semi-automated (possible source 2)
-wikidataLastModified	Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36	toolWikidataLastModified	-1	could be semi-automated (possible source 2)
-wikidataLastModified	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.95 Safari/537.36 	toolWikidataLastModified	-1	could be semi-automated (possible source 2)
-wikidataLastModified	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:50.0) Gecko/20100101 Firefox/50.0	toolWikidataLastModified	-1	could be semi-automated (possible source 2)
-wikidataLastModified	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:50.0) Gecko/20100101 Firefox/50.0	toolWikidataLastModified	-1	could be semi-automated (possible source 2)
-wikidataLastModified	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.95 Safari/537.36	toolWikidataLastModified	-1	could be semi-automated (possible source 2)
-wikidataLastModified	Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36	toolWikidataLastModified	-1	could be semi-automated (possible source 2)
-wikidataLastModified	Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36	toolWikidataLastModified	-1	could be semi-automated (possible source 2)
-wikidataLastModified	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36	toolWikidataLastModified	-1	could be semi-automated (possible source 2)
-wikidataLastModified	Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36	toolWikidataLastModified	-1	could be semi-automated (possible source 2)
-wikidataLastModified	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:51.0) Gecko/20100101 Firefox/51.0	toolWikidataLastModified	-1	could be semi-automated (possible source 2)
-wikidataLastModified	Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36	toolWikidataLastModified	-1	could be semi-automated (possible source 2)
-wikidataLastModified	Mozilla/5.0 (Windows NT 6.1; WOW64; rv:51.0) Gecko/20100101 Firefox/51.0	toolWikidataLastModified	-1	could be semi-automated (possible source 2)
 imageToSocialNetworksID	-	toolSearchingForImageToID	-1	needs more data
 hasLabelInstanceOfThis	Apache-HttpClient/4.3.5 (java 1.5)	toolSearchingForSupraInstanceOfWithLabel	-1	needs more data
 thisBasedOn	Java/1.7.0_121	toolSearchingForFilmAndMusicInfo	1.7.0_121	needs more data
@@ -155,3 +140,4 @@ thisDOIThatWithFilter	Magnus labs tools	toolSearchingForPublicationIDs	-1	needs 
 thisInstanceOfGenderDescription	Mozilla/5.0	toolSearchingForHumans	5	needs more data
 entityAllPropertiesAllObjectsWithInstanceAndLabel	sparqlwrapper 1.8.0 (rdflib.github.io/sparqlwrapper)	toolSearchingForInformationAboutEntity	1.8.0	needs more data
 thisSubclassOfWithLabelOrderByLabel	Mozilla/5.0	toolSearchingForSubclassOf	5	needs more data
+thisLocatedInTheAdministrativeTerritorialEntityWithCoordinateLocation	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:51.0) Gecko/20100101 Firefox/51.0	toolSearchingForLocation	-1	needs more data
