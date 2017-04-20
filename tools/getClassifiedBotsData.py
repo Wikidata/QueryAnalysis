@@ -2,18 +2,21 @@ import csv
 from collections import defaultdict
 
 import os
+import sys
 
 # X = hour
 # Y = count
 # Z (stacked X) = ToolName
 
 
+workingDir = sys.argv[1]
+os.chdir(workingDir)
 
 if not os.path.exists("classifiedBotsData"):
     os.makedirs("classifiedBotsData")
 
 for i in xrange(1, 2):
-    with open("../test/test/test/QueryProcessedOpenRDF" + "%02d" % i + ".tsv") as f:
+    with open("QueryProcessedOpenRDF" + "%02d" % i + ".tsv") as f:
         reader = csv.DictReader(f, delimiter="\t")
 
         data = dict()
