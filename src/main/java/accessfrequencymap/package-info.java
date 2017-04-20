@@ -1,5 +1,4 @@
 /**
  * @author adrian
- *
  */
 package accessfrequencymap;

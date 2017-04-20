@@ -20,12 +20,11 @@ package general;
  */
 
 
+import accessfrequencymap.AccessFrequencyMap;
 import com.univocity.parsers.common.ParsingContext;
 import com.univocity.parsers.common.processor.ObjectRowProcessor;
 import com.univocity.parsers.tsv.TsvParser;
 import com.univocity.parsers.tsv.TsvParserSettings;
-
-import accessfrequencymap.AccessFrequencyMap;
 import input.InputHandlerParquet;
 import input.InputHandlerTSV;
 import logging.LoggingHandler;
@@ -41,25 +40,14 @@ import org.openrdf.queryrender.sparql.SPARQLQueryRenderer;
 import query.OpenRDFQueryHandler;
 import scala.Tuple2;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -304,14 +292,13 @@ public final class Main
       while ((line = br.readLine()) != null) {
         userAgentRegex.add(line);
       }
-    }
-    catch (FileNotFoundException e) {
+    } catch (FileNotFoundException e) {
       logger.error("Could not find userAgentRegex.dat", e);
-    }
-    catch (IOException e) {
+    } catch (IOException e) {
       logger.error("IOError while trying to read userAgentRegex.dat", e);
     }
   }
+
   /**
    * Writes all found query Types to queryType/queryTypeFiles/.
    *

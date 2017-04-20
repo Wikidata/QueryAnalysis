@@ -4,7 +4,11 @@ import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 import numpy as np
 import os
+import sys
 from matplotlib.pyplot import cm
+
+workingDir = sys.argv[1]
+os.chdir(workingDir)
 
 
 def plotHist(data, title, countTools, xlabel="hour", ylabel="count of queries", log=False):
@@ -54,7 +58,7 @@ def plotHist(data, title, countTools, xlabel="hour", ylabel="count of queries", 
 inputDirectory = "dayTriple/"
 
 files = []
-for i in xrange(1, 32):
+for i in xrange(1, 2):
     files.append("classifiedBotsData/" + "%02d" % i + "ClassifiedBotsData.tsv")
 
 
