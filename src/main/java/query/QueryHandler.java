@@ -437,19 +437,19 @@ public abstract class QueryHandler
       return;
     }
 
-    for (String regex : Main.userAgentRegex) {
-      if (this.userAgent.matches(regex)) {
-        this.toolName = "USER";
-        this.toolVersion = "1.0";
-        return;
-      }
-    }
-
     Tuple2<String, String> key = new Tuple2<>(this.getQueryType(), this.getUserAgent());
     if (Main.queryTypeToToolMapping.containsKey(key)) {
       Tuple2<String, String> value = Main.queryTypeToToolMapping.get(key);
       this.toolName = value._1;
       this.toolVersion = value._2;
+      return;
+    }
+
+    for (String regex : Main.userAgentRegex) {
+      if (this.userAgent.matches(regex)) {
+        this.toolName = "USER";
+        this.toolVersion = "1.0";
+      }
     }
 
     if (this.toolName.equals("0")) {
