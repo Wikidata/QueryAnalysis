@@ -26,7 +26,9 @@ for i in xrange(1, 2):
         for processed, source in zip(pReader, sReader):
             if pWriter.fieldnames is None:
                 ph = dict((h, h) for h in pReader.fieldnames)
+                ph['#uri_query'] = '#uri_query'
                 pWriter.fieldnames = pReader.fieldnames
+                pWriter.fieldnames.append('#uri_query')
                 pWriter.writerow(ph)
 
             if sWriter.fieldnames is None:
@@ -34,7 +36,8 @@ for i in xrange(1, 2):
                 sWriter.fieldnames = sReader.fieldnames
                 sWriter.writerow(sh)
 
-            if (processed["#ToolName"] == "0"):
+            if (processed["#ToolName"] == "USER"):
+                processed['#uri_query'] = source['uri_query']
                 pWriter.writerow(processed)
                 sWriter.writerow(source)
                 queryTypes.add(processed["#QueryType"])
