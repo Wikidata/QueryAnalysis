@@ -48,6 +48,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.Map.Entry;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -314,13 +315,12 @@ public final class Main
       FileUtils.deleteQuietly(outputFolderFile);
     }
     new File(outputFolderName).mkdir();
-    SPARQLQueryRenderer renderer = new SPARQLQueryRenderer();
     String currentOutputFolderName = outputFolderName;
-    for (TupleExpr parsedQuery : queryTypes.keySet()) {
+    for (Entry<TupleExpr, String> parsedQuery : queryTypes.entrySet()) {
 
-      String queryType = queryTypes.get(parsedQuery);
+      String queryType = parsedQuery.getValue();
       try (BufferedWriter bw = new BufferedWriter(new FileWriter(currentOutputFolderName + queryType + ".queryType"))) {
-        bw.write(parsedQuery.toString());
+        bw.write(parsedQuery.getKey().toString());
       } catch (IOException e) {
         logger.error("Could not write the query type " + queryType + ".", e);
       } catch (Exception e) {
