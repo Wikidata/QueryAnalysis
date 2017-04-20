@@ -26,6 +26,13 @@ thisElFilmFilmID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:50.0) Gecko/20100101
 thisOFDbID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:50.0) Gecko/20100101 Firefox/50.0	toolSearchingForMovieDatabaseID	-1	needs more data
 thisMovieMeterMovieID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:50.0) Gecko/20100101 Firefox/50.0	toolSearchingForMovieDatabaseID	-1	needs more data
 thisAllMovieMovieID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:50.0) Gecko/20100101 Firefox/50.0	toolSearchingForMovieDatabaseID	-1	needs more data
+thisIMDbID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:50.0) Gecko/20100101 Firefox/50.0	toolSearchingForMovieDatabaseID	-1	needs more data
+thisKinopoiskFilmID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:51.0) Gecko/20100101 Firefox/51.0	toolSearchingForMovieDatabaseID	-1	needs more data
+thisCSFDFilmID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:51.0) Gecko/20100101 Firefox/51.0	toolSearchingForMovieDatabaseID	-1	needs more data
+thisElFilmFilmID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:51.0) Gecko/20100101 Firefox/51.0	toolSearchingForMovieDatabaseID	-1	needs more data
+thisOFDbID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:51.0) Gecko/20100101 Firefox/51.0	toolSearchingForMovieDatabaseID	-1	needs more data
+thisMovieMeterMovieID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:51.0) Gecko/20100101 Firefox/51.0	toolSearchingForMovieDatabaseID	-1	needs more data
+thisAllMovieMovieID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:51.0) Gecko/20100101 Firefox/51.0	toolSearchingForMovieDatabaseID	-1	needs more data
 thisIMDbID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:51.0) Gecko/20100101 Firefox/51.0	toolSearchingForMovieDatabaseID	-1	needs more data
 instanceOfThis	sparqlwrapper 1.8.0 (rdflib.github.io/sparqlwrapper)	toolUsingSparqlwrapperPython	1.8.0	needs more data
 bot2	Magnus labs tools	bot2	0.1?	some queries from bot2 contain a toolComment, some not
