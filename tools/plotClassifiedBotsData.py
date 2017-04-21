@@ -12,6 +12,7 @@ os.chdir(workingDir)
 
 metricName = sys.argv[2]
 
+
 def plotHist(data, title, countTools, xlabel="hour", ylabel="count of queries", log=False):
     if not os.path.exists(title[:title.rfind("/")]):
         os.makedirs(title[:title.rfind("/")])
@@ -29,23 +30,31 @@ def plotHist(data, title, countTools, xlabel="hour", ylabel="count of queries", 
     if log:
         axes.set_yscale('log')
 
-    color = iter(cm.nipy_spectral(np.linspace(0, 1, countTools)))
+    colormap = cm.nipy_spectral(np.linspace(0, 1, countTools))
+    color = iter(colormap)
 
-    for metric in data:
+    minMetricValue = data[0][1]["Y"][0]
+    maxMetricValue = 0
+
+    for dataPoint in data:
         c = next((color))
+        XY = dataPoint[1]
 
-        metricName = metric[0]
-        XY = metric[1]
+        if (XY["Y"][0] < minMetricValue):
+            minMetricValue = XY["Y"][0]
+
+        if (XY["X"][0] > maxMetricValue):
+            maxMetricValue = XY["Y"][0]
 
         try:
-            ax.bar(XY["X"], XY["Y"], align='center', color=c, edgecolor=c, label=metricName + str(XY["Y"]))
+            ax.bar(XY["X"], XY["Y"], align='center', color=c, edgecolor=c)
         except ValueError:
             pass
 
-
-    handles, labels = ax.get_legend_handles_labels()
-    lgd = ax.legend(handles, labels, bbox_to_anchor=(1, 1), loc='upper left', ncol=1, prop={'size': 6})
-
+    scalarMappaple = cm.ScalarMappable(cmap=cm.nipy_spectral,
+                                       norm=plt.Normalize(vmin=minMetricValue, vmax=maxMetricValue))
+    scalarMappaple._A = []
+    plt.colorbar(scalarMappaple)
 
     if xlabel is 'hour':
         plt.xlim(-1, 24)
@@ -55,7 +64,7 @@ def plotHist(data, title, countTools, xlabel="hour", ylabel="count of queries", 
 
     plt.xticks(fontsize=9)
 
-    plt.savefig(title + ".png", bbox_extra_artists=(lgd,), bbox_inches='tight')
+    plt.savefig(title + ".png", bbox_inches='tight')
 
     plt.close()
 
@@ -94,8 +103,6 @@ for file in files:
         counts = []
 
         for line in reader:
-            if line[metricName] == '0':
-                continue
             hours.append(int(line['hour']))
             metrics.append(line[metricName])
             totalMetricNames.add(line[metricName])
