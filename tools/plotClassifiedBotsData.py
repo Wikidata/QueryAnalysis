@@ -10,6 +10,7 @@ from matplotlib.pyplot import cm
 workingDir = sys.argv[1]
 os.chdir(workingDir)
 
+metricName = sys.argv[2]
 
 def plotHist(data, title, countTools, xlabel="hour", ylabel="count of queries", log=False):
     if not os.path.exists(title[:title.rfind("/")]):
@@ -30,19 +31,21 @@ def plotHist(data, title, countTools, xlabel="hour", ylabel="count of queries", 
 
     color = iter(cm.nipy_spectral(np.linspace(0, 1, countTools)))
 
-    for tool in data:
+    for metric in data:
         c = next((color))
 
-        toolName = tool[0]
-        XY = tool[1]
+        metricName = metric[0]
+        XY = metric[1]
 
         try:
-            ax.bar(XY["X"], XY["Y"], align='center', color=c, edgecolor=c, label=toolName + str(XY["Y"]))
+            ax.bar(XY["X"], XY["Y"], align='center', color=c, edgecolor=c, label=metricName + str(XY["Y"]))
         except ValueError:
             pass
 
+
     handles, labels = ax.get_legend_handles_labels()
     lgd = ax.legend(handles, labels, bbox_to_anchor=(1, 1), loc='upper left', ncol=1, prop={'size': 6})
+
 
     if xlabel is 'hour':
         plt.xlim(-1, 24)
@@ -51,7 +54,9 @@ def plotHist(data, title, countTools, xlabel="hour", ylabel="count of queries", 
         plt.xlim(0, 32)
 
     plt.xticks(fontsize=9)
+
     plt.savefig(title + ".png", bbox_extra_artists=(lgd,), bbox_inches='tight')
+
     plt.close()
 
 
@@ -59,7 +64,7 @@ inputDirectory = "dayTriple/"
 
 files = []
 for i in xrange(1, 2):
-    files.append("classifiedBotsData/" + "%02d" % i + "ClassifiedBotsData.tsv")
+    files.append("classifiedBotsData/" + metricName + "/" + "%02d" % i + "ClassifiedBotsData.tsv")
 
 
 # files.append("classifiedBotsData/TotalClassifiedBotsData.tsv")
@@ -74,61 +79,62 @@ def compare(item1, item2):
 
 
 totalDataPerDay = {}
-totalToolNames = set()
+totalMetricNames = set()
 
 for file in files:
     print "Working on: " + file
 
-    day = file.replace('classifiedBotsData/', '').replace("ClassifiedBotsData.tsv", '')
+    day = file.replace('classifiedBotsData/' + metricName + '/', '').replace("ClassifiedBotsData.tsv", '')
 
     with open(file) as f:
         reader = csv.DictReader(f, delimiter="\t")
 
         hours = []
-        toolNames = []
+        metrics = []
         counts = []
 
         for line in reader:
-            if line['ToolName'] == '0':
+            if line[metricName] == '0':
                 continue
             hours.append(int(line['hour']))
-            toolNames.append(line['ToolName'])
-            totalToolNames.add(line['ToolName'])
+            metrics.append(line[metricName])
+            totalMetricNames.add(line[metricName])
             counts.append(int(line['count']))
 
         # divide data into "stacks"
 
         data = {}
-        for toolName in toolNames:
-            if toolName not in totalDataPerDay:
-                totalDataPerDay[toolName] = {}
-                totalDataPerDay[toolName]["X"] = list()
-                totalDataPerDay[toolName]["Y"] = list()
+        for metric in metrics:
+            if metric not in totalDataPerDay:
+                totalDataPerDay[metric] = {}
+                totalDataPerDay[metric]["X"] = list()
+                totalDataPerDay[metric]["Y"] = list()
 
-            data[toolName] = {}
-            data[toolName]["X"] = list()
-            data[toolName]["Y"] = list()
+            data[metric] = {}
+            data[metric]["X"] = list()
+            data[metric]["Y"] = list()
 
-        for hour, toolName, count in zip(hours, toolNames, counts):
-            data[toolName]["X"].append(hour)
-            data[toolName]["Y"].append(count)
+        for hour, metric, count in zip(hours, metrics, counts):
+            data[metric]["X"].append(hour)
+            data[metric]["Y"].append(count)
 
         # sort data so that the log graph is kind of useful
         sorted_data = sorted(data.items(), cmp=compare)
 
-        plotHist(sorted_data, 'classifiedBotsData/plots/day' + day, len(set(toolNames)))
-        plotHist(sorted_data, 'classifiedBotsData/plots/log/day' + day, len(set(toolNames)), log=True)
+        plotHist(sorted_data, 'classifiedBotsData/' + metricName + '/plots/day' + day, len(set(metrics)))
+        plotHist(sorted_data, 'classifiedBotsData/' + metricName + '/plots/log/day' + day, len(set(metrics)), log=True)
 
-    for toolName in totalToolNames:
-        if toolName in data:
-            totalDataPerDay[toolName]["X"].append(int(day))
+    for metric in totalMetricNames:
+        if metric in data:
+            totalDataPerDay[metric]["X"].append(int(day))
 
             sum = 0
-            for count in data[toolName]["Y"]:
+            for count in data[metric]["Y"]:
                 sum += count
-            totalDataPerDay[toolName]["Y"].append(sum)
+            totalDataPerDay[metric]["Y"].append(sum)
 
 sorted_data = sorted(totalDataPerDay.items(), cmp=compare)
 
-plotHist(sorted_data, "classifiedBotsData/plots/total", len(totalToolNames), xlabel='day')
-plotHist(sorted_data, "classifiedBotsData/plots/total_log", len(totalToolNames), xlabel='day', log=True)
+plotHist(sorted_data, "classifiedBotsData/" + metricName + "/plots/total", len(totalMetricNames), xlabel='day')
+plotHist(sorted_data, "classifiedBotsData/" + metricName + "/plots/total_log", len(totalMetricNames), xlabel='day',
+         log=True)

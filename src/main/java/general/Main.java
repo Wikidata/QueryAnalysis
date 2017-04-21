@@ -36,7 +36,6 @@ import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.openrdf.query.algebra.TupleExpr;
 import org.openrdf.query.parser.ParsedQuery;
-import org.openrdf.queryrender.sparql.SPARQLQueryRenderer;
 import query.OpenRDFQueryHandler;
 import scala.Tuple2;
 

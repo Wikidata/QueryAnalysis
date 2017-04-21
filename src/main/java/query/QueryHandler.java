@@ -400,7 +400,7 @@ public abstract class QueryHandler
       return;
     }
 
-    if(queryStringWithoutPrefixes.equals("prefix schema: <http://schema.org/> SELECT * WHERE {<http://www.wikidata.org> schema:dateModified ?y}")) {
+    if (queryStringWithoutPrefixes.equals("prefix schema: <http://schema.org/> SELECT * WHERE {<http://www.wikidata.org> schema:dateModified ?y}")) {
       toolName = "wikidataLastModified";
       toolVersion = "1.0";
       return;
@@ -431,7 +431,7 @@ public abstract class QueryHandler
       return;
     }
 
-    if(userAgent.equals("Mozilla/5.0")) {
+    if (userAgent.equals("Mozilla/5.0")) {
       toolName = "feb20descriptions";
       toolVersion = "0.1";
       return;
