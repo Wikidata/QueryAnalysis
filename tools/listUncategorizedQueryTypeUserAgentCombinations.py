@@ -9,6 +9,9 @@ import os
 
 COMBINATIONS_LIMIT = 10
 
+processedPrefix = "QueryProcessedOpenRDF"
+sourcePrefix = "queryCnt"
+
 if not os.path.exists("queryTypeUserAgentCombinations"):
     os.makedirs("queryTypeUserAgentCombinations")
 
@@ -36,22 +39,20 @@ for file in files:
 
 # grep QueryProcessedOpenRDFXX.tsv for these queryTypes and the respective userAgents and create a directory for
 # each of these found userAgents and put all found querys in it
-files = []
-for i in xrange(1, 2):
-    files.append("QueryProcessedOpenRDF" + "%02d" % i + ".tsv")
 
-for file in sorted(files):
-    print "Working on: " + file
-    with open(file) as f:
-        reader = csv.DictReader(f, delimiter="\t")
-        for line in reader:
+for i in xrange(1, 2):
+    print "Working on: %02d" % i 
+    with open(processedPrefix + "%02d" % i + ".tsv") as p, open(sourcePrefix + "%02d" % i + ".tsv") as s:
+        pReader = csv.DictReader(p, delimiter="\t")
+        sReader = csv.DictReader(s, delimiter="\t")
+        for processed, source in zip(pReader, sReader):
             # skip invalid ones
-            if int(line['#Valid']) != 1:
+            if int(processed['#Valid']) != 1:
                 continue
 
-            queryType = line['#QueryType']
-            userAgent = line['#user_agent']
-            toolName = line['#ToolName']
+            queryType = processed['#QueryType']
+            userAgent = source['user_agent']
+            toolName = processed['#ToolName']
 
             if queryType in queryTypeUserAgentCombinationsCount.keys():
                 if userAgent not in queryTypeUserAgentCombinationsCount[queryType]['userAgent'].keys():
@@ -66,7 +67,7 @@ for file in sorted(files):
                     toolName)
 
                 # search for query
-                originalFileLine = line['#original_line(filename_line)']
+                originalFileLine = processed['#original_line(filename_line)']
                 originalFile = os.path.basename(originalFileLine.split("_", 1)[0])
                 originalLine = int(originalFileLine.split("_", 1)[1])
 
