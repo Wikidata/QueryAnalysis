@@ -46,7 +46,7 @@ public class AccessFrequencyMap<K, V> implements Map<K, V>
   @Override
   public Set<Entry<K, V>> entrySet()
   {
-    Set<Entry<K, V>> set = new TreeSet<Entry<K, V>>();
+    Set<Entry<K, V>> set = new HashSet<Entry<K, V>>();
     for (AccessFrequencyMapEntry<K, V> entry : list) {
       set.add(new AccessFrequencyMapEntry<K, V>(entry.getKey(), entry.getValue()));
     }
