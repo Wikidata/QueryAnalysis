@@ -1,0 +1,5 @@
+SELECT ?wikidata
+WHERE {
+  ?wikidata <http://www.wikidata.org/prop/direct/P352> "P04440" .
+  FILTER (isLITERAL ("P04440" ))
+}
