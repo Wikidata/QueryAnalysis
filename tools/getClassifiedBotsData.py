@@ -4,18 +4,15 @@ from collections import defaultdict
 import os
 import sys
 
-# X = hour
-# Y = count
-# Z (stacked X) = ToolName
-
-
 workingDir = sys.argv[1]
 os.chdir(workingDir)
 
-if not os.path.exists("classifiedBotsData"):
-    os.makedirs("classifiedBotsData")
+metricName = sys.argv[2]
 
-for i in xrange(1, 2):
+if not os.path.exists("classifiedBotsData/" + metricName):
+    os.makedirs("classifiedBotsData/" + metricName)
+
+for i in xrange(1, 3):
     with open("QueryProcessedOpenRDF" + "%02d" % i + ".tsv") as f:
         reader = csv.DictReader(f, delimiter="\t")
 
@@ -28,17 +25,17 @@ for i in xrange(1, 2):
             if line['#hour'] not in data:
                 data[line['#hour']] = defaultdict(int)
 
-            data[line['#hour']][line['#ToolName']] += 1
+            data[line['#hour']][line['#' + metricName]] += 1
 
-        header = "hour\tToolName\tcount\n"
-        with open("classifiedBotsData/" + "%02d" % i + "ClassifiedBotsData.tsv", "w") as outputFile:
+        header = "hour\t" + metricName + "\tcount\n"
+        with open("classifiedBotsData/" + metricName + "/" + "%02d" % i + "ClassifiedBotsData.tsv", "w") as outputFile:
             outputFile.write(header)
-            for hour, toolNameDict in data.iteritems():
-                for toolName in toolNameDict.iterkeys():
-                    outputFile.write(str(hour) + "\t" + str(toolName) + "\t" + str(data[hour][toolName]) + "\n")
+            for hour, metricDict in data.iteritems():
+                for metric in metricDict.iterkeys():
+                    outputFile.write(str(hour) + "\t" + str(metric) + "\t" + str(data[hour][metric]) + "\n")
 
-    with open("classifiedBotsData/TotalClassifiedBotsData.tsv", "w") as outputFile:
+    with open("classifiedBotsData/" + metricName + "/" + "TotalClassifiedBotsData.tsv", "w") as outputFile:
         outputFile.write(header)
-        for hour, toolNameDict in data.iteritems():
-            for toolName in toolNameDict.iterkeys():
-                outputFile.write(str(hour) + "\t" + str(toolName) + "\t" + str(data[hour][toolName]) + "\n")
+        for hour, metricDict in data.iteritems():
+            for metric in metricDict.iterkeys():
+                outputFile.write(str(hour) + "\t" + str(metric) + "\t" + str(data[hour][metric]) + "\n")
