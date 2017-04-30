@@ -1,0 +1,4 @@
+SELECT ?inchikey
+WHERE {
+  <http://www.wikidata.org/entity/Q27101995> <http://www.wikidata.org/prop/direct/P235> ?inchikey .
+}
