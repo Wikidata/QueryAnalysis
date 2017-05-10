@@ -5,6 +5,8 @@ import org.apache.log4j.Logger;
 import scala.Tuple2;
 
 import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -108,6 +110,8 @@ public abstract class QueryHandler
    */
   private String qIDString = null;
 
+  protected LinkedHashMap<String, Integer> sparqlStatistics;
+
   /**
    *
    */
@@ -205,6 +209,26 @@ public abstract class QueryHandler
     }
     return this.variableCountHead;
   }
+
+  /**
+   * Computes the sparqlStatistics.
+   * Useful for caching.
+   */
+  protected abstract void computeSparqlStatistics();
+
+  /**
+   *
+   * @return a map containing the number of occurrences of each sparql features
+   *  existing in the AST tupleExpr tree
+   */
+  public LinkedHashMap<String, Integer> getSparqlStatistics()
+  {
+    if(this.sparqlStatistics == null) {
+      this.computeSparqlStatistics();
+    }
+    return this.sparqlStatistics;
+  }
+
 
   /**
    * Computes the number of variables in the query pattern.

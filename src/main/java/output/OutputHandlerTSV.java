@@ -6,11 +6,13 @@ import general.Main;
 import org.apache.log4j.Logger;
 import query.Cache;
 import query.QueryHandler;
+import query.SparqlStatisticsCollector;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author adrian
@@ -64,12 +66,19 @@ public class OutputHandlerTSV extends OutputHandler
     header.add("#ToolVersion");
     header.add("#StringLengthWithComments");
     header.add("#QuerySize");
+    header.add(("#SelectCount"));
     header.add("#VariableCountHead");
     header.add("#VariableCountPattern");
     header.add("#TripleCountWithService");
     header.add("#TripleCountNoService");
     header.add("#QueryType");
     header.add("#QIDs");
+
+    //add all sparqlStatisticNodes
+    for(String sparqlStatisticFeature : SparqlStatisticsCollector.getDefaultMap().keySet()) {
+      header.add("#" + sparqlStatisticFeature);
+    }
+
     header.add("#original_line(filename_line)");
     writer.writeHeaders(header);
   }
@@ -132,14 +141,22 @@ public class OutputHandlerTSV extends OutputHandler
     if (Main.withBots || queryHandler.getToolName().equals("0") || queryHandler.getToolName().equals("USER")) {
       line.add(queryHandler.getStringLength());
       line.add(queryHandler.getQuerySize());
+      line.add(queryHandler.getSparqlStatistics());
       line.add(queryHandler.getVariableCountHead());
       line.add(queryHandler.getVariableCountPattern());
       line.add(queryHandler.getTripleCountWithService());
       line.add(-1);
       line.add(queryHandler.getQueryType());
       line.add(queryHandler.getqIDString());
+
+      Map<String,Integer> sparqlStatistics = queryHandler.getSparqlStatistics();
+      //add all sparqlStatisticNodes
+      for(String sparqlStatisticFeature : sparqlStatistics.keySet()) {
+        line.add(sparqlStatistics.get(sparqlStatisticFeature));
+      }
+
     } else {
-      for (int i = 0; i < 8; i++) {
+      for (int i = 0; i < 8 + SparqlStatisticsCollector.getDefaultMap().size(); i++) {
         line.add(-1);
       }
     }
