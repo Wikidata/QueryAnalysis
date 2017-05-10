@@ -72,7 +72,7 @@ public abstract class QueryHandler
    * -1 -> invalid for unknown reasons
    * -3 -> Not a valid (absolute URI):
    * -5 -> BIND clause alias '{}' was previously used
-   * -6 ->	Multiple prefix declarations for prefix 'p'
+   * -6 ->	Multiple prefix declquerarations for prefix 'p'
    * -9 -> There was a syntax error in the URL
    * -10 -> The url was truncated and was therefore not decodable
    * -11 -> The query string was empty and was therefore not being parsed

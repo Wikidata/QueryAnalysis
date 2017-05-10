@@ -66,7 +66,6 @@ public class OutputHandlerTSV extends OutputHandler
     header.add("#ToolVersion");
     header.add("#StringLengthWithComments");
     header.add("#QuerySize");
-    header.add(("#SelectCount"));
     header.add("#VariableCountHead");
     header.add("#VariableCountPattern");
     header.add("#TripleCountWithService");
@@ -141,7 +140,6 @@ public class OutputHandlerTSV extends OutputHandler
     if (Main.withBots || queryHandler.getToolName().equals("0") || queryHandler.getToolName().equals("USER")) {
       line.add(queryHandler.getStringLength());
       line.add(queryHandler.getQuerySize());
-      line.add(queryHandler.getSparqlStatistics());
       line.add(queryHandler.getVariableCountHead());
       line.add(queryHandler.getVariableCountPattern());
       line.add(queryHandler.getTripleCountWithService());
