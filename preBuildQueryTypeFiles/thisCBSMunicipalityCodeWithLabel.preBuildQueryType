@@ -1,0 +1,6 @@
+ SELECT ?label ?municipality_label
+ WHERE {
+   ?OrgnBNanon_24_30 <http://www.w3.org/2000/01/rdf-schema#label> ?municipality_label ;
+                     <http://www.wikidata.org/prop/direct/P382> "0106" .
+   FILTER ( "en" =  lang( ?label) )
+ }

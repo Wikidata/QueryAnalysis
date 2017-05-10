@@ -1,0 +1,17 @@
+ SELECT ?item ?picture
+ WHERE {
+   {
+     SELECT DISTINCT  ?item ?itemLabel ?numero (SAMPLE( ?pic) AS ?picture)
+     WHERE {
+       ?item <http://www.wikidata.org/prop/P528> ?catalogStatement .
+       ?catalogStatement <http://www.wikidata.org/prop/statement/P528> ?numero ;
+                         <http://www.wikidata.org/prop/qualifier/P972> <http://www.wikidata.org/entity/Q14530> .
+       OPTIONAL {
+         ?item <http://www.wikidata.org/prop/direct/P18> ?pic .
+       }
+       SERVICE  <http://wikiba.se/ontology#label> {  <http://www.bigdata.com/rdf#serviceParam> <http://wikiba.se/ontology#language> "en" . }
+     }
+     GROUP BY  ?item  ?itemLabel  ?numero
+     ORDER BY  ASC ( ?numero)
+   }
+ }

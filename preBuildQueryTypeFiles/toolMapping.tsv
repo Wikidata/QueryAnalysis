@@ -96,6 +96,10 @@ thisPubMedIDthatWithFilter	Magnus labs tools	toolSearchingForPublicationIDs	-1	n
 thisIMDbID	Mechanize/2.7.5 Ruby/2.2.6p396 (http://github.com/sparklemotion/mechanize/)	toolUsingMechanizeForIMDb	-1	needs more data
 thisIMDbID	MovieGuide-wikidata/0.1	movieguide	0.1	https://github.com/nandhp/movieguide
 InCHIKeyThis	Mozilla/4.0 (compatible; Virtuoso)	toolSearchingForChemical	-1	needs more data
+itemsWithPicturesFromCatalogue	Mozilla/4.0 (compatible; Virtuoso)	toolSearchingForItemsFromCatalogue	-1	needs more data
+thisCBSMunicipalityCodeThisWithLabel	Mozilla/4.0 (compatible; Virtuoso)	toolSearchingForCBSMunicipality	-1	needs more data
+thisCBSMunicipalityCodeWithLabel	Mozilla/4.0 (compatible; Virtuoso)	toolSearchingForCBSMunicipality	-1	needs more data
+thisCollectionDepictsPositionHeld	Mozilla/4.0 (compatible; Virtuoso)	toolSearchingForDepictionsFromCollection	-1	needs more data
 thisUniProtIDWithFilterIsLiteral	Mozilla/4.0 (compatible; Virtuoso)	toolSearchingForUniProtID	-1	needs more data
 thisInstanceOfGenderDescription	Mozilla/5.0	toolSearchingForHumans	5	needs more data
 thisSubclassOfWithLabelOrderByLabel	Mozilla/5.0	toolSearchingForSubclassOf	5	needs more data
@@ -133,6 +137,7 @@ thisLocatedInTheAdministrativeTerritorialEntityWithCoordinateLocation	Mozilla/5.
 thisMovieMeterMovieID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:51.0) Gecko/20100101 Firefox/51.0	toolSearchingForMovieDatabaseID	-1	needs more data
 thisOFDbID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:51.0) Gecko/20100101 Firefox/51.0	toolSearchingForMovieDatabaseID	-1	needs more data
 thisRottenTomatoesID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:51.0) Gecko/20100101 Firefox/51.0	toolSearchingForMovieDatabaseID	-1	needs more data
+thisPORTfilmID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:52.0) Gecko/20100101 Firefox/52.0	toolSearchingForMovieDatabaseID	-1	needs more data
 thisNKCRAUTIDAboutAndLanguage	NK2WP/2.0 (nkp.cz linker service, run by <petr.kadlec@gmail.com>)	linkerForCzechNationalLibrary	2	linker for http://www.nkp.cz/
 toolLookingForWikidataIdBasedOnTwitterUsername	python-requests/2.11.1	toolLookingForWikidataIdBasedOnTwitterUsername	2.11.1	it is probably NOT this one, even though it looks similar: https://github.com/fnielsen/scholia/blob/5094353127cd929585fab6b2cf1b0047353d9162/scholia/query.py#L223-L224
 toolLookingForWikidataIdBasedOnTwitterUsername	python-requests/2.12.3	toolLookingForWikidataIdBasedOnTwitterUsername	2.12.3	it is probably NOT this one, even though it looks similar: https://github.com/fnielsen/scholia/blob/5094353127cd929585fab6b2cf1b0047353d9162/scholia/query.py#L223-L224

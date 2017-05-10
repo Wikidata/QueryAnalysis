@@ -1,0 +1,6 @@
+ SELECT ?label ?cbsMunicipalityCode ?municipality_label
+ WHERE {
+   ?OrgnBNanon_9_0 <http://www.w3.org/2000/01/rdf-schema#label> ?municipality_label ;
+                   <http://www.wikidata.org/prop/direct/P382> ?cbsMunicipalityCode .
+   FILTER ( "en" =  lang( ?label) )
+ }

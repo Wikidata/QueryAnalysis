@@ -1,0 +1,12 @@
+SELECT  (1 AS ?stubvar18)
+WHERE {
+  {
+    SELECT DISTINCT  ?item
+    WHERE {
+      ?item <http://www.wikidata.org/prop/direct/P195> <http://www.wikidata.org/entity/Q1376> ;
+            <http://www.wikidata.org/prop/direct/P180> ?monarque .
+      ?monarque <http://www.wikidata.org/prop/direct/P39> <http://www.wikidata.org/entity/Q842606> .
+      SERVICE  <http://wikiba.se/ontology#label> {  <http://www.bigdata.com/rdf#serviceParam> <http://wikiba.se/ontology#language> "en" . }
+    }
+  }
+}
