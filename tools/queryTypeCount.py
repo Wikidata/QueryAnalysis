@@ -1,8 +1,7 @@
-import glob
-import pprint
 import csv
-import os
 from collections import defaultdict
+
+import os
 
 pathBase = "queryType"
 
@@ -32,7 +31,7 @@ for i in xrange(1, 2):
         pReader = csv.DictReader(p, delimiter="\t")
         sReader = csv.DictReader(s, delimiter="\t")
         for processed, source in zip(pReader, sReader):
-            if int( processed['#Valid']) != 1:
+            if int(processed['#Valid']) != 1:
                 continue
 
             queryType = processed['#QueryType']
@@ -44,29 +43,29 @@ for i in xrange(1, 2):
             if agent == "spider":
                 totalCountSpider += 1
                 queryTypeCountsSpider[queryType] += 1
-        with open (pathBase + "/" + "%02dQueryTypeCountUser.tsv" % i, "w") as userfile:
+        with open(pathBase + "/" + "%02dQueryTypeCountUser.tsv" % i, "w") as userfile:
             userfile.write(header)
-            for k,v in sorted(queryTypeCountsUser.iteritems(), key=lambda (k,v):(v,k), reverse=True):
-                totalQueryTypesUser[k] += v    
-                percentage = float(v)/totalCountUser*100
+            for k, v in sorted(queryTypeCountsUser.iteritems(), key=lambda (k, v): (v, k), reverse=True):
+                totalQueryTypesUser[k] += v
+                percentage = float(v) / totalCountUser * 100
                 userfile.write(str(k) + "\t" + str(v) + "\t" + str(percentage) + "\n")
-        with open (pathBase + "/" + "%02dQueryTypeCountSpider.tsv" % i, "w") as spiderfile:
+        with open(pathBase + "/" + "%02dQueryTypeCountSpider.tsv" % i, "w") as spiderfile:
             spiderfile.write(header)
-            for k,v in sorted(queryTypeCountsSpider.iteritems(), key=lambda (k,v):(v,k), reverse=True):
+            for k, v in sorted(queryTypeCountsSpider.iteritems(), key=lambda (k, v): (v, k), reverse=True):
                 totalQueryTypesSpider[k] += v
-                percentage = float(v)/totalCountSpider*100
+                percentage = float(v) / totalCountSpider * 100
                 spiderfile.write(str(k) + "\t" + str(v) + "\t" + str(percentage) + "\n")
         totalTotalCountUser += totalCountUser
         totalTotalCountSpider += totalCountSpider
 
-with open (pathBase + "/TotalQueryTypeCountUser.tsv", "w") as userfile:
+with open(pathBase + "/TotalQueryTypeCountUser.tsv", "w") as userfile:
     userfile.write(header)
-    for k,v in sorted(totalQueryTypesUser.iteritems(), key=lambda (k,v):(v,k), reverse=True):
-        percentage = float(v)/totalTotalCountUser*100
+    for k, v in sorted(totalQueryTypesUser.iteritems(), key=lambda (k, v): (v, k), reverse=True):
+        percentage = float(v) / totalTotalCountUser * 100
         userfile.write(str(k) + "\t" + str(v) + "\t" + str(percentage) + "\n")
 
-with open (pathBase + "/TotalQueryTypeCountSpider.tsv", "w") as spiderfile:
+with open(pathBase + "/TotalQueryTypeCountSpider.tsv", "w") as spiderfile:
     spiderfile.write(header)
-    for k,v in sorted(totalQueryTypesSpider.iteritems(), key=lambda (k,v):(v,k), reverse=True):
-        percentage = float(v)/totalTotalCountSpider*100
+    for k, v in sorted(totalQueryTypesSpider.iteritems(), key=lambda (k, v): (v, k), reverse=True):
+        percentage = float(v) / totalTotalCountSpider * 100
         spiderfile.write(str(k) + "\t" + str(v) + "\t" + str(percentage) + "\n")
