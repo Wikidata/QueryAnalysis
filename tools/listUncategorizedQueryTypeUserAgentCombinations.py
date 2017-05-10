@@ -41,7 +41,7 @@ for file in files:
 # each of these found userAgents and put all found querys in it
 
 for i in xrange(1, 2):
-    print "Working on: %02d" % i 
+    print "Working on: %02d" % i
     with open(processedPrefix + "%02d" % i + ".tsv") as p, open(sourcePrefix + "%02d" % i + ".tsv") as s:
         pReader = csv.DictReader(p, delimiter="\t")
         sReader = csv.DictReader(s, delimiter="\t")

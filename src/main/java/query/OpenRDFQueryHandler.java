@@ -125,6 +125,25 @@ public class OpenRDFQueryHandler extends QueryHandler
     this.querySize = openRDFQueryLengthVisitor.getSize();
   }
 
+  @Override
+  protected void computeSparqlStatistics()
+  {
+
+    if (getValidityStatus() != 1) {
+      this.sparqlStatistics = SparqlStatisticsCollector.getDefaultMap();
+      return;
+    }
+
+    SparqlStatisticsCollector sparqlStatisticsCollector = new SparqlStatisticsCollector();
+    try {
+      this.query.getTupleExpr().visitChildren(sparqlStatisticsCollector);
+    } catch (Exception e) {
+      logger.error("An unknown error occured while computing the sparql statistics: ", e);
+    }
+
+    this.sparqlStatistics = sparqlStatisticsCollector.getStatistics();
+  }
+
   /**
    * {@inheritDoc}
    */
@@ -319,4 +338,5 @@ public class OpenRDFQueryHandler extends QueryHandler
       return null;
     }
   }
+
 }

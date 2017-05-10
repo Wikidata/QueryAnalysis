@@ -106,7 +106,6 @@ public final class Main
   {
     Options options = new Options();
     options.addOption("l", "logging", false, "enables file logging");
-    options.addOption("j", "jena", false, "uses the Jena SPARQL Parser");
     options.addOption("o", "openrdf", false, "uses the OpenRDF SPARQL Parser");
     options.addOption("f", "file", true, "defines the input file prefix");
     options.addOption("h", "help", false, "displays this help");
