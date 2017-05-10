@@ -75,7 +75,7 @@ public class OutputHandlerTSV extends OutputHandler
     header.add("#QIDs");
 
     //add all sparqlStatisticNodes
-    for(String sparqlStatisticFeature : SparqlStatisticsCollector.getDefaultMap().keySet()) {
+    for (String sparqlStatisticFeature : SparqlStatisticsCollector.getDefaultMap().keySet()) {
       header.add("#" + sparqlStatisticFeature);
     }
 
@@ -149,9 +149,9 @@ public class OutputHandlerTSV extends OutputHandler
       line.add(queryHandler.getQueryType());
       line.add(queryHandler.getqIDString());
 
-      Map<String,Integer> sparqlStatistics = queryHandler.getSparqlStatistics();
+      Map<String, Integer> sparqlStatistics = queryHandler.getSparqlStatistics();
       //add all sparqlStatisticNodes
-      for(String sparqlStatisticFeature : sparqlStatistics.keySet()) {
+      for (String sparqlStatisticFeature : sparqlStatistics.keySet()) {
         line.add(sparqlStatistics.get(sparqlStatisticFeature));
       }
 

@@ -1,13 +1,15 @@
 package query;
 
 import general.Main;
-import it.unimi.dsi.fastutil.Hash;
 import openrdffork.StandardizingSPARQLParser;
 import org.apache.log4j.Logger;
 import org.openrdf.model.Value;
 import org.openrdf.model.impl.URIImpl;
 import org.openrdf.query.MalformedQueryException;
-import org.openrdf.query.algebra.*;
+import org.openrdf.query.algebra.ArbitraryLengthPath;
+import org.openrdf.query.algebra.StatementPattern;
+import org.openrdf.query.algebra.TupleExpr;
+import org.openrdf.query.algebra.Var;
 import org.openrdf.query.algebra.helpers.QueryModelVisitorBase;
 import org.openrdf.query.algebra.helpers.StatementPatternCollector;
 import org.openrdf.query.parser.ParsedQuery;
@@ -139,7 +141,7 @@ public class OpenRDFQueryHandler extends QueryHandler
       logger.error("An unknown error occured while computing the sparql statistics: ", e);
     }
 
-    this.sparqlStatistics= sparqlStatisticsCollector.getStatistics();
+    this.sparqlStatistics = sparqlStatisticsCollector.getStatistics();
   }
 
   /**

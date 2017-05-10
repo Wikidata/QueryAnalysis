@@ -6,7 +6,6 @@ import scala.Tuple2;
 
 import java.util.HashSet;
 import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -51,6 +50,12 @@ public abstract class QueryHandler
    * (including triples in SERIVCE blocks).
    */
   protected Integer tripleCountWithService = null;
+  /**
+   * Contains the sparql statistics. Needs to be a linked map in order to
+   * ensure consistency in the order of the keys (the OutputHandler first iterates
+   * over the keys for the output TSV headers, and LATER over the values)
+   */
+  protected LinkedHashMap<String, Integer> sparqlStatistics;
   /**
    * Saves the query-string with added prefixes.
    */
@@ -109,8 +114,6 @@ public abstract class QueryHandler
    * The Q-IDs as a string of comma separated values.
    */
   private String qIDString = null;
-
-  protected LinkedHashMap<String, Integer> sparqlStatistics;
 
   /**
    *
@@ -217,13 +220,12 @@ public abstract class QueryHandler
   protected abstract void computeSparqlStatistics();
 
   /**
-   *
    * @return a map containing the number of occurrences of each sparql features
-   *  existing in the AST tupleExpr tree
+   * existing in the AST tupleExpr tree
    */
   public LinkedHashMap<String, Integer> getSparqlStatistics()
   {
-    if(this.sparqlStatistics == null) {
+    if (this.sparqlStatistics == null) {
       this.computeSparqlStatistics();
     }
     return this.sparqlStatistics;

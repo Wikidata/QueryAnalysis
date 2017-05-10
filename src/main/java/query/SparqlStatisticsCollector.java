@@ -3,43 +3,22 @@ package query;
 import org.openrdf.query.algebra.QueryModelNode;
 import org.openrdf.query.algebra.helpers.QueryModelVisitorBase;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.Map;
 
 /**
  * @author: Julius Gonsior
  */
 public class SparqlStatisticsCollector extends QueryModelVisitorBase
 {
-  private Map<String, Integer> statistics = getDefaultMap();
-
-  public Map<String, Integer> getStatistics()
-  {
-    return statistics;
-  }
-
-  /**
-   * default method which get's called by all meet statements
-   *
-   * @param node
-   * @throws Exception
-   */
-  @Override
-  public void meetNode(QueryModelNode node) throws Exception
-  {
-    String className = node.getClass().getSimpleName();
-    statistics.put(className, statistics.get(className) + 1);
-    super.meetNode(node);
-  }
+  private LinkedHashMap<String, Integer> statistics = getDefaultMap();
 
   /**
    * Returns a map containing all classes that implement the QueryModelNode
    * Interface and are therfore part of the AST TupleExpr
    */
-  public static Map<String, Integer> getDefaultMap()
+  public static LinkedHashMap<String, Integer> getDefaultMap()
   {
-    Map<String, Integer> defaultMap = new LinkedHashMap<>();
+    LinkedHashMap<String, Integer> defaultMap = new LinkedHashMap<>();
     defaultMap.put("Add", 0);
     defaultMap.put("And", 0);
     defaultMap.put("ArbitraryLengthPath", 0);
@@ -119,6 +98,25 @@ public class SparqlStatisticsCollector extends QueryModelVisitorBase
     defaultMap.put("ZeroLengthPath", 0);
     return defaultMap;
 
+  }
+
+  public LinkedHashMap<String, Integer> getStatistics()
+  {
+    return statistics;
+  }
+
+  /**
+   * default method which get's called by all meet statements
+   *
+   * @param node
+   * @throws Exception
+   */
+  @Override
+  public void meetNode(QueryModelNode node) throws Exception
+  {
+    String className = node.getClass().getSimpleName();
+    statistics.put(className, statistics.get(className) + 1);
+    super.meetNode(node);
   }
 
 
