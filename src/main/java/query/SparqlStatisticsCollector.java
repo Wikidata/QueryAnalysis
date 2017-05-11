@@ -55,7 +55,7 @@ public class SparqlStatisticsCollector extends QueryModelVisitorBase
     defaultMap.put("IRIFunction", 0);
     defaultMap.put("IsBNode", 0);
     defaultMap.put("IsLiteral", 0);
-    defaultMap.put("Isnumeric", 0);
+    defaultMap.put("IsNumeric", 0);
     defaultMap.put("IsResource", 0);
     defaultMap.put("IsURI", 0);
     defaultMap.put("Join", 0);
