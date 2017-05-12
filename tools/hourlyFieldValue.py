@@ -1,6 +1,7 @@
 import csv
-
 import os
+
+from itertools import izip
 
 
 def writeOut(fieldValues, file, dictionary):
@@ -40,7 +41,7 @@ for metric in metrics:
 
             pReader = csv.DictReader(p, delimiter="\t")
             sReader = csv.DictReader(s, delimiter="\t")
-            for processed, source in zip(pReader, sReader):
+            for processed, source in izip(pReader, sReader):
                 if int(processed["#Valid"]) != 1:
                     continue
 
