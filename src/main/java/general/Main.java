@@ -34,6 +34,10 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.openrdf.query.algebra.TupleExpr;
 import org.openrdf.query.parser.ParsedQuery;
 import query.OpenRDFQueryHandler;
@@ -72,6 +76,10 @@ public final class Main
    * Saves the regular expresions used to identify user queries (via userAgent).
    */
   public static final List<String> userAgentRegex = new ArrayList<String>();
+  /**
+   * Saves the example queries for query.wikidata.org.
+   */
+  public static final Map<String, String> exampleQueries = new HashMap<String, String>();
   /**
    * Define a static logger variable.
    */
@@ -190,6 +198,7 @@ public final class Main
 
     loadPreBuildQueryTypes();
     loadUserAgentRegex();
+    getExampleQueries();
 
     long startTime = System.nanoTime();
 
@@ -324,6 +333,45 @@ public final class Main
       } catch (Exception e) {
         logger.error("Error while rendering query type " + queryType + ".", e);
       }
+    }
+  }
+
+  /**
+   * Reads the example queries from https://www.wikidata.org/wiki/Wikidata:SPARQL_query_service/queries/examples.
+   */
+  private static void getExampleQueries()
+  {
+    Document doc;
+    try {
+
+      doc = Jsoup.connect("https://www.wikidata.org/wiki/Wikidata:SPARQL_query_service/queries/examples")
+          .header("Accept-Encoding", "gzip, deflate")
+          .userAgent("SPARQLQueryAnalyser")
+          .maxBodySize(0)
+          .timeout(600000)
+          .get();
+
+      Elements links = doc.select("pre");
+      for (Element link : links) {
+
+        Element parent = link.parent();
+        String name = null;
+        while (parent.previousElementSibling() != null) {
+          parent = parent.previousElementSibling();
+          if (parent.nodeName().matches("h[1-6]")) {
+            name = parent.child(0).text();
+            break;
+          }
+        }
+
+        if (name != null) {
+          exampleQueries.put("#" + name + "\n" + link.text(), name);
+        } else {
+          logger.error("Could not find header to: " + link.text());
+        }
+      }
+    } catch (IOException e) {
+      logger.error("Could not connetct to wikidata.org", e);
     }
   }
 }

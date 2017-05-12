@@ -454,6 +454,18 @@ public abstract class QueryHandler
   }
 
   /**
+   * @return The name of the example query this query equals, or -1 if it does not
+   */
+  public final String getExampleQuery()
+  {
+    String name = Main.exampleQueries.get(this.queryString);
+    if (name == null) {
+      return "-1";
+    }
+    return name;
+  }
+
+  /**
    * @param userAgent The user agent that posed this query.
    */
   public final void setUserAgent(String userAgent)
