@@ -1,7 +1,8 @@
 import csv
-from shutil import copyfile
-
 import os
+
+from shutil import copyfile
+from itertools import izip
 
 subfolder = "userData/"
 
@@ -23,7 +24,7 @@ for i in xrange(1, 2):
         pWriter = csv.DictWriter(user_p, None, delimiter="\t")
         sWriter = csv.DictWriter(user_s, None, delimiter="\t")
 
-        for processed, source in zip(pReader, sReader):
+        for processed, source in izip(pReader, sReader):
             if pWriter.fieldnames is None:
                 ph = dict((h, h) for h in pReader.fieldnames)
                 ph['#uri_query'] = '#uri_query'
