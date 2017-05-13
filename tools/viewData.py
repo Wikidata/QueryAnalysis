@@ -4,9 +4,10 @@ import csv
 import getopt
 import urllib
 import urlparse
-
 import sys
+
 from tabulate import tabulate
+from itertools import izip
 
 metrics = ["#QuerySize", "#TripleCountWithService"]
 
@@ -49,7 +50,7 @@ with open(processedPrefix + "%02d" % day + ".tsv") as p, open(sourcePrefix + "%0
     sReader = csv.DictReader(s, delimiter="\t")
 
     i = 0
-    for processed, source in zip(pReader, sReader):
+    for processed, source in izip(pReader, sReader):
         if start <= i <= end:
             data = [[]]
             for metric in metrics:
