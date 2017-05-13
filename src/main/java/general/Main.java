@@ -317,8 +317,10 @@ public final class Main
   {
     Document doc;
     try {
+      System.setProperty("http.proxyHost", "http://webproxy.eqiad.wmnet");
+      System.setProperty("http.proxyPort", "8080");
 
-      doc = Jsoup.connect("https://www.wikidata.org/wiki/Wikidata:SPARQL_query_service/queries/examples")
+      doc = Jsoup.connect("http://www.wikidata.org/wiki/Wikidata:SPARQL_query_service/queries/examples")
           .header("Accept-Encoding", "gzip, deflate")
           .userAgent("SPARQLQueryAnalyser")
           .maxBodySize(0)
