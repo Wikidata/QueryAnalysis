@@ -3,6 +3,7 @@
 import csv
 import getopt
 import urllib
+import urlparse
 
 import sys
 from tabulate import tabulate
@@ -18,7 +19,7 @@ start_given = False
 end_given = False
 
 processedPrefix = "QueryProcessedOpenRDF"
-sourcePrefix = "QueryCnt"
+sourcePrefix = "queryCnt"
 
 try:
     opts, args = getopt.getopt(sys.argv[1:], "hd:s:e:", ["day=", "startline=", "endline="])
@@ -54,6 +55,10 @@ with open(processedPrefix + "%02d" % day + ".tsv") as p, open(sourcePrefix + "%0
             for metric in metrics:
                 data[0].append(processed[metric])
             print tabulate(data, headers=metrics)
-            print urllib.unquote_plus(source["uri_query"].decode('utf8'))
+            d = dict(urlparse.parse_qsl(urlparse.urlsplit(source['uri_query']).query))
+            if 'query' in d.keys():
+                print d['query']
+            else:
+                print "Could not find query in uri_query."
 
         i += 1
