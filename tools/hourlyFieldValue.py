@@ -21,6 +21,8 @@ def writeOut(fieldValues, file, dictionary):
 
 metrics = ['ToolName']
 for metric in metrics:
+    print "Working on " + metric
+    
     pathBase = metric
 
     if not os.path.exists(pathBase):
@@ -31,6 +33,7 @@ for metric in metrics:
     monthlyData = dict()
 
     for i in xrange(1, 2):
+        print "\tWorking on %02d" % i
         with open("QueryProcessedOpenRDF" + "%02d" % i + ".tsv") as p, open("queryCnt" + "%02d" % i + ".tsv") as s:
             dailyFieldValues = set()
 

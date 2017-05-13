@@ -15,6 +15,7 @@ if not os.path.exists(subfolder):
 queryTypes = set()
 
 for i in xrange(1, 2):
+    print "Working on %02d" % i
     with open(processedPrefix + "%02d" % i + ".tsv") as p, open(sourcePrefix + "%02d" % i + ".tsv") as s, open(
                                     subfolder + processedPrefix + "%02d" % i + ".tsv", "w") as user_p, open(
                                 subfolder + sourcePrefix + "%02d" % i + ".tsv", "w") as user_s:
