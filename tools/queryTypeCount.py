@@ -1,7 +1,8 @@
 import csv
-from collections import defaultdict
-
 import os
+
+from collections import defaultdict
+from itertools import izip
 
 pathBase = "queryType"
 
@@ -30,7 +31,7 @@ for i in xrange(1, 2):
 
         pReader = csv.DictReader(p, delimiter="\t")
         sReader = csv.DictReader(s, delimiter="\t")
-        for processed, source in zip(pReader, sReader):
+        for processed, source in izip(pReader, sReader):
             if int(processed['#Valid']) != 1:
                 continue
 
