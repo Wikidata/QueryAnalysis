@@ -317,14 +317,13 @@ public final class Main
   {
     Document doc;
     try {
-      System.setProperty("http.proxyHost", "http://webproxy.eqiad.wmnet");
-      System.setProperty("http.proxyPort", "8080");
 
       doc = Jsoup.connect("http://www.wikidata.org/wiki/Wikidata:SPARQL_query_service/queries/examples")
           .header("Accept-Encoding", "gzip, deflate")
           .userAgent("SPARQLQueryAnalyser")
           .maxBodySize(0)
           .timeout(600000)
+          .proxy("http://webproxy.eqiad.wmnet", 8080)
           .get();
 
       Elements links = doc.select("pre");
@@ -354,7 +353,7 @@ public final class Main
   /**
    * Writes all found query Types to queryType/queryTypeFiles/.
    *
-   * @param inputFilePrefix The location of the input data
+   * @param inputFolder The location of the input data
    */
   private static void writeQueryTypes(String inputFolder)
   {
@@ -380,7 +379,7 @@ public final class Main
   /**
    * Writes all the example queries to exampleQueries/.
    *
-   * @param inputFilePrefix The location of the input data
+   * @param inputFolder The location of the input data
    */
   private static void writeExampleQueries(String inputFolder)
   {
