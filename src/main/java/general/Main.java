@@ -323,7 +323,7 @@ public final class Main
           .userAgent("SPARQLQueryAnalyser")
           .maxBodySize(0)
           .timeout(600000)
-          .proxy("http://webproxy.eqiad.wmnet", 8080)
+          .proxy("webproxy.eqiad.wmnet", 8080)
           .get();
 
       Elements links = doc.select("pre");
@@ -346,6 +346,7 @@ public final class Main
         }
       }
     } catch (IOException e) {
+      
       logger.error("Could not connetct to wikidata.org", e);
     }
   }
