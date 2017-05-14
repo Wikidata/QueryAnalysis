@@ -320,45 +320,54 @@ public final class Main
   private static void getExampleQueries()
   {
     Document doc;
+    // Not an ideal solution since it duplicates code, but I have not yet found a way to either set a fallback (no proxy)
     try {
 
       doc = Jsoup.connect("http://www.wikidata.org/wiki/Wikidata:SPARQL_query_service/queries/examples")
           .header("Accept-Encoding", "gzip, deflate")
           .userAgent("SPARQLQueryAnalyser")
           .maxBodySize(0)
-          .timeout(600000)
           .proxy("webproxy.eqiad.wmnet", 8080)
           .get();
+    } catch (IOException e) {
+      try {
+        logger.warn("Could not connect to wikidata.org via the proxy.", e);
+        doc = Jsoup.connect("http://www.wikidata.org/wiki/Wikidata:SPARQL_query_service/queries/examples")
+            .header("Accept-Encoding", "gzip, deflate")
+            .userAgent("SPARQLQueryAnalyser")
+            .maxBodySize(0)
+            .get();
+      } catch (IOException e2) {
+        logger.error("Could not connect to wikidata.org.", e2);
+        return;
+      }
+    }
+    Elements links = doc.select("pre");
+    for (Element link : links) {
 
-      Elements links = doc.select("pre");
-      for (Element link : links) {
-
-        Element parent = link.parent();
-        String name = null;
-        while (parent.previousElementSibling() != null) {
-          parent = parent.previousElementSibling();
-          if (parent.nodeName().matches("h[1-6]")) {
-            name = parent.child(0).text();
-            break;
-          }
-        }
-
-        if (name != null) {
-          String query = "#" + name + "\n" + link.text();
-          exampleQueriesString.put(query, name);
-          OpenRDFQueryHandler queryHandler = new OpenRDFQueryHandler();
-          queryHandler.setQueryString(query);
-          if (queryHandler.getValidityStatus() != 1) {
-            logger.warn("The example query " + name + " is no valid SPARQL.");
-          } else {
-            exampleQueriesTupleExpr.put(queryHandler.getParsedQuery().getTupleExpr(), name);
-          }
-        } else {
-          logger.error("Could not find header to: " + link.text());
+      Element parent = link.parent();
+      String name = null;
+      while (parent.previousElementSibling() != null) {
+        parent = parent.previousElementSibling();
+        if (parent.nodeName().matches("h[1-6]")) {
+          name = parent.child(0).text();
+          break;
         }
       }
-    } catch (IOException e) {
-      logger.error("Could not connect to wikidata.org", e);
+
+      if (name != null) {
+        String query = "#" + name + "\n" + link.text();
+        exampleQueriesString.put(query, name);
+        OpenRDFQueryHandler queryHandler = new OpenRDFQueryHandler();
+        queryHandler.setQueryString(query);
+        if (queryHandler.getValidityStatus() != 1) {
+          logger.warn("The example query " + name + " is no valid SPARQL.");
+        } else {
+          exampleQueriesTupleExpr.put(queryHandler.getParsedQuery().getTupleExpr(), name);
+        }
+      } else {
+        logger.error("Could not find header to: " + link.text());
+      }
     }
   }
 
