@@ -254,6 +254,18 @@ public class OpenRDFQueryHandler extends QueryHandler
   }
 
   /**
+   * @return the represented query as a ParsedQuery-Object or null if the query was not valid
+   */
+  public final ParsedQuery getParsedQuery()
+  {
+    if (this.getValidityStatus() != 1) {
+      return null;
+    } else {
+      return this.query;
+    }
+  }
+
+  /**
    * Normalizes a given query by:
    * - replacing all wikidata uris at subject and object positions with sub1, sub2 ... (obj1, obj2 ...).
    *
@@ -337,6 +349,19 @@ public class OpenRDFQueryHandler extends QueryHandler
       logger.error("Unexpected error finding prefixes in query " + this.getQueryStringWithoutPrefixes(), e);
       return null;
     }
+  }
+
+  @Override
+  public final String getExampleQueryTupleMatch()
+  {
+    if (this.getValidityStatus() != 1) {
+      return "-1";
+    }
+    String name = Main.exampleQueriesTupleExpr.get(this.query.getTupleExpr());
+    if (name == null) {
+      return "-1";
+    }
+    return name;
   }
 
 }

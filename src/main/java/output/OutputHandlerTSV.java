@@ -64,7 +64,8 @@ public class OutputHandlerTSV extends OutputHandler
     header.add("#Valid");
     header.add("#ToolName");
     header.add("#ToolVersion");
-    header.add("#ExampleQuery");
+    header.add("#ExampleQueryStringComparison");
+    header.add("#ExampleQueryParsedComparison");
     header.add("#StringLengthWithComments");
     header.add("#QuerySize");
     header.add("#VariableCountHead");
@@ -139,7 +140,8 @@ public class OutputHandlerTSV extends OutputHandler
     line.add(queryHandler.getToolName());
     line.add(queryHandler.getToolVersion());
     if (Main.withBots || queryHandler.getToolName().equals("0") || queryHandler.getToolName().equals("USER")) {
-      line.add(queryHandler.getExampleQuery());
+      line.add(queryHandler.getExampleQueryStringMatch());
+      line.add(queryHandler.getExampleQueryTupleMatch());
       line.add(queryHandler.getStringLength());
       line.add(queryHandler.getQuerySize());
       line.add(queryHandler.getVariableCountHead());
@@ -156,7 +158,7 @@ public class OutputHandlerTSV extends OutputHandler
       }
 
     } else {
-      for (int i = 0; i < 9 + SparqlStatisticsCollector.getDefaultMap().size(); i++) {
+      for (int i = 0; i < 10 + SparqlStatisticsCollector.getDefaultMap().size(); i++) {
         line.add(-1);
       }
     }

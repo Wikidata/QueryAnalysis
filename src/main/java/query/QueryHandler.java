@@ -454,16 +454,24 @@ public abstract class QueryHandler
   }
 
   /**
-   * @return The name of the example query this query equals, or -1 if it does not
+   * @return The name of the example query this query equals according to string comparison, or -1 if it does not
    */
-  public final String getExampleQuery()
+  public final String getExampleQueryStringMatch()
   {
-    String name = Main.exampleQueries.get(this.queryString);
+    if (this.getValidityStatus() != 1) {
+      return "-1";
+    }
+    String name = Main.exampleQueriesString.get(this.queryString);
     if (name == null) {
       return "-1";
     }
     return name;
   }
+
+  /**
+   * @return The name of the example query this query equals according to comparison of the parsed query, or -1 if it does not
+   */
+  public abstract String getExampleQueryTupleMatch();
 
   /**
    * @param userAgent The user agent that posed this query.

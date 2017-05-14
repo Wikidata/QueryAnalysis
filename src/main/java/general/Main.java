@@ -77,9 +77,13 @@ public final class Main
    */
   public static final List<String> userAgentRegex = new ArrayList<String>();
   /**
-   * Saves the example queries for query.wikidata.org.
+   * Saves the example queries for query.wikidata.org as strings.
    */
-  public static final Map<String, String> exampleQueries = new HashMap<String, String>();
+  public static final Map<String, String> exampleQueriesString = new HashMap<String, String>();
+  /**
+   * Saves the example queries for query.wikidata.org as TupleExpr.
+   */
+  public static final Map<TupleExpr, String> exampleQueriesTupleExpr = new AccessFrequencyMap<TupleExpr, String>();
   /**
    * Define a static logger variable.
    */
@@ -340,13 +344,21 @@ public final class Main
         }
 
         if (name != null) {
-          exampleQueries.put("#" + name + "\n" + link.text(), name);
+          String query = "#" + name + "\n" + link.text();
+          exampleQueriesString.put(query, name);
+          OpenRDFQueryHandler queryHandler = new OpenRDFQueryHandler();
+          queryHandler.setQueryString(query);
+          if (queryHandler.getValidityStatus() != 1) {
+            logger.warn("The example query " + name + " is no valid SPARQL.");
+          } else {
+            exampleQueriesTupleExpr.put(queryHandler.getParsedQuery().getTupleExpr(), name);
+          }
         } else {
           logger.error("Could not find header to: " + link.text());
         }
       }
     } catch (IOException e) {
-      logger.error("Could not connetct to wikidata.org", e);
+      logger.error("Could not connect to wikidata.org", e);
     }
   }
 
@@ -387,7 +399,7 @@ public final class Main
     File outputFolderFile = new File(outputFolderName);
     FileUtils.deleteQuietly(outputFolderFile);
     outputFolderFile.mkdir();
-    for (Entry<String, String> exampleQuery : exampleQueries.entrySet()) {
+    for (Entry<String, String> exampleQuery : exampleQueriesString.entrySet()) {
 
       try (BufferedWriter bw = new BufferedWriter(new FileWriter(outputFolderName + exampleQuery.getValue() + ".exampleQuery"))) {
         bw.write(exampleQuery.getKey());
