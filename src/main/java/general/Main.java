@@ -346,7 +346,6 @@ public final class Main
         }
       }
     } catch (IOException e) {
-      
       logger.error("Could not connetct to wikidata.org", e);
     }
   }
