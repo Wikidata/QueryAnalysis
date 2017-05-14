@@ -3,7 +3,6 @@ import os
 
 from collections import defaultdict
 from itertools import izip
-from twisted.protocols.policies import LimitTotalConnectionsFactory
 
 processedPrefix = "QueryProcessedOpenRDF"
 sourcePrefix = "queryCnt"
