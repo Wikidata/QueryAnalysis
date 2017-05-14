@@ -1,0 +1,7 @@
+SELECT distinct ?gene ?protein
+WHERE{
+  ?strain wdt:P685 '272561'.
+  ?gene wdt:P2393 'CT_003';
+        wdt:P703 ?strain;
+        wdt:P688 ?protein.
+}

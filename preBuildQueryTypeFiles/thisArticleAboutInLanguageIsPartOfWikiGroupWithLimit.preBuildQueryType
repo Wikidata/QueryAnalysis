@@ -1,0 +1,12 @@
+PREFIX wikibase: <http://wikiba.se/ontology#>
+PREFIX wd: <http://www.wikidata.org/entity/>
+PREFIX schema: <http://schema.org/>
+select ?linkWikiversity
+where {
+  ?linkWikiversity a schema:Article;
+                     schema:about wd:Q14914970;
+                     schema:inLanguage "en";
+                     schema:isPartOf ?wikiversity .
+  ?wikiversity wikibase:wikiGroup "wikiversity" .
+}
+limit 1
