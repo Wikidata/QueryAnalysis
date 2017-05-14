@@ -128,6 +128,7 @@ public final class Main
     //some parameters which can be changed through parameters
     //QueryHandler queryHandler = new OpenRDFQueryHandler();
     String inputFilePrefix;
+    String inputFolder;
     String inputFileSuffix = ".tsv";
     String queryParserName = "OpenRDF";
     Class inputHandlerClass = null;
@@ -163,6 +164,7 @@ public final class Main
       }
       if (cmd.hasOption("file")) {
         inputFilePrefix = cmd.getOptionValue("file").trim();
+        inputFolder = inputFilePrefix.substring(0, inputFilePrefix.lastIndexOf('/') + 1);
       } else {
         System.out.println("Please specify at least the file which we should work on using the option '--file PREFIX' or 'f PREFIX'");
         return;
@@ -215,7 +217,8 @@ public final class Main
       //wait until all workers are finished
     }
 
-    writeQueryTypes(inputFilePrefix);
+    writeQueryTypes(inputFolder);
+    writeExampleQueries(inputFolder);
 
     long stopTime = System.nanoTime();
     long millis = TimeUnit.MILLISECONDS.convert(stopTime - startTime, TimeUnit.NANOSECONDS);
@@ -308,35 +311,6 @@ public final class Main
   }
 
   /**
-   * Writes all found query Types to queryType/queryTypeFiles/.
-   *
-   * @param inputFilePrefix The location of the input data
-   */
-  private static void writeQueryTypes(String inputFilePrefix)
-  {
-    String outputFolderName = inputFilePrefix.substring(0, inputFilePrefix.lastIndexOf('/') + 1) + "queryType/";
-    new File(outputFolderName).mkdir();
-    outputFolderName += "queryTypeFiles/";
-    File outputFolderFile = new File(outputFolderName);
-    if (dynamicQueryTypes) {
-      FileUtils.deleteQuietly(outputFolderFile);
-    }
-    new File(outputFolderName).mkdir();
-    String currentOutputFolderName = outputFolderName;
-    for (Entry<TupleExpr, String> parsedQuery : queryTypes.entrySet()) {
-
-      String queryType = parsedQuery.getValue();
-      try (BufferedWriter bw = new BufferedWriter(new FileWriter(currentOutputFolderName + queryType + ".queryType"))) {
-        bw.write(parsedQuery.getKey().toString());
-      } catch (IOException e) {
-        logger.error("Could not write the query type " + queryType + ".", e);
-      } catch (Exception e) {
-        logger.error("Error while rendering query type " + queryType + ".", e);
-      }
-    }
-  }
-
-  /**
    * Reads the example queries from https://www.wikidata.org/wiki/Wikidata:SPARQL_query_service/queries/examples.
    */
   private static void getExampleQueries()
@@ -344,11 +318,12 @@ public final class Main
     Document doc;
     try {
 
-      doc = Jsoup.connect("https://www.wikidata.org/wiki/Wikidata:SPARQL_query_service/queries/examples")
+      doc = Jsoup.connect("http://www.wikidata.org/wiki/Wikidata:SPARQL_query_service/queries/examples")
           .header("Accept-Encoding", "gzip, deflate")
           .userAgent("SPARQLQueryAnalyser")
           .maxBodySize(0)
           .timeout(600000)
+          .proxy("webproxy.eqiad.wmnet", 8080)
           .get();
 
       Elements links = doc.select("pre");
@@ -372,6 +347,54 @@ public final class Main
       }
     } catch (IOException e) {
       logger.error("Could not connetct to wikidata.org", e);
+    }
+  }
+
+  /**
+   * Writes all found query Types to queryType/queryTypeFiles/.
+   *
+   * @param inputFolder The location of the input data
+   */
+  private static void writeQueryTypes(String inputFolder)
+  {
+    String outputFolderName = inputFolder + "queryType/";
+    new File(outputFolderName).mkdir();
+    outputFolderName += "queryTypeFiles/";
+    File outputFolderFile = new File(outputFolderName);
+    if (dynamicQueryTypes) {
+      FileUtils.deleteQuietly(outputFolderFile);
+    }
+    outputFolderFile.mkdir();
+    for (Entry<TupleExpr, String> parsedQuery : queryTypes.entrySet()) {
+
+      String queryType = parsedQuery.getValue();
+      try (BufferedWriter bw = new BufferedWriter(new FileWriter(outputFolderName + queryType + ".queryType"))) {
+        bw.write(parsedQuery.getKey().toString());
+      } catch (IOException e) {
+        logger.error("Could not write the query type " + queryType + ".", e);
+      }
+    }
+  }
+
+  /**
+   * Writes all the example queries to exampleQueries/.
+   *
+   * @param inputFolder The location of the input data
+   */
+  private static void writeExampleQueries(String inputFolder)
+  {
+    String outputFolderName = inputFolder + "exampleQueries/";
+    File outputFolderFile = new File(outputFolderName);
+    FileUtils.deleteQuietly(outputFolderFile);
+    outputFolderFile.mkdir();
+    for (Entry<String, String> exampleQuery : exampleQueries.entrySet()) {
+
+      try (BufferedWriter bw = new BufferedWriter(new FileWriter(outputFolderName + exampleQuery.getValue() + ".exampleQuery"))) {
+        bw.write(exampleQuery.getKey());
+      }
+      catch (IOException e) {
+        logger.error("Could not write the example query " + exampleQuery.getValue() + ".", e);
+      }
     }
   }
 }
