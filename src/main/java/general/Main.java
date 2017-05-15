@@ -20,7 +20,6 @@ package general;
  */
 
 
-import accessfrequencymap.AccessFrequencyMap;
 import com.univocity.parsers.common.ParsingContext;
 import com.univocity.parsers.common.processor.ObjectRowProcessor;
 import com.univocity.parsers.tsv.TsvParser;
@@ -28,6 +27,8 @@ import com.univocity.parsers.tsv.TsvParserSettings;
 import input.InputHandlerParquet;
 import input.InputHandlerTSV;
 import logging.LoggingHandler;
+import openrdffork.TupleExprWrapper;
+
 import org.apache.commons.cli.*;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Level;
@@ -67,13 +68,13 @@ public final class Main
   /**
    * Saves the encountered queryTypes.
    */
-  public static final Map<TupleExpr, String> queryTypes = Collections.synchronizedMap(new AccessFrequencyMap<TupleExpr, String>());
+  public static final Map<TupleExprWrapper, String> queryTypes = Collections.synchronizedMap(new HashMap<TupleExprWrapper, String>());
   /**
    * Saves the mapping of query type and user agent to tool name and version.
    */
   public static final Map<Tuple2<String, String>, Tuple2<String, String>> queryTypeToToolMapping = new HashMap<>();
   /**
-   * Saves the regular expresions used to identify user queries (via userAgent).
+   * Saves the regular expressions used to identify user queries (via userAgent).
    */
   public static final List<String> userAgentRegex = new ArrayList<String>();
   /**
@@ -83,7 +84,7 @@ public final class Main
   /**
    * Saves the example queries for query.wikidata.org as TupleExpr.
    */
-  public static final Map<TupleExpr, String> exampleQueriesTupleExpr = new AccessFrequencyMap<TupleExpr, String>();
+  public static final Map<TupleExprWrapper, String> exampleQueriesTupleExpr = new HashMap<TupleExprWrapper, String>();
   /**
    * Define a static logger variable.
    */
@@ -251,7 +252,7 @@ public final class Main
             ParsedQuery normalizedPreBuildQuery = queryHandler.getNormalizedQuery();
             String queryTypeName = filePath.toString().substring(filePath.toString().lastIndexOf("/") + 1, filePath.toString().lastIndexOf("."));
             if (normalizedPreBuildQuery != null) {
-              queryTypes.put(normalizedPreBuildQuery.getTupleExpr(), queryTypeName);
+              queryTypes.put(new TupleExprWrapper(normalizedPreBuildQuery.getTupleExpr()), queryTypeName);
             } else {
               logger.info("Pre-build query " + queryTypeName + " could not be parsed.");
             }
@@ -363,7 +364,7 @@ public final class Main
         if (queryHandler.getValidityStatus() != 1) {
           logger.warn("The example query " + name + " is no valid SPARQL.");
         } else {
-          exampleQueriesTupleExpr.put(queryHandler.getParsedQuery().getTupleExpr(), name);
+          exampleQueriesTupleExpr.put(new TupleExprWrapper(queryHandler.getParsedQuery().getTupleExpr()), name);
         }
       } else {
         logger.error("Could not find header to: " + link.text());
@@ -386,7 +387,7 @@ public final class Main
       FileUtils.deleteQuietly(outputFolderFile);
     }
     outputFolderFile.mkdir();
-    for (Entry<TupleExpr, String> parsedQuery : queryTypes.entrySet()) {
+    for (Entry<TupleExprWrapper, String> parsedQuery : queryTypes.entrySet()) {
 
       String queryType = parsedQuery.getValue();
       try (BufferedWriter bw = new BufferedWriter(new FileWriter(outputFolderName + queryType + ".queryType"))) {
