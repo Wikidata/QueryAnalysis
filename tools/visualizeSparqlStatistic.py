@@ -12,7 +12,7 @@ os.chdir(workingDir)
 notStatisticNames = ['#Valid', '#ToolName', '#ToolVersion', '#StringLengthWithComments', '#QuerySize',
                      '#VariableCountHead',
                      '#VariableCountPattern', '#TripleCountWithService', '#TripleCountNoService', '#QueryType', '#QIDs',
-                     '#original_line(filename_line)']
+                     '#original_line(filename_line)', '#ExampleQueryStringComparison', '#ExampleQueryParsedComparison']
 
 statistic = defaultdict(int)
 totalCount = 0
