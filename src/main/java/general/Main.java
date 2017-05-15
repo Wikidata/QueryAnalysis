@@ -325,7 +325,7 @@ public final class Main
 
       doc = Jsoup.connect("http://www.wikidata.org/wiki/Wikidata:SPARQL_query_service/queries/examples")
           .header("Accept-Encoding", "gzip, deflate")
-          .userAgent("SPARQLQueryAnalyser")
+          .userAgent("github.com/Wikidata/QueryAnalysis")
           .maxBodySize(0)
           .proxy("webproxy.eqiad.wmnet", 8080)
           .get();
