@@ -12,13 +12,26 @@ public class TupleExprWrapper
    * The TupleExpr represented by this wrapper.
    */
   private TupleExpr tupleExpr;
+  /**
+   * The hashCode of the represented TupleExpr for performance optimization.
+   */
+  private int tupleExprHashCode;
 
   /**
    * @param tupleExprToSet {@link #tupleExpr}
    */
   public TupleExprWrapper(TupleExpr tupleExprToSet)
   {
-    this.tupleExpr = tupleExprToSet;
+    this.setTupleExpr(tupleExprToSet);
+  }
+
+  private void computeHashCode()
+  {
+    if (this.tupleExpr != null) {
+      this.tupleExprHashCode = getTupleExpr().toString().hashCode();
+    } else {
+      this.tupleExprHashCode = 0;
+    }
   }
 
   /**
@@ -35,6 +48,7 @@ public class TupleExprWrapper
   public void setTupleExpr(TupleExpr tupleExprToSet)
   {
     this.tupleExpr = tupleExprToSet;
+    computeHashCode();
   }
 
   @Override
@@ -46,7 +60,7 @@ public class TupleExprWrapper
   @Override
   public final int hashCode()
   {
-    return this.tupleExpr.toString().hashCode();
+    return this.tupleExprHashCode;
   }
 
   @Override
@@ -59,6 +73,8 @@ public class TupleExprWrapper
     if (getClass() != o.getClass()) return false;
 
     TupleExprWrapper tupleExprWrapper = (TupleExprWrapper) o;
+
+    if (this.hashCode() != tupleExprWrapper.hashCode()) return false;
 
     return this.getTupleExpr().equals(tupleExprWrapper.getTupleExpr());
   }
