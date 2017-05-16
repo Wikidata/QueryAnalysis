@@ -359,7 +359,7 @@ public class OpenRDFQueryHandler extends QueryHandler
     if (this.getValidityStatus() != 1) {
       return "-1";
     }
-    String name = Main.exampleQueriesTupleExpr.get(this.query.getTupleExpr());
+    String name = Main.exampleQueriesTupleExpr.get(new TupleExprWrapper(this.query.getTupleExpr()));
     if (name == null) {
       return "-1";
     }
