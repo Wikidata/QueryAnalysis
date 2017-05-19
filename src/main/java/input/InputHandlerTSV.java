@@ -72,7 +72,12 @@ public class InputHandlerTSV extends InputHandler
         }
         Tuple2<String, Integer> queryTuple = decode(row[0].toString(), inputFile, parsingContext.currentLine());
 
-        outputHandler.writeLine(queryTuple._1, queryTuple._2, row[2].toString(), parsingContext.currentLine(), inputFile);
+        String query = queryTuple._1;
+        Integer validity = queryTuple._2;
+        String user_agent = row[2].toString();
+        Long current_line = parsingContext.currentLine();
+
+        outputHandler.writeLine(query, validity, user_agent, current_line, inputFile);
       }
     };
 
