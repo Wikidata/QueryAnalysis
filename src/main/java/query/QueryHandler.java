@@ -515,16 +515,16 @@ public abstract class QueryHandler
    */
   private void computeqIDString()
   {
-    if (qIDs == null) {
+    if (getqIDs() == null) {
       this.qIDString = "D";
       return;
     }
-    if (qIDs.size() == 0) {
+    if (getqIDs().size() == 0) {
       this.qIDString = "D";
       return;
     }
     String qIDString = "";
-    for (String qID : qIDs) {
+    for (String qID : getqIDs()) {
       qIDString += qID + ",";
     }
     this.qIDString = qIDString.substring(0, qIDString.lastIndexOf(","));
