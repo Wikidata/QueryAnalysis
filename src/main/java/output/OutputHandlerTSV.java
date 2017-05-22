@@ -74,6 +74,7 @@ public class OutputHandlerTSV extends OutputHandler
     header.add("#TripleCountNoService");
     header.add("#QueryType");
     header.add("#QIDs");
+    header.add("#PIDs");
 
     //add all sparqlStatisticNodes
     for (String sparqlStatisticFeature : SparqlStatisticsCollector.getDefaultMap().keySet()) {
@@ -150,6 +151,7 @@ public class OutputHandlerTSV extends OutputHandler
       line.add(-1);
       line.add(queryHandler.getQueryType());
       line.add(queryHandler.getqIDString());
+      line.add(queryHandler.getpIDString());
 
       Map<String, Integer> sparqlStatistics = queryHandler.getSparqlStatistics();
       //add all sparqlStatisticNodes

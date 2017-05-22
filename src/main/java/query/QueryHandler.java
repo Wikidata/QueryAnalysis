@@ -34,7 +34,11 @@ public abstract class QueryHandler
    */
   protected Set<String> qIDs;
   /**
-   * Kind of the complexity of the query
+   * The P-IDs used in this query.
+   */
+  protected Set<String> pIDs;
+  /**
+   * Kind of the complexity of the query.
    */
   protected Integer querySize = null;
   /**
@@ -114,11 +118,15 @@ public abstract class QueryHandler
    * The Q-IDs as a string of comma separated values.
    */
   private String qIDString = null;
+  /**
+   * The P-IDs as a string of comma separated values.
+   */
+  private String pIDString = null;
 
   /**
    *
    */
-  public QueryHandler()
+   public QueryHandler()
   {
     this.queryString = "";
     this.validityStatus = 0;
@@ -539,5 +547,66 @@ public abstract class QueryHandler
       this.computeqIDString();
     }
     return this.qIDString;
+  }
+
+  //test
+  /**
+   * @return The P-IDs contained in this query
+   */
+  public Set<String> getpIDs()
+  {
+    if (queryType.equals("-1") && pIDs == null) {
+      try {
+        this.computeQueryType();
+      } catch (IllegalStateException e) {
+        return null;
+      }
+    }
+    return pIDs;
+  }
+
+  /**
+   * Sets the P-IDs, removing http://www.wikidata.org/entity/ if necessary.
+   *
+   * @param pIDstoSet the P-IDs to set
+   */
+  protected void setpIDs(Set<String> pIDstoSet)
+  {
+    pIDs = new HashSet<String>();
+    for (String pID : pIDstoSet) {
+      pIDs.add(pID.replaceAll("http://www.wikidata.org/prop/direct/", ""));
+    }
+  }
+
+  /**
+   * Computes the P-IDs as a string of comma separated values.
+   * Useful for caching.
+   */
+  private void computepIDString()
+  {
+    if (getpIDs() == null) {
+      this.pIDString = "D";
+      return;
+    }
+    if (getpIDs().size() == 0) {
+      this.pIDString = "D";
+      return;
+    }
+    String pIDString = "";
+    for (String pID : getpIDs()) {
+      pIDString += pID + ",";
+    }
+    this.pIDString = pIDString.substring(0, pIDString.lastIndexOf(","));
+  }
+
+  /**
+   * @return the P-IDs as a string of comma separated values.
+   */
+  public String getpIDString()
+  {
+    if (this.pIDString == null) {
+      this.computepIDString();
+    }
+    return this.pIDString;
   }
 }

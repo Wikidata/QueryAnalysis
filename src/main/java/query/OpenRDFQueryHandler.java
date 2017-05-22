@@ -281,6 +281,7 @@ public class OpenRDFQueryHandler extends QueryHandler
     ParsedQuery normalizedQuery = new StandardizingSPARQLParser().parseNormalizeQuery(queryToNormalize.getSourceString(), BASE_URI);
 
     final Map<String, Integer> strings = new HashMap<>();
+    final Map<String, Integer> pIDs = new HashMap<String, Integer>();
 
     normalizedQuery.getTupleExpr().visit(new QueryModelVisitorBase<VisitorException>()
     {
@@ -290,6 +291,8 @@ public class OpenRDFQueryHandler extends QueryHandler
       {
         statementPattern.setSubjectVar(normalizeHelper(statementPattern.getSubjectVar(), strings));
         statementPattern.setObjectVar(normalizeHelper(statementPattern.getObjectVar(), strings));
+
+        normalizeHelper(statementPattern.getPredicateVar(), pIDs);
       }
     });
     normalizedQuery.getTupleExpr().visit(new QueryModelVisitorBase<VisitorException>()
@@ -303,6 +306,7 @@ public class OpenRDFQueryHandler extends QueryHandler
       }
     });
     this.setqIDs(strings.keySet());
+    this.setpIDs(pIDs.keySet());
     return normalizedQuery;
   }
 
