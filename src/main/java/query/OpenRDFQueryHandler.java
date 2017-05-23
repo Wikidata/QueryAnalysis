@@ -2,6 +2,8 @@ package query;
 
 import general.Main;
 import openrdffork.StandardizingSPARQLParser;
+import openrdffork.TupleExprWrapper;
+
 import org.apache.log4j.Logger;
 import org.openrdf.model.Value;
 import org.openrdf.model.impl.URIImpl;
@@ -223,15 +225,15 @@ public class OpenRDFQueryHandler extends QueryHandler
 
     synchronized (Main.queryTypes) {
 
-      String result = Main.queryTypes.get(normalizedQuery.getTupleExpr());
+      String result = Main.queryTypes.get(new TupleExprWrapper(normalizedQuery.getTupleExpr()));
       if (result != null) {
         this.queryType = result;
         return;
       }
 
       if (Main.dynamicQueryTypes) {
-        Main.queryTypes.put(normalizedQuery.getTupleExpr(), String.valueOf(Main.queryTypes.size()));
-        this.queryType = Main.queryTypes.get(normalizedQuery.getTupleExpr());
+        Main.queryTypes.put(new TupleExprWrapper(normalizedQuery.getTupleExpr()), String.valueOf(normalizedQuery.getTupleExpr().toString().hashCode()));
+        this.queryType = Main.queryTypes.get(new TupleExprWrapper(normalizedQuery.getTupleExpr()));
       } else {
         this.queryType = "-1";
       }
@@ -357,7 +359,7 @@ public class OpenRDFQueryHandler extends QueryHandler
     if (this.getValidityStatus() != 1) {
       return "-1";
     }
-    String name = Main.exampleQueriesTupleExpr.get(this.query.getTupleExpr());
+    String name = Main.exampleQueriesTupleExpr.get(new TupleExprWrapper(this.query.getTupleExpr()));
     if (name == null) {
       return "-1";
     }
