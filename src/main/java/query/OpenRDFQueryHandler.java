@@ -2,6 +2,8 @@ package query;
 
 import general.Main;
 import openrdffork.StandardizingSPARQLParser;
+import openrdffork.TupleExprWrapper;
+
 import org.apache.log4j.Logger;
 import org.openrdf.model.Value;
 import org.openrdf.model.impl.URIImpl;
@@ -223,15 +225,15 @@ public class OpenRDFQueryHandler extends QueryHandler
 
     synchronized (Main.queryTypes) {
 
-      String result = Main.queryTypes.get(normalizedQuery.getTupleExpr());
+      String result = Main.queryTypes.get(new TupleExprWrapper(normalizedQuery.getTupleExpr()));
       if (result != null) {
         this.queryType = result;
         return;
       }
 
       if (Main.dynamicQueryTypes) {
-        Main.queryTypes.put(normalizedQuery.getTupleExpr(), String.valueOf(Main.queryTypes.size()));
-        this.queryType = Main.queryTypes.get(normalizedQuery.getTupleExpr());
+        Main.queryTypes.put(new TupleExprWrapper(normalizedQuery.getTupleExpr()), String.valueOf(normalizedQuery.getTupleExpr().toString().hashCode()));
+        this.queryType = Main.queryTypes.get(new TupleExprWrapper(normalizedQuery.getTupleExpr()));
       } else {
         this.queryType = "-1";
       }
@@ -279,6 +281,7 @@ public class OpenRDFQueryHandler extends QueryHandler
     ParsedQuery normalizedQuery = new StandardizingSPARQLParser().parseNormalizeQuery(queryToNormalize.getSourceString(), BASE_URI);
 
     final Map<String, Integer> strings = new HashMap<>();
+    final Map<String, Integer> pIDs = new HashMap<String, Integer>();
 
     normalizedQuery.getTupleExpr().visit(new QueryModelVisitorBase<VisitorException>()
     {
@@ -288,6 +291,8 @@ public class OpenRDFQueryHandler extends QueryHandler
       {
         statementPattern.setSubjectVar(normalizeHelper(statementPattern.getSubjectVar(), strings));
         statementPattern.setObjectVar(normalizeHelper(statementPattern.getObjectVar(), strings));
+
+        normalizeHelper(statementPattern.getPredicateVar(), pIDs);
       }
     });
     normalizedQuery.getTupleExpr().visit(new QueryModelVisitorBase<VisitorException>()
@@ -301,6 +306,7 @@ public class OpenRDFQueryHandler extends QueryHandler
       }
     });
     this.setqIDs(strings.keySet());
+    this.setpIDs(pIDs.keySet());
     return normalizedQuery;
   }
 
@@ -318,37 +324,20 @@ public class OpenRDFQueryHandler extends QueryHandler
       if (value != null) {
         if (value.getClass().equals(URIImpl.class)) {
           String subjectString = value.stringValue();
-          if (subjectString.startsWith("http://www.wikidata.org/")) {
-            if (!foundNames.containsKey(subjectString)) {
-              foundNames.put(subjectString, foundNames.size() + 1);
+          for (String uriPrefix : Main.prefixes.values()) {
+            if (subjectString.startsWith(uriPrefix)) {
+              if (!foundNames.containsKey(subjectString)) {
+                foundNames.put(subjectString, foundNames.size() + 1);
+              }
+              String uri = subjectString.substring(0, subjectString.lastIndexOf("/")) + "/QName" + foundNames.get(subjectString);
+              String name = "-const-" + uri + "-uri";
+              return new Var(name, new URIImpl(uri));
             }
-            String uri = subjectString.substring(0, subjectString.lastIndexOf("/")) + "/QName" + foundNames.get(subjectString);
-            String name = "-const-" + uri + "-uri";
-            return new Var(name, new URIImpl(uri));
           }
         }
       }
     }
     return var;
-  }
-
-  /**
-   * @return The prefixed defined in the original query represented by this handler.
-   */
-  private Map<String, String> getOriginalPrefixes()
-  {
-    if (this.getValidityStatus() == -1) {
-      return null;
-    }
-    try {
-      ASTQueryContainer qc = SyntaxTreeBuilder.parseQuery(this.getQueryStringWithoutPrefixes());
-      StringEscapesProcessor.process(qc);
-      BaseDeclProcessor.process(qc, BASE_URI);
-      return PrefixDeclProcessor.process(qc);
-    } catch (TokenMgrError | ParseException | MalformedQueryException e) {
-      logger.error("Unexpected error finding prefixes in query " + this.getQueryStringWithoutPrefixes(), e);
-      return null;
-    }
   }
 
   @Override
@@ -357,7 +346,7 @@ public class OpenRDFQueryHandler extends QueryHandler
     if (this.getValidityStatus() != 1) {
       return "-1";
     }
-    String name = Main.exampleQueriesTupleExpr.get(this.query.getTupleExpr());
+    String name = Main.exampleQueriesTupleExpr.get(new TupleExprWrapper(this.query.getTupleExpr()));
     if (name == null) {
       return "-1";
     }

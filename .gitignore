@@ -44,8 +44,9 @@ fabric.properties
 test/
 !test/java*
 
-#but allow preBuildQueryConfig
+#but allow preBuildQueryConfig and prefixConfig
 !toolMapping.tsv
+!standardPrefixes.tsv
 
 #error logs
 /logs/

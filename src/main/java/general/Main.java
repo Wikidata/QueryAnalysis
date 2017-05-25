@@ -20,7 +20,8 @@ package general;
  */
 
 
-import accessfrequencymap.AccessFrequencyMap;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 import com.univocity.parsers.common.ParsingContext;
 import com.univocity.parsers.common.processor.ObjectRowProcessor;
 import com.univocity.parsers.tsv.TsvParser;
@@ -28,7 +29,10 @@ import com.univocity.parsers.tsv.TsvParserSettings;
 import input.InputHandlerParquet;
 import input.InputHandlerTSV;
 import logging.LoggingHandler;
+import openrdffork.TupleExprWrapper;
+
 import org.apache.commons.cli.*;
+import org.apache.commons.collections.BidiMap;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -67,13 +71,13 @@ public final class Main
   /**
    * Saves the encountered queryTypes.
    */
-  public static final Map<TupleExpr, String> queryTypes = Collections.synchronizedMap(new AccessFrequencyMap<TupleExpr, String>());
+  public static final Map<TupleExprWrapper, String> queryTypes = Collections.synchronizedMap(new HashMap<TupleExprWrapper, String>());
   /**
    * Saves the mapping of query type and user agent to tool name and version.
    */
   public static final Map<Tuple2<String, String>, Tuple2<String, String>> queryTypeToToolMapping = new HashMap<>();
   /**
-   * Saves the regular expresions used to identify user queries (via userAgent).
+   * Saves the regular expressions used to identify user queries (via userAgent).
    */
   public static final List<String> userAgentRegex = new ArrayList<String>();
   /**
@@ -83,7 +87,11 @@ public final class Main
   /**
    * Saves the example queries for query.wikidata.org as TupleExpr.
    */
-  public static final Map<TupleExpr, String> exampleQueriesTupleExpr = new AccessFrequencyMap<TupleExpr, String>();
+  public static final Map<TupleExprWrapper, String> exampleQueriesTupleExpr = new HashMap<TupleExprWrapper, String>();
+  /**
+   * Saves the standard prefixes.
+   */
+  public static final BiMap<String, String> prefixes = HashBiMap.create();
   /**
    * Define a static logger variable.
    */
@@ -202,6 +210,7 @@ public final class Main
 
     LoggingHandler.initConsoleLog();
 
+    loadStandardPrefixes();
     loadPreBuildQueryTypes();
     loadUserAgentRegex();
     getExampleQueries();
@@ -231,6 +240,52 @@ public final class Main
   }
 
   /**
+   * Loads all standard prefixes.
+   */
+  private static void loadStandardPrefixes()
+  {
+    TsvParserSettings parserSettings = new TsvParserSettings();
+    parserSettings.setLineSeparatorDetectionEnabled(true);
+    parserSettings.setHeaderExtractionEnabled(true);
+    parserSettings.setSkipEmptyLines(true);
+    parserSettings.setReadInputOnSeparateThread(true);
+
+    ObjectRowProcessor rowProcessor = new ObjectRowProcessor()
+    {
+      @Override
+      public void rowProcessed(Object[] row, ParsingContext parsingContext)
+      {
+        if (row.length <= 1) {
+          logger.warn("Ignoring line without tab while parsing.");
+          return;
+        }
+        if (row.length == 2) {
+          try {
+            prefixes.put(row[0].toString(), row[1].toString());
+          } catch (IllegalArgumentException e) {
+            logger.error("Prefix or uri for standard prefixes defined multiple times", e);
+          }
+          return;
+        }
+        logger.warn("Line with row length " + row.length + " found. Is the formatting of toolMapping.tsv correct?");
+        return;
+      }
+
+    };
+
+    parserSettings.setProcessor(rowProcessor);
+
+    TsvParser parser = new TsvParser(parserSettings);
+
+    try {
+      parser.parse(new InputStreamReader(new FileInputStream("parserSettings/standardPrefixes.tsv")));
+    }
+    catch (FileNotFoundException e) {
+      logger.error("Could not open configuration file for standard prefixes.", e);
+    }
+  }
+
+  /**
    * Loads all pre-build query types.
    */
   private static void loadPreBuildQueryTypes()
@@ -251,7 +306,7 @@ public final class Main
             ParsedQuery normalizedPreBuildQuery = queryHandler.getNormalizedQuery();
             String queryTypeName = filePath.toString().substring(filePath.toString().lastIndexOf("/") + 1, filePath.toString().lastIndexOf("."));
             if (normalizedPreBuildQuery != null) {
-              queryTypes.put(normalizedPreBuildQuery.getTupleExpr(), queryTypeName);
+              queryTypes.put(new TupleExprWrapper(normalizedPreBuildQuery.getTupleExpr()), queryTypeName);
             } else {
               logger.info("Pre-build query " + queryTypeName + " could not be parsed.");
             }
@@ -320,7 +375,7 @@ public final class Main
   private static void getExampleQueries()
   {
     Document doc;
-    // Not an ideal solution since it duplicates code, but I have not yet found a way to either set a fallback (no proxy)
+    // Not an ideal solution since it duplicates code, but I have not yet found a way to set a fallback (no proxy)
     try {
 
       doc = Jsoup.connect("http://www.wikidata.org/wiki/Wikidata:SPARQL_query_service/queries/examples")
@@ -363,7 +418,7 @@ public final class Main
         if (queryHandler.getValidityStatus() != 1) {
           logger.warn("The example query " + name + " is no valid SPARQL.");
         } else {
-          exampleQueriesTupleExpr.put(queryHandler.getParsedQuery().getTupleExpr(), name);
+          exampleQueriesTupleExpr.put(new TupleExprWrapper(queryHandler.getParsedQuery().getTupleExpr()), name);
         }
       } else {
         logger.error("Could not find header to: " + link.text());
@@ -386,7 +441,7 @@ public final class Main
       FileUtils.deleteQuietly(outputFolderFile);
     }
     outputFolderFile.mkdir();
-    for (Entry<TupleExpr, String> parsedQuery : queryTypes.entrySet()) {
+    for (Entry<TupleExprWrapper, String> parsedQuery : queryTypes.entrySet()) {
 
       String queryType = parsedQuery.getValue();
       try (BufferedWriter bw = new BufferedWriter(new FileWriter(outputFolderName + queryType + ".queryType"))) {
