@@ -4,10 +4,19 @@ import os
 from collections import defaultdict
 from itertools import izip
 
+def listToString(list):
+    returnString = ""
+    for entry in list:
+        returnString += entry + ","
+    return returnString[:-1]
+
 processedPrefix = "QueryProcessedOpenRDF"
 sourcePrefix = "queryCnt"
 
-metrics = ['ToolName']
+# Set if you only want to rank ID-Combinations with a specific number of IDs, default ranks all.
+idCombinations = 0
+
+metrics = ['PIDs']
 for metric in metrics:
     print "Working on " + metric
     
@@ -35,20 +44,28 @@ for metric in metrics:
                     continue
     
                 key = processed['#' + metric]
+                
+                # Sort the entries in PIDs and QIDs to even out the count 
+                if metric == "PIDs" or metric == "QIDs":
+                    keys_array = sorted(key.split(","))
+                    if idCombinations == 0 or len(keys_array) == idCombinations:
+                        key = listToString(keys_array)
+                    else:
+                        continue
     
                 dailyCount += 1
                 dailyMetricCounts[key] += 1 
                 
             totalCount += dailyCount
     
-        with open(pathBase + "/Day" + "%02d" % i + pathBase + ".tsv", "w") as dailyfile:
+        with open(pathBase + "/Day" + "%02d" % i + pathBase + "_Ranking.tsv", "w") as dailyfile:
             dailyfile.write(header)
             for k, v in sorted(dailyMetricCounts.iteritems(), key=lambda (k, v): (v, k), reverse=True):
                 totalMetricCounts[k] += v
                 percentage = float(v) / dailyCount * 100
                 dailyfile.write(str(k) + "\t" + str(v) + "\t" + str(percentage) + "\n")
     
-    with open(pathBase + "/" + "Total" + pathBase + ".tsv", "w") as totalfile:
+    with open(pathBase + "/" + "Total" + pathBase + "_Ranking.tsv", "w") as totalfile:
         totalfile.write(header)
         for k, v in sorted(totalMetricCounts.iteritems(), key=lambda (k, v): (v, k), reverse=True):
             percentage = float(v) / totalCount * 100

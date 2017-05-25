@@ -4,8 +4,14 @@ import general.Main;
 import org.apache.log4j.Logger;
 import scala.Tuple2;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 /**
@@ -34,7 +40,11 @@ public abstract class QueryHandler
    */
   protected Set<String> qIDs;
   /**
-   * Kind of the complexity of the query
+   * The P-IDs used in this query.
+   */
+  protected Set<String> pIDs;
+  /**
+   * Kind of the complexity of the query.
    */
   protected Integer querySize = null;
   /**
@@ -114,11 +124,15 @@ public abstract class QueryHandler
    * The Q-IDs as a string of comma separated values.
    */
   private String qIDString = null;
+  /**
+   * The P-IDs as a string of comma separated values.
+   */
+  private String pIDString = null;
 
   /**
    *
    */
-  public QueryHandler()
+   public QueryHandler()
   {
     this.queryString = "";
     this.validityStatus = 0;
@@ -480,6 +494,51 @@ public abstract class QueryHandler
   {
     this.userAgent = userAgent;
   }
+  /**
+   * @param anyIDstoSet A set with IDs with explicit URIs
+   * @return The set with all URIs from Main.prefixes
+   */
+  private Set<String> setAnyIDs(Set<String> anyIDstoSet)
+  {
+    Set<String> anyIDs = new HashSet<String>();
+    for (String anyID : anyIDstoSet) {
+      List<Map.Entry<String, String>> prefixList = new ArrayList<Map.Entry<String, String>>(Main.prefixes.entrySet());
+      Collections.sort(prefixList, new Comparator<Map.Entry<String, String>>() {
+
+        @Override
+        public int compare(Entry<String, String> arg0, Entry<String, String> arg1)
+        {
+          return Integer.valueOf(arg1.getValue().length()).compareTo(Integer.valueOf(arg0.getValue().length()));
+        }
+      });
+      for (Map.Entry<String, String> entry : prefixList) {
+        if (anyID.startsWith(entry.getValue())) {
+          anyIDs.add(anyID.replaceFirst(entry.getValue(), entry.getKey() + ":"));
+          break;
+        }
+      }
+    }
+    return anyIDs;
+  }
+
+  /**
+   * @param anyIDstoString The set that should be converted into a string.
+   * @return The IDs as a string of comma separated values.
+   */
+  private String computeAnyIDString(Set<String> anyIDstoString)
+  {
+    if (anyIDstoString == null) {
+      return "D";
+    }
+    if (anyIDstoString.size() == 0) {
+      return "D";
+    }
+    String anyIDStringToReturn = "";
+    for (String anyID : anyIDstoString) {
+      anyIDStringToReturn += anyID + ",";
+    }
+    return anyIDStringToReturn.substring(0, anyIDStringToReturn.lastIndexOf(","));
+  }
 
   /**
    * @return The Q-IDs contained in this query
@@ -497,16 +556,13 @@ public abstract class QueryHandler
   }
 
   /**
-   * Sets the Q-IDs, removing http://www.wikidata.org/entity/ if necessary.
+   * Sets the Q-IDs, replacing URIs with default prefixes.
    *
    * @param qIDstoSet the Q-IDs to set
    */
   protected void setqIDs(Set<String> qIDstoSet)
   {
-    qIDs = new HashSet<String>();
-    for (String qID : qIDstoSet) {
-      qIDs.add(qID.replaceAll("http://www.wikidata.org/entity/", ""));
-    }
+    this.qIDs = setAnyIDs(qIDstoSet);
   }
 
   /**
@@ -515,19 +571,7 @@ public abstract class QueryHandler
    */
   private void computeqIDString()
   {
-    if (qIDs == null) {
-      this.qIDString = "D";
-      return;
-    }
-    if (qIDs.size() == 0) {
-      this.qIDString = "D";
-      return;
-    }
-    String qIDString = "";
-    for (String qID : qIDs) {
-      qIDString += qID + ",";
-    }
-    this.qIDString = qIDString.substring(0, qIDString.lastIndexOf(","));
+    this.qIDString = computeAnyIDString(getqIDs());
   }
 
   /**
@@ -539,5 +583,50 @@ public abstract class QueryHandler
       this.computeqIDString();
     }
     return this.qIDString;
+  }
+
+  /**
+   * @return The P-IDs contained in this query
+   */
+  public Set<String> getpIDs()
+  {
+    if (queryType.equals("-1") && pIDs == null) {
+      try {
+        this.computeQueryType();
+      } catch (IllegalStateException e) {
+        return null;
+      }
+    }
+    return pIDs;
+  }
+
+  /**
+   * Sets the P-IDs, replacing URIs with default prefixes.
+   *
+   * @param pIDstoSet the P-IDs to set
+   */
+  protected void setpIDs(Set<String> pIDstoSet)
+  {
+    this.pIDs = setAnyIDs(pIDstoSet);
+  }
+
+  /**
+   * Computes the P-IDs as a string of comma separated values.
+   * Useful for caching.
+   */
+  private void computepIDString()
+  {
+    this.pIDString = computeAnyIDString(getpIDs());
+  }
+
+  /**
+   * @return the P-IDs as a string of comma separated values.
+   */
+  public String getpIDString()
+  {
+    if (this.pIDString == null) {
+      this.computepIDString();
+    }
+    return this.pIDString;
   }
 }

@@ -20,6 +20,8 @@ package general;
  */
 
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 import com.univocity.parsers.common.ParsingContext;
 import com.univocity.parsers.common.processor.ObjectRowProcessor;
 import com.univocity.parsers.tsv.TsvParser;
@@ -30,6 +32,7 @@ import logging.LoggingHandler;
 import openrdffork.TupleExprWrapper;
 
 import org.apache.commons.cli.*;
+import org.apache.commons.collections.BidiMap;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -85,6 +88,10 @@ public final class Main
    * Saves the example queries for query.wikidata.org as TupleExpr.
    */
   public static final Map<TupleExprWrapper, String> exampleQueriesTupleExpr = new HashMap<TupleExprWrapper, String>();
+  /**
+   * Saves the standard prefixes.
+   */
+  public static final BiMap<String, String> prefixes = HashBiMap.create();
   /**
    * Define a static logger variable.
    */
@@ -203,6 +210,7 @@ public final class Main
 
     LoggingHandler.initConsoleLog();
 
+    loadStandardPrefixes();
     loadPreBuildQueryTypes();
     loadUserAgentRegex();
     getExampleQueries();
@@ -229,6 +237,52 @@ public final class Main
     long millis = TimeUnit.MILLISECONDS.convert(stopTime - startTime, TimeUnit.NANOSECONDS);
     Date date = new Date(millis);
     System.out.println("Finished executing with all threads: " + new SimpleDateFormat("mm-dd HH:mm:ss:SSSSSSS").format(date));
+  }
+
+  /**
+   * Loads all standard prefixes.
+   */
+  private static void loadStandardPrefixes()
+  {
+    TsvParserSettings parserSettings = new TsvParserSettings();
+    parserSettings.setLineSeparatorDetectionEnabled(true);
+    parserSettings.setHeaderExtractionEnabled(true);
+    parserSettings.setSkipEmptyLines(true);
+    parserSettings.setReadInputOnSeparateThread(true);
+
+    ObjectRowProcessor rowProcessor = new ObjectRowProcessor()
+    {
+      @Override
+      public void rowProcessed(Object[] row, ParsingContext parsingContext)
+      {
+        if (row.length <= 1) {
+          logger.warn("Ignoring line without tab while parsing.");
+          return;
+        }
+        if (row.length == 2) {
+          try {
+            prefixes.put(row[0].toString(), row[1].toString());
+          } catch (IllegalArgumentException e) {
+            logger.error("Prefix or uri for standard prefixes defined multiple times", e);
+          }
+          return;
+        }
+        logger.warn("Line with row length " + row.length + " found. Is the formatting of toolMapping.tsv correct?");
+        return;
+      }
+
+    };
+
+    parserSettings.setProcessor(rowProcessor);
+
+    TsvParser parser = new TsvParser(parserSettings);
+
+    try {
+      parser.parse(new InputStreamReader(new FileInputStream("parserSettings/standardPrefixes.tsv")));
+    }
+    catch (FileNotFoundException e) {
+      logger.error("Could not open configuration file for standard prefixes.", e);
+    }
   }
 
   /**
@@ -321,7 +375,7 @@ public final class Main
   private static void getExampleQueries()
   {
     Document doc;
-    // Not an ideal solution since it duplicates code, but I have not yet found a way to either set a fallback (no proxy)
+    // Not an ideal solution since it duplicates code, but I have not yet found a way to set a fallback (no proxy)
     try {
 
       doc = Jsoup.connect("http://www.wikidata.org/wiki/Wikidata:SPARQL_query_service/queries/examples")

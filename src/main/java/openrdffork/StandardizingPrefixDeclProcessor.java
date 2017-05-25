@@ -5,6 +5,8 @@ import org.openrdf.query.parser.sparql.ASTVisitorBase;
 import org.openrdf.query.parser.sparql.PrefixDeclProcessor;
 import org.openrdf.query.parser.sparql.ast.*;
 
+import general.Main;
+
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,38 +51,9 @@ public class StandardizingPrefixDeclProcessor extends PrefixDeclProcessor
     }
 
     // insert some default prefixes (if not explicitly defined in the query)
-    insertDefaultPrefix(prefixMap, "hint", "http://www.bigdata.com/queryHints#");
-    insertDefaultPrefix(prefixMap, "hint", "http://www.bigdata.com/queryHints#");
-    insertDefaultPrefix(prefixMap, "gas", "http://www.bigdata.com/rdf/gas#");
-    insertDefaultPrefix(prefixMap, "bds", "http://www.bigdata.com/rdf/search#");
-    insertDefaultPrefix(prefixMap, "bd", "http://www.bigdata.com/rdf#");
-    insertDefaultPrefix(prefixMap, "schema", "http://schema.org/");
-    insertDefaultPrefix(prefixMap, "cc", "http://creativecommons.org/ns#");
-    insertDefaultPrefix(prefixMap, "geo", "http://www.opengis.net/ont/geosparql#");
-    insertDefaultPrefix(prefixMap, "prov", "http://www.w3.org/ns/prov#");
-    insertDefaultPrefix(prefixMap, "xsd", "http://www.w3.org/2001/XMLSchema#");
-    insertDefaultPrefix(prefixMap, "skos", "http://www.w3.org/2004/02/skos/core#");
-    insertDefaultPrefix(prefixMap, "owl", "http://www.w3.org/2002/07/owl#");
-    insertDefaultPrefix(prefixMap, "rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#");
-    insertDefaultPrefix(prefixMap, "rdfs", "http://www.w3.org/2000/01/rdf-schema#");
-    insertDefaultPrefix(prefixMap, "wdata", "http://www.wikidata.org/wiki/Special:EntityData/");
-    insertDefaultPrefix(prefixMap, "wdno", "http://www.wikidata.org/prop/novalue/");
-    insertDefaultPrefix(prefixMap, "prn", "http://www.wikidata.org/prop/reference/value-normalized/");
-    insertDefaultPrefix(prefixMap, "prv", "http://www.wikidata.org/prop/reference/value/");
-    insertDefaultPrefix(prefixMap, "pr", "http://www.wikidata.org/prop/reference/");
-    insertDefaultPrefix(prefixMap, "pqn", "http://www.wikidata.org/prop/qualifier/value-normalized/");
-    insertDefaultPrefix(prefixMap, "pqv", "http://www.wikidata.org/prop/qualifier/value/");
-    insertDefaultPrefix(prefixMap, "pq", "http://www.wikidata.org/prop/qualifier/");
-    insertDefaultPrefix(prefixMap, "psn", "http://www.wikidata.org/prop/statement/value-normalized/");
-    insertDefaultPrefix(prefixMap, "psv", "http://www.wikidata.org/prop/statement/value/");
-    insertDefaultPrefix(prefixMap, "ps", "http://www.wikidata.org/prop/statement/");
-    insertDefaultPrefix(prefixMap, "wdv", "http://www.wikidata.org/value/");
-    insertDefaultPrefix(prefixMap, "wdref", "http://www.wikidata.org/reference/");
-    insertDefaultPrefix(prefixMap, "p", "http://www.wikidata.org/prop/");
-    insertDefaultPrefix(prefixMap, "wds", "http://www.wikidata.org/entity/statement/");
-    insertDefaultPrefix(prefixMap, "wdt", "http://www.wikidata.org/prop/direct/");
-    insertDefaultPrefix(prefixMap, "wd", "http://www.wikidata.org/entity/");
-    insertDefaultPrefix(prefixMap, "wikibase", "http://wikiba.se/ontology#");
+    for (Map.Entry<String, String> entry : Main.prefixes.entrySet()) {
+      insertDefaultPrefix(prefixMap, entry.getKey(), entry.getValue());
+    }
 
     ASTUnparsedQuadDataBlock dataBlock = null;
     if (qc.getOperation() instanceof ASTInsertData) {
