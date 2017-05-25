@@ -22,9 +22,10 @@ processedPrefix = "QueryProcessedOpenRDF"
 sourcePrefix = "queryCnt"
 
 pathBase = "PIDs"
+pathSuffix = "Combinations"
 
-if not os.path.exists(pathBase):
-    os.makedirs(pathBase)
+if not os.path.exists(pathBase + pathSuffix):
+    os.makedirs(pathBase + pathSuffix)
     
 monthlyFieldValues = set()
 
@@ -61,8 +62,8 @@ for i in xrange(1, 2):
                     dailyData[key][match] += 1
                     monthlyData[key][match] += 1
                     
-    with open(pathBase + "/" + "Day" + "%02d" % i + pathBase + ".tsv", "w") as dailyfile:
+    with open(pathBase + pathSuffix + "/" + "Day" + "%02d" % i + pathBase + ".tsv", "w") as dailyfile:
         writeOut(dailyFieldValues, dailyfile, dailyData)
 
-with open(pathBase + "/" + "Total" + pathBase + ".tsv", "w") as monthlyfile:
+with open(pathBase + pathSuffix + "/" + "Total" + pathBase + ".tsv", "w") as monthlyfile:
     writeOut(monthlyFieldValues, monthlyfile, monthlyData)
