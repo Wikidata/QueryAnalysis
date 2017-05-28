@@ -8,7 +8,7 @@ from itertools import izip
 processedPrefix = "QueryProcessedOpenRDF"
 sourcePrefix = "queryCnt"
 
-TopN = 10
+TopN = 20
 
 pathBase = "QueryType"
 subfolder = pathBase + "/exampleQueries"
@@ -36,9 +36,11 @@ for i in xrange(1, 2):
             if topNQueryTypes.__contains__(queryType):
                 d = dict(urlparse.parse_qsl(urlparse.urlsplit(source['uri_query']).query))
                 if queryType.startswith("-"):
-                    queryType = queryType.replace("-", "MINUS", 1)
+                    queryTypeName = queryType.replace("-", "MINUS", 1)
+                else:
+                    queryTypeName = queryType
                 if 'query' in d.keys():
-                    with open(subfolder + "/" + queryType + ".exampleQuery", "w") as queryFile:
+                    with open(subfolder + "/" + queryTypeName + ".example", "w") as queryFile:
                         queryFile.write(d['query'])
                     topNQueryTypes.remove(queryType)
                 else:
