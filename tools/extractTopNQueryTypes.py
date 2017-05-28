@@ -35,6 +35,8 @@ for i in xrange(1, 2):
             queryType = processed["#QueryType"]
             if topNQueryTypes.__contains__(queryType):
                 d = dict(urlparse.parse_qsl(urlparse.urlsplit(source['uri_query']).query))
+                if queryType.startswith("-"):
+                    queryType = queryType.replace("-", "MINUS", 1)
                 if 'query' in d.keys():
                     with open(subfolder + "/" + queryType + ".exampleQuery", "w") as queryFile:
                         queryFile.write(d['query'])
