@@ -117,10 +117,11 @@ thisArticleAboutInLanguageIsPartOfWikiGroupWithLimit	Mozilla/5.0 (Windows NT 10.
 thisHasLabel_cityOrRegion	Mozilla/5.0 (Windows NT 6.1; WOW64; rv:35.0) Gecko/20100101 Firefox/35.0	toolSearchingForHasLabelWithConstraints	-1	needs more data (possible Source: 1)
 thisHasLabel_existingCountries	Mozilla/5.0 (Windows NT 6.1; WOW64; rv:35.0) Gecko/20100101 Firefox/35.0	toolSearchingForHasLabelWithConstraints	-1	needs more data (possible Source: 1)
 thisHasLabel_geographicalObjects	Mozilla/5.0 (Windows NT 6.1; WOW64; rv:35.0) Gecko/20100101 Firefox/35.0	toolSearchingForHasLabelWithConstraints	-1	needs more data (possible Source: 1)
-thisIMDbID	Mozilla/5.0 (Windows NT; Windows NT 10.0; es-ES) WindowsPowerShell/5.1.14393.206	toolUsingWindowsPowerShellForIMDb	5.1.14393.206	needs more data (possible Source: 0)
-thisIMDbID	Mozilla/5.0 (Windows NT; Windows NT 10.0; es-ES) WindowsPowerShell/5.1.14393.479	toolUsingWindowsPowerShellForIMDb	5.1.14393.479	needs more data (possible Source: 0)
-thisIMDbID	Mozilla/5.0 (Windows NT; Windows NT 10.0; es-ES) WindowsPowerShell/5.1.14393.576	toolUsingWindowsPowerShellForIMDb	5.1.14393.576	needs more data (possible Source: 0)
-thisIMDbID	Mozilla/5.0 (Windows NT; Windows NT 10.0; es-ES) WindowsPowerShell/5.1.14393.693	toolUsingWindowsPowerShellForIMDb	5.1.14393.693	needs more data (possible Source: 0)
+thisIMDbID	Mozilla/5.0 (Windows NT; Windows NT 10.0; es-ES) WindowsPowerShell/5.1.14393.206	toolUsingWindowsPowerShellForIMDb	-1	needs more data (possible Source: 0)
+thisIMDbID	Mozilla/5.0 (Windows NT; Windows NT 10.0; es-ES) WindowsPowerShell/5.1.14393.479	toolUsingWindowsPowerShellForIMDb	-1	needs more data (possible Source: 0)
+thisIMDbID	Mozilla/5.0 (Windows NT; Windows NT 10.0; es-ES) WindowsPowerShell/5.1.14393.576	toolUsingWindowsPowerShellForIMDb	-1	needs more data (possible Source: 0)
+thisIMDbID	Mozilla/5.0 (Windows NT; Windows NT 10.0; es-ES) WindowsPowerShell/5.1.14393.693	toolUsingWindowsPowerShellForIMDb	-1	needs more data (possible Source: 0)
+thisIMDbID	Mozilla/5.0 (Windows NT; Windows NT 10.0; es-ES) WindowsPowerShell/5.1.15063.138	toolUsingWindowsPowerShellForIMDb	-1	needs more data (possible Source: 0)
 thisDerivedFromStatedInPaper	Mozilla/5.0 (Windows; U; WindowsNT 5.1; en-US; rv1.8.1.6) Gecko/20070725 Firefox/2.0.0.6	toolSearchingForRelationToPaperStatements	-1	needs more data
 thisNRHPReferenceNumber	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.2.1) Gecko/20021204	toolSearchingForHistoryPlaces	-1	needs more data
 thisULANID	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.2.1) Gecko/20021204	toolSearchingForULANID	-1	needs more data
@@ -143,14 +144,32 @@ thisMovieMeterMovieID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:51.0) Gecko/201
 thisOFDbID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:51.0) Gecko/20100101 Firefox/51.0	toolSearchingForMovieDatabaseID	-1	needs more data
 thisRottenTomatoesID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:51.0) Gecko/20100101 Firefox/51.0	toolSearchingForMovieDatabaseID	-1	needs more data
 thisAFICatalogOfFeatureFilmsID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:52.0) Gecko/20100101 Firefox/52.0	toolSearchingForMovieDatabaseID	-1	needs more data
+thisAllMovieMovieID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:52.0) Gecko/20100101 Firefox/52.0	toolSearchingForMovieDatabaseID	-1	needs more data
 thisAlloCineFilmID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:52.0) Gecko/20100101 Firefox/52.0	toolSearchingForMovieDatabaseID	-1	needs more data
+thisCSFDFilmID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:52.0) Gecko/20100101 Firefox/52.0	toolSearchingForMovieDatabaseID	-1	needs more data
 thisDNFFilmID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:52.0) Gecko/20100101 Firefox/52.0	toolSearchingForMovieDatabaseID	-1	needs more data
+thisElFilmFilmID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:52.0) Gecko/20100101 Firefox/52.0	toolSearchingForMovieDatabaseID	-1	needs more data
 thisElonetMovieID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:52.0) Gecko/20100101 Firefox/52.0	toolSearchingForMovieDatabaseID	-1	needs more data
+thisFilmAffinityID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:52.0) Gecko/20100101 Firefox/52.0	toolSearchingForMovieDatabaseID	-1	needs more data
+thisIMDbID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:52.0) Gecko/20100101 Firefox/52.0	toolSearchingForMovieDatabaseID	-1	needs more data
+thisKinopoiskFilmID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:52.0) Gecko/20100101 Firefox/52.0	toolSearchingForMovieDatabaseID	-1	needs more data
+thisMovieMeterMovieID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:52.0) Gecko/20100101 Firefox/52.0	toolSearchingForMovieDatabaseID	-1	needs more data
+thisOFDbID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:52.0) Gecko/20100101 Firefox/52.0	toolSearchingForMovieDatabaseID	-1	needs more data
 thisOpenMediaDatabaseFilmID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:52.0) Gecko/20100101 Firefox/52.0	toolSearchingForMovieDatabaseID	-1	needs more data
 thisPORTfilmID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:52.0) Gecko/20100101 Firefox/52.0	toolSearchingForMovieDatabaseID	-1	needs more data
+thisRottenTomatoesID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:52.0) Gecko/20100101 Firefox/52.0	toolSearchingForMovieDatabaseID	-1	needs more data
 thisSwedishFilmDatabaseFilmID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:52.0) Gecko/20100101 Firefox/52.0	toolSearchingForMovieDatabaseID	-1	needs more data
 thisTVdotComID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:52.0) Gecko/20100101 Firefox/52.0	toolSearchingForMovieDatabaseID	-1	needs more data
 thisTVGuideShowID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:52.0) Gecko/20100101 Firefox/52.0	toolSearchingForMovieDatabaseID	-1	needs more data
+thisAllMovieMovieID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0	toolSearchingForMovieDatabaseID	-1	needs more data
+thisCSFDFilmID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0	toolSearchingForMovieDatabaseID	-1	needs more data
+thisElFilmFilmID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0	toolSearchingForMovieDatabaseID	-1	needs more data
+thisFilmAffinityID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0	toolSearchingForMovieDatabaseID	-1	needs more data
+thisIMDbID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0	toolSearchingForMovieDatabaseID	-1	needs more data
+thisKinopoiskFilmID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0	toolSearchingForMovieDatabaseID	-1	needs more data
+thisMovieMeterMovieID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0	toolSearchingForMovieDatabaseID	-1	needs more data
+thisOFDbID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0	toolSearchingForMovieDatabaseID	-1	needs more data
+thisRottenTomatoesID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0	toolSearchingForMovieDatabaseID	-1	needs more data
 thisNKCRAUTIDAboutAndLanguage	NK2WP/2.0 (nkp.cz linker service, run by <petr.kadlec@gmail.com>)	linkerForCzechNationalLibrary	2	linker for http://www.nkp.cz/
 toolLookingForWikidataIdBasedOnTwitterUsername	python-requests/2.11.1	toolLookingForWikidataIdBasedOnTwitterUsername	2.11.1	it is probably NOT this one, even though it looks similar: https://github.com/fnielsen/scholia/blob/5094353127cd929585fab6b2cf1b0047353d9162/scholia/query.py#L223-L224
 toolLookingForWikidataIdBasedOnTwitterUsername	python-requests/2.12.3	toolLookingForWikidataIdBasedOnTwitterUsername	2.12.3	it is probably NOT this one, even though it looks similar: https://github.com/fnielsen/scholia/blob/5094353127cd929585fab6b2cf1b0047353d9162/scholia/query.py#L223-L224
