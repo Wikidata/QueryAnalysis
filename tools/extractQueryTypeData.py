@@ -93,6 +93,7 @@ with open(pathBase + "/TotalQueryType_Ranking.tsv") as rankingFile, open(outputF
                         processedToWrite[key] = queryTypes[queryType][key]
                     
                     typeWriter.writerow(processedToWrite)
+                    queryTypes.pop(queryType)
         
 df = pandas.read_csv(outputFilePath, sep="\t", header=0)
 df = df.sort_values(by=["QueryType_count"], ascending=[False])
