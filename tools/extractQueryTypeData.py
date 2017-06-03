@@ -36,8 +36,6 @@ sourcePrefix = "queryCnt"
 if not os.path.exists(subfolder):
     os.makedirs(subfolder)
     
-lines = []
-    
 with open(pathBase + "/TotalQueryType_Ranking.tsv") as rankingFile, open(outputFilePath, "w") as types:
     rankingReader = csv.DictReader(rankingFile, delimiter = "\t")
     typeWriter = csv.DictWriter(types, None, delimiter="\t")
@@ -96,10 +94,7 @@ with open(pathBase + "/TotalQueryType_Ranking.tsv") as rankingFile, open(outputF
                     for key in queryTypes[queryType]:
                         processedToWrite[key] = queryTypes[queryType][key]
                     
-                    lines.append(processedToWrite)
-                    
-    for line in lines:
-        typeWriter.writerow(line)
+                    typeWriter.writerow(processedToWrite)
         
 df = pandas.read_csv(outputFilePath, sep="\t", header=0)
 df = df.sort_values(by=["QueryType_count"], ascending=[False])
