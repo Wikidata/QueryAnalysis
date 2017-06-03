@@ -1,9 +1,11 @@
 import csv
 import os
 import urlparse
+import pandas
 
 from shutil import copyfile
 from itertools import izip
+from reportlab.lib.testutils import outputfile
 
 fieldBasedOnQueryType = ['#Valid', '#QuerySize', '#VariableCountHead', '#VariableCountPattern', '#TripleCountWithService', '#TripleCountNoService',
                          '#PIDs', '#Add', '#And', '#ArbitraryLengthPath', '#Avg', '#BindingSetAssignment', '#BNodeGenerato', '#Bound',
@@ -16,33 +18,6 @@ fieldBasedOnQueryType = ['#Valid', '#QuerySize', '#VariableCountHead', '#Variabl
                          '#Reduced', '#Regex', '#SameTerm', '#Sample', '#Service', '#SingletonSet', '#Slice', '#StatementPattern', '#Str', '#Sum',
                          '#Union', '#ValueConstant', '#Var', '#ZeroLengthPath']
 
-def buildExampleLineToQueryType(queryType):
-    for i in xrange(1, 2):
-        with open(processedPrefix + "%02d" % i + ".tsv") as p, open(sourcePrefix + "%02d" % i + ".tsv") as s:
-            pReader = csv.DictReader(p, delimiter="\t")
-            sReader = csv.DictReader(s, delimiter="\t")
-    
-            for processed, source in izip(pReader, sReader):
-                if queryType == processed["#QueryType"]:
-                    processedToWrite = dict()
-                    
-                    if writeExampleQueryToProcessed:
-                        d = dict(urlparse.parse_qsl(urlparse.urlsplit(source['uri_query'].lower()).query))
-                        if 'query' in d.keys():
-                            processedToWrite['#example_query'] = d['query']
-                        else:
-                            processedToWrite['#example_query'] = ""
-                            print "ERROR: Could not find query in uri_query:"
-                            print source['uri_query']
-                    
-                    for key in processed:
-                        if key in fieldBasedOnQueryType:
-                            processedToWrite[key] = processed[key]
-                    
-                    return processedToWrite
-    
-    return None
-
 # Number of query types to be extracted, use 0 for infinity
 
 TopN = 0
@@ -53,13 +28,17 @@ pathBase = "QueryType"
 
 subfolder = "queryTypeData"
 
+outputFilePath = subfolder + "/QueryTypesWithData.tsv"
+
 processedPrefix = "QueryProcessedOpenRDF"
 sourcePrefix = "queryCnt"
 
 if not os.path.exists(subfolder):
     os.makedirs(subfolder)
     
-with open(pathBase + "/TotalQueryType_Ranking.tsv") as rankingFile, open(subfolder + "/QueryTypesWithData.tsv", "w") as types:
+lines = []
+    
+with open(pathBase + "/TotalQueryType_Ranking.tsv") as rankingFile, open(outputFilePath, "w") as types:
     rankingReader = csv.DictReader(rankingFile, delimiter = "\t")
     typeWriter = csv.DictWriter(types, None, delimiter="\t")
     
@@ -81,20 +60,49 @@ with open(pathBase + "/TotalQueryType_Ranking.tsv") as rankingFile, open(subfold
     
     i = 0
     
+    queryTypes = dict()
+    
     for line in rankingReader:
         if i >= TopN and TopN != 0:
             break
         i += 1
         
-        queryType = line["QueryType"]
+        queryTypes[line["QueryType"]] = line
         
-        exampleLine = buildExampleLineToQueryType(queryType)
+    for i in xrange(1, 2):
+        with open(processedPrefix + "%02d" % i + ".tsv") as p, open(sourcePrefix + "%02d" % i + ".tsv") as s:
+            pReader = csv.DictReader(p, delimiter="\t")
+            sReader = csv.DictReader(s, delimiter="\t")
+    
+            for processed, source in izip(pReader, sReader):
+                queryType = processed["#QueryType"]
+                if queryType in queryTypes:
+                    
+                    processedToWrite = dict()
+                    
+                    if writeExampleQueryToProcessed:
+                        d = dict(urlparse.parse_qsl(urlparse.urlsplit(source['uri_query'].lower()).query))
+                        if 'query' in d.keys():
+                            processedToWrite['#example_query'] = d['query']
+                        else:
+                            processedToWrite['#example_query'] = ""
+                            print "ERROR: Could not find query in uri_query:"
+                            print source['uri_query']
+                    
+                    for key in processed:
+                        if key in fieldBasedOnQueryType:
+                            processedToWrite[key] = processed[key]
+                            
+                    for key in queryTypes[queryType]:
+                        processedToWrite[key] = queryTypes[queryType][key]
+                    
+                    lines.append(processedToWrite)
+                    
+    for line in lines:
+        typeWriter.writerow(line)
         
-        if exampleLine == None:
-            print "ERROR: Could not find example line for query type " + queryType + "."
-        else:
-            for key in line:
-                exampleLine[key] = line[key]
-            typeWriter.writerow(exampleLine)
+df = pandas.read_csv(outputFilePath, sep="\t", header=0)
+df = df.sort_values(by=["QueryType_count"], ascending=[False])
+df.to_csv(outputFilePath, sep="\t")
 
 print "Done."
