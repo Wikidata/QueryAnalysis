@@ -3,9 +3,7 @@ import os
 import urlparse
 import pandas
 
-from shutil import copyfile
 from itertools import izip
-from reportlab.lib.testutils import outputfile
 
 fieldBasedOnQueryType = ['#Valid', '#QuerySize', '#VariableCountHead', '#VariableCountPattern', '#TripleCountWithService', '#TripleCountNoService',
                          '#PIDs', '#Add', '#And', '#ArbitraryLengthPath', '#Avg', '#BindingSetAssignment', '#BNodeGenerato', '#Bound',
