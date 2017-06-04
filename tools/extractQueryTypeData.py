@@ -100,8 +100,8 @@ if len(queryTypes) > 0:
     for key in queryTypes:
         print "\t" + key 
         
-df = pandas.read_csv(outputFilePath, sep="\t", header=0)
-df = df.sort_values(by=["QueryType_count"], ascending=[False])
+df = pandas.read_csv(outputFilePath, sep="\t", header=0, index_col=0)
+df = df.sort(["QueryType_count"], ascending=False)
 df.to_csv(outputFilePath, sep="\t")
 
 print "Done."
