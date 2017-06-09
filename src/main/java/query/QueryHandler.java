@@ -1,12 +1,15 @@
 package query;
 
 import general.Main;
+import openrdffork.TupleExprWrapper;
+
 import org.apache.log4j.Logger;
 import scala.Tuple2;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -23,6 +26,15 @@ public abstract class QueryHandler
    * Define a static logger variable.
    */
   private static final Logger logger = Logger.getLogger(QueryHandler.class);
+
+  /**
+   * The number of the thread (needs to be unique for one run).
+   */
+  protected int threadNumber = -1;
+  /**
+   * The map holding the query types.
+   */
+  protected Map<TupleExprWrapper, String> queryTypes;
 
   /**
    * A pattern of a SPARQL query where all "parameter" information is removed from
@@ -149,6 +161,22 @@ public abstract class QueryHandler
   public final Logger getLogger()
   {
     return logger;
+  }
+
+  /**
+   * @param threadNumberToSet {@link #threadNumber}
+   */
+  public void setThreadNumber(int threadNumberToSet)
+  {
+    threadNumber = threadNumberToSet;
+  }
+
+  /**
+   * @param queryTypesToSet {@link #queryTypes}
+   */
+  public void setQueryTypes(Map<TupleExprWrapper, String> queryTypesToSet)
+  {
+    this.queryTypes = queryTypesToSet;
   }
 
   /**
