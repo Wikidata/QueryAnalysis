@@ -1,12 +1,20 @@
 import os
 import re
-import pandas
+import csv
+
+from itertools import izip
 
 queryTypeSubfolder = "queryType/queryTypeFiles/"
+
+subfolder = "temp/"
+
+if not os.path.exists(subfolder):
+    os.makedirs(subfolder)
 
 duplicatesFile = "duplicates.txt"
 
 processedPrefix = "QueryProcessedOpenRDF"
+sourcePrefix = "queryCnt"
 
 os.system("./fdupes " + queryTypeSubfolder + " > " + duplicatesFile)
 
@@ -36,7 +44,33 @@ os.remove(duplicatesFile)
 columnIdentifier = "#QueryType"
 
 for i in xrange(1, 5):
-    fileName = processedPrefix + "%02d" % i + ".tsv"
-    df = pandas.read_csv(fileName, sep="\t", header=0, index_col=0)
-    df[columnIdentifier].replace(replacementDict, inplace=True)
-    df.to_csv(fileName, sep="\t")
+    print "Working on %02d" % i
+    with open(processedPrefix + "%02d" % i + ".tsv") as p, open(sourcePrefix + "%02d" % i + ".tsv") as s, open(
+                                    subfolder + processedPrefix + "%02d" % i + ".tsv", "w") as user_p, open(
+                                subfolder + sourcePrefix + "%02d" % i + ".tsv", "w") as user_s:
+        pReader = csv.DictReader(p, delimiter="\t")
+        sReader = csv.DictReader(s, delimiter="\t")
+
+        pWriter = csv.DictWriter(user_p, None, delimiter="\t")
+        sWriter = csv.DictWriter(user_s, None, delimiter="\t")
+
+        for processed, source in izip(pReader, sReader):
+            if pWriter.fieldnames is None:
+                ph = dict((h, h) for h in pReader.fieldnames)
+                pWriter.fieldnames = pReader.fieldnames
+                pWriter.writerow(ph)
+
+            if sWriter.fieldnames is None:
+                sh = dict((h, h) for h in sReader.fieldnames)
+                sWriter.fieldnames = sReader.fieldnames
+                sWriter.writerow(sh)
+
+            if processed[columnIdentifier] in replacementDict:
+                processed[columnIdentifier] = replacementDict[processed[columnIdentifier]]
+            pWriter.writerow(processed)
+            sWriter.writerow(source)
+    
+    os.system("cp " + subfolder + processedPrefix + "%02d" % i + ".tsv" + " " + processedPrefix + "%02d" % i + ".tsv")
+    os.system("cp " + subfolder + sourcePrefix + "%02d" % i + ".tsv" + " " + sourcePrefix + "%02d" % i + ".tsv")
+    
+os.system("rm -r temp")
