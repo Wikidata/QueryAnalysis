@@ -231,7 +231,7 @@ public class OpenRDFQueryHandler extends QueryHandler
     }
 
     if (Main.dynamicQueryTypes) {
-      String newQueryType = String.valueOf(threadNumber) + String.valueOf(queryTypes.size());
+      String newQueryType = String.valueOf(threadNumber) + "_" + String.valueOf(queryTypes.size());
       queryTypes.put(new TupleExprWrapper(normalizedQuery.getTupleExpr()), newQueryType);
       this.queryType = newQueryType;
     } else {
