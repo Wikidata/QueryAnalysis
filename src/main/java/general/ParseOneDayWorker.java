@@ -2,11 +2,19 @@ package general;
 
 
 import input.InputHandler;
+import openrdffork.TupleExprWrapper;
+
 import org.apache.log4j.Logger;
+import org.openrdf.query.algebra.TupleExpr;
+
 import output.OutputHandlerTSV;
 
 import java.io.FileNotFoundException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author: Julius Gonsior
@@ -23,6 +31,7 @@ public class ParseOneDayWorker implements Runnable
   private String queryParserName;
   private Class queryHandlerClass;
   private int day;
+  private HashMap<TupleExprWrapper, String> queryTypes = new HashMap<TupleExprWrapper, String>();
 
   public ParseOneDayWorker(String inputFile, String inputFilePrefix, Class inputHandlerClass, String queryParserName, Class queryHandlerClass, int day) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException
   {
@@ -32,6 +41,9 @@ public class ParseOneDayWorker implements Runnable
     this.queryParserName = queryParserName;
     this.queryHandlerClass = queryHandlerClass;
     this.day = day;
+    for (Map.Entry<TupleExprWrapper, String> entry : Main.queryTypes.entrySet()) {
+      this.queryTypes.put(entry.getKey(), entry.getValue());
+    }
   }
 
 
@@ -47,9 +59,12 @@ public class ParseOneDayWorker implements Runnable
       logger.info("Start processing " + inputFile);
       try {
         OutputHandlerTSV outputHandler = new OutputHandlerTSV(outputFile, queryHandlerClass);
+        outputHandler.setThreadNumber(day);
+        outputHandler.setQueryTypes(queryTypes);
         //try {
         inputHandler.parseTo(outputHandler);
         logger.info("Done processing " + inputFile + " to " + outputFile + ".");
+        Main.writeQueryTypes(queryTypes);
         //   } catch (Exception e) {
         //    logger.error("Unexpected error while parsing " + inputFile + ".", e);
         //  }

@@ -69,9 +69,9 @@ import static java.nio.file.Files.readAllBytes;
 public final class Main
 {
   /**
-   * Saves the encountered queryTypes.
+   * Saves the premade queryTypes.
    */
-  public static final Map<TupleExprWrapper, String> queryTypes = Collections.synchronizedMap(new HashMap<TupleExprWrapper, String>());
+  public static final Map<TupleExprWrapper, String> queryTypes = new HashMap<TupleExprWrapper, String>();
   /**
    * Saves the mapping of query type and user agent to tool name and version.
    */
@@ -108,6 +108,10 @@ public final class Main
    * Saves if the query types should be generated dynamically.
    */
   public static boolean dynamicQueryTypes;
+  /**
+   * Saves the output folder name for query types.
+   */
+  private static String outputFolderName;
 
   /**
    * Since this is a utility class, it should not be instantiated.
@@ -140,8 +144,8 @@ public final class Main
     //some parameters which can be changed through parameters
     //QueryHandler queryHandler = new OpenRDFQueryHandler();
     String inputFilePrefix;
-    String inputFolder;
     String inputFileSuffix = ".tsv";
+    String inputFolder;
     String queryParserName = "OpenRDF";
     Class inputHandlerClass = null;
     Class queryHandlerClass = null;
@@ -219,6 +223,8 @@ public final class Main
 
     ExecutorService executor = Executors.newFixedThreadPool(numberOfThreads);
 
+    prepareWritingQueryTypes(inputFolder);
+
     for (int day = 1; day <= 31; day++) {
       String inputFile = inputFilePrefix + String.format("%02d", day) + inputFileSuffix;
       Runnable parseOneMonthWorker = new ParseOneDayWorker(inputFile, inputFilePrefix, inputHandlerClass, queryParserName, queryHandlerClass, day);
@@ -230,7 +236,7 @@ public final class Main
       //wait until all workers are finished
     }
 
-    writeQueryTypes(inputFolder);
+    // writeQueryTypes(queryTypes);
     writeExampleQueries(inputFolder);
 
     long stopTime = System.nanoTime();
@@ -427,13 +433,12 @@ public final class Main
   }
 
   /**
-   * Writes all found query Types to queryType/queryTypeFiles/.
-   *
-   * @param inputFolder The location of the input data
+   * Creates the output folder for query types (if necessary) and deletes the old files if we're creating new dynamic query types.
+   * @param inputFolder The input folder to create the query type subfolder in
    */
-  private static void writeQueryTypes(String inputFolder)
+  private static void prepareWritingQueryTypes(String inputFolder)
   {
-    String outputFolderName = inputFolder + "queryType/";
+    outputFolderName = inputFolder + "queryType/";
     new File(outputFolderName).mkdir();
     outputFolderName += "queryTypeFiles/";
     File outputFolderFile = new File(outputFolderName);
@@ -441,8 +446,16 @@ public final class Main
       FileUtils.deleteQuietly(outputFolderFile);
     }
     outputFolderFile.mkdir();
-    for (Entry<TupleExprWrapper, String> parsedQuery : queryTypes.entrySet()) {
+  }
 
+  /**
+   * Writes all found query Types to queryType/queryTypeFiles/.
+   *
+   * @param queryTypesToWrite The map containing the query types to be written.
+   */
+  public static void writeQueryTypes(Map<TupleExprWrapper, String> queryTypesToWrite)
+  {
+    for (Entry<TupleExprWrapper, String> parsedQuery : queryTypesToWrite.entrySet()) {
       String queryType = parsedQuery.getValue();
       try (BufferedWriter bw = new BufferedWriter(new FileWriter(outputFolderName + queryType + ".queryType"))) {
         bw.write(parsedQuery.getKey().toString());
@@ -459,13 +472,15 @@ public final class Main
    */
   private static void writeExampleQueries(String inputFolder)
   {
-    String outputFolderName = inputFolder + "exampleQueries/";
-    File outputFolderFile = new File(outputFolderName);
+    String outputFolderNameExampleQueries = inputFolder + "exampleQueries/";
+    File outputFolderFile = new File(outputFolderNameExampleQueries);
     FileUtils.deleteQuietly(outputFolderFile);
     outputFolderFile.mkdir();
     for (Entry<String, String> exampleQuery : exampleQueriesString.entrySet()) {
 
-      try (BufferedWriter bw = new BufferedWriter(new FileWriter(outputFolderName + exampleQuery.getValue() + ".exampleQuery"))) {
+      String fileName = exampleQuery.getValue().replaceAll("/", "SLASH");
+
+      try (BufferedWriter bw = new BufferedWriter(new FileWriter(outputFolderNameExampleQueries + fileName + ".exampleQuery"))) {
         bw.write(exampleQuery.getKey());
       }
       catch (IOException e) {

@@ -53,10 +53,6 @@ public class OutputHandlerTSV extends OutputHandler
   {
     FileOutputStream outputWriter = new FileOutputStream(fileToWrite + ".tsv");
     writer = new TsvWriter(outputWriter, new TsvWriterSettings());
-    for (int i = 0; i < hourly_user.length; i++) {
-      hourly_user[i] = 0L;
-      hourly_spider[i] = 0L;
-    }
 
     this.queryHandlerClass = queryHandlerClass;
 
@@ -135,6 +131,8 @@ public class OutputHandlerTSV extends OutputHandler
     queryHandler.setUserAgent(userAgent);
     queryHandler.setCurrentLine(currentLine);
     queryHandler.setCurrentFile(currentFile);
+    queryHandler.setThreadNumber(threadNumber);
+    queryHandler.setQueryTypes(queryTypes);
 
     List<Object> line = new ArrayList<>();
     line.add(queryHandler.getValidityStatus());

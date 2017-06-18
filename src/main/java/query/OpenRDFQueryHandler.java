@@ -223,20 +223,19 @@ public class OpenRDFQueryHandler extends QueryHandler
       throw new IllegalStateException();
     }
 
-    synchronized (Main.queryTypes) {
+    String result = queryTypes.get(new TupleExprWrapper(normalizedQuery.getTupleExpr()));
 
-      String result = Main.queryTypes.get(new TupleExprWrapper(normalizedQuery.getTupleExpr()));
-      if (result != null) {
-        this.queryType = result;
-        return;
-      }
+    if (result != null) {
+      this.queryType = result;
+      return;
+    }
 
-      if (Main.dynamicQueryTypes) {
-        Main.queryTypes.put(new TupleExprWrapper(normalizedQuery.getTupleExpr()), String.valueOf(normalizedQuery.getTupleExpr().toString().hashCode()));
-        this.queryType = Main.queryTypes.get(new TupleExprWrapper(normalizedQuery.getTupleExpr()));
-      } else {
-        this.queryType = "-1";
-      }
+    if (Main.dynamicQueryTypes) {
+      String newQueryType = String.valueOf(threadNumber) + "_" + String.valueOf(queryTypes.size());
+      queryTypes.put(new TupleExprWrapper(normalizedQuery.getTupleExpr()), newQueryType);
+      this.queryType = newQueryType;
+    } else {
+      this.queryType = "-1";
     }
   }
 

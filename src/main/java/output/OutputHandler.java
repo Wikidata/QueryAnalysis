@@ -1,6 +1,10 @@
 package output;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
+
+import openrdffork.TupleExprWrapper;
 
 /**
  * @author adrian
@@ -13,13 +17,29 @@ public abstract class OutputHandler implements Serializable
   private static final long serialVersionUID = 1L;
 
   /**
-   * Saves the amount of queries put by agent_type user.
+   * The number of the thread (needs to be unique for one run).
    */
-  protected final Long[] hourly_user = new Long[24];
+  protected int threadNumber = -1;
   /**
-   * Saves the amount of queries put by agent_type spider.
+   * The map holding the query types.
    */
-  protected final Long[] hourly_spider = new Long[24];
+  protected Map<TupleExprWrapper, String> queryTypes;
+
+  /**
+   * @param threadNumberToSet {@link #threadNumber}
+   */
+  public void setThreadNumber(int threadNumberToSet)
+  {
+    this.threadNumber = threadNumberToSet;
+  }
+
+  /**
+   * @param queryTypesToSet {@link #queryTypes}
+   */
+  public void setQueryTypes(Map<TupleExprWrapper, String> queryTypesToSet)
+  {
+    this.queryTypes = queryTypesToSet;
+  }
 
   /**
    * Takes a query and the additional information from input and writes
