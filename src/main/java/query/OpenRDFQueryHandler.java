@@ -323,16 +323,12 @@ public class OpenRDFQueryHandler extends QueryHandler
       if (value != null) {
         if (value.getClass().equals(URIImpl.class)) {
           String subjectString = value.stringValue();
-          for (String uriPrefix : Main.prefixes.values()) {
-            if (subjectString.startsWith(uriPrefix)) {
-              if (!foundNames.containsKey(subjectString)) {
-                foundNames.put(subjectString, foundNames.size() + 1);
-              }
-              String uri = subjectString.substring(0, subjectString.lastIndexOf("/")) + "/QName" + foundNames.get(subjectString);
-              String name = "-const-" + uri + "-uri";
-              return new Var(name, new URIImpl(uri));
-            }
+          if (!foundNames.containsKey(subjectString)) {
+            foundNames.put(subjectString, foundNames.size() + 1);
           }
+          String uri = subjectString.substring(0, subjectString.lastIndexOf("/")) + "/QName" + foundNames.get(subjectString);
+          String name = "-const-" + uri + "-uri";
+          return new Var(name, new URIImpl(uri));
         }
       }
     }

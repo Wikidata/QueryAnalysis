@@ -524,27 +524,31 @@ public abstract class QueryHandler
   }
   /**
    * @param anyIDstoSet A set with IDs with explicit URIs
-   * @return The set with all URIs from Main.prefixes
+   * @return The set with all URIs from Main.prefixes replaced by the prefixes, all others will be added as-is.
    */
   private Set<String> setAnyIDs(Set<String> anyIDstoSet)
   {
+    List<Map.Entry<String, String>> prefixList = new ArrayList<Map.Entry<String, String>>(Main.prefixes.entrySet());
+    Collections.sort(prefixList, new Comparator<Map.Entry<String, String>>() {
+
+      @Override
+      public int compare(Entry<String, String> arg0, Entry<String, String> arg1)
+      {
+        return Integer.valueOf(arg1.getValue().length()).compareTo(Integer.valueOf(arg0.getValue().length()));
+      }
+    });
+
     Set<String> anyIDs = new HashSet<String>();
     for (String anyID : anyIDstoSet) {
-      List<Map.Entry<String, String>> prefixList = new ArrayList<Map.Entry<String, String>>(Main.prefixes.entrySet());
-      Collections.sort(prefixList, new Comparator<Map.Entry<String, String>>() {
-
-        @Override
-        public int compare(Entry<String, String> arg0, Entry<String, String> arg1)
-        {
-          return Integer.valueOf(arg1.getValue().length()).compareTo(Integer.valueOf(arg0.getValue().length()));
-        }
-      });
+      boolean wasAdded = false;
       for (Map.Entry<String, String> entry : prefixList) {
         if (anyID.startsWith(entry.getValue())) {
           anyIDs.add(anyID.replaceFirst(entry.getValue(), entry.getKey() + ":"));
+          wasAdded = true;
           break;
         }
       }
+      if (!wasAdded) anyIDs.add(anyID);
     }
     return anyIDs;
   }
