@@ -4,6 +4,9 @@ import os
 from collections import defaultdict
 from itertools import izip
 
+# This script generates a table that maps how often each predicate is used in combination with each predicate
+# TODO: Command line parameters
+
 def writeOut(fieldValues, file, dictionary):
     header = "hour/combinedWith"
     for field in sorted(fieldValues):

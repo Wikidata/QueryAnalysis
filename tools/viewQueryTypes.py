@@ -59,6 +59,8 @@ with open(filename) as file:
     fileReader = csv.DictReader(file, delimiter="\t")
 
     for line in fileReader:
+        if i > end and end != 0:
+            break
         i += 1
         if queryType != None:
             if line["QueryType"] == queryType:

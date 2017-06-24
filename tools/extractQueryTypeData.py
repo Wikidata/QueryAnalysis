@@ -5,6 +5,10 @@ import pandas
 
 from itertools import izip
 
+# Generates a list of all query types sorted in descending order by number of appearance based on fieldRanking.tsv's output for the field #QueryType
+# The file contains all metrics that are specific for the query type (ignoring things like subject and object names) as well as one example query for this query type
+# TODO: Setup command line parameters  
+
 fieldBasedOnQueryType = ['#Valid', '#QuerySize', '#VariableCountHead', '#VariableCountPattern', '#TripleCountWithService', '#TripleCountNoService',
                          '#PIDs', '#Add', '#And', '#ArbitraryLengthPath', '#Avg', '#BindingSetAssignment', '#BNodeGenerato', '#Bound',
                          '#Clear', '#Coalesce', '#Compare', '#CompareAll', '#CompareAny', '#Copy', '#Count', '#Create', '#Datatype', '#DeleteData',

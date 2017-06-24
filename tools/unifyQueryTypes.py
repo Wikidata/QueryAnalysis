@@ -8,6 +8,10 @@ import shutil
 from itertools import izip
 from distutils.dir_util import copy_tree
 
+# This script uses fdupes to check the queryTypeFiles-Folder and the reference query types folder for duplicates.
+# If it finds duplicates it chooses one of the queryTypes (the one in the reference query types folder if one exists, otherwise at random)
+# and renames all other duplicate entries in #QueryType to that query type  
+
 help = 'Usage: unifyQueryTypes.py -d <directory with processed files> -r <directory with reference query types>'
 
 processedPrefix = "QueryProcessedOpenRDF"
@@ -45,7 +49,7 @@ if referenceQueryTypeDirectory == None:
 
 
 # Variable for the folder containing the query-Type files
-queryTypeSubfolder = directory + "queryType/queryTypeFiles/"
+queryTypeSubfolder = directory + "queryTypeFiles/"
 
 temporaryDirectory = directory + "temp/"
 

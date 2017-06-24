@@ -140,6 +140,10 @@ public abstract class QueryHandler
    * The P-IDs as a string of comma separated values.
    */
   private String pIDString = null;
+  /**
+   * The categories as a string of comma separated values.
+   */
+  private String categories = null;
 
   /**
    *
@@ -660,5 +664,42 @@ public abstract class QueryHandler
       this.computepIDString();
     }
     return this.pIDString;
+  }
+
+  /**
+   * Sets the categories string to contain all categories it should have according to its predicates and the propertyGroupMapping.
+   */
+  private void computeCategoriesString()
+  {
+    if (queryType.equals("-1") && qIDs == null) {
+      try {
+        this.computeQueryType();
+      } catch (IllegalStateException e) {
+        this.categories = "";
+      }
+    }
+
+    Set<String> categoriesFound = new HashSet<String>();
+
+    for (String predicate : this.getpIDs()) {
+      for (Map.Entry<String, Set<String>> entry : Main.propertyGroupMapping.entrySet()) {
+        String property = "wdt:" + entry.getKey();
+        if (property.equals(predicate)) {
+          categoriesFound.addAll(entry.getValue());
+        }
+      }
+    }
+    this.categories = this.computeAnyIDString(categoriesFound);
+  }
+
+  /**
+   * @return {@link #categories}
+   */
+  public String getCategoriesString()
+  {
+    if (this.categories == null) {
+      this.computeCategoriesString();
+    }
+    return categories;
   }
 }

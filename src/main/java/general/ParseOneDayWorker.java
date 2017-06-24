@@ -27,16 +27,18 @@ public class ParseOneDayWorker implements Runnable
   private static final Logger logger = Logger.getLogger(ParseOneDayWorker.class);
   private final String inputFile;
   private final String inputFilePrefix;
+  private final String outputFolder;
   private InputHandler inputHandler;
   private String queryParserName;
   private Class queryHandlerClass;
   private int day;
   private HashMap<TupleExprWrapper, String> queryTypes = new HashMap<TupleExprWrapper, String>();
 
-  public ParseOneDayWorker(String inputFile, String inputFilePrefix, Class inputHandlerClass, String queryParserName, Class queryHandlerClass, int day) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException
+  public ParseOneDayWorker(String inputFile, String inputFilePrefix, String outputFolder, Class inputHandlerClass, String queryParserName, Class queryHandlerClass, int day) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException
   {
     this.inputFile = inputFile;
     this.inputFilePrefix = inputFilePrefix;
+    this.outputFolder = outputFolder;
     this.inputHandler = (InputHandler) inputHandlerClass.getConstructor().newInstance();
     this.queryParserName = queryParserName;
     this.queryHandlerClass = queryHandlerClass;
@@ -51,8 +53,7 @@ public class ParseOneDayWorker implements Runnable
   public void run()
   {
     //create directory for the output
-    String outputFolderName = inputFilePrefix.substring(0, inputFilePrefix.lastIndexOf('/'));
-    String outputFile = outputFolderName + "/QueryProcessed" + queryParserName + String.format("%02d", day);
+    String outputFile = outputFolder + "/QueryProcessed" + queryParserName + String.format("%02d", day);
     try {
       inputHandler.setInputFile(inputFile);
 

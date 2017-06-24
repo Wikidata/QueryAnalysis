@@ -4,6 +4,9 @@ import os
 from shutil import copyfile
 from itertools import izip
 
+# Creates a subset of the raw log files and the processed log files where #QueryType is USER
+# TODO: Command line parameters
+
 subfolder = "userData/"
 
 processedPrefix = "QueryProcessedOpenRDF"
