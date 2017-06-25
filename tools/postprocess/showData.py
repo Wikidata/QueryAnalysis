@@ -22,41 +22,41 @@ start_given = False
 end_given = False
 
 try:
-    opts, args = getopt.getopt(sys.argv[1:], "hd:s:e:", ["day=", "startline=", "endline="])
+	opts, args = getopt.getopt(sys.argv[1:], "hd:s:e:", ["day=", "startline=", "endline="])
 except getopt.GetoptError:
-    print help
-    sys.exit(2)
+	print help
+	sys.exit(2)
 for opt, arg in opts:
-    if opt == "-h":
-        print help
-        sys.exit()
-    elif opt in ("-d", "--day"):
-        day = int(arg)
-        day_given = True
-    elif opt in ("-s", "--startline"):
-        start = int(arg)
-        start_given = True
-    elif opt in ("-e", "--endline"):
-        end = int(arg)
-        end_given = True
+	if opt == "-h":
+		print help
+		sys.exit()
+	elif opt in ("-d", "--day"):
+		day = int(arg)
+		day_given = True
+	elif opt in ("-s", "--startline"):
+		start = int(arg)
+		start_given = True
+	elif opt in ("-e", "--endline"):
+		end = int(arg)
+		end_given = True
 
 if not (day_given and start_given and end_given):
-    print help
-    sys.exit()
+	print help
+	sys.exit()
 
 
 class ViewDataHandler:
-    metrics = ["#QuerySize", "#TripleCountWithService"]
+	metrics = ["#QuerySize", "#TripleCountWithService"]
 
-    def handle(self, sparqlQuery, processed):
-        data = [[]]
-        for metric in self.metrics:
-            data[0].append(processed[metric])
-        print tabulate(data, headers=metrics)
-        if sparqlQuery is None:
-            print "Error: Could not find query in uri_query."
-        else:
-            print sparqlQuery
+	def handle(self, sparqlQuery, processed):
+		data = [[]]
+		for metric in self.metrics:
+			data[0].append(processed[metric])
+		print tabulate(data, headers=metrics)
+		if sparqlQuery is None:
+			print "Error: Could not find query in uri_query."
+		else:
+			print sparqlQuery
 
 
 handler = ViewDataHandler()

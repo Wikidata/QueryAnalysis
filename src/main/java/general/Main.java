@@ -107,15 +107,13 @@ public final class Main
    */
   public static boolean dynamicQueryTypes;
   /**
-   * Saves the output folder name for query types.
-   */
-  private static String outputFolderName;
-
-  /**
    * If set to true the resulting processed output files aren't being gzipped
    */
   public static boolean noGzipOutput = false;
-
+  /**
+   * Saves the output folder name for query types.
+   */
+  private static String outputFolderName;
   private static boolean noExampleQueries = false;
 
   /**

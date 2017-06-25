@@ -41,72 +41,72 @@ processedPrefix = "QueryProcessedOpenRDF"
 sourcePrefix = "queryCnt"
 
 if not os.path.exists(subfolder):
-    os.makedirs(subfolder)
+	os.makedirs(subfolder)
 
 with open(pathBase + "/TotalQueryType_Ranking.tsv") as rankingFile, open(outputFilePath, "w") as types:
-    rankingReader = csv.DictReader(rankingFile, delimiter="\t")
-    typeWriter = csv.DictWriter(types, None, delimiter="\t")
+	rankingReader = csv.DictReader(rankingFile, delimiter="\t")
+	typeWriter = csv.DictWriter(types, None, delimiter="\t")
 
-    th = dict()
+	th = dict()
 
-    for h in rankingReader.fieldnames:
-        th[h] = h
+	for h in rankingReader.fieldnames:
+		th[h] = h
 
-    typeWriter.fieldnames = list(rankingReader.fieldnames)
+	typeWriter.fieldnames = list(rankingReader.fieldnames)
 
-    if writeExampleQueryToProcessed:
-        th['#example_query'] = '#example_query'
-        typeWriter.fieldnames.append('#example_query')
-    for h in fieldBasedOnQueryType:
-        th[h] = h
-        typeWriter.fieldnames.append(h)
-    typeWriter.writerow(th)
+	if writeExampleQueryToProcessed:
+		th['#example_query'] = '#example_query'
+		typeWriter.fieldnames.append('#example_query')
+	for h in fieldBasedOnQueryType:
+		th[h] = h
+		typeWriter.fieldnames.append(h)
+	typeWriter.writerow(th)
 
-    i = 0
+	i = 0
 
-    queryTypes = dict()
+	queryTypes = dict()
 
-    for line in rankingReader:
-        if i >= TopN and TopN != 0:
-            break
-        i += 1
+	for line in rankingReader:
+		if i >= TopN and TopN != 0:
+			break
+		i += 1
 
-        queryTypes[line["QueryType"]] = line
+		queryTypes[line["QueryType"]] = line
 
-    for i in xrange(1, 2):
-        with open(processedPrefix + "%02d" % i + ".tsv") as p, open(sourcePrefix + "%02d" % i + ".tsv") as s:
-            pReader = csv.DictReader(p, delimiter="\t")
-            sReader = csv.DictReader(s, delimiter="\t")
+	for i in xrange(1, 2):
+		with open(processedPrefix + "%02d" % i + ".tsv") as p, open(sourcePrefix + "%02d" % i + ".tsv") as s:
+			pReader = csv.DictReader(p, delimiter="\t")
+			sReader = csv.DictReader(s, delimiter="\t")
 
-            for processed, source in izip(pReader, sReader):
-                queryType = processed["#QueryType"]
-                if queryType in queryTypes:
+			for processed, source in izip(pReader, sReader):
+				queryType = processed["#QueryType"]
+				if queryType in queryTypes:
 
-                    processedToWrite = dict()
+					processedToWrite = dict()
 
-                    if writeExampleQueryToProcessed:
-                        d = dict(urlparse.parse_qsl(urlparse.urlsplit(source['uri_query'].lower()).query))
-                        if 'query' in d.keys():
-                            processedToWrite['#example_query'] = d['query']
-                        else:
-                            processedToWrite['#example_query'] = ""
-                            print "ERROR: Could not find query in uri_query:"
-                            print source['uri_query']
+					if writeExampleQueryToProcessed:
+						d = dict(urlparse.parse_qsl(urlparse.urlsplit(source['uri_query'].lower()).query))
+						if 'query' in d.keys():
+							processedToWrite['#example_query'] = d['query']
+						else:
+							processedToWrite['#example_query'] = ""
+							print "ERROR: Could not find query in uri_query:"
+							print source['uri_query']
 
-                    for key in processed:
-                        if key in fieldBasedOnQueryType:
-                            processedToWrite[key] = processed[key]
+					for key in processed:
+						if key in fieldBasedOnQueryType:
+							processedToWrite[key] = processed[key]
 
-                    for key in queryTypes[queryType]:
-                        processedToWrite[key] = queryTypes[queryType][key]
+					for key in queryTypes[queryType]:
+						processedToWrite[key] = queryTypes[queryType][key]
 
-                    typeWriter.writerow(processedToWrite)
-                    del queryTypes[queryType]
+					typeWriter.writerow(processedToWrite)
+					del queryTypes[queryType]
 
 if len(queryTypes) > 0:
-    print "Could not find examples for the following query types:"
-    for key in queryTypes:
-        print "\t" + key
+	print "Could not find examples for the following query types:"
+	for key in queryTypes:
+		print "\t" + key
 
 df = pandas.read_csv(outputFilePath, sep="\t", header=0, index_col=0)
 df = df.sort(["QueryType_count"], ascending=False)
