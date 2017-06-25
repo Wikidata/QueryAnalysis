@@ -111,6 +111,10 @@ public final class Main
   private static String outputFolderName;
 
   /**
+   * If set to true the resulting processed output files aren't being gzipped
+   */
+  private static boolean noGzipOutput = false;
+  /**
    * Since this is a utility class, it should not be instantiated.
    */
   private Main()
@@ -136,6 +140,7 @@ public final class Main
     options.addOption("b", "withBots", false, "enables metric calculation for bot queries+");
     options.addOption("p", "readPreprocessed", false, "enables reading of preprocessed files");
     options.addOption("d", "dynamicQueryTypes", false, "enables dynamic generation of query types");
+    options.addOption("g", "noGzipOutput", false, "disables the gzipped output of the output files");
 
 
     //some parameters which can be changed through parameters
@@ -196,6 +201,9 @@ public final class Main
       }
       if (cmd.hasOption("dynamicQueryTypes")) {
         dynamicQueryTypes = true;
+      }
+      if (cmd.hasOption("noGzipOutput")) {
+        noGzipOutput = true;
       }
     } catch (UnrecognizedOptionException e) {
       System.out.println("Unrecognized commandline option: " + e.getOption());
