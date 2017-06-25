@@ -3,12 +3,9 @@
 import csv
 import glob
 import os
-# import getopt
-# import urllib
 import urlparse
 
 import sys
-# from tabulate import tabulate
 from itertools import izip
 
 processedPrefix = "QueryProcessedOpenRDF"
