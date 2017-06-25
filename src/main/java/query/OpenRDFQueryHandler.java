@@ -327,7 +327,8 @@ public class OpenRDFQueryHandler extends QueryHandler
             foundNames.put(subjectString, foundNames.size() + 1);
           }
           if (!subjectString.contains("/")) {
-            logger.error("Variable " + var.toString() + " could not be normalized because it does not contain a slash.");
+            logger.error("Variable " + var.toString() + " could not be normalized because it does not contain a slash.\n" +
+                "Query was: " + this.getQueryStringWithoutPrefixes());
             return var;
           }
           String uri = subjectString.substring(0, subjectString.lastIndexOf("/")) + "/QName" + foundNames.get(subjectString);
