@@ -26,6 +26,8 @@ import com.univocity.parsers.common.ParsingContext;
 import com.univocity.parsers.common.processor.ObjectRowProcessor;
 import com.univocity.parsers.tsv.TsvParser;
 import com.univocity.parsers.tsv.TsvParserSettings;
+
+import input.InputHandler;
 import input.InputHandlerParquet;
 import input.InputHandlerTSV;
 import logging.LoggingHandler;
@@ -43,6 +45,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.openrdf.query.parser.ParsedQuery;
 import query.OpenRDFQueryHandler;
+import query.QueryHandler;
 import scala.Tuple2;
 
 import java.io.*;
@@ -66,6 +69,10 @@ import static java.nio.file.Files.readAllBytes;
  */
 public final class Main
 {
+  /**
+   * Saves the mapping of properties to groups.
+   */
+  public static final Map<String, Set<String>> propertyGroupMapping = new HashMap<String, Set<String>>();
   /**
    * Saves the premade queryTypes.
    */
@@ -91,10 +98,6 @@ public final class Main
    */
   public static final BiMap<String, String> prefixes = HashBiMap.create();
   /**
-   * Define a static logger variable.
-   */
-  private static final Logger logger = Logger.getLogger(Main.class);
-  /**
    * Saves if metrics should be calculated for bot queries.
    */
   public static boolean withBots;
@@ -106,6 +109,15 @@ public final class Main
    * Saves if the query types should be generated dynamically.
    */
   public static boolean dynamicQueryTypes;
+  /**
+   * Define a static logger variable.
+   */
+  private static final Logger logger = Logger.getLogger(Main.class);
+  /**
+   * Saves the output folder name for query types.
+   */
+  private static String outputFolderNameQueryTypes;
+
   /**
    * If set to true the resulting processed output files aren't being gzipped
    */
@@ -133,14 +145,12 @@ public final class Main
   {
     Options options = new Options();
     options.addOption("l", "logging", false, "enables file logging");
-    options.addOption("o", "openrdf", false, "uses the OpenRDF SPARQL Parser");
-    options.addOption("f", "file", true, "defines the input file prefix");
+    options.addOption("o", "outputDirectory", true, "The directory the output should be written to.");
+    options.addOption("f", "file", true, "The directory and input file name the program should process (e.g /home/name/data/queryCnt)");
     options.addOption("h", "help", false, "displays this help");
     options.addOption("t", "tsv", false, "reads from .tsv-files");
-    // options.addOption("p", "parquet", false, "read from .parquet-files");
     options.addOption("n", "numberOfThreads", true, "number of used threads, default 1");
     options.addOption("b", "withBots", false, "enables metric calculation for bot queries+");
-    options.addOption("p", "readPreprocessed", false, "enables reading of preprocessed files");
     options.addOption("d", "dynamicQueryTypes", false, "enables dynamic generation of query types");
     options.addOption("g", "noGzipOutput", false, "disables the gzipped output of the output files");
     options.addOption("e", "noExampleQueriesOutput", false, "disables the matching of example queries");
@@ -150,10 +160,10 @@ public final class Main
     //QueryHandler queryHandler = new OpenRDFQueryHandler();
     String inputFilePrefix;
     String inputFileSuffix = ".tsv";
-    String inputFolder;
+    String outputFolder;
     String queryParserName = "OpenRDF";
-    Class inputHandlerClass = null;
-    Class queryHandlerClass = null;
+    Class inputHandlerClass = InputHandlerTSV.class;
+    Class queryHandlerClass = OpenRDFQueryHandler.class;
     int numberOfThreads = 1;
 
     CommandLineParser parser = new DefaultParser();
@@ -165,29 +175,23 @@ public final class Main
         formatter.printHelp("help", options);
         return;
       }
-      if (cmd.hasOption("openrdf")) {
-        queryHandlerClass = OpenRDFQueryHandler.class;
-      }
       if (cmd.hasOption("tsv")) {
         inputFileSuffix = ".tsv";
         inputHandlerClass = InputHandlerTSV.class;
       }
-      if (cmd.hasOption("parquet")) {
-        inputFileSuffix = ".parquet";
-        Logger.getLogger("org").setLevel(Level.WARN);
-        Logger.getLogger("akka").setLevel(Level.WARN);
-        SparkConf conf = new SparkConf().setAppName("SPARQLQueryAnalyzer").setMaster("local");
-        JavaSparkContext sc = new JavaSparkContext(conf);
-        inputHandlerClass = InputHandlerParquet.class;
-      }
-      if (inputHandlerClass == null) {
-        System.out.println("Please specify which parser to use, either -t for TSV or -p for parquet.");
-      }
       if (cmd.hasOption("file")) {
         inputFilePrefix = cmd.getOptionValue("file").trim();
-        inputFolder = inputFilePrefix.substring(0, inputFilePrefix.lastIndexOf('/') + 1);
       } else {
-        System.out.println("Please specify at least the file which we should work on using the option '--file PREFIX' or 'f PREFIX'");
+        System.out.println("Please specify the file which we should work on using the option '--file PREFIX' or '-f PREFIX'");
+        return;
+      }
+      if (cmd.hasOption("outputDirectory")) {
+        outputFolder = cmd.getOptionValue("outputDirectory").trim();
+        if (!outputFolder.endsWith("/")) {
+          outputFolder += "/";
+        }
+      } else {
+        System.out.println("Please specify the director to write the processed logs to using the option '--outputDirectry DIRECTORY' or '-o DIRECTORY'");
         return;
       }
       if (cmd.hasOption("logging")) {
@@ -231,16 +235,17 @@ public final class Main
     if (!noExampleQueries) {
       getExampleQueries();
     }
+    loadPropertyGroupMapping();
 
     long startTime = System.nanoTime();
 
     ExecutorService executor = Executors.newFixedThreadPool(numberOfThreads);
 
-    prepareWritingQueryTypes(inputFolder);
+    prepareWritingQueryTypes(outputFolder);
 
     for (int day = 1; day <= 31; day++) {
       String inputFile = inputFilePrefix + String.format("%02d", day) + inputFileSuffix;
-      Runnable parseOneMonthWorker = new ParseOneDayWorker(inputFile, inputFilePrefix, inputHandlerClass, queryParserName, queryHandlerClass, day);
+      Runnable parseOneMonthWorker = new ParseOneDayWorker(inputFile, inputFilePrefix, outputFolder, inputHandlerClass, queryParserName, queryHandlerClass, day);
       executor.execute(parseOneMonthWorker);
     }
     executor.shutdown();
@@ -251,7 +256,7 @@ public final class Main
 
     // writeQueryTypes(queryTypes);
     if (!noExampleQueries) {
-      writeExampleQueries(inputFolder);
+      writeExampleQueries(outputFolder);
     }
 
     long stopTime = System.nanoTime();
@@ -319,7 +324,7 @@ public final class Main
             OpenRDFQueryHandler queryHandler = new OpenRDFQueryHandler();
             //queryHandler.setValidityStatus(1);
             queryHandler.setQueryString(queryString);
-            if (queryHandler.getValidityStatus() != 1) {
+            if (queryHandler.getValidityStatus() != QueryHandler.Validity.VALID) {
               logger.info("The Pre-build query " + filePath + " is no valid SPARQL");
               continue;
             }
@@ -370,6 +375,48 @@ public final class Main
     } catch (IOException e) {
       logger.error("Could not read from directory inputData/queryType/premadeQueryTypeFiles", e);
     }
+  }
+
+  /**
+   * see {@link propertyGroupMapping}.
+   */
+  private static void loadPropertyGroupMapping()
+  {
+    TsvParserSettings parserSettings = new TsvParserSettings();
+    parserSettings.setLineSeparatorDetectionEnabled(true);
+    parserSettings.setHeaderExtractionEnabled(true);
+    parserSettings.setSkipEmptyLines(true);
+    parserSettings.setReadInputOnSeparateThread(true);
+
+    ObjectRowProcessor rowProcessor = new ObjectRowProcessor()
+    {
+      @Override
+      public void rowProcessed(Object[] row, ParsingContext parsingContext)
+      {
+        if (row.length <= 1) {
+          logger.warn("Ignoring line without tab while parsing.");
+          return;
+        }
+        if (row.length == 2) {
+          if (row[1] == null) {
+            return;
+          }
+          propertyGroupMapping.put(row[0].toString(), new HashSet<String>(Arrays.asList(row[1].toString().split(","))));
+          return;
+        }
+        logger.warn("Line with row length " + row.length + " found. Is the formatting of propertyGroupMapping.tsv correct?");
+        return;
+      }
+
+    };
+
+    parserSettings.setProcessor(rowProcessor);
+
+    TsvParser parser = new TsvParser(parserSettings);
+
+    File file = new File("propertyClassification/propertyGroupMapping.tsv");
+
+    parser.parse(file);
   }
 
   /**
@@ -428,7 +475,7 @@ public final class Main
         exampleQueriesString.put(query, name);
         OpenRDFQueryHandler queryHandler = new OpenRDFQueryHandler();
         queryHandler.setQueryString(query);
-        if (queryHandler.getValidityStatus() != 1) {
+        if (queryHandler.getValidityStatus() != QueryHandler.Validity.VALID) {
           logger.warn("The example query " + name + " is no valid SPARQL.");
         } else {
           exampleQueriesTupleExpr.put(new TupleExprWrapper(queryHandler.getParsedQuery().getTupleExpr()), name);
@@ -441,19 +488,23 @@ public final class Main
 
   /**
    * Creates the output folder for query types (if necessary) and deletes the old files if we're creating new dynamic query types.
-   *
-   * @param inputFolder The input folder to create the query type subfolder in
+   * @param outputFolder The input folder to create the query type subfolder in
    */
-  private static void prepareWritingQueryTypes(String inputFolder)
+  private static void prepareWritingQueryTypes(String outputFolder)
   {
-    outputFolderName = inputFolder + "queryType/";
-    new File(outputFolderName).mkdir();
-    outputFolderName += "queryTypeFiles/";
-    File outputFolderFile = new File(outputFolderName);
+    outputFolderNameQueryTypes = outputFolder + "queryTypeFiles/";
+    File outputFolderFile = new File(outputFolderNameQueryTypes);
     if (dynamicQueryTypes) {
       FileUtils.deleteQuietly(outputFolderFile);
     }
     outputFolderFile.mkdir();
+    try (BufferedWriter bw = new BufferedWriter(new FileWriter(outputFolderNameQueryTypes + "README.md"))) {
+      bw.write("This directory contains one file for each query type found in this month.\n" +
+          "The name of the file (<name>.queryType) corresponds to the #QueryType entry in the processed logs.\n" +
+          "WARNING: Until unifiyQueryTypes.py has been run on its parent directory this directory contains duplicates as the same query type can have multiple names.");
+    } catch (IOException e) {
+      logger.error("Could not create the readme for the query type folder.", e);
+    }
   }
 
   /**
@@ -465,7 +516,7 @@ public final class Main
   {
     for (Entry<TupleExprWrapper, String> parsedQuery : queryTypesToWrite.entrySet()) {
       String queryType = parsedQuery.getValue();
-      try (BufferedWriter bw = new BufferedWriter(new FileWriter(outputFolderName + queryType + ".queryType"))) {
+      try (BufferedWriter bw = new BufferedWriter(new FileWriter(outputFolderNameQueryTypes + queryType + ".queryType"))) {
         bw.write(parsedQuery.getKey().toString());
       } catch (IOException e) {
         logger.error("Could not write the query type " + queryType + ".", e);
@@ -476,17 +527,26 @@ public final class Main
   /**
    * Writes all the example queries to exampleQueries/.
    *
-   * @param inputFolder The location of the input data
+   * @param outputFolder The location of the input data
    */
-  private static void writeExampleQueries(String inputFolder)
+  private static void writeExampleQueries(String outputFolder)
   {
-    String outputFolderNameExampleQueries = inputFolder + "exampleQueries/";
+    String outputFolderNameExampleQueries = outputFolder + "exampleQueries/";
     File outputFolderFile = new File(outputFolderNameExampleQueries);
     FileUtils.deleteQuietly(outputFolderFile);
     outputFolderFile.mkdir();
+
+    try (BufferedWriter bw = new BufferedWriter(new FileWriter(outputFolderNameExampleQueries + "README.md"))) {
+      bw.write("This file contains one file for each example query on the wikidata wiki at the time of this run.\n" +
+          "The name of the file (<name>.exampleQuery) corresponds to the #ExampleQueryStringComparison and #ExampleQueryParsedComparison entries in the processed logs.");
+    } catch (IOException e) {
+      logger.error("Could not write the readme for example queries folder.", e);
+    }
+
     for (Entry<String, String> exampleQuery : exampleQueriesString.entrySet()) {
 
       String fileName = exampleQuery.getValue().replaceAll("/", "SLASH");
+      fileName = fileName.replaceAll(" ", "_");
 
       try (BufferedWriter bw = new BufferedWriter(new FileWriter(outputFolderNameExampleQueries + fileName + ".exampleQuery"))) {
         bw.write(exampleQuery.getKey());

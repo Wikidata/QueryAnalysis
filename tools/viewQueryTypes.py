@@ -58,17 +58,18 @@ i = 1
 with open(filename) as file:
 	fileReader = csv.DictReader(file, delimiter="\t")
 
-	for line in fileReader:
-		i += 1
-		if queryType != None:
-			if line["QueryType"] == queryType:
-				writeRow(line)
-				foundQueryType = True
-				break
-		else:
-			if i >= start and (i <= end or end == 0):
-				foundStartLine = True
-				writeRow(line)
+    for line in fileReader:
+        if i > end and end != 0:
+            breaki += 1
+        if queryType != None:
+            if line["QueryType"] == queryType:
+                writeRow(line)
+                foundQueryType = True
+                break
+        else:
+            if i >= start and (i <= end or end == 0):
+                foundStartLine = True
+                writeRow(line)
 
 if not foundQueryType:
 	print "Could not find query type " + queryType

@@ -79,10 +79,10 @@ public class OutputHandlerTSV extends OutputHandler
     header.add("#VariableCountHead");
     header.add("#VariableCountPattern");
     header.add("#TripleCountWithService");
-    header.add("#TripleCountNoService");
     header.add("#QueryType");
-    header.add("#QIDs");
-    header.add("#PIDs");
+    header.add("#SubjectsAndObjects");
+    header.add("#Predicates");
+    header.add("#Categories");
 
     //add all sparqlStatisticNodes
     for (String sparqlStatisticFeature : SparqlStatisticsCollector.getDefaultMap().keySet()) {
@@ -117,7 +117,7 @@ public class OutputHandlerTSV extends OutputHandler
    * @param currentFile    The file from which the data to be written originates.
    */
   @Override
-  public final void writeLine(String queryToAnalyze, Integer validityStatus, String userAgent, long currentLine, String currentFile)
+  public final void writeLine(String queryToAnalyze, QueryHandler.Validity validityStatus, String userAgent, long currentLine, String currentFile)
   {
     QueryHandler queryHandler = cache.getQueryHandler(validityStatus, queryToAnalyze, queryHandlerClass);
 
@@ -131,7 +131,7 @@ public class OutputHandlerTSV extends OutputHandler
     line.add(queryHandler.getValidityStatus());
     line.add(queryHandler.getToolName());
     line.add(queryHandler.getToolVersion());
-    if (Main.withBots || queryHandler.getToolName().equals("0") || queryHandler.getToolName().equals("USER")) {
+    if (Main.withBots || queryHandler.getToolName().equals("UNKNOWN") || queryHandler.getToolName().equals("USER")) {
       line.add(queryHandler.getExampleQueryStringMatch());
       line.add(queryHandler.getExampleQueryTupleMatch());
       line.add(queryHandler.getStringLength());
@@ -139,10 +139,10 @@ public class OutputHandlerTSV extends OutputHandler
       line.add(queryHandler.getVariableCountHead());
       line.add(queryHandler.getVariableCountPattern());
       line.add(queryHandler.getTripleCountWithService());
-      line.add(-1);
       line.add(queryHandler.getQueryType());
       line.add(queryHandler.getqIDString());
       line.add(queryHandler.getpIDString());
+      line.add(queryHandler.getCategoriesString());
 
       Map<String, Integer> sparqlStatistics = queryHandler.getSparqlStatistics();
       //add all sparqlStatisticNodes

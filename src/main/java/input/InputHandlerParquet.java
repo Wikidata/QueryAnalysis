@@ -5,6 +5,7 @@ import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
 import output.OutputHandler;
+import query.QueryHandler;
 import scala.Tuple2;
 
 import java.io.FileNotFoundException;
@@ -67,7 +68,7 @@ public class InputHandlerParquet extends InputHandler implements Serializable
     while (iterator.hasNext()) {
       Row row = iterator.next();
       Object[] convertedRow = new Object[7];
-      Tuple2<String, Integer> queryTuple = decode(row.get(columnNames.get("uri_query")).toString(), inputFile, -1);
+      Tuple2<String, QueryHandler.Validity> queryTuple = decode(row.get(columnNames.get("uri_query")).toString(), inputFile, -1);
       convertedRow[0] = row.get(columnNames.get("uri_query"));
       convertedRow[1] = row.get(columnNames.get("uri_path"));
       convertedRow[2] = row.get(columnNames.get("user_agent"));

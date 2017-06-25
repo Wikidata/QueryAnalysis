@@ -36,7 +36,7 @@ public abstract class QueryHandler
    * -1 means uninitialized or that the query is or that the queryType could not
    * be computed
    */
-  protected String queryType = "-1";
+  protected String queryType = null;
 
   /**
    * The Q-IDs used in this query.
@@ -51,7 +51,7 @@ public abstract class QueryHandler
    */
   protected Integer querySize = null;
   /**
-   * The number of variables in the query head
+   * The number of variables in the query head.
    */
   protected Integer variableCountHead = null;
   /**
@@ -74,23 +74,80 @@ public abstract class QueryHandler
    */
   private String queryString;
   /**
+   * @author adrian
+   * An enumeration specifying the different validity states.
+   */
+  public enum Validity {
+    /**
+     * Valid, but empty query.
+     */
+    EMPTY(2),
+    /**
+     * Valid query.
+     */
+    VALID(1),
+    /**
+     * default internal value -> should always be changed, if it is 0 then there was an internal error!
+     */
+    DEFAULT(0),
+    /**
+     * Invalid for unknown reasons.
+     */
+    INVALID(-1),
+    /**
+     * Not a valid (absolute) URI.
+     */
+    INVALID_URI(-2),
+    /**
+     * BIND clause alias '{}' was previously used.
+     */
+    INVALID_BIND_PREVIOUSLY_USED(-5),
+    /**
+     * Multiple prefix declarations for prefix.
+     */
+    INVALID_PREFIX_DECLARATION_MULTIPLE_TIMES(-6),
+    /**
+     * There was a syntax error in the URL.
+     */
+    INVALID_SYNTAX(-9),
+    /**
+     * The url was truncated and was therefore not decodable.
+     */
+    INVALID_URL_TRUNCATED(-10),
+    /**
+     * The query string was empty and was therefore not being parsed.
+     */
+    INVALID_EMTPY_QUERY_STRING(-11);
+
+    /**
+     * The value representing the validity.
+     */
+    private int value;
+
+    /**
+     * @param valueToSet The integer value of the validity state.
+     */
+    Validity(int valueToSet)
+    {
+      this.value = valueToSet;
+    }
+
+    /**
+     * @return the validity code of this validity object.
+     */
+    public int getValue()
+    {
+      return this.value;
+    }
+  }
+  /**
    * Saves the query-string without prefixes.
    */
   private String queryStringWithoutPrefixes;
   /**
    * Saves if queryString is a valid query, and if not, why
-   * 2 -> valid, but empty query
-   * 1 -> valid
-   * 0 -> default internal value -> should always be changed, if it is 0 then there was an internal error!
-   * -1 -> invalid for unknown reasons
-   * -3 -> Not a valid (absolute URI):
-   * -5 -> BIND clause alias '{}' was previously used
-   * -6 ->	Multiple prefix declquerarations for prefix 'p'
-   * -9 -> There was a syntax error in the URL
-   * -10 -> The url was truncated and was therefore not decodable
-   * -11 -> The query string was empty and was therefore not being parsed
    */
-  private int validityStatus;
+  private Validity validityStatus;
   /**
    * Saves the current line the query was from.
    */
@@ -131,6 +188,10 @@ public abstract class QueryHandler
    * The P-IDs as a string of comma separated values.
    */
   private String pIDString = null;
+  /**
+   * The categories as a string of comma separated values.
+   */
+  private String categories = null;
 
   /**
    *
@@ -138,7 +199,7 @@ public abstract class QueryHandler
   public QueryHandler()
   {
     this.queryString = "";
-    this.validityStatus = 0;
+    this.validityStatus = Validity.DEFAULT;
   }
 
   /**
@@ -184,8 +245,8 @@ public abstract class QueryHandler
   public final void setQueryString(String queryStringToSet)
   {
     if (queryStringToSet.equals("")) {
-      this.validityStatus = 2;
-    } else if (validityStatus > -1) {
+      this.validityStatus = Validity.EMPTY;
+    } else if (validityStatus.getValue() > -1) {
       this.queryStringWithoutPrefixes = queryStringToSet;
       this.lengthNoAddedPrefixes = queryStringToSet.length();
       this.queryString = queryStringToSet;
@@ -204,7 +265,7 @@ public abstract class QueryHandler
   /**
    * @return Returns the validity status of the query
    */
-  public final int getValidityStatus()
+  public final Validity getValidityStatus()
   {
     return validityStatus;
   }
@@ -212,7 +273,7 @@ public abstract class QueryHandler
   /**
    * @param validityStatus validityStatus to set the variable valid to
    */
-  public final void setValidityStatus(int validityStatus)
+  public final void setValidityStatus(Validity validityStatus)
   {
     this.validityStatus = validityStatus;
   }
@@ -316,11 +377,11 @@ public abstract class QueryHandler
   public final String getQueryType()
   {
     //lazy loading of queryType
-    if (queryType.equals("-1")) {
+    if (queryType == null) {
       try {
         this.computeQueryType();
       } catch (IllegalStateException e) {
-        return "-1";
+        return "INVALID";
       }
     }
     return this.queryType;
@@ -391,10 +452,10 @@ public abstract class QueryHandler
     this.toolComputed = true;
 
     //default values in case we don't find anything for computation
-    this.toolName = "0";
-    this.toolVersion = "0";
+    this.toolName = "UNKNOWN";
+    this.toolVersion = "UNKNOWN";
 
-    if (validityStatus != 1) {
+    if (validityStatus != Validity.VALID) {
       return;
     }
 
@@ -449,11 +510,6 @@ public abstract class QueryHandler
         this.toolVersion = "1.0";
       }
     }
-
-    if (this.toolName.equals("0")) {
-      logger.debug("Tool found which is neither user nor bot - is it really not a bot or a user?: \n" + this.queryString);
-    }
-
   }
 
   /**
@@ -499,12 +555,12 @@ public abstract class QueryHandler
    */
   public final String getExampleQueryStringMatch()
   {
-    if (this.getValidityStatus() != 1) {
-      return "-1";
+    if (this.getValidityStatus() != Validity.VALID) {
+      return "INVALID";
     }
     String name = Main.exampleQueriesString.get(this.queryString);
     if (name == null) {
-      return "-1";
+      return "NONE";
     }
     return name;
   }
@@ -516,28 +572,31 @@ public abstract class QueryHandler
 
   /**
    * @param anyIDstoSet A set with IDs with explicit URIs
-   * @return The set with all URIs from Main.prefixes
+   * @return The set with all URIs from Main.prefixes replaced by the prefixes, all others will be added as-is.
    */
   private Set<String> setAnyIDs(Set<String> anyIDstoSet)
   {
+    List<Map.Entry<String, String>> prefixList = new ArrayList<Map.Entry<String, String>>(Main.prefixes.entrySet());
+    Collections.sort(prefixList, new Comparator<Map.Entry<String, String>>() {
+
+      @Override
+      public int compare(Entry<String, String> arg0, Entry<String, String> arg1)
+      {
+        return Integer.valueOf(arg1.getValue().length()).compareTo(Integer.valueOf(arg0.getValue().length()));
+      }
+    });
+
     Set<String> anyIDs = new HashSet<String>();
     for (String anyID : anyIDstoSet) {
-      List<Map.Entry<String, String>> prefixList = new ArrayList<Map.Entry<String, String>>(Main.prefixes.entrySet());
-      Collections.sort(prefixList, new Comparator<Map.Entry<String, String>>()
-      {
-
-        @Override
-        public int compare(Entry<String, String> arg0, Entry<String, String> arg1)
-        {
-          return Integer.valueOf(arg1.getValue().length()).compareTo(Integer.valueOf(arg0.getValue().length()));
-        }
-      });
+      boolean wasAdded = false;
       for (Map.Entry<String, String> entry : prefixList) {
         if (anyID.startsWith(entry.getValue())) {
           anyIDs.add(anyID.replaceFirst(entry.getValue(), entry.getKey() + ":"));
+          wasAdded = true;
           break;
         }
       }
+      if (!wasAdded) anyIDs.add(anyID);
     }
     return anyIDs;
   }
@@ -566,7 +625,7 @@ public abstract class QueryHandler
    */
   public Set<String> getqIDs()
   {
-    if (queryType.equals("-1") && qIDs == null) {
+    if (queryType == null && qIDs == null) {
       try {
         this.computeQueryType();
       } catch (IllegalStateException e) {
@@ -611,7 +670,7 @@ public abstract class QueryHandler
    */
   public Set<String> getpIDs()
   {
-    if (queryType.equals("-1") && pIDs == null) {
+    if (queryType == null && pIDs == null) {
       try {
         this.computeQueryType();
       } catch (IllegalStateException e) {
@@ -649,5 +708,49 @@ public abstract class QueryHandler
       this.computepIDString();
     }
     return this.pIDString;
+  }
+
+  /**
+   * Sets the categories string to contain all categories it should have according to its predicates and the propertyGroupMapping.
+   */
+  private void computeCategoriesString()
+  {
+    if (queryType == null && qIDs == null) {
+      try {
+        this.computeQueryType();
+      } catch (IllegalStateException e) {
+        this.categories = "";
+      }
+    }
+
+    Set<String> categoriesFound = new HashSet<String>();
+
+    Set<String> pids = this.getpIDs();
+
+    if (pids == null) {
+      this.categories = "D";
+      return;
+    }
+
+    for (String predicate : pids) {
+      for (Map.Entry<String, Set<String>> entry : Main.propertyGroupMapping.entrySet()) {
+        String property = "wdt:" + entry.getKey();
+        if (property.equals(predicate)) {
+          categoriesFound.addAll(entry.getValue());
+        }
+      }
+    }
+    this.categories = this.computeAnyIDString(categoriesFound);
+  }
+
+  /**
+   * @return {@link #categories}
+   */
+  public String getCategoriesString()
+  {
+    if (this.categories == null) {
+      this.computeCategoriesString();
+    }
+    return categories;
   }
 }

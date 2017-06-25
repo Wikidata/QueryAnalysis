@@ -4,6 +4,8 @@ from collections import defaultdict
 
 from itertools import izip
 
+# This script can be deleted as far as I know. (Adrian)
+
 pathBase = "queryType"
 
 if not os.path.exists(pathBase):

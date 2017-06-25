@@ -5,6 +5,9 @@ from collections import defaultdict
 from itertools import izip
 
 
+# This script creates descending rankings for each day for all metrics (in the array metrics)
+# TODO: Command line parameters
+
 def listToString(list):
 	returnString = ""
 	for entry in list:
@@ -47,7 +50,14 @@ for metric in metrics:
 
 				key = processed['#' + metric]
 
-				# Sort the entries in PIDs and QIDs to even out the count 
+                # Sort the entries in PIDs and QIDs to even out the count 
+                if metric == "#SubjectsAndObjects" or metric == "#Predicates":
+                    keys_array = sorted(key.split(","))
+                    if idCombinations == 0 or len(keys_array) == idCombinations:
+                        key = listToString(keys_array)
+                    else:
+                        continue
+				# Sort the entries in PIDs and QIDs to even out the count
 				if metric == "PIDs" or metric == "QIDs":
 					keys_array = sorted(key.split(","))
 					if idCombinations == 0 or len(keys_array) == idCombinations:

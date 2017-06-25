@@ -43,7 +43,7 @@ public class OpenRDFQueryHandler extends QueryHandler
   {
     try {
       this.query = this.parseQuery(getQueryString());
-      this.setValidityStatus(1);
+      this.setValidityStatus(QueryHandler.Validity.VALID);
     } catch (MalformedQueryException e) {
       String message = e.getMessage();
       if (message != null) {
@@ -53,17 +53,17 @@ public class OpenRDFQueryHandler extends QueryHandler
 
         if (message.contains("Not a valid (absolute) URI:")) {
           logger.warn("This shoud not happen anymore: " + e.getMessage());
-          setValidityStatus(-3);
+          setValidityStatus(QueryHandler.Validity.INVALID_URI);
         } else if (message.contains("BIND clause alias '{}' was previously used")) {
           logger.warn("This shoud not happen anymore: " + e.getMessage());
-          setValidityStatus(-5);
+          setValidityStatus(QueryHandler.Validity.INVALID_BIND_PREVIOUSLY_USED);
         } else if (message.contains("Multiple prefix declarations for prefix")) {
-          setValidityStatus(-6);
+          setValidityStatus(QueryHandler.Validity.INVALID_PREFIX_DECLARATION_MULTIPLE_TIMES);
         } else {
-          setValidityStatus(-1);
+          setValidityStatus(QueryHandler.Validity.INVALID);
         }
       } else {
-        setValidityStatus(-1);
+        setValidityStatus(QueryHandler.Validity.INVALID);
       }
       logger.debug("Invalid query: \t" + getQueryString() + "\t->\t" + e.getMessage());
       logger.debug("QUE length:" + this.getLengthNoAddedPrefixes() + "\t" + message);
@@ -99,7 +99,7 @@ public class OpenRDFQueryHandler extends QueryHandler
   @Override
   public void computeQuerySize()
   {
-    if (getValidityStatus() != 1) {
+    if (getValidityStatus() != QueryHandler.Validity.VALID) {
       this.querySize = -1;
       return;
     }
@@ -119,7 +119,7 @@ public class OpenRDFQueryHandler extends QueryHandler
   protected void computeSparqlStatistics()
   {
 
-    if (getValidityStatus() != 1) {
+    if (getValidityStatus() != QueryHandler.Validity.VALID) {
       this.sparqlStatistics = SparqlStatisticsCollector.getDefaultMap();
       return;
     }
@@ -140,7 +140,7 @@ public class OpenRDFQueryHandler extends QueryHandler
   @Override
   protected final void computeVariableCountPattern()
   {
-    if (getValidityStatus() != 1) {
+    if (getValidityStatus() != QueryHandler.Validity.VALID) {
       this.variableCountPattern = -1;
       return;
     }
@@ -171,7 +171,7 @@ public class OpenRDFQueryHandler extends QueryHandler
   @Override
   protected final void computeVariableCountHead()
   {
-    if (getValidityStatus() != 1) {
+    if (getValidityStatus() != QueryHandler.Validity.VALID) {
       this.variableCountHead = -1;
       return;
     }
@@ -185,7 +185,7 @@ public class OpenRDFQueryHandler extends QueryHandler
   @Override
   protected final void computeTripleCountWithService()
   {
-    if (getValidityStatus() != 1) {
+    if (getValidityStatus() != QueryHandler.Validity.VALID) {
       this.tripleCountWithService = -1;
       return;
     }
@@ -200,7 +200,7 @@ public class OpenRDFQueryHandler extends QueryHandler
    */
   public final void computeQueryType() throws IllegalStateException
   {
-    if (this.getValidityStatus() != 1) {
+    if (this.getValidityStatus() != QueryHandler.Validity.VALID) {
       throw new IllegalStateException();
     }
     ParsedQuery normalizedQuery;
@@ -219,11 +219,11 @@ public class OpenRDFQueryHandler extends QueryHandler
     }
 
     if (Main.dynamicQueryTypes) {
-      String newQueryType = String.valueOf(threadNumber) + "_" + String.valueOf(queryTypes.size());
+      String newQueryType = "qt:" + String.valueOf(threadNumber) + "_" + String.valueOf(queryTypes.size());
       queryTypes.put(new TupleExprWrapper(normalizedQuery.getTupleExpr()), newQueryType);
       this.queryType = newQueryType;
     } else {
-      this.queryType = "-1";
+      this.queryType = "UNKNOWN";
     }
   }
 
@@ -232,7 +232,7 @@ public class OpenRDFQueryHandler extends QueryHandler
    */
   public final ParsedQuery getNormalizedQuery()
   {
-    if (this.getValidityStatus() != 1) {
+    if (this.getValidityStatus() != QueryHandler.Validity.VALID) {
       throw new IllegalStateException();
     }
     try {
@@ -247,7 +247,7 @@ public class OpenRDFQueryHandler extends QueryHandler
    */
   public final ParsedQuery getParsedQuery()
   {
-    if (this.getValidityStatus() != 1) {
+    if (this.getValidityStatus() != QueryHandler.Validity.VALID) {
       return null;
     } else {
       return this.query;
@@ -311,16 +311,22 @@ public class OpenRDFQueryHandler extends QueryHandler
       if (value != null) {
         if (value.getClass().equals(URIImpl.class)) {
           String subjectString = value.stringValue();
-          for (String uriPrefix : Main.prefixes.values()) {
-            if (subjectString.startsWith(uriPrefix)) {
-              if (!foundNames.containsKey(subjectString)) {
-                foundNames.put(subjectString, foundNames.size() + 1);
-              }
-              String uri = subjectString.substring(0, subjectString.lastIndexOf("/")) + "/QName" + foundNames.get(subjectString);
-              String name = "-const-" + uri + "-uri";
-              return new Var(name, new URIImpl(uri));
-            }
+          if (!foundNames.containsKey(subjectString)) {
+            foundNames.put(subjectString, foundNames.size() + 1);
           }
+          String lastIndexOf;
+          if (subjectString.contains("/")) {
+            lastIndexOf = "/";
+          } else if (subjectString.contains(":")) {
+            lastIndexOf = ":";
+          } else {
+            logger.error("Variable " + var.toString() + " could not be normalized because the urn formatting is not recognized.\n" +
+                "Query was: " + this.getQueryStringWithoutPrefixes());
+            return var;
+          }
+          String uri = subjectString.substring(0, subjectString.lastIndexOf(lastIndexOf)) + lastIndexOf + "QName" + foundNames.get(subjectString);
+          String name = "-const-" + uri + "-uri";
+          return new Var(name, new URIImpl(uri));
         }
       }
     }
@@ -330,12 +336,12 @@ public class OpenRDFQueryHandler extends QueryHandler
   @Override
   public final String getExampleQueryTupleMatch()
   {
-    if (this.getValidityStatus() != 1) {
-      return "-1";
+    if (this.getValidityStatus() != QueryHandler.Validity.VALID) {
+      return "INVALID";
     }
     String name = Main.exampleQueriesTupleExpr.get(new TupleExprWrapper(this.query.getTupleExpr()));
     if (name == null) {
-      return "-1";
+      return "NONE";
     }
     return name;
   }

@@ -1,6 +1,7 @@
 package output;
 
 import openrdffork.TupleExprWrapper;
+import query.QueryHandler;
 
 import java.io.Serializable;
 import java.util.Map;
@@ -50,7 +51,7 @@ public abstract class OutputHandler implements Serializable
    * @param currentLine    The line from which the data to be written originates.
    * @param currentFile    The file from which the data to be written originates.
    */
-  public abstract void writeLine(String queryToAnalyze, Integer validityStatus, String userAgent, long currentLine, String currentFile);
+  public abstract void writeLine(String queryToAnalyze, QueryHandler.Validity validityStatus, String userAgent, long currentLine, String currentFile);
 
   /**
    * Closes any files that might have been opened.
