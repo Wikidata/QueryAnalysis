@@ -79,10 +79,10 @@ public class OutputHandlerTSV extends OutputHandler
     header.add("#VariableCountHead");
     header.add("#VariableCountPattern");
     header.add("#TripleCountWithService");
-    header.add("#TripleCountNoService");
     header.add("#QueryType");
-    header.add("#QIDs");
-    header.add("#PIDs");
+    header.add("#SubjectsAndObjects");
+    header.add("#Predicates");
+    header.add("#Categories");
 
     //add all sparqlStatisticNodes
     for (String sparqlStatisticFeature : SparqlStatisticsCollector.getDefaultMap().keySet()) {
@@ -139,10 +139,10 @@ public class OutputHandlerTSV extends OutputHandler
       line.add(queryHandler.getVariableCountHead());
       line.add(queryHandler.getVariableCountPattern());
       line.add(queryHandler.getTripleCountWithService());
-      line.add(-1);
       line.add(queryHandler.getQueryType());
       line.add(queryHandler.getqIDString());
       line.add(queryHandler.getpIDString());
+      line.add(queryHandler.getCategoriesString());
 
       Map<String, Integer> sparqlStatistics = queryHandler.getSparqlStatistics();
       //add all sparqlStatisticNodes
@@ -157,6 +157,27 @@ public class OutputHandlerTSV extends OutputHandler
     }
     line.add(currentFile + "_" + currentLine);
 
+    for (int i = 0; i < line.size(); i++) {
+      line.set(i, makeStringMoreReadable(line.get(i).toString()));
+    }
+
     writer.writeRow(line);
+  }
+
+  /**
+   * Converts the given string to UNKNOWN if it is -1 and to NULL if the object is null, returns the original in all other cases.
+   * @param inputString The string to be converted.
+   * @return UNKNOWN for '-1', NULL for null-objects, the original string in all other cases
+   */
+  final String makeStringMoreReadable(String inputString)
+  {
+    if (inputString == null) {
+      return "NULL";
+    }
+
+    if (inputString.equals("-1")) {
+      return "UNKNOWN";
+    }
+    return inputString;
   }
 }

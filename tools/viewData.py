@@ -50,6 +50,8 @@ with open(processedPrefix + "%02d" % day + ".tsv") as p, open(sourcePrefix + "%0
 
     i = 0
     for processed, source in izip(pReader, sReader):
+        if i > end:
+            break
         if start <= i <= end:
             data = [[]]
             for metric in metrics:

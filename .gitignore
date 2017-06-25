@@ -47,6 +47,7 @@ test/
 #but allow preBuildQueryConfig and prefixConfig
 !toolMapping.tsv
 !standardPrefixes.tsv
+!propertyGroupMapping.tsv
 
 #error logs
 /logs/
@@ -56,3 +57,4 @@ test/
 /.pydevproject
 /benchmark/
 tools/classifiedBotsData/
+/outputData/

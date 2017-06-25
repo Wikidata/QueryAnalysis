@@ -131,6 +131,10 @@ public abstract class QueryHandler
    * The P-IDs as a string of comma separated values.
    */
   private String pIDString = null;
+  /**
+   * The categories as a string of comma separated values.
+   */
+  private String categories = null;
 
   /**
    *
@@ -516,28 +520,31 @@ public abstract class QueryHandler
 
   /**
    * @param anyIDstoSet A set with IDs with explicit URIs
-   * @return The set with all URIs from Main.prefixes
+   * @return The set with all URIs from Main.prefixes replaced by the prefixes, all others will be added as-is.
    */
   private Set<String> setAnyIDs(Set<String> anyIDstoSet)
   {
+    List<Map.Entry<String, String>> prefixList = new ArrayList<Map.Entry<String, String>>(Main.prefixes.entrySet());
+    Collections.sort(prefixList, new Comparator<Map.Entry<String, String>>() {
+
+      @Override
+      public int compare(Entry<String, String> arg0, Entry<String, String> arg1)
+      {
+        return Integer.valueOf(arg1.getValue().length()).compareTo(Integer.valueOf(arg0.getValue().length()));
+      }
+    });
+
     Set<String> anyIDs = new HashSet<String>();
     for (String anyID : anyIDstoSet) {
-      List<Map.Entry<String, String>> prefixList = new ArrayList<Map.Entry<String, String>>(Main.prefixes.entrySet());
-      Collections.sort(prefixList, new Comparator<Map.Entry<String, String>>()
-      {
-
-        @Override
-        public int compare(Entry<String, String> arg0, Entry<String, String> arg1)
-        {
-          return Integer.valueOf(arg1.getValue().length()).compareTo(Integer.valueOf(arg0.getValue().length()));
-        }
-      });
+      boolean wasAdded = false;
       for (Map.Entry<String, String> entry : prefixList) {
         if (anyID.startsWith(entry.getValue())) {
           anyIDs.add(anyID.replaceFirst(entry.getValue(), entry.getKey() + ":"));
+          wasAdded = true;
           break;
         }
       }
+      if (!wasAdded) anyIDs.add(anyID);
     }
     return anyIDs;
   }
@@ -649,5 +656,49 @@ public abstract class QueryHandler
       this.computepIDString();
     }
     return this.pIDString;
+  }
+
+  /**
+   * Sets the categories string to contain all categories it should have according to its predicates and the propertyGroupMapping.
+   */
+  private void computeCategoriesString()
+  {
+    if (queryType.equals("-1") && qIDs == null) {
+      try {
+        this.computeQueryType();
+      } catch (IllegalStateException e) {
+        this.categories = "";
+      }
+    }
+
+    Set<String> categoriesFound = new HashSet<String>();
+
+    Set<String> pids = this.getpIDs();
+
+    if (pids == null) {
+      this.categories = "D";
+      return;
+    }
+
+    for (String predicate : pids) {
+      for (Map.Entry<String, Set<String>> entry : Main.propertyGroupMapping.entrySet()) {
+        String property = "wdt:" + entry.getKey();
+        if (property.equals(predicate)) {
+          categoriesFound.addAll(entry.getValue());
+        }
+      }
+    }
+    this.categories = this.computeAnyIDString(categoriesFound);
+  }
+
+  /**
+   * @return {@link #categories}
+   */
+  public String getCategoriesString()
+  {
+    if (this.categories == null) {
+      this.computeCategoriesString();
+    }
+    return categories;
   }
 }
