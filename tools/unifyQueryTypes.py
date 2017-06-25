@@ -1,12 +1,12 @@
-import os
-import re
 import csv
 import getopt
-import sys
+import os
+import re
 import shutil
-
-from itertools import izip
 from distutils.dir_util import copy_tree
+
+import sys
+from itertools import izip
 
 help = 'Usage: unifyQueryTypes.py -d <directory with processed files> -r <directory with reference query types>'
 
@@ -39,10 +39,9 @@ for opt, arg in opts:
 
 if directory == "":
     print "WARNING: No directory specified with -d, assuming the directory this file is in."
-    
+
 if referenceQueryTypeDirectory == None:
     print "WARNING: No directory with/for reference query types given, assuming it is being created now."
-
 
 # Variable for the folder containing the query-Type files
 queryTypeSubfolder = directory + "queryType/queryTypeFiles/"
@@ -56,7 +55,7 @@ duplicatesFile = directory + "duplicates.txt"
 
 if not os.path.exists("fdupes"):
     print "WARNING: Could not find fdupes executable next to this script. Assuming it is installed on this machine."
-    
+
 if referenceQueryTypeDirectory != None:
     os.system("fdupes " + queryTypeSubfolder + " " + referenceQueryTypeDirectory + " > " + duplicatesFile)
 else:
@@ -76,6 +75,7 @@ patternReference = None
 if referenceQueryTypeDirectory != None:
     patternReference = re.compile(referenceQueryTypeDirectory + "(.*)\.queryType\n")
 
+
 # takes a list of lines from duplicates.txt (all files point to the same query type) and unifies them by adding an entry to the replacement dict
 # for each duplicate query type as well as deleting said duplicate query types
 def handleNewQueryTypes(queryTypeBlock):
@@ -84,20 +84,21 @@ def handleNewQueryTypes(queryTypeBlock):
         os.remove(entry[:-1])
         replacementDict[patternHere.match(entry).group(1)] = unifiyngQueryType
 
+
 # Reads the lines from fdupes output and separates it into blocks (each terminated by endline character)
-with open(duplicatesFile) as dupes:    
+with open(duplicatesFile) as dupes:
     block = []
-    
+
     for line in dupes:
         if line == "\n":
-            
+
             # If the reference query type directory was not set every block is a new block (meaning there is no query type in the reference folder that might be equal to this block)
             if referenceQueryTypeDirectory == None:
                 handleNewQueryTypes(block)
             else:
                 referenceQueryType = ""
                 entryToDelete = ""
-                
+
                 # Find the line in this block that matches the reference query type directory (if it exists)
                 for entry in block:
                     match = patternReference.match(entry)
@@ -105,7 +106,7 @@ with open(duplicatesFile) as dupes:
                         referenceQueryType = match.group(1)
                         entryToDelete = entry
                         break
-                
+
                 if referenceQueryType == "":
                     handleNewQueryTypes(block)
                 else:
@@ -123,7 +124,7 @@ with open(duplicatesFile) as dupes:
             block = []
             continue
         block.append(line)
-        
+
 os.remove(duplicatesFile)
 
 # set of files in the reference directory to check for conflicts with the new query types
@@ -143,9 +144,8 @@ for (dirpath, dirnames, filenames) in os.walk(queryTypeSubfolder):
 
 replacementReplacementDict = dict()
 
-
 for localFile in localFiles:
-    
+
     # If there is a naming conflict with the reference folder we add an increasing number to the query type until 
     if localFile in referenceFiles:
         i = 1
@@ -156,18 +156,18 @@ for localFile in localFiles:
         replacementReplacementDict[localFileParts[0]] = newName
         replacementDict[localFileParts[0]] = newName
         os.rename(queryTypeSubfolder + localFileParts[0] + ".queryType", queryTypeSubfolder + newName + ".queryType")
-        
+
 for key, value in replacementDict.iteritems():
     if value in replacementReplacementDict:
         replacementDict[key] = replacementReplacementDict[value]
-        
+
 for key, value in replacementDictReferenceFolder.iteritems():
     if key not in replacementDict:
         replacementDict[key] = value
     else:
         print "ERROR: Query type " + key + " appears both as an old and a new query type. This is probably an embarrassing error on the authors part."
         sys.exit(1)
-        
+
 if referenceQueryTypeDirectory != None:
     copy_tree(queryTypeSubfolder, referenceQueryTypeDirectory)
 
@@ -175,7 +175,8 @@ columnIdentifier = "#QueryType"
 
 for i in xrange(1, 3):
     print "Working on %02d" % i
-    with open(directory + processedPrefix + "%02d" % i + ".tsv") as p, open(directory + sourcePrefix + "%02d" % i + ".tsv") as s, open(
+    with open(directory + processedPrefix + "%02d" % i + ".tsv") as p, open(
+                                    directory + sourcePrefix + "%02d" % i + ".tsv") as s, open(
                                     temporaryDirectory + processedPrefix + "%02d" % i + ".tsv", "w") as user_p, open(
                                 temporaryDirectory + sourcePrefix + "%02d" % i + ".tsv", "w") as user_s:
         pReader = csv.DictReader(p, delimiter="\t")
@@ -199,8 +200,9 @@ for i in xrange(1, 3):
                 processed[columnIdentifier] = replacementDict[processed[columnIdentifier]]
             pWriter.writerow(processed)
             sWriter.writerow(source)
-    
-    shutil.copy(temporaryDirectory + processedPrefix + "%02d" % i + ".tsv", directory + processedPrefix + "%02d" % i + ".tsv")
+
+    shutil.copy(temporaryDirectory + processedPrefix + "%02d" % i + ".tsv",
+                directory + processedPrefix + "%02d" % i + ".tsv")
     shutil.copy(temporaryDirectory + sourcePrefix + "%02d" % i + ".tsv", directory + sourcePrefix + "%02d" % i + ".tsv")
-    
+
 shutil.rmtree(directory + "temp")

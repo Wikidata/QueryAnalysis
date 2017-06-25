@@ -30,9 +30,7 @@ import input.InputHandlerParquet;
 import input.InputHandlerTSV;
 import logging.LoggingHandler;
 import openrdffork.TupleExprWrapper;
-
 import org.apache.commons.cli.*;
-import org.apache.commons.collections.BidiMap;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -42,7 +40,6 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.openrdf.query.algebra.TupleExpr;
 import org.openrdf.query.parser.ParsedQuery;
 import query.OpenRDFQueryHandler;
 import scala.Tuple2;
@@ -285,8 +282,7 @@ public final class Main
 
     try {
       parser.parse(new InputStreamReader(new FileInputStream("parserSettings/standardPrefixes.tsv")));
-    }
-    catch (FileNotFoundException e) {
+    } catch (FileNotFoundException e) {
       logger.error("Could not open configuration file for standard prefixes.", e);
     }
   }
@@ -434,6 +430,7 @@ public final class Main
 
   /**
    * Creates the output folder for query types (if necessary) and deletes the old files if we're creating new dynamic query types.
+   *
    * @param inputFolder The input folder to create the query type subfolder in
    */
   private static void prepareWritingQueryTypes(String inputFolder)
@@ -482,8 +479,7 @@ public final class Main
 
       try (BufferedWriter bw = new BufferedWriter(new FileWriter(outputFolderNameExampleQueries + fileName + ".exampleQuery"))) {
         bw.write(exampleQuery.getKey());
-      }
-      catch (IOException e) {
+      } catch (IOException e) {
         logger.error("Could not write the example query " + exampleQuery.getValue() + ".", e);
       }
     }

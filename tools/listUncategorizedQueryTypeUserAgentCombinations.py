@@ -3,9 +3,8 @@
 import collections
 import csv
 import linecache
-import urlparse
-
 import os
+import urlparse
 
 COMBINATIONS_LIMIT = 10
 

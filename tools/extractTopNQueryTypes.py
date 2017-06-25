@@ -1,6 +1,5 @@
 import csv
 import os
-import glob
 import urlparse
 
 from itertools import izip
@@ -19,18 +18,18 @@ if not os.path.exists(subfolder):
     os.makedirs(subfolder)
 
 with open(pathBase + "/TotalQueryType_Ranking.tsv") as rankingFile:
-    rankingReader = csv.DictReader(rankingFile, delimiter = "\t")
+    rankingReader = csv.DictReader(rankingFile, delimiter="\t")
     for line in rankingReader:
         if len(topNQueryTypes) >= TopN:
             break
         topNQueryTypes.append(line["QueryType"])
-        
+
 for i in xrange(1, 2):
     print "Working on %02d" % i
     with open(processedPrefix + "%02d" % i + ".tsv") as p, open(sourcePrefix + "%02d" % i + ".tsv") as s:
         pReader = csv.DictReader(p, delimiter="\t")
         sReader = csv.DictReader(s, delimiter="\t")
-        
+
         for processed, source in izip(pReader, sReader):
             queryType = processed["#QueryType"]
             if topNQueryTypes.__contains__(queryType):

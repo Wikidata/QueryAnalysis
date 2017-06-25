@@ -1,7 +1,7 @@
 import csv
 import os
-
 from collections import defaultdict
+
 from itertools import izip
 
 pathBase = "queryType"

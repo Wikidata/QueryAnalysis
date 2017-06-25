@@ -2,12 +2,11 @@
 
 import csv
 import getopt
-import urllib
 import urlparse
-import sys
 
-from tabulate import tabulate
+import sys
 from itertools import izip
+from tabulate import tabulate
 
 metrics = ["#QuerySize", "#TripleCountWithService"]
 
