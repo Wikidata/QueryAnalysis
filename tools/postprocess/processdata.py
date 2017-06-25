@@ -1,21 +1,34 @@
 # -*- coding: utf-8 -*-
 
 import csv
+import glob
+import os
 # import getopt
 # import urllib
 import urlparse
 
-# import sys
-
+import sys
 # from tabulate import tabulate
-# from itertools import izip
+from itertools import izip
 
 processedPrefix = "QueryProcessedOpenRDF"
+processedSuffix = ".tsv"
 sourcePrefix = "queryCnt"
 
 
-def processDay(day, startIdx, endIdx, handler):
-	with open(processedPrefix + "%02d" % day + ".tsv") as p, open(sourcePrefix + "%02d" % day + ".tsv") as s:
+# iterates over all processed files in the given folder
+def processFolder(folder, handler):
+	for filename in glob.glob(folder + "/" + processedPrefix + "*" + processedSuffix):
+		# parse day
+		day = filename[len(processedPrefix):][:-len(processedSuffix)]
+		processDay(day, handler, folder=folder)
+
+
+def processDay(day, handler, startIdx=0, endIdx=sys.maxint, folder="."):
+	os.chdir(folder)
+	processedFileName = processedPrefix + "%02d" % day + processedSuffix
+	print "Working on: " + processedFileName
+	with open(processedFileName) as p, open(sourcePrefix + "%02d" % day + processedSuffix) as s:
 		pReader = csv.DictReader(p, delimiter="\t")
 		sReader = csv.DictReader(s, delimiter="\t")
 
@@ -32,3 +45,5 @@ def processDay(day, startIdx, endIdx, handler):
 			elif i > endIdx:
 				break
 			i += 1
+
+			# @todo add processFolderCummulatively which emulates a group by query

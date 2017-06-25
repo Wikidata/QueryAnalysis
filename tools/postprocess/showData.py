@@ -1,49 +1,23 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+import argparse
 
-# import csv
-import getopt
-
-# import urllib
-# import urlparse
 import sys
+from tabulate import tabulate
 
 import processdata as processdata
 
-# from tabulate import tabulate
-# from itertools import izip
+parser = argparse.ArgumentParser(description="Tool to view the content of the processed query logs")
+parser.add_argument("--folder", "-f", type=str, nargs=1, help="the folder in which the files are in")
+parser.add_argument("day", type=int, nargs=1, help="the day which we're interested in")
+parser.add_argument("startline", type=int, nargs=1, help="the starting line of the file we're interested in")
+parser.add_argument("endline", type=int, nargs=1, help="the ending line of the file we're interested in")
 
-help = 'Usage: showData.py -d <day> -s <startline> -e <endline>'
-day = 0
-start = 0
-end = 0
-day_given = False
-start_given = False
-end_given = False
+if (len(sys.argv[1:]) == 0):
+	parser.print_help()
+	parser.exit()
 
-try:
-	opts, args = getopt.getopt(sys.argv[1:], "hd:s:e:", ["day=", "startline=", "endline="])
-except getopt.GetoptError:
-	print help
-	sys.exit(2)
-for opt, arg in opts:
-	if opt == "-h":
-		print help
-		sys.exit()
-	elif opt in ("-d", "--day"):
-		day = int(arg)
-		day_given = True
-	elif opt in ("-s", "--startline"):
-		start = int(arg)
-		start_given = True
-	elif opt in ("-e", "--endline"):
-		end = int(arg)
-		end_given = True
-
-if not (day_given and start_given and end_given):
-	print help
-	sys.exit()
-
+args = parser.parse_args()
 
 class ViewDataHandler:
 	metrics = ["#QuerySize", "#TripleCountWithService"]
@@ -52,7 +26,7 @@ class ViewDataHandler:
 		data = [[]]
 		for metric in self.metrics:
 			data[0].append(processed[metric])
-		print tabulate(data, headers=metrics)
+		print tabulate(data, headers=self.metrics)
 		if sparqlQuery is None:
 			print "Error: Could not find query in uri_query."
 		else:
@@ -60,23 +34,4 @@ class ViewDataHandler:
 
 
 handler = ViewDataHandler()
-processdata.processDay(day, start, end, handler)
-
-# with open(processedPrefix + "%02d" % day + ".tsv") as p, open(sourcePrefix + "%02d" % day + ".tsv") as s:
-# pReader = csv.DictReader(p, delimiter="\t")
-# sReader = csv.DictReader(s, delimiter="\t")
-
-# i = 0
-# for processed, source in izip(pReader, sReader):
-# if start <= i <= end:
-# data = [[]]
-# for metric in metrics:
-# data[0].append(processed[metric])
-# print tabulate(data, headers=metrics)
-# d = dict(urlparse.parse_qsl(urlparse.urlsplit(source['uri_query']).query))
-# if 'query' in d.keys():
-# print d['query']
-# else:
-# print "Could not find query in uri_query."
-
-# i += 1
+processdata.processDay(args.day, handler, folder=args.folder, startIdx=args.startline, endIdx=args.endline)
