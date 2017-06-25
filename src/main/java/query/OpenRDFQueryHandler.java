@@ -326,12 +326,17 @@ public class OpenRDFQueryHandler extends QueryHandler
           if (!foundNames.containsKey(subjectString)) {
             foundNames.put(subjectString, foundNames.size() + 1);
           }
-          if (!subjectString.contains("/")) {
-            logger.error("Variable " + var.toString() + " could not be normalized because it does not contain a slash.\n" +
+          String lastIndexOf;
+          if (subjectString.contains("/")) {
+            lastIndexOf = "/";
+          } else if (subjectString.contains(":")) {
+            lastIndexOf = ":";
+          } else {
+            logger.error("Variable " + var.toString() + " could not be normalized because the urn formatting is not recognized.\n" +
                 "Query was: " + this.getQueryStringWithoutPrefixes());
             return var;
           }
-          String uri = subjectString.substring(0, subjectString.lastIndexOf("/")) + "/QName" + foundNames.get(subjectString);
+          String uri = subjectString.substring(0, subjectString.lastIndexOf(lastIndexOf)) + lastIndexOf + "QName" + foundNames.get(subjectString);
           String name = "-const-" + uri + "-uri";
           return new Var(name, new URIImpl(uri));
         }
