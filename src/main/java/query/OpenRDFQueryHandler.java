@@ -82,20 +82,12 @@ public class OpenRDFQueryHandler extends QueryHandler
     //the third argument is the baseURI to resolve any relative URIs that are in
     //the query against, but it can be NULL as well
     StandardizingSPARQLParser parser = new StandardizingSPARQLParser();
-/*  try {
-      queryAST = SyntaxTreeBuilder.parseQuery(queryToParse);
-    }
-    catch (TokenMgrError | ParseException e1) {
-      throw new MalformedQueryException(e1.getMessage());
-    }
-    parser.normalize(queryAST);*/
 
     try {
       ParsedQuery parsedQuery = parser.parseQuery(queryToParse, BASE_URI);
-      //QueryParserUtil.parseQuery(QueryLanguage.SPARQL, queryToParse, "https://query.wikidata.org/bigdata/namespace/wdq/sparql");
       return parsedQuery;
     } catch (Throwable e) {
-      // kind of a dirty hack to catch an java.lang.error which occurs when trying to parse a query which contains f.e. the following string: "jul\ius" where the \ is an invalid escape charachter
+      // kind of a dirty hack to catch an java.lang.error which occurs when trying to parse a query which contains f.e. the following string: "jul\ius" where the \ is an invalid escape character
       //because this error is kind of an MalformedQueryException we will just throw it as one
       throw new MalformedQueryException(e.getMessage());
     }

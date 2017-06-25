@@ -114,7 +114,9 @@ public final class Main
   /**
    * If set to true the resulting processed output files aren't being gzipped
    */
-  private static boolean noGzipOutput = false;
+  public static boolean noGzipOutput = false;
+
+  private static boolean noExampleQueries = false;
 
   /**
    * Since this is a utility class, it should not be instantiated.
@@ -143,6 +145,7 @@ public final class Main
     options.addOption("p", "readPreprocessed", false, "enables reading of preprocessed files");
     options.addOption("d", "dynamicQueryTypes", false, "enables dynamic generation of query types");
     options.addOption("g", "noGzipOutput", false, "disables the gzipped output of the output files");
+    options.addOption("e", "noExampleQueriesOutput", false, "disables the matching of example queries");
 
 
     //some parameters which can be changed through parameters
@@ -207,6 +210,9 @@ public final class Main
       if (cmd.hasOption("noGzipOutput")) {
         noGzipOutput = true;
       }
+      if (cmd.hasOption("noExampleQueries")) {
+        noExampleQueries = true;
+      }
     } catch (UnrecognizedOptionException e) {
       System.out.println("Unrecognized commandline option: " + e.getOption());
       HelpFormatter formatter = new HelpFormatter();
@@ -224,7 +230,9 @@ public final class Main
     loadStandardPrefixes();
     loadPreBuildQueryTypes();
     loadUserAgentRegex();
-    getExampleQueries();
+    if (!noExampleQueries) {
+      getExampleQueries();
+    }
 
     long startTime = System.nanoTime();
 
@@ -244,7 +252,9 @@ public final class Main
     }
 
     // writeQueryTypes(queryTypes);
-    writeExampleQueries(inputFolder);
+    if (!noExampleQueries) {
+      writeExampleQueries(inputFolder);
+    }
 
     long stopTime = System.nanoTime();
     long millis = TimeUnit.MILLISECONDS.convert(stopTime - startTime, TimeUnit.NANOSECONDS);
