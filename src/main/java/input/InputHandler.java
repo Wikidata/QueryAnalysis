@@ -3,7 +3,6 @@ package input;
 import org.apache.log4j.Logger;
 import output.OutputHandler;
 import query.QueryHandler;
-import query.QueryHandler.Validity;
 import scala.Tuple2;
 
 import java.io.FileNotFoundException;

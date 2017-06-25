@@ -19,6 +19,7 @@ if (len(sys.argv[1:]) == 0):
 
 args = parser.parse_args()
 
+
 class ViewDataHandler:
 	metrics = ["#QuerySize", "#TripleCountWithService"]
 

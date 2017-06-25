@@ -50,14 +50,13 @@ for metric in metrics:
 
 				key = processed['#' + metric]
 
-                # Sort the entries in PIDs and QIDs to even out the count 
-                if metric == "#SubjectsAndObjects" or metric == "#Predicates":
-                    keys_array = sorted(key.split(","))
-                    if idCombinations == 0 or len(keys_array) == idCombinations:
-                        key = listToString(keys_array)
-                    else:
-                        continue
-				# Sort the entries in PIDs and QIDs to even out the count
+		# Sort the entries in PIDs and QIDs to even out the count
+		if metric == "#SubjectsAndObjects" or metric == "#Predicates":
+			keys_array = sorted(key.split(","))
+			if idCombinations == 0 or len(keys_array) == idCombinations:
+				key = listToString(keys_array)
+			else:
+				continue  # Sort the entries in PIDs and QIDs to even out the count
 				if metric == "PIDs" or metric == "QIDs":
 					keys_array = sorted(key.split(","))
 					if idCombinations == 0 or len(keys_array) == idCombinations:
@@ -70,15 +69,15 @@ for metric in metrics:
 
 			totalCount += dailyCount
 
-		with open(pathBase + "/Day" + "%02d" % i + pathBase + "_Ranking.tsv", "w") as dailyfile:
-			dailyfile.write(header)
-			for k, v in sorted(dailyMetricCounts.iteritems(), key=lambda (k, v): (v, k), reverse=True):
-				totalMetricCounts[k] += v
-				percentage = float(v) / dailyCount * 100
-				dailyfile.write(str(k) + "\t" + str(v) + "\t" + str(percentage) + "\n")
+	with open(pathBase + "/Day" + "%02d" % i + pathBase + "_Ranking.tsv", "w") as dailyfile:
+		dailyfile.write(header)
+		for k, v in sorted(dailyMetricCounts.iteritems(), key=lambda (k, v): (v, k), reverse=True):
+			totalMetricCounts[k] += v
+			percentage = float(v) / dailyCount * 100
+			dailyfile.write(str(k) + "\t" + str(v) + "\t" + str(percentage) + "\n")
 
-	with open(pathBase + "/" + "Total" + pathBase + "_Ranking.tsv", "w") as totalfile:
-		totalfile.write(header)
-		for k, v in sorted(totalMetricCounts.iteritems(), key=lambda (k, v): (v, k), reverse=True):
-			percentage = float(v) / totalCount * 100
-			totalfile.write(str(k) + "\t" + str(v) + "\t" + str(percentage) + "\n")
+with open(pathBase + "/" + "Total" + pathBase + "_Ranking.tsv", "w") as totalfile:
+	totalfile.write(header)
+	for k, v in sorted(totalMetricCounts.iteritems(), key=lambda (k, v): (v, k), reverse=True):
+		percentage = float(v) / totalCount * 100
+		totalfile.write(str(k) + "\t" + str(v) + "\t" + str(percentage) + "\n")

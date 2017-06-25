@@ -43,4 +43,4 @@ def processDay(day, handler, startIdx=0, endIdx=sys.maxint, folder="."):
 				break
 			i += 1
 
-			# @todo add processFolderCummulatively which emulates a group by query
+		# @todo add processFolderCummulatively which emulates a group by query

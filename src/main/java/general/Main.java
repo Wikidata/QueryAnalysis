@@ -26,18 +26,12 @@ import com.univocity.parsers.common.ParsingContext;
 import com.univocity.parsers.common.processor.ObjectRowProcessor;
 import com.univocity.parsers.tsv.TsvParser;
 import com.univocity.parsers.tsv.TsvParserSettings;
-
-import input.InputHandler;
-import input.InputHandlerParquet;
 import input.InputHandlerTSV;
 import logging.LoggingHandler;
 import openrdffork.TupleExprWrapper;
 import org.apache.commons.cli.*;
 import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.apache.spark.SparkConf;
-import org.apache.spark.api.java.JavaSparkContext;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -98,6 +92,10 @@ public final class Main
    */
   public static final BiMap<String, String> prefixes = HashBiMap.create();
   /**
+   * Define a static logger variable.
+   */
+  private static final Logger logger = Logger.getLogger(Main.class);
+  /**
    * Saves if metrics should be calculated for bot queries.
    */
   public static boolean withBots;
@@ -110,18 +108,13 @@ public final class Main
    */
   public static boolean dynamicQueryTypes;
   /**
-   * Define a static logger variable.
+   * If set to true the resulting processed output files aren't being gzipped
    */
-  private static final Logger logger = Logger.getLogger(Main.class);
+  public static boolean noGzipOutput = false;
   /**
    * Saves the output folder name for query types.
    */
   private static String outputFolderNameQueryTypes;
-
-  /**
-   * If set to true the resulting processed output files aren't being gzipped
-   */
-  public static boolean noGzipOutput = false;
   /**
    * Saves the output folder name for query types.
    */
@@ -488,16 +481,20 @@ public final class Main
 
   /**
    * Creates the output folder for query types (if necessary) and deletes the old files if we're creating new dynamic query types.
+   *
    * @param outputFolder The input folder to create the query type subfolder in
    */
   private static void prepareWritingQueryTypes(String outputFolder)
   {
-    outputFolderNameQueryTypes = outputFolder + "queryTypeFiles/";
-    File outputFolderFile = new File(outputFolderNameQueryTypes);
-    if (dynamicQueryTypes) {
-      FileUtils.deleteQuietly(outputFolderFile);
-    }
+    File outputFolderFile = new File(outputFolder);
     outputFolderFile.mkdir();
+
+    outputFolderNameQueryTypes = outputFolder + "queryTypeFiles/";
+    File outputQueryTypeFolderFile = new File(outputFolderNameQueryTypes);
+    if (dynamicQueryTypes) {
+      FileUtils.deleteQuietly(outputQueryTypeFolderFile);
+    }
+    outputQueryTypeFolderFile.mkdir();
     try (BufferedWriter bw = new BufferedWriter(new FileWriter(outputFolderNameQueryTypes + "README.md"))) {
       bw.write("This directory contains one file for each query type found in this month.\n" +
           "The name of the file (<name>.queryType) corresponds to the #QueryType entry in the processed logs.\n" +

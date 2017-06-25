@@ -2,11 +2,9 @@
 
 import csv
 import getopt
-import urlparse
 
 import sys
 from itertools import izip
-from tabulate import tabulate
 
 metrics = ["#QuerySize", "#TripleCountWithService"]
 
@@ -51,16 +49,16 @@ with open(processedPrefix + "%02d" % day + ".tsv") as p, open(sourcePrefix + "%0
 	i = 0
 	for processed, source in izip(pReader, sReader):
 		if i > end:
-            break
-        if start <= i <= end:
-			data = [[]]
-			for metric in metrics:
-				data[0].append(processed[metric])
-			print tabulate(data, headers=metrics)
-			d = dict(urlparse.parse_qsl(urlparse.urlsplit(source['uri_query']).query))
-			if 'query' in d.keys():
-				print d['query']
-			else:
-				print "Could not find query in uri_query."
+	break
+	if start <= i <= end:
+		data = [[]]
+		for metric in metrics:
+			data[0].append(processed[metric])
+		print tabulate(data, headers=metrics)
+		d = dict(urlparse.parse_qsl(urlparse.urlsplit(source['uri_query']).query))
+		if 'query' in d.keys():
+			print d['query']
+		else:
+			print "Could not find query in uri_query."
 
-		i += 1
+	i += 1
