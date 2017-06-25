@@ -2,30 +2,31 @@
 
 import csv
 import glob
-import os
+import gzip
 import urlparse
 
 import sys
 from itertools import izip
 
 processedPrefix = "QueryProcessedOpenRDF"
-processedSuffix = ".tsv"
+processedSuffix = ".tsv.gz"
 sourcePrefix = "queryCnt"
 
 
 # iterates over all processed files in the given folder
-def processFolder(folder, handler):
-	for filename in glob.glob(folder + "/" + processedPrefix + "*" + processedSuffix):
-		# parse day
+def processFolder(handler, rawLogDatafolder="/a/akrausetud/rawLogdata",
+                  processedLogDataFolder="/a/akrausetud/processedLogDataForAllCategories"):
+	for filename in glob.glob(processedLogDataFolder + "/" + processedPrefix + "*" + processedSuffix):
 		day = filename[len(processedPrefix):][:-len(processedSuffix)]
-		processDay(day, handler, folder=folder)
+		processDay(day, handler, rawLogDatafolder=rawLogDatafolder, processedLogDataFolder=processedLogDataFolder)
 
 
-def processDay(day, handler, startIdx=0, endIdx=sys.maxint, folder="."):
-	os.chdir(folder)
-	processedFileName = processedPrefix + "%02d" % day + processedSuffix
+def processDay(day, handler, startIdx=0, endIdx=sys.maxint, rawLogDataFolder="/a/akrausetud/rawLogdata",
+               processedLogDataFolder="/a/akrausetud/processedLogDataForAllCategories"):
+	processedFileName = processedLogDataFolder + "/" + processedPrefix + "%02d" % day + processedSuffix
+
 	print "Working on: " + processedFileName
-	with open(processedFileName) as p, open(sourcePrefix + "%02d" % day + processedSuffix) as s:
+	with gzip.open(processedFileName) as p, open(rawLogDataFolder + "/" + sourcePrefix + "%02d" % day + ".tsv") as s:
 		pReader = csv.DictReader(p, delimiter="\t")
 		sReader = csv.DictReader(s, delimiter="\t")
 
