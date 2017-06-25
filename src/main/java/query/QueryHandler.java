@@ -681,7 +681,14 @@ public abstract class QueryHandler
 
     Set<String> categoriesFound = new HashSet<String>();
 
-    for (String predicate : this.getpIDs()) {
+    Set<String> pids = this.getpIDs();
+
+    if (pids == null) {
+      this.categories = "D";
+      return;
+    }
+
+    for (String predicate : pids) {
       for (Map.Entry<String, Set<String>> entry : Main.propertyGroupMapping.entrySet()) {
         String property = "wdt:" + entry.getKey();
         if (property.equals(predicate)) {
