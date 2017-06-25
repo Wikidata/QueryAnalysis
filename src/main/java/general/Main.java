@@ -36,6 +36,7 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
+import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -114,6 +115,7 @@ public final class Main
    * If set to true the resulting processed output files aren't being gzipped
    */
   private static boolean noGzipOutput = false;
+
   /**
    * Since this is a utility class, it should not be instantiated.
    */
@@ -385,25 +387,18 @@ public final class Main
   private static void getExampleQueries()
   {
     Document doc;
-    // Not an ideal solution since it duplicates code, but I have not yet found a way to set a fallback (no proxy)
+    Connection connection = Jsoup.connect("http://www.wikidata.org/wiki/Wikidata:SPARQL_query_service/queries/examples")
+        .header("Accept-Encoding", "gzip, deflate")
+        .userAgent("github.com/Wikidata/QueryAnalysis")
+        .maxBodySize(0);
     try {
-
-      doc = Jsoup.connect("http://www.wikidata.org/wiki/Wikidata:SPARQL_query_service/queries/examples")
-          .header("Accept-Encoding", "gzip, deflate")
-          .userAgent("github.com/Wikidata/QueryAnalysis")
-          .maxBodySize(0)
-          .proxy("webproxy.eqiad.wmnet", 8080)
-          .get();
+      doc = connection.get();
     } catch (IOException e) {
       try {
-        logger.warn("Could not connect to wikidata.org via the proxy.", e);
-        doc = Jsoup.connect("http://www.wikidata.org/wiki/Wikidata:SPARQL_query_service/queries/examples")
-            .header("Accept-Encoding", "gzip, deflate")
-            .userAgent("SPARQLQueryAnalyser")
-            .maxBodySize(0)
-            .get();
+        logger.warn("While trying to download the example queries could not connect directloy to wikidata.org, trying via a proxy now.");
+        doc = connection.proxy("webproxy.eqiad.wmnet", 8080).get();
       } catch (IOException e2) {
-        logger.error("Could not connect to wikidata.org.", e2);
+        logger.error("Could not even connect to wikidata.org via the proxy.", e2);
         return;
       }
     }
