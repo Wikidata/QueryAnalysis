@@ -1,38 +1,33 @@
-import getopt
+import argparse
+from collections import defaultdict
+from pprint import pprint
 
 import sys
 
 import processdata as processdata
 
-help = 'Usage: countTools.py -f <folder>'
-folder = ""
-folderGiven = False
+parser = argparse.ArgumentParser(description="Counts the used tools/bots in the given folder")
+parser.add_argument("processedLogDataFolder", type=str, help="the folder in which the processed log files are in")
+parser.add_argument("rawLogDataFolder", type=str, help="the folder in which the raw log files are in")
 
-try:
-	opts, args = getopt.getopt(sys.argv[1:], "f", ["folder="])
-except getopt.GetoptError:
-	print help
-	sys.exit(2)
-for opt, arg in opts:
-	if opt == "-h":
-		print help
-		sys.exit()
-	elif opt in ("-f", "--folder"):
-		folder = arg
-		folder_given = True
+if (len(sys.argv[1:]) == 0):
+	parser.print_help()
+	parser.exit()
 
-if not (folderGiven):
-	print help
-	sys.exit()
-
+args = parser.parse_args()
 
 class CountToolsHandler:
-	metrics = ["#QuerySize", "#TripleCountWithService"]
+	toolCounter = defaultdict(int)
 
 	def handle(self, sparqlQuery, processed):
-		pass
+		self.toolCounter[processed['#ToolName']] += 1
 
+	def printStatistic(self):
+		pprint(sorted(self.toolCounter.iteritems(), key=lambda x: x[1], reverse=True))
 
 handler = CountToolsHandler()
 
-processdata.processFolder(folder, handler)
+processdata.processFolder(handler, processedLogDataFolder=args.processedLogDataFolder,
+                          rawLogDataFolder=args.rawLogDataFolder)
+
+handler.printStatistic()

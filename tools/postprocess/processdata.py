@@ -3,6 +3,7 @@
 import csv
 import glob
 import gzip
+import os
 import urlparse
 
 import sys
@@ -14,11 +15,11 @@ sourcePrefix = "queryCnt"
 
 
 # iterates over all processed files in the given folder
-def processFolder(handler, rawLogDatafolder="/a/akrausetud/rawLogdata",
+def processFolder(handler, rawLogDataFolder="/a/akrausetud/rawLogdata",
                   processedLogDataFolder="/a/akrausetud/processedLogDataForAllCategories"):
 	for filename in glob.glob(processedLogDataFolder + "/" + processedPrefix + "*" + processedSuffix):
-		day = filename[len(processedPrefix):][:-len(processedSuffix)]
-		processDay(day, handler, rawLogDatafolder=rawLogDatafolder, processedLogDataFolder=processedLogDataFolder)
+		day = os.path.basename(filename)[len(processedPrefix):][:-len(processedSuffix)]
+		processDay(int(day), handler, rawLogDataFolder=rawLogDataFolder, processedLogDataFolder=processedLogDataFolder)
 
 
 def processDay(day, handler, startIdx=0, endIdx=sys.maxint, rawLogDataFolder="/a/akrausetud/rawLogdata",
