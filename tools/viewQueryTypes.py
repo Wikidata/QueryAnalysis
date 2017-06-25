@@ -2,10 +2,9 @@
 
 import csv
 import getopt
-import sys
 
+import sys
 from tabulate import tabulate
-from itertools import izip
 
 metrics = ["#QuerySize", "#TripleCountWithService"]
 
@@ -41,18 +40,19 @@ for opt, arg in opts:
 if end != 0 and start > end:
     print "ERROR: startline is greater than endline."
     sys.exit()
-    
+
 if queryType != None and (not foundStartLine or end != 0):
     print "WARNING: Ignoring start- or endline because query type was set."
-    
+
 
 def writeRow(line):
     data = [[]]
     for metric in metrics:
-        data[0].append(line[metric]) 
+        data[0].append(line[metric])
     print "\nQueryType: " + line["QueryType"] + "\n"
     print tabulate(data, headers=metrics)
     print line["#example_query"] + "\n"
+
 
 i = 1
 with open(filename) as file:
@@ -69,7 +69,6 @@ with open(filename) as file:
             if i >= start and (i <= end or end == 0):
                 foundStartLine = True
                 writeRow(line)
-
 
 if not foundQueryType:
     print "Could not find query type " + queryType

@@ -3,7 +3,6 @@ package query;
 import general.Main;
 import openrdffork.StandardizingSPARQLParser;
 import openrdffork.TupleExprWrapper;
-
 import org.apache.log4j.Logger;
 import org.openrdf.model.Value;
 import org.openrdf.model.impl.URIImpl;
@@ -15,10 +14,7 @@ import org.openrdf.query.algebra.Var;
 import org.openrdf.query.algebra.helpers.QueryModelVisitorBase;
 import org.openrdf.query.algebra.helpers.StatementPatternCollector;
 import org.openrdf.query.parser.ParsedQuery;
-import org.openrdf.query.parser.sparql.BaseDeclProcessor;
-import org.openrdf.query.parser.sparql.PrefixDeclProcessor;
-import org.openrdf.query.parser.sparql.StringEscapesProcessor;
-import org.openrdf.query.parser.sparql.ast.*;
+import org.openrdf.query.parser.sparql.ast.VisitorException;
 
 import java.util.*;
 
@@ -86,20 +82,12 @@ public class OpenRDFQueryHandler extends QueryHandler
     //the third argument is the baseURI to resolve any relative URIs that are in
     //the query against, but it can be NULL as well
     StandardizingSPARQLParser parser = new StandardizingSPARQLParser();
-/*  try {
-      queryAST = SyntaxTreeBuilder.parseQuery(queryToParse);
-    }
-    catch (TokenMgrError | ParseException e1) {
-      throw new MalformedQueryException(e1.getMessage());
-    }
-    parser.normalize(queryAST);*/
 
     try {
       ParsedQuery parsedQuery = parser.parseQuery(queryToParse, BASE_URI);
-      //QueryParserUtil.parseQuery(QueryLanguage.SPARQL, queryToParse, "https://query.wikidata.org/bigdata/namespace/wdq/sparql");
       return parsedQuery;
     } catch (Throwable e) {
-      // kind of a dirty hack to catch an java.lang.error which occurs when trying to parse a query which contains f.e. the following string: "jul\ius" where the \ is an invalid escape charachter
+      // kind of a dirty hack to catch an java.lang.error which occurs when trying to parse a query which contains f.e. the following string: "jul\ius" where the \ is an invalid escape character
       //because this error is kind of an MalformedQueryException we will just throw it as one
       throw new MalformedQueryException(e.getMessage());
     }

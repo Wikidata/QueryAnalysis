@@ -30,19 +30,17 @@ import input.InputHandlerParquet;
 import input.InputHandlerTSV;
 import logging.LoggingHandler;
 import openrdffork.TupleExprWrapper;
-
 import org.apache.commons.cli.*;
-import org.apache.commons.collections.BidiMap;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
+import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.openrdf.query.algebra.TupleExpr;
 import org.openrdf.query.parser.ParsedQuery;
 import query.OpenRDFQueryHandler;
 import scala.Tuple2;
@@ -114,6 +112,13 @@ public final class Main
   private static String outputFolderName;
 
   /**
+   * If set to true the resulting processed output files aren't being gzipped
+   */
+  public static boolean noGzipOutput = false;
+
+  private static boolean noExampleQueries = false;
+
+  /**
    * Since this is a utility class, it should not be instantiated.
    */
   private Main()
@@ -139,6 +144,8 @@ public final class Main
     options.addOption("b", "withBots", false, "enables metric calculation for bot queries+");
     options.addOption("p", "readPreprocessed", false, "enables reading of preprocessed files");
     options.addOption("d", "dynamicQueryTypes", false, "enables dynamic generation of query types");
+    options.addOption("g", "noGzipOutput", false, "disables the gzipped output of the output files");
+    options.addOption("e", "noExampleQueriesOutput", false, "disables the matching of example queries");
 
 
     //some parameters which can be changed through parameters
@@ -200,6 +207,12 @@ public final class Main
       if (cmd.hasOption("dynamicQueryTypes")) {
         dynamicQueryTypes = true;
       }
+      if (cmd.hasOption("noGzipOutput")) {
+        noGzipOutput = true;
+      }
+      if (cmd.hasOption("noExampleQueries")) {
+        noExampleQueries = true;
+      }
     } catch (UnrecognizedOptionException e) {
       System.out.println("Unrecognized commandline option: " + e.getOption());
       HelpFormatter formatter = new HelpFormatter();
@@ -217,7 +230,9 @@ public final class Main
     loadStandardPrefixes();
     loadPreBuildQueryTypes();
     loadUserAgentRegex();
-    getExampleQueries();
+    if (!noExampleQueries) {
+      getExampleQueries();
+    }
 
     long startTime = System.nanoTime();
 
@@ -237,7 +252,9 @@ public final class Main
     }
 
     // writeQueryTypes(queryTypes);
-    writeExampleQueries(inputFolder);
+    if (!noExampleQueries) {
+      writeExampleQueries(inputFolder);
+    }
 
     long stopTime = System.nanoTime();
     long millis = TimeUnit.MILLISECONDS.convert(stopTime - startTime, TimeUnit.NANOSECONDS);
@@ -285,8 +302,7 @@ public final class Main
 
     try {
       parser.parse(new InputStreamReader(new FileInputStream("parserSettings/standardPrefixes.tsv")));
-    }
-    catch (FileNotFoundException e) {
+    } catch (FileNotFoundException e) {
       logger.error("Could not open configuration file for standard prefixes.", e);
     }
   }
@@ -381,25 +397,18 @@ public final class Main
   private static void getExampleQueries()
   {
     Document doc;
-    // Not an ideal solution since it duplicates code, but I have not yet found a way to set a fallback (no proxy)
+    Connection connection = Jsoup.connect("http://www.wikidata.org/wiki/Wikidata:SPARQL_query_service/queries/examples")
+        .header("Accept-Encoding", "gzip, deflate")
+        .userAgent("github.com/Wikidata/QueryAnalysis")
+        .maxBodySize(0);
     try {
-
-      doc = Jsoup.connect("http://www.wikidata.org/wiki/Wikidata:SPARQL_query_service/queries/examples")
-          .header("Accept-Encoding", "gzip, deflate")
-          .userAgent("github.com/Wikidata/QueryAnalysis")
-          .maxBodySize(0)
-          .proxy("webproxy.eqiad.wmnet", 8080)
-          .get();
+      doc = connection.get();
     } catch (IOException e) {
       try {
-        logger.warn("Could not connect to wikidata.org via the proxy.", e);
-        doc = Jsoup.connect("http://www.wikidata.org/wiki/Wikidata:SPARQL_query_service/queries/examples")
-            .header("Accept-Encoding", "gzip, deflate")
-            .userAgent("SPARQLQueryAnalyser")
-            .maxBodySize(0)
-            .get();
+        logger.warn("While trying to download the example queries could not connect directloy to wikidata.org, trying via a proxy now.");
+        doc = connection.proxy("webproxy.eqiad.wmnet", 8080).get();
       } catch (IOException e2) {
-        logger.error("Could not connect to wikidata.org.", e2);
+        logger.error("Could not even connect to wikidata.org via the proxy.", e2);
         return;
       }
     }
@@ -434,6 +443,7 @@ public final class Main
 
   /**
    * Creates the output folder for query types (if necessary) and deletes the old files if we're creating new dynamic query types.
+   *
    * @param inputFolder The input folder to create the query type subfolder in
    */
   private static void prepareWritingQueryTypes(String inputFolder)
@@ -482,8 +492,7 @@ public final class Main
 
       try (BufferedWriter bw = new BufferedWriter(new FileWriter(outputFolderNameExampleQueries + fileName + ".exampleQuery"))) {
         bw.write(exampleQuery.getKey());
-      }
-      catch (IOException e) {
+      } catch (IOException e) {
         logger.error("Could not write the example query " + exampleQuery.getValue() + ".", e);
       }
     }

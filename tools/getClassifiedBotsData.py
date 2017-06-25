@@ -1,7 +1,7 @@
 import csv
+import os
 from collections import defaultdict
 
-import os
 import sys
 
 workingDir = sys.argv[1]

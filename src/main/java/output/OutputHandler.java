@@ -1,10 +1,9 @@
 package output;
 
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
-
 import openrdffork.TupleExprWrapper;
+
+import java.io.Serializable;
+import java.util.Map;
 
 /**
  * @author adrian

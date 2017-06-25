@@ -22,7 +22,7 @@ def writeOut(fieldValues, file, dictionary):
 metrics = ['ToolName']
 for metric in metrics:
     print "Working on " + metric
-    
+
     pathBase = metric
 
     if not os.path.exists(pathBase):

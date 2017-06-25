@@ -1,11 +1,10 @@
 package openrdffork;
 
+import general.Main;
 import org.openrdf.query.MalformedQueryException;
 import org.openrdf.query.parser.sparql.ASTVisitorBase;
 import org.openrdf.query.parser.sparql.PrefixDeclProcessor;
 import org.openrdf.query.parser.sparql.ast.*;
-
-import general.Main;
 
 import java.util.LinkedHashMap;
 import java.util.List;

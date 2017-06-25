@@ -2,20 +2,11 @@ package query;
 
 import general.Main;
 import openrdffork.TupleExprWrapper;
-
 import org.apache.log4j.Logger;
 import scala.Tuple2;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
 
 /**
  * @author adrian
@@ -144,7 +135,7 @@ public abstract class QueryHandler
   /**
    *
    */
-   public QueryHandler()
+  public QueryHandler()
   {
     this.queryString = "";
     this.validityStatus = 0;
@@ -496,6 +487,14 @@ public abstract class QueryHandler
   }
 
   /**
+   * @param userAgent The user agent that posed this query.
+   */
+  public final void setUserAgent(String userAgent)
+  {
+    this.userAgent = userAgent;
+  }
+
+  /**
    * @return The name of the example query this query equals according to string comparison, or -1 if it does not
    */
   public final String getExampleQueryStringMatch()
@@ -516,13 +515,6 @@ public abstract class QueryHandler
   public abstract String getExampleQueryTupleMatch();
 
   /**
-   * @param userAgent The user agent that posed this query.
-   */
-  public final void setUserAgent(String userAgent)
-  {
-    this.userAgent = userAgent;
-  }
-  /**
    * @param anyIDstoSet A set with IDs with explicit URIs
    * @return The set with all URIs from Main.prefixes
    */
@@ -531,7 +523,8 @@ public abstract class QueryHandler
     Set<String> anyIDs = new HashSet<String>();
     for (String anyID : anyIDstoSet) {
       List<Map.Entry<String, String>> prefixList = new ArrayList<Map.Entry<String, String>>(Main.prefixes.entrySet());
-      Collections.sort(prefixList, new Comparator<Map.Entry<String, String>>() {
+      Collections.sort(prefixList, new Comparator<Map.Entry<String, String>>()
+      {
 
         @Override
         public int compare(Entry<String, String> arg0, Entry<String, String> arg1)

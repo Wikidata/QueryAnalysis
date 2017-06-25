@@ -1,10 +1,10 @@
 import csv
+import os
 from collections import defaultdict
 from pprint import pprint
 
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
-import os
 
 
 def plotHist(X, Y, title, xlabel="x", ylabel="count of queries", log=False):

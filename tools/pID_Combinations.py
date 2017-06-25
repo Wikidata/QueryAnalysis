@@ -1,8 +1,9 @@
 import csv
 import os
-
 from collections import defaultdict
+
 from itertools import izip
+
 
 def writeOut(fieldValues, file, dictionary):
     header = "hour/combinedWith"
@@ -18,6 +19,7 @@ def writeOut(fieldValues, file, dictionary):
                 line += "\t0"
         file.write(line + "\n")
 
+
 processedPrefix = "QueryProcessedOpenRDF"
 sourcePrefix = "queryCnt"
 
@@ -26,29 +28,29 @@ pathSuffix = "Combinations"
 
 if not os.path.exists(pathBase + pathSuffix):
     os.makedirs(pathBase + pathSuffix)
-    
+
 monthlyFieldValues = set()
 
 monthlyData = dict()
-    
-for i in xrange(1, 2):        
+
+for i in xrange(1, 2):
     print "Working on: %02d" % i
     with open(processedPrefix + "%02d" % i + ".tsv") as p, open(sourcePrefix + "%02d" % i + ".tsv") as s:
-        
+
         dailyFieldValues = set()
 
         dailyData = dict()
-    
+
         pReader = csv.DictReader(p, delimiter="\t")
         sReader = csv.DictReader(s, delimiter="\t")
         for processed, source in izip(pReader, sReader):
             if int(processed['#Valid']) != 1:
                 continue
-    
+
             keys_string = processed['#' + pathBase]
-            
+
             keys_array = keys_string.split(",")
-            
+
             for key in keys_array:
                 if key not in dailyFieldValues:
                     dailyFieldValues.add(key)
@@ -61,7 +63,7 @@ for i in xrange(1, 2):
                         continue
                     dailyData[key][match] += 1
                     monthlyData[key][match] += 1
-                    
+
     with open(pathBase + pathSuffix + "/" + "Day" + "%02d" % i + pathBase + ".tsv", "w") as dailyfile:
         writeOut(dailyFieldValues, dailyfile, dailyData)
 

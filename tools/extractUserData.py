@@ -1,7 +1,7 @@
 import csv
 import os
-
 from shutil import copyfile
+
 from itertools import izip
 
 subfolder = "userData/"
