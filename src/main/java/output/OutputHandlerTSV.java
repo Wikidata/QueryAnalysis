@@ -117,7 +117,7 @@ public class OutputHandlerTSV extends OutputHandler
    * @param currentFile    The file from which the data to be written originates.
    */
   @Override
-  public final void writeLine(String queryToAnalyze, Integer validityStatus, String userAgent, long currentLine, String currentFile)
+  public final void writeLine(String queryToAnalyze, QueryHandler.Validity validityStatus, String userAgent, long currentLine, String currentFile)
   {
     QueryHandler queryHandler = cache.getQueryHandler(validityStatus, queryToAnalyze, queryHandlerClass);
 
@@ -131,7 +131,7 @@ public class OutputHandlerTSV extends OutputHandler
     line.add(queryHandler.getValidityStatus());
     line.add(queryHandler.getToolName());
     line.add(queryHandler.getToolVersion());
-    if (Main.withBots || queryHandler.getToolName().equals("0") || queryHandler.getToolName().equals("USER")) {
+    if (Main.withBots || queryHandler.getToolName().equals("UNKNOWN") || queryHandler.getToolName().equals("USER")) {
       line.add(queryHandler.getExampleQueryStringMatch());
       line.add(queryHandler.getExampleQueryTupleMatch());
       line.add(queryHandler.getStringLength());
@@ -157,27 +157,6 @@ public class OutputHandlerTSV extends OutputHandler
     }
     line.add(currentFile + "_" + currentLine);
 
-    for (int i = 0; i < line.size(); i++) {
-      line.set(i, makeStringMoreReadable(line.get(i).toString()));
-    }
-
     writer.writeRow(line);
-  }
-
-  /**
-   * Converts the given string to UNKNOWN if it is -1 and to NULL if the object is null, returns the original in all other cases.
-   * @param inputString The string to be converted.
-   * @return UNKNOWN for '-1', NULL for null-objects, the original string in all other cases
-   */
-  final String makeStringMoreReadable(String inputString)
-  {
-    if (inputString == null) {
-      return "NULL";
-    }
-
-    if (inputString.equals("-1")) {
-      return "UNKNOWN";
-    }
-    return inputString;
   }
 }

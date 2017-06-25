@@ -45,6 +45,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.openrdf.query.parser.ParsedQuery;
 import query.OpenRDFQueryHandler;
+import query.QueryHandler;
 import scala.Tuple2;
 
 import java.io.*;
@@ -320,7 +321,7 @@ public final class Main
             OpenRDFQueryHandler queryHandler = new OpenRDFQueryHandler();
             //queryHandler.setValidityStatus(1);
             queryHandler.setQueryString(queryString);
-            if (queryHandler.getValidityStatus() != 1) {
+            if (queryHandler.getValidityStatus() != QueryHandler.Validity.VALID) {
               logger.info("The Pre-build query " + filePath + " is no valid SPARQL");
               continue;
             }
@@ -471,7 +472,7 @@ public final class Main
         exampleQueriesString.put(query, name);
         OpenRDFQueryHandler queryHandler = new OpenRDFQueryHandler();
         queryHandler.setQueryString(query);
-        if (queryHandler.getValidityStatus() != 1) {
+        if (queryHandler.getValidityStatus() != QueryHandler.Validity.VALID) {
           logger.warn("The example query " + name + " is no valid SPARQL.");
         } else {
           exampleQueriesTupleExpr.put(new TupleExprWrapper(queryHandler.getParsedQuery().getTupleExpr()), name);

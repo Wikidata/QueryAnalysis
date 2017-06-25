@@ -34,7 +34,7 @@ public class Cache
   /**
    * the memory cached query handler objects
    */
-  private Map<Tuple2<Integer, String>, QueryHandler> queryHandlerLRUMap = (Map<Tuple2<Integer, String>, QueryHandler>) Collections.synchronizedMap(new LRUMap(100000));
+  private Map<Tuple2<QueryHandler.Validity, String>, QueryHandler> queryHandlerLRUMap = (Map<Tuple2<QueryHandler.Validity, String>, QueryHandler>) Collections.synchronizedMap(new LRUMap(100000));
 
   /**
    * exists only to prevent this Class from being instantiated
@@ -87,9 +87,9 @@ public class Cache
    * @param queryToAnalyze The query that should be analyzed and written.
    * @return QueryHandler a QueryHandler object which was created for the same queryString before
    */
-  public QueryHandler getQueryHandler(Integer validityStatus, String queryToAnalyze, Class queryHandlerClass)
+  public QueryHandler getQueryHandler(QueryHandler.Validity validityStatus, String queryToAnalyze, Class queryHandlerClass)
   {
-    Tuple2<Integer, String> tuple = new Tuple2<Integer, String>(validityStatus, queryToAnalyze);
+    Tuple2<QueryHandler.Validity, String> tuple = new Tuple2<QueryHandler.Validity, String>(validityStatus, queryToAnalyze);
 
     //check if requested object already exists in cache
     if (!queryHandlerLRUMap.containsKey(tuple)) {

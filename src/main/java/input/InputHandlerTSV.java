@@ -7,6 +7,7 @@ import com.univocity.parsers.tsv.TsvParserSettings;
 import com.univocity.parsers.tsv.TsvWriter;
 import org.apache.log4j.Logger;
 import output.OutputHandler;
+import query.QueryHandler;
 import scala.Tuple2;
 
 import java.io.FileInputStream;
@@ -70,10 +71,10 @@ public class InputHandlerTSV extends InputHandler
           logger.warn("Ignoring line without tab while parsing.");
           return;
         }
-        Tuple2<String, Integer> queryTuple = decode(row[0].toString(), inputFile, parsingContext.currentLine());
+        Tuple2<String, QueryHandler.Validity> queryTuple = decode(row[0].toString(), inputFile, parsingContext.currentLine());
 
         String query = queryTuple._1;
-        Integer validity = queryTuple._2;
+        QueryHandler.Validity validity = queryTuple._2;
         String user_agent = row[2].toString();
         Long current_line = parsingContext.currentLine();
 
