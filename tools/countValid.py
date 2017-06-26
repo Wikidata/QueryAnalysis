@@ -6,8 +6,8 @@ import sys
 from postprocess import processdata
 
 parser = argparse.ArgumentParser(description="Counts the valid queries")
-parser.add_argument("processedLogDataFolder", type=str, help="the folder in which the processed log files are in")
-parser.add_argument("rawLogDataFolder", type=str, help="the folder in which the raw log files are in")
+parser.add_argument("--monthsFolder", "-m", type=str, help="the folder in which the months directory are residing")
+parser.add_argument("month", type=str, help="the month which we're interested in")
 
 if (len(sys.argv[1:]) == 0):
 	parser.print_help()
@@ -20,19 +20,18 @@ class CountValdHandler:
 	validCounter = defaultdict(int)
 
 	def handle(self, sparqlQuery, processed):
-		# pprint(processed)
 		self.validCounter[processed['#Valid']] += 1
 
-	def printStatistic(self):
-		print "Valid: \t\t" + str(self.validCounter['VALID']) + " " + str(
-			float(self.validCounter['VALID']) / (self.validCounter['VALID'] + self.validCounter['INVALID']) * 100) + "%"
-		print "Invalid:\t" + str(self.validCounter['INVALID']) + " " + str(float(self.validCounter['INVALID']) / (
+	def __str__(self):
+		return "Valid: \t\t" + str(self.validCounter['VALID']) + " " + str(
+			float(self.validCounter['VALID']) / (
+				self.validCounter['VALID'] + self.validCounter['INVALID']) * 100) + "%" + "Invalid:\t" + str(
+			self.validCounter['INVALID']) + " " + str(float(self.validCounter['INVALID']) / (
 			self.validCounter['VALID'] + self.validCounter['INVALID']) * 100) + "%"
 
 
 handler = CountValdHandler()
 
-processdata.processMonth(handler, processedLogDataFolder=args.processedLogDataFolder,
-                         rawLogDataFolder=args.rawLogDataFolder)
+processdata.processMonth(handler, args.month, monthsFolder=args.monthsFolder)
 
-handler.printStatistic()
+print(handler)
