@@ -15,18 +15,18 @@ sourcePrefix = "queryCnt"
 
 
 # iterates over all processed files in the given folder
-def processMonth(handler, month, monthsFolder="/a/akrausetud/months"):
+def processMonth(handler, month, monthsFolder):
 	for filename in glob.glob(monthsFolder + "/" + month
 			                          + "/processedLogData/" + processedPrefix + "*" + processedSuffix):
 		day = os.path.basename(filename)[len(processedPrefix):][:-len(processedSuffix)]
-		processDay(handler, int(day), month=month, monthsFolder=monthsFolder)
+		processDay(handler, int(day), month, monthsFolder)
 
 
 ''' monthsFolder is only needed for development
 '''
 
 
-def processDay(handler, day, month, startIdx=0, endIdx=sys.maxint, monthsFolder="/a/akrausetud/months"):
+def processDay(handler, day, month, monthsFolder, startIdx=0, endIdx=sys.maxint):
 	processedFileName = monthsFolder + "/" + month + "/processedLogData/" + processedPrefix + "%02d" % day + processedSuffix
 
 	print "Working on: " + processedFileName

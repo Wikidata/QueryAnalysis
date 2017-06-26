@@ -9,7 +9,7 @@ from postprocess import processdata
 parser = argparse.ArgumentParser(
 	description="Counts for a given metric how often it occurs per hour. Creates then daily and a monthly tsv file containg the hour, the metric and the queryCount")
 parser.add_argument("metric", type=str, help="the metric which we want to count (without #)")
-parser.add_argument("--monthsFolder", "-m", default="/a/akrausetud/month", type=str,
+parser.add_argument("--monthsFolder", "-m", default="/a/akrausetud/months", type=str,
                     help="the folder in which the months directory are residing")
 parser.add_argument("month", type=str, help="the month which we're interested in")
 
@@ -67,6 +67,6 @@ class HourlyMetricCountHandler:
 
 handler = HourlyMetricCountHandler(args.metric)
 
-processdata.processMonth(handler, args.month, monthsFolder=args.monthsFolder)
+processdata.processMonth(handler, args.month, args.monthsFolder)
 
 handler.saveToFiles(args.monthsFolder + "/" + args.month + "/processedLogData/hourlyMetricCountData")

@@ -6,7 +6,7 @@ import sys
 from postprocess import processdata
 
 parser = argparse.ArgumentParser(description="Prints out the SPARQL statistic")
-parser.add_argument("--monthsFolder", "-m", default="/a/akrausetud/month", type=str,
+parser.add_argument("--monthsFolder", "-m", default="/a/akrausetud/months", type=str,
                     help="the folder in which the months directory are residing")
 parser.add_argument("month", type=str, help="the month which we're interested in")
 
@@ -46,6 +46,6 @@ class SparqlStatisticHandler:
 
 handler = SparqlStatisticHandler()
 
-processdata.processMonth(handler, args.month, monthsFolder=args.monthsFolder)
+processdata.processMonth(handler, args.month, args.monthsFolder)
 
 print handler

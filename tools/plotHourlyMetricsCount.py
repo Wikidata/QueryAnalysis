@@ -10,7 +10,7 @@ from matplotlib.pyplot import cm
 
 parser = argparse.ArgumentParser(
 	description="Generates hourly/daily/monthly plots per metric, please run getHourlyMetricCount.py before")
-parser.add_argument("--monthsFolder", "-m", type=str, default="/a/akrausetud/month",
+parser.add_argument("--monthsFolder", "-m", type=str, default="/a/akrausetud/months",
                     help="the folder in which the months directory are residing")
 parser.add_argument("metric", type=str, help="the metric which we want to count (without #)")
 parser.add_argument("month", default="/a/akrausetud/month", type=str, help="the month which we're interested in")
