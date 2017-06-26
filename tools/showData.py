@@ -8,9 +8,8 @@ from tabulate import tabulate
 from postprocess import processdata
 
 parser = argparse.ArgumentParser(description="Tool to view the content of the processed query logs")
-parser.add_argument("--rawLogDataFolder", "-r", type=str, help="the folder in which the raw log files are in")
-parser.add_argument("--processedLogDataFolder", "-p", type=str,
-                    help="the folder in which the processed log files are in")
+parser.add_argument("--monthsFolder", "-m", type=str, help="the folder in which the months directory are residing")
+parser.add_argument("month", type=str, help="the month which we're interested in")
 parser.add_argument("day", type=int, help="the day which we're interested in")
 parser.add_argument("startline", type=int, help="the starting line of the file we're interested in")
 parser.add_argument("endline", type=int, help="the ending line of the file we're interested in")
@@ -37,5 +36,6 @@ class ViewDataHandler:
 
 
 handler = ViewDataHandler()
-processdata.processDay(args.day, handler, rawLogDataFolder=args.rawLogDataFolder,
-                       processedLogDataFolder=args.processedLogDataFolder, startIdx=args.startline, endIdx=args.endline)
+
+processdata.processDay(handler, args.day, args.month, startIdx=args.startline, endIdx=args.endline,
+                       monthsFolder=args.monthsFolder)
