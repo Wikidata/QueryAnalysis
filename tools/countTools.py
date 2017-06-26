@@ -7,7 +7,8 @@ import sys
 from postprocess import processdata
 
 parser = argparse.ArgumentParser(description="Counts the used tools/bots in the given folder")
-parser.add_argument("--monthsFolder", "-m", type=str, help="the folder in which the months directory are residing")
+parser.add_argument("--monthsFolder", "-m", default="/a/akrausetud/month", type=str,
+                    help="the folder in which the months directory are residing")
 parser.add_argument("month", type=str, help="the month which we're interested in")
 
 if (len(sys.argv[1:]) == 0):
