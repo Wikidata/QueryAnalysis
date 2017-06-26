@@ -664,9 +664,12 @@ public abstract class QueryHandler
 
     for (String predicate : pids) {
       for (Map.Entry<String, Set<String>> entry : Main.propertyGroupMapping.entrySet()) {
-        String property = "wdt:" + entry.getKey();
-        if (property.equals(predicate)) {
-          categoriesFound.addAll(entry.getValue());
+        if (predicate.endsWith(entry.getKey())) {
+          for (Map.Entry<String, String> entryPrefixes : Main.prefixes.entrySet()) {
+            if (predicate.startsWith(entryPrefixes.getValue())) {
+              categoriesFound.addAll(entry.getValue());
+            }
+          }
         }
       }
     }
