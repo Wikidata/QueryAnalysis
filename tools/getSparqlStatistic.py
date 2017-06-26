@@ -3,7 +3,7 @@ from collections import defaultdict
 
 import sys
 
-import processdata as processdata
+from postprocess import processdata
 
 parser = argparse.ArgumentParser(description="Prints out the SPARQL statistic")
 parser.add_argument("processedLogDataFolder", type=str, help="the folder in which the processed log files are in")
@@ -43,7 +43,7 @@ class SparqlStatisticHandler:
 
 handler = SparqlStatisticHandler()
 
-processdata.processFolder(handler, processedLogDataFolder=args.processedLogDataFolder,
-                          rawLogDataFolder=args.rawLogDataFolder)
+processdata.processMonth(handler, processedLogDataFolder=args.processedLogDataFolder,
+                         rawLogDataFolder=args.rawLogDataFolder)
 
 handler.printStatistic()

@@ -15,8 +15,8 @@ sourcePrefix = "queryCnt"
 
 
 # iterates over all processed files in the given folder
-def processFolder(handler, rawLogDataFolder="/a/akrausetud/rawLogdata",
-                  processedLogDataFolder="/a/akrausetud/processedLogDataForAllCategories"):
+def processMonth(handler, rawLogDataFolder="/a/akrausetud/rawLogdata",
+                 processedLogDataFolder="/a/akrausetud/processedLogDataForAllCategories"):
 	for filename in glob.glob(processedLogDataFolder + "/" + processedPrefix + "*" + processedSuffix):
 		day = os.path.basename(filename)[len(processedPrefix):][:-len(processedSuffix)]
 		processDay(int(day), handler, rawLogDataFolder=rawLogDataFolder, processedLogDataFolder=processedLogDataFolder)

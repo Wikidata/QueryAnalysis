@@ -4,7 +4,7 @@ from pprint import pprint
 
 import sys
 
-import processdata as processdata
+from postprocess import processdata
 
 parser = argparse.ArgumentParser(description="Counts the used tools/bots in the given folder")
 parser.add_argument("processedLogDataFolder", type=str, help="the folder in which the processed log files are in")
@@ -28,7 +28,7 @@ class CountToolsHandler:
 
 handler = CountToolsHandler()
 
-processdata.processFolder(handler, processedLogDataFolder=args.processedLogDataFolder,
-                          rawLogDataFolder=args.rawLogDataFolder)
+processdata.processMonth(handler, processedLogDataFolder=args.processedLogDataFolder,
+                         rawLogDataFolder=args.rawLogDataFolder)
 
 handler.printStatistic()
