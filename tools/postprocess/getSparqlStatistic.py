@@ -27,13 +27,13 @@ class SparqlStatisticHandler:
 	totalCount = 0
 
 	def handle(self, sparqlQuery, processed):
-		self.totalCount += 1
-		for featureName in processed:
-			if featureName in self.notStatisticNames:
-				continue
-			if processed[featureName] is not "0":
-				self.statistic[featureName] += 1
-			# int(line[featureName])
+		if (processed['#Valid'] == 'VALID'):
+			self.totalCount += 1
+			for featureName in processed:
+				if featureName in self.notStatisticNames:
+					continue
+				if processed[featureName] is not "0":
+					self.statistic[featureName] += 1
 
 	def printStatistic(self):
 		for featureName, featureCount in sorted(self.statistic.iteritems()):
