@@ -39,7 +39,8 @@ def processDay(day, handler, startIdx=0, endIdx=sys.maxint, rawLogDataFolder="/a
 					sparqlQuery = requestParameters['query']
 				else:
 					sparqlQuery = None
-
+				processed['#hour'] = source['hour']
+				processed['#day'] = day
 				handler.handle(sparqlQuery, processed)
 			elif i > endIdx:
 				break
