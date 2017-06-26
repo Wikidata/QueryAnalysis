@@ -4,14 +4,14 @@ from collections import defaultdict
 
 import sys
 
-import processdata as processdata
+from postprocess import processdata
 
 parser = argparse.ArgumentParser(
 	description="Counts for a given metric how often it occurs per hour. Creates then daily and a monthly tsv file containg the hour, the metric and the queryCount")
 parser.add_argument("metric", type=str, help="the metric which we want to count (without #)")
-parser.add_argument("processedLogDataFolder", type=str, help="the folder in which the processed log files are in")
-parser.add_argument("rawLogDataFolder", type=str, help="the folder in which the raw log files are in")
-parser.add_argument("outputFolder", type=str, help="the folder in which the resulting tsv files should be put in")
+parser.add_argument("--monthsFolder", "-m", default="/a/akrausetud/months", type=str,
+                    help="the folder in which the months directory are residing")
+parser.add_argument("month", type=str, help="the month which we're interested in")
 
 if (len(sys.argv[1:]) == 0):
 	parser.print_help()
@@ -42,12 +42,12 @@ class HourlyMetricCountHandler:
 
 	def saveToFiles(self, outputFolder):
 		outputFolder = outputFolder + "/"
-		if not os.path.exists(outputFolder + "classifiedBotsData/" + self.metric):
-			os.makedirs(outputFolder + "classifiedBotsData/" + self.metric)
+		if not os.path.exists(outputFolder + "/" + self.metric):
+			os.makedirs(outputFolder + "/" + self.metric)
 
 		header = "hour\t" + self.metric + "\tcount\n"
 		for day, data in self.dailyData.iteritems():
-			with open(outputFolder + "classifiedBotsData/" + self.metric + "/" + "%02d" % day
+			with open(outputFolder + self.metric + "/" + "%02d" % day
 					          + "ClassifiedBotsData.tsv", "w") as outputFile:
 				outputFile.write(header)
 				for hour, metricDict in data.iteritems():
@@ -56,7 +56,7 @@ class HourlyMetricCountHandler:
 						outputFile.write(str(hour) + "\t" + str(metric)
 						                 + "\t" + str(data[hour][metric]) + "\n")
 
-		with open(outputFolder + "classifiedBotsData/" + self.metric + "/" + "TotalClassifiedBotsData.tsv",
+		with open(outputFolder + self.metric + "/" + "TotalClassifiedBotsData.tsv",
 		          "w") as outputFile:
 			outputFile.write(header)
 			for hour, metricDict in self.monthlyData.iteritems():
@@ -67,7 +67,6 @@ class HourlyMetricCountHandler:
 
 handler = HourlyMetricCountHandler(args.metric)
 
-processdata.processFolder(handler, processedLogDataFolder=args.processedLogDataFolder,
-                          rawLogDataFolder=args.rawLogDataFolder)
+processdata.processMonth(handler, args.month, args.monthsFolder)
 
-handler.saveToFiles(args.outputFolder)
+handler.saveToFiles(args.monthsFolder + "/" + args.month + "/processedLogData/hourlyMetricCountData")
