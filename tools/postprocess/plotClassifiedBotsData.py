@@ -1,3 +1,4 @@
+import argparse
 import csv
 import os
 
@@ -7,10 +8,21 @@ import numpy as np
 import sys
 from matplotlib.pyplot import cm
 
-workingDir = sys.argv[1]
+parser = argparse.ArgumentParser(description="Generates hourly/daily/monthly plots per metric")
+parser.add_argument("workingFolder", type=str,
+                    help="the folder in which the tsv files from getHourlyMetricCount.py are")
+parser.add_argument("metric", type=str, help="the metric which we want to count (without #)")
+
+if (len(sys.argv[1:]) == 0):
+	parser.print_help()
+	parser.exit()
+
+args = parser.parse_args()
+
+workingDir = args.workingFolder
 os.chdir(workingDir)
 
-metricName = sys.argv[2]
+metricName = args.metric
 
 
 def plotHist(data, title, countTools, xlabel="hour", ylabel="count of queries", log=False):
@@ -72,7 +84,7 @@ def plotHist(data, title, countTools, xlabel="hour", ylabel="count of queries", 
 inputDirectory = "dayTriple/"
 
 files = []
-for i in xrange(1, 2):
+for i in xrange(1, 3):
 	files.append("classifiedBotsData/" + metricName + "/" + "%02d" % i + "ClassifiedBotsData.tsv")
 
 
