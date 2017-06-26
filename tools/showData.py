@@ -5,7 +5,7 @@ import argparse
 import sys
 from tabulate import tabulate
 
-import processdata as processdata
+from postprocess import processdata
 
 parser = argparse.ArgumentParser(description="Tool to view the content of the processed query logs")
 parser.add_argument("--rawLogDataFolder", "-r", type=str, help="the folder in which the raw log files are in")

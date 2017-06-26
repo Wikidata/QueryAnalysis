@@ -4,7 +4,7 @@ from collections import defaultdict
 
 import sys
 
-import processdata as processdata
+from postprocess import processdata
 
 parser = argparse.ArgumentParser(
 	description="Counts for a given metric how often it occurs per hour. Creates then daily and a monthly tsv file containg the hour, the metric and the queryCount")
@@ -67,7 +67,7 @@ class HourlyMetricCountHandler:
 
 handler = HourlyMetricCountHandler(args.metric)
 
-processdata.processFolder(handler, processedLogDataFolder=args.processedLogDataFolder,
-                          rawLogDataFolder=args.rawLogDataFolder)
+processdata.processMonth(handler, processedLogDataFolder=args.processedLogDataFolder,
+                         rawLogDataFolder=args.rawLogDataFolder)
 
 handler.saveToFiles(args.outputFolder)
