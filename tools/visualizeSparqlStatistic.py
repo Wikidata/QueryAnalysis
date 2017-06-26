@@ -18,20 +18,20 @@ statistic = defaultdict(int)
 totalCount = 0
 
 for i in xrange(1, 6):
-    with open("QueryProcessedOpenRDF%02d" % i + ".tsv") as file:
-        reader = csv.DictReader(file, delimiter="\t")
-        for line in reader:
-            if int(line["#Valid"]) != 1:
-                continue
-            if (line["#ToolName"] != "USER"):
-                continue
-            totalCount += 1
-            for featureName in line:
-                if featureName in notStatisticNames:
-                    continue
-                if line[featureName] is not "0":
-                    statistic[featureName] += 1  # int(line[featureName])
+	with open("QueryProcessedOpenRDF%02d" % i + ".tsv") as file:
+		reader = csv.DictReader(file, delimiter="\t")
+		for line in reader:
+			if int(line["#Valid"]) != 1:
+				continue
+			if (line["#ToolName"] != "USER"):
+				continue
+			totalCount += 1
+			for featureName in line:
+				if featureName in notStatisticNames:
+					continue
+				if line[featureName] is not "0":
+					statistic[featureName] += 1  # int(line[featureName])
 
 for featureName, featureCount in sorted(statistic.iteritems()):
-    print('{:<28} {:>8}/{:<8} {:>5}%'.format(featureName, featureCount, totalCount,
-                                             round(featureCount / totalCount * 100, 2)))
+	print('{:<28} {:>8}/{:<8} {:>5}%'.format(featureName, featureCount, totalCount,
+	                                         round(featureCount / totalCount * 100, 2)))

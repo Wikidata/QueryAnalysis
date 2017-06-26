@@ -74,73 +74,6 @@ public abstract class QueryHandler
    */
   private String queryString;
   /**
-   * @author adrian
-   * An enumeration specifying the different validity states.
-   */
-  public enum Validity {
-    /**
-     * Valid, but empty query.
-     */
-    EMPTY(2),
-    /**
-     * Valid query.
-     */
-    VALID(1),
-    /**
-     * default internal value -> should always be changed, if it is 0 then there was an internal error!
-     */
-    DEFAULT(0),
-    /**
-     * Invalid for unknown reasons.
-     */
-    INVALID(-1),
-    /**
-     * Not a valid (absolute) URI.
-     */
-    INVALID_URI(-2),
-    /**
-     * BIND clause alias '{}' was previously used.
-     */
-    INVALID_BIND_PREVIOUSLY_USED(-5),
-    /**
-     * Multiple prefix declarations for prefix.
-     */
-    INVALID_PREFIX_DECLARATION_MULTIPLE_TIMES(-6),
-    /**
-     * There was a syntax error in the URL.
-     */
-    INVALID_SYNTAX(-9),
-    /**
-     * The url was truncated and was therefore not decodable.
-     */
-    INVALID_URL_TRUNCATED(-10),
-    /**
-     * The query string was empty and was therefore not being parsed.
-     */
-    INVALID_EMTPY_QUERY_STRING(-11);
-
-    /**
-     * The value representing the validity.
-     */
-    private int value;
-
-    /**
-     * @param valueToSet The integer value of the validity state.
-     */
-    Validity(int valueToSet)
-    {
-      this.value = valueToSet;
-    }
-
-    /**
-     * @return the validity code of this validity object.
-     */
-    public int getValue()
-    {
-      return this.value;
-    }
-  }
-  /**
    * Saves the query-string without prefixes.
    */
   private String queryStringWithoutPrefixes;
@@ -192,7 +125,6 @@ public abstract class QueryHandler
    * The categories as a string of comma separated values.
    */
   private String categories = null;
-
   /**
    *
    */
@@ -325,7 +257,6 @@ public abstract class QueryHandler
     return this.sparqlStatistics;
   }
 
-
   /**
    * Computes the number of variables in the query pattern.
    * Useful for caching.
@@ -362,14 +293,12 @@ public abstract class QueryHandler
     return this.tripleCountWithService;
   }
 
-
   /**
    * Computes the query type.
    *
    * @throws IllegalStateException
    */
   protected abstract void computeQueryType() throws IllegalStateException;
-
 
   /**
    * @return Returns the query type as a number referencing a file containing the queryTypePattern.
@@ -577,7 +506,8 @@ public abstract class QueryHandler
   private Set<String> setAnyIDs(Set<String> anyIDstoSet)
   {
     List<Map.Entry<String, String>> prefixList = new ArrayList<Map.Entry<String, String>>(Main.prefixes.entrySet());
-    Collections.sort(prefixList, new Comparator<Map.Entry<String, String>>() {
+    Collections.sort(prefixList, new Comparator<Map.Entry<String, String>>()
+    {
 
       @Override
       public int compare(Entry<String, String> arg0, Entry<String, String> arg1)
@@ -752,5 +682,74 @@ public abstract class QueryHandler
       this.computeCategoriesString();
     }
     return categories;
+  }
+
+  /**
+   * @author adrian
+   *         An enumeration specifying the different validity states.
+   */
+  public enum Validity
+  {
+    /**
+     * Valid, but empty query.
+     */
+    EMPTY(2),
+    /**
+     * Valid query.
+     */
+    VALID(1),
+    /**
+     * default internal value -> should always be changed, if it is 0 then there was an internal error!
+     */
+    DEFAULT(0),
+    /**
+     * Invalid for unknown reasons.
+     */
+    INVALID(-1),
+    /**
+     * Not a valid (absolute) URI.
+     */
+    INVALID_URI(-2),
+    /**
+     * BIND clause alias '{}' was previously used.
+     */
+    INVALID_BIND_PREVIOUSLY_USED(-5),
+    /**
+     * Multiple prefix declarations for prefix.
+     */
+    INVALID_PREFIX_DECLARATION_MULTIPLE_TIMES(-6),
+    /**
+     * There was a syntax error in the URL.
+     */
+    INVALID_SYNTAX(-9),
+    /**
+     * The url was truncated and was therefore not decodable.
+     */
+    INVALID_URL_TRUNCATED(-10),
+    /**
+     * The query string was empty and was therefore not being parsed.
+     */
+    INVALID_EMTPY_QUERY_STRING(-11);
+
+    /**
+     * The value representing the validity.
+     */
+    private int value;
+
+    /**
+     * @param valueToSet The integer value of the validity state.
+     */
+    Validity(int valueToSet)
+    {
+      this.value = valueToSet;
+    }
+
+    /**
+     * @return the validity code of this validity object.
+     */
+    public int getValue()
+    {
+      return this.value;
+    }
   }
 }
