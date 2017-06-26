@@ -6,8 +6,9 @@ import sys
 from postprocess import processdata
 
 parser = argparse.ArgumentParser(description="Prints out the SPARQL statistic")
-parser.add_argument("processedLogDataFolder", type=str, help="the folder in which the processed log files are in")
-parser.add_argument("rawLogDataFolder", type=str, help="the folder in which the raw log files are in")
+parser.add_argument("--monthsFolder", "-m", default="/a/akrausetud/months", type=str,
+                    help="the folder in which the months directory are residing")
+parser.add_argument("month", type=str, help="the month which we're interested in")
 
 if (len(sys.argv[1:]) == 0):
 	parser.print_help()
@@ -35,15 +36,16 @@ class SparqlStatisticHandler:
 				if processed[featureName] is not "0":
 					self.statistic[featureName] += 1
 
-	def printStatistic(self):
+	def __str__(self):
+		result = ""
 		for featureName, featureCount in sorted(self.statistic.iteritems()):
-			print('{:<28} {:>8}/{:<8} {:>5}%'.format(featureName, featureCount, self.totalCount,
-			                                         round(float(featureCount) / self.totalCount * 100, 2)))
+			result += '{:<28} {:>8}/{:<8} {:>5}%'.format(featureName, featureCount, self.totalCount,
+			                                             round(float(featureCount) / self.totalCount * 100, 2)) + "\n"
+		return result
 
 
 handler = SparqlStatisticHandler()
 
-processdata.processMonth(handler, processedLogDataFolder=args.processedLogDataFolder,
-                         rawLogDataFolder=args.rawLogDataFolder)
+processdata.processMonth(handler, args.month, args.monthsFolder)
 
-handler.printStatistic()
+print handler

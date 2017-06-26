@@ -15,19 +15,23 @@ sourcePrefix = "queryCnt"
 
 
 # iterates over all processed files in the given folder
-def processMonth(handler, rawLogDataFolder="/a/akrausetud/rawLogdata",
-                 processedLogDataFolder="/a/akrausetud/processedLogDataForAllCategories"):
-	for filename in glob.glob(processedLogDataFolder + "/" + processedPrefix + "*" + processedSuffix):
+def processMonth(handler, month, monthsFolder):
+	for filename in glob.glob(monthsFolder + "/" + month
+			                          + "/processedLogData/" + processedPrefix + "*" + processedSuffix):
 		day = os.path.basename(filename)[len(processedPrefix):][:-len(processedSuffix)]
-		processDay(int(day), handler, rawLogDataFolder=rawLogDataFolder, processedLogDataFolder=processedLogDataFolder)
+		processDay(handler, int(day), month, monthsFolder)
 
 
-def processDay(day, handler, startIdx=0, endIdx=sys.maxint, rawLogDataFolder="/a/akrausetud/rawLogdata",
-               processedLogDataFolder="/a/akrausetud/processedLogDataForAllCategories"):
-	processedFileName = processedLogDataFolder + "/" + processedPrefix + "%02d" % day + processedSuffix
+''' monthsFolder is only needed for development
+'''
+
+
+def processDay(handler, day, month, monthsFolder, startIdx=0, endIdx=sys.maxint):
+	processedFileName = monthsFolder + "/" + month + "/processedLogData/" + processedPrefix + "%02d" % day + processedSuffix
 
 	print "Working on: " + processedFileName
-	with gzip.open(processedFileName) as p, open(rawLogDataFolder + "/" + sourcePrefix + "%02d" % day + ".tsv") as s:
+	with gzip.open(processedFileName) as p, open(monthsFolder + "/" + month
+			                                             + "/rawLogData/" + sourcePrefix + "%02d" % day + ".tsv") as s:
 		pReader = csv.DictReader(p, delimiter="\t")
 		sReader = csv.DictReader(s, delimiter="\t")
 
@@ -45,5 +49,3 @@ def processDay(day, handler, startIdx=0, endIdx=sys.maxint, rawLogDataFolder="/a
 			elif i > endIdx:
 				break
 			i += 1
-
-		# @todo add processFolderCummulatively which emulates a group by query
