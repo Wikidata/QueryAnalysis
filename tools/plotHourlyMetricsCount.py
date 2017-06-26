@@ -8,10 +8,11 @@ import numpy as np
 import sys
 from matplotlib.pyplot import cm
 
-parser = argparse.ArgumentParser(description="Generates hourly/daily/monthly plots per metric")
-parser.add_argument("workingFolder", type=str,
-                    help="the folder in which the tsv files from getHourlyMetricCount.py are")
+parser = argparse.ArgumentParser(
+	description="Generates hourly/daily/monthly plots per metric, please run getHourlyMetricCount.py before")
+parser.add_argument("--monthsFolder", "-m", type=str, help="the folder in which the months directory are residing")
 parser.add_argument("metric", type=str, help="the metric which we want to count (without #)")
+parser.add_argument("month", default="/a/akrausetud/month", type=str, help="the month which we're interested in")
 
 if (len(sys.argv[1:]) == 0):
 	parser.print_help()
@@ -19,7 +20,7 @@ if (len(sys.argv[1:]) == 0):
 
 args = parser.parse_args()
 
-workingDir = args.workingFolder
+workingDir = args.monthsFolder + "/" + args.month + "/processedLogData/hourlyMetricCountData"
 os.chdir(workingDir)
 
 metricName = args.metric
@@ -85,7 +86,7 @@ inputDirectory = "dayTriple/"
 
 files = []
 for i in xrange(1, 3):
-	files.append("classifiedBotsData/" + metricName + "/" + "%02d" % i + "ClassifiedBotsData.tsv")
+	files.append(metricName + "/" + "%02d" % i + "ClassifiedBotsData.tsv")
 
 
 # files.append("classifiedBotsData/TotalClassifiedBotsData.tsv")
@@ -105,8 +106,8 @@ totalMetricNames = set()
 for file in files:
 	print "Working on: " + file
 
-	day = file.replace('classifiedBotsData/' + metricName + '/', '').replace("ClassifiedBotsData.tsv", '')
-
+	day = file.replace(metricName + '/', '').replace("ClassifiedBotsData.tsv", '')
+	print os.getcwd()
 	with open(file) as f:
 		reader = csv.DictReader(f, delimiter="\t")
 
@@ -140,8 +141,8 @@ for file in files:
 		# sort data so that the log graph is kind of useful
 		sorted_data = sorted(data.items(), cmp=compare)
 
-		plotHist(sorted_data, 'classifiedBotsData/' + metricName + '/plots/day' + day, len(set(metrics)))
-		plotHist(sorted_data, 'classifiedBotsData/' + metricName + '/plots/log/day' + day, len(set(metrics)), log=True)
+		plotHist(sorted_data, metricName + '/plots/day' + day, len(set(metrics)))
+		plotHist(sorted_data, metricName + '/plots/log/day' + day, len(set(metrics)), log=True)
 
 	for metric in totalMetricNames:
 		if metric in data:
@@ -154,6 +155,6 @@ for file in files:
 
 sorted_data = sorted(totalDataPerDay.items(), cmp=compare)
 
-plotHist(sorted_data, "classifiedBotsData/" + metricName + "/plots/total", len(totalMetricNames), xlabel='day')
-plotHist(sorted_data, "classifiedBotsData/" + metricName + "/plots/total_log", len(totalMetricNames), xlabel='day',
+plotHist(sorted_data, metricName + "/plots/total", len(totalMetricNames), xlabel='day')
+plotHist(sorted_data, metricName + "/plots/total_log", len(totalMetricNames), xlabel='day',
          log=True)
