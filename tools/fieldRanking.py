@@ -15,13 +15,13 @@ def listToString(list):
     return returnString[:-1]
 
 
-processedPrefix = "QueryProcessedOpenRDF"
-sourcePrefix = "queryCnt"
+processedPrefix = "../outputData/QueryProcessedOpenRDF"
+sourcePrefix = "../inputData/queryCnt"
 
 # Set if you only want to rank ID-Combinations with a specific number of IDs, default ranks all.
-idCombinations = 0
+idCombinations = -1
 
-metrics = ['PIDs']
+metrics = ['Categories']
 for metric in metrics:
     print "Working on " + metric
 
@@ -45,16 +45,21 @@ for metric in metrics:
             pReader = csv.DictReader(p, delimiter="\t")
             sReader = csv.DictReader(s, delimiter="\t")
             for processed, source in izip(pReader, sReader):
-                if int(processed['#Valid']) != 1:
+                if processed['#Valid'] != "VALID":
                     continue
 
                 key = processed['#' + metric]
 
                 # Sort the entries in PIDs and QIDs to even out the count 
-                if metric == "#SubjectsAndObjects" or metric == "#Predicates":
+                if metric == "SubjectsAndObjects" or metric == "Predicates" or metric == "Categories":
                     keys_array = sorted(key.split(","))
-                    if idCombinations == 0 or len(keys_array) == idCombinations:
+                    if len(keys_array) == idCombinations or idCombinations == 0:
                         key = listToString(keys_array)
+                    elif idCombinations == -1:
+                        for single_key in keys_array:
+                            dailyCount += 1
+                            dailyMetricCounts[single_key] += 1
+                        continue
                     else:
                         continue
 
