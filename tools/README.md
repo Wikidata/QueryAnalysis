@@ -8,7 +8,7 @@ You need to specify the directory which contains the `QueryProcessedOpenRDF01.ts
 The output will be, in the directory `classifiedBotsData` for each day a `01ClassifiedBotsData.tsv` and a `TotalClassifiedBotsData.tsv`. 
 These files contain three columns, first the hour, then the specified metric and as the third the count.
 
-## [plotClassifiedBotsData.py](plotClassifiedBotsData.py)
+## [plotClassifiedBotsData.py](postprocess/plotClassifiedBotsData.py)
 You need to specify the directory which contains the result from `getClassifiedBotsData.py` as the first input parameter, the metric you want to be extracted as the second. 
 Takes the created files from `getClassifiedBotsData.py` as input and creates stacked bar charts out of them. Creates a log and a linear version, daily and hourly versions.
 
