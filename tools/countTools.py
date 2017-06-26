@@ -30,4 +30,4 @@ handler = CountToolsHandler()
 
 processdata.processMonth(handler, args.month, monthsFolder=args.monthsFolder)
 
-print(handler)
+print handler
