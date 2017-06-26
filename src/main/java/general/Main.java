@@ -138,8 +138,7 @@ public final class Main
   {
     Options options = new Options();
     options.addOption("l", "logging", false, "enables file logging");
-    options.addOption("o", "outputDirectory", true, "The directory the output should be written to.");
-    options.addOption("f", "file", true, "The directory and input file name the program should process (e.g /home/name/data/queryCnt)");
+    options.addOption("w", "workingDirectory", true, "The directory we should be working on.");
     options.addOption("h", "help", false, "displays this help");
     options.addOption("t", "tsv", false, "reads from .tsv-files");
     options.addOption("n", "numberOfThreads", true, "number of used threads, default 1");
@@ -172,19 +171,16 @@ public final class Main
         inputFileSuffix = ".tsv";
         inputHandlerClass = InputHandlerTSV.class;
       }
-      if (cmd.hasOption("file")) {
-        inputFilePrefix = cmd.getOptionValue("file").trim();
-      } else {
-        System.out.println("Please specify the file which we should work on using the option '--file PREFIX' or '-f PREFIX'");
-        return;
-      }
-      if (cmd.hasOption("outputDirectory")) {
-        outputFolder = cmd.getOptionValue("outputDirectory").trim();
-        if (!outputFolder.endsWith("/")) {
-          outputFolder += "/";
+      if (cmd.hasOption("workingDirectory")) {
+        String workingDirectory = cmd.getOptionValue("workingDirectory").trim();
+        if (!workingDirectory.endsWith("/")) {
+          workingDirectory += "/";
         }
+        inputFilePrefix = workingDirectory + "rawLogData/queryCnt";
+
+        outputFolder = workingDirectory + "processedLogData/";
       } else {
-        System.out.println("Please specify the director to write the processed logs to using the option '--outputDirectry DIRECTORY' or '-o DIRECTORY'");
+        System.out.println("Please specify the directory which we should work on using the option '--workingDirectory DIRECTORY' or '-w DIRECTORY'");
         return;
       }
       if (cmd.hasOption("logging")) {
@@ -370,9 +366,6 @@ public final class Main
     }
   }
 
-  /**
-   * see {@link propertyGroupMapping}.
-   */
   private static void loadPropertyGroupMapping()
   {
     TsvParserSettings parserSettings = new TsvParserSettings();
@@ -412,9 +405,6 @@ public final class Main
     parser.parse(file);
   }
 
-  /**
-   * see {@link userAgentRegex}.
-   */
   private static void loadUserAgentRegex()
   {
     try (BufferedReader br = new BufferedReader(new FileReader("userAgentClassification/userAgentRegex.dat"))) {
