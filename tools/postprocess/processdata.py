@@ -16,7 +16,8 @@ sourcePrefix = "queryCnt"
 
 # iterates over all processed files in the given folder
 def processMonth(handler, month, monthsFolder="/a/akrausetud/months"):
-	for filename in glob.glob(monthsFolder + "/processedLogData/" + processedPrefix + "*" + processedSuffix):
+	for filename in glob.glob(monthsFolder + "/" + month
+			                          + "/processedLogData/" + processedPrefix + "*" + processedSuffix):
 		day = os.path.basename(filename)[len(processedPrefix):][:-len(processedSuffix)]
 		processDay(handler, int(day), month=month, monthsFolder=monthsFolder)
 
@@ -29,8 +30,8 @@ def processDay(handler, day, month, startIdx=0, endIdx=sys.maxint, monthsFolder=
 	processedFileName = monthsFolder + "/" + month + "/processedLogData/" + processedPrefix + "%02d" % day + processedSuffix
 
 	print "Working on: " + processedFileName
-	with gzip.open(processedFileName) as p, open(
-															monthsFolder + "/" + month + "/rawLogData/" + sourcePrefix + "%02d" % day + ".tsv") as s:
+	with gzip.open(processedFileName) as p, open(monthsFolder + "/" + month
+			                                             + "/rawLogData/" + sourcePrefix + "%02d" % day + ".tsv") as s:
 		pReader = csv.DictReader(p, delimiter="\t")
 		sReader = csv.DictReader(s, delimiter="\t")
 
