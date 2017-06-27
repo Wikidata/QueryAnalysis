@@ -28,7 +28,7 @@ class SparqlStatisticHandler:
 	totalCount = 0
 
 	def handle(self, sparqlQuery, processed):
-		if (processed['#Valid'] == 'VALID'):
+		if (processed['#Valid'] == 'VALID' or processed['#Valid'] == '1'):
 			self.totalCount += 1
 			for featureName in processed:
 				if featureName in self.notStatisticNames:

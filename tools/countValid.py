@@ -24,11 +24,17 @@ class CountValdHandler:
 		self.validCounter[processed['#Valid']] += 1
 
 	def __str__(self):
-		return "Valid: \t\t" + str(self.validCounter['VALID']) + " " + str(
-			float(self.validCounter['VALID']) / (
-				self.validCounter['VALID'] + self.validCounter['INVALID']) * 100) + "%" + "\n" + \
-		       "Invalid:\t" + str(self.validCounter['INVALID']) + " " + str(float(self.validCounter['INVALID']) / (
-			self.validCounter['VALID'] + self.validCounter['INVALID']) * 100) + "%"
+		if 'VALID' in self.validCounter:
+			validCount = self.validCounter['VALID']
+			invalidCount = self.validCounter['INVALID']
+		else:
+			validCount = self.validCounter['1']
+			invalidCount = self.validCounter['-1']
+		return "Valid: \t\t" + str(validCount) + " " + str(
+			float(validCount) / (
+				validCount + invalidCount) * 100) + "%" + "\n" + \
+		       "Invalid:\t" + str(self.validCounter['INVALID']) + " " + str(float(invalidCount) / (
+			validCount + invalidCount) * 100) + "%"
 
 
 handler = CountValdHandler()
