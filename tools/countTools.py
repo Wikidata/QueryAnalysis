@@ -21,7 +21,7 @@ class CountToolsHandler:
 	toolCounter = defaultdict(int)
 
 	def handle(self, sparqlQuery, processed):
-		if (processed['#Valid'] == 'VALID'):
+		if (processed['#Valid'] == 'VALID' or processed['#Valid'] == '1'):
 			self.toolCounter[processed['#ToolName']] += 1
 
 	def __str__(self):

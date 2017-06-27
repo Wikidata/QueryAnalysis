@@ -29,7 +29,7 @@ class HourlyMetricCountHandler:
 		self.metric = metric
 
 	def handle(self, sparqlQuery, processed):
-		if (processed['#Valid'] == 'VALID'):
+		if (processed['#Valid'] == 'VALID' or processed['#Valid'] == '1'):
 			if (processed['#day'] not in self.dailyData):
 				self.dailyData[processed['#day']] = dict()
 			if (processed['#hour'] not in self.dailyData[processed['#day']]):
