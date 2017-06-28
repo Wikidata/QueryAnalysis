@@ -1,26 +1,43 @@
+import argparse
 import csv
+import gzip
 import os
 from shutil import copyfile
 
+import sys
 from itertools import izip
 
-# Creates a subset of the raw log files and the processed log files where #QueryType is USER
-# TODO: Command line parameters
+parser = argparse.ArgumentParser(
+	description="Creates a subset of the raw log files and the processed log files where #QueryType is USER")
+parser.add_argument("--monthsFolder", "-m", default="/a/akrausetud/months", type=str,
+                    help="the folder in which the months directory are residing")
+parser.add_argument("month", type=str, help="the month which we're interested in")
+
+if (len(sys.argv[1:]) == 0):
+	parser.print_help()
+	parser.exit()
+
+args = parser.parse_args()
+
+os.chdir(args.monthsFolder + "/" + args.month)
 
 subfolder = "userData/"
 
-processedPrefix = "QueryProcessedOpenRDF"
-sourcePrefix = "queryCnt"
+processedPrefix = "processedLogData/QueryProcessedOpenRDF"
+sourcePrefix = "rawLogData/queryCnt"
 
 if not os.path.exists(subfolder):
 	os.makedirs(subfolder)
+	os.makedirs(subfolder + "processedLogData")
+	os.makedirs(subfolder + "rawLogData")
 
 queryTypes = set()
 
 for i in xrange(1, 2):
 	print "Working on %02d" % i
-	with open(processedPrefix + "%02d" % i + ".tsv") as p, open(sourcePrefix + "%02d" % i + ".tsv") as s, open(
-									subfolder + processedPrefix + "%02d" % i + ".tsv", "w") as user_p, open(
+	with gzip.open(processedPrefix + "%02d" % i + ".tsv.gz") as p, open(
+							sourcePrefix + "%02d" % i + ".tsv") as s, gzip.open(
+									subfolder + processedPrefix + "%02d" % i + ".tsv.gz", "w") as user_p, open(
 								subfolder + sourcePrefix + "%02d" % i + ".tsv", "w") as user_s:
 		pReader = csv.DictReader(p, delimiter="\t")
 		sReader = csv.DictReader(s, delimiter="\t")

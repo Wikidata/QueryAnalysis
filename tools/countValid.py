@@ -17,7 +17,7 @@ if (len(sys.argv[1:]) == 0):
 args = parser.parse_args()
 
 
-class CountValdHandler:
+class CountValidityHandler:
 	validCounter = defaultdict(int)
 
 	def handle(self, sparqlQuery, processed):
@@ -33,11 +33,11 @@ class CountValdHandler:
 		return "Valid: \t\t" + str(validCount) + " " + str(
 			float(validCount) / (
 				validCount + invalidCount) * 100) + "%" + "\n" + \
-		       "Invalid:\t" + str(self.validCounter['INVALID']) + " " + str(float(invalidCount) / (
+		       "Invalid:\t" + str(invalidCount) + " " + str(float(invalidCount) / (
 			validCount + invalidCount) * 100) + "%"
 
 
-handler = CountValdHandler()
+handler = CountValidityHandler()
 
 processdata.processMonth(handler, args.month, args.monthsFolder)
 
