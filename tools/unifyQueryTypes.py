@@ -1,61 +1,64 @@
+import argparse
 import csv
-import getopt
+import glob
+import gzip
 import os
 import re
 import shutil
-from distutils.dir_util import copy_tree
-
 import sys
-from itertools import izip
+
+from distutils.dir_util import copy_tree
+from duplicity.tempdir import TemporaryDirectory
 
 # This script uses fdupes to check the queryTypeFiles-Folder and the reference query types folder for duplicates.
 # If it finds duplicates it chooses one of the queryTypes (the one in the reference query types folder if one exists, otherwise at random)
 # and renames all other duplicate entries in #QueryType to that query type  
 
-help = 'Usage: unifyQueryTypes.py -d <directory with processed files> -r <directory with reference query types>'
+def addMissingSlash(directoryString):
+	if not directoryString.endswith("/"):
+		return directoryString + "/"
+	return directoryString
+
+parser = argparse.ArgumentParser(
+	description="This script uses fdupes to check the queryTypeFiles-Folder and the reference query types folder for duplicates.\n" +
+	"If it finds duplicates it chooses one of the queryTypes (the one in the reference query types folder if one exists, otherwise at random)\n" +
+	"and renames all other duplicate entries in #QueryType to that query type ")
+parser.add_argument("--monthsFolder", "-m", default="/a/akrausetud/months/", type=str,
+                    help="The folder in which the months directories are residing.")
+parser.add_argument("month", type=str, help="The month whose query types should be unified.")
+parser.add_argument("referenceDirectory", default="/a/akrausetud/queryTypeReferenceFolder/", type=str, help="The directory with the reference query types.")
+
+if (len(sys.argv[1:]) == 0):
+	parser.print_help()
+	parser.exit()
+
+args = parser.parse_args()
+
+os.chdir(addMissingSlash(args.monthsFolder) + addMissingSlash(args.month))
+
+referenceQueryTypeDirectory = addMissingSlash(args.referenceDirectory)
+
+readme = "README.md"
+
+processedFolder = "processedLogData/"
 
 processedPrefix = "QueryProcessedOpenRDF"
-sourcePrefix = "queryCnt"
+processedSuffix = ".tsv.gz"
 
-directory = ""
-referenceQueryTypeDirectory = None
-
-# reads the command line arguments -d and -r
-try:
-	opts, args = getopt.getopt(sys.argv[1:], "hd:r:", ["directory=", "referenceQueryTypes="])
-except getopt.GetoptError:
-	print help
-	sys.exit(2)
-for opt, arg in opts:
-	if opt == "-h":
-		print help
-		sys.exit()
-	elif opt in ("-d", "--directory"):
-		if arg[len(arg) - 1] != "/":
-			directory = arg + "/"
-		else:
-			directory = arg
-	elif opt in ("-r", "--referenceQueryTypes"):
-		if arg[len(arg) - 1] != "/":
-			referenceQueryTypeDirectory = arg + "/"
-		else:
-			referenceQueryTypeDirectory = arg
-
-if directory == "":
-	print "WARNING: No directory specified with -d, assuming the directory this file is in."
-
-if referenceQueryTypeDirectory == None:
-	print "WARNING: No directory with/for reference query types given, assuming it is being created now."
+processedFilePrefix = processedFolder + processedPrefix
 
 # Variable for the folder containing the query-Type files
-queryTypeSubfolder = directory + "queryTypeFiles/"
+queryTypeSubfolder = processedFolder + "queryTypeFiles/"
 
-temporaryDirectory = directory + "temp/"
+temporaryDirectory = "temp/"
 
 if not os.path.exists(temporaryDirectory):
 	os.makedirs(temporaryDirectory)
 
-duplicatesFile = directory + "duplicates.txt"
+if not os.path.exists(temporaryDirectory + processedFolder):
+	os.makedirs(temporaryDirectory + processedFolder)
+
+duplicatesFile = "duplicates.txt"
 
 if not os.path.exists("fdupes"):
 	print "WARNING: Could not find fdupes executable next to this script. Assuming it is installed on this machine."
@@ -94,7 +97,11 @@ with open(duplicatesFile) as dupes:
 	block = []
 
 	for line in dupes:
+		if line.endswith("README.md\n"):
+			continue
 		if line == "\n":
+			if len(block) < 2:
+				continue
 
 			# If the reference query type directory was not set every block is a new block (meaning there is no query type in the reference folder that might be equal to this block)
 			if referenceQueryTypeDirectory == None:
@@ -138,11 +145,15 @@ localFiles = set()
 
 for (dirpath, dirnames, filenames) in os.walk(referenceQueryTypeDirectory):
 	for file in filenames:
+		if (file.endswith(readme)):
+			continue
 		referenceFiles.add(file)
 	break
 
 for (dirpath, dirnames, filenames) in os.walk(queryTypeSubfolder):
 	for file in filenames:
+		if (file.endswith(readme)):
+			continue
 		localFiles.add(file)
 	break
 
@@ -173,40 +184,31 @@ for key, value in replacementDictReferenceFolder.iteritems():
 		sys.exit(1)
 
 if referenceQueryTypeDirectory != None:
-	copy_tree(queryTypeSubfolder, referenceQueryTypeDirectory)
+	for filename in glob.glob(queryTypeSubfolder + "*.queryType"):
+		shutil.copy(filename, referenceQueryTypeDirectory + os.path.basename(filename))
+		os.remove(filename)
+		
+shutil.rmtree(queryTypeSubfolder)
 
 columnIdentifier = "#QueryType"
 
-for i in xrange(1, 3):
-	print "Working on %02d" % i
-	with open(directory + processedPrefix + "%02d" % i + ".tsv") as p, open(
-									directory + sourcePrefix + "%02d" % i + ".tsv") as s, open(
-								temporaryDirectory + processedPrefix + "%02d" % i + ".tsv", "w") as user_p, open(
-								temporaryDirectory + sourcePrefix + "%02d" % i + ".tsv", "w") as user_s:
+for filename in glob.glob(processedFilePrefix + "*" + processedSuffix):
+	print "Working on " + filename
+	with gzip.open(filename) as p, gzip.open(temporaryDirectory + filename, "w") as temp_p:
 		pReader = csv.DictReader(p, delimiter="\t")
-		sReader = csv.DictReader(s, delimiter="\t")
 
-		pWriter = csv.DictWriter(user_p, None, delimiter="\t")
-		sWriter = csv.DictWriter(user_s, None, delimiter="\t")
+		pWriter = csv.DictWriter(temp_p, None, delimiter="\t")
 
-		for processed, source in izip(pReader, sReader):
+		for processed in pReader:
 			if pWriter.fieldnames is None:
 				ph = dict((h, h) for h in pReader.fieldnames)
 				pWriter.fieldnames = pReader.fieldnames
 				pWriter.writerow(ph)
 
-			if sWriter.fieldnames is None:
-				sh = dict((h, h) for h in sReader.fieldnames)
-				sWriter.fieldnames = sReader.fieldnames
-				sWriter.writerow(sh)
-
 			if processed[columnIdentifier] in replacementDict:
 				processed[columnIdentifier] = replacementDict[processed[columnIdentifier]]
 			pWriter.writerow(processed)
-			sWriter.writerow(source)
 
-	shutil.copy(temporaryDirectory + processedPrefix + "%02d" % i + ".tsv",
-	            directory + processedPrefix + "%02d" % i + ".tsv")
-	shutil.copy(temporaryDirectory + sourcePrefix + "%02d" % i + ".tsv", directory + sourcePrefix + "%02d" % i + ".tsv")
+	shutil.copy(temporaryDirectory + filename, filename)
 
-shutil.rmtree(directory + "temp")
+shutil.rmtree(temporaryDirectory)
