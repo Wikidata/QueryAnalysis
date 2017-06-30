@@ -61,19 +61,24 @@ class FieldRankingHandler:
 		field_array = str(processed["#" + metric]).split(",")
 		if args.nosplitting:			
 			field_array = sorted(field_array)
+			self.countQuery(processed["#day"])
 			self.countEntry(utility.listToString(field_array), processed["#day"])
 		else:			
+			self.countQuery(processed["#day"])
 			for entry in field_array:
 				self.countEntry(entry, processed["#day"])
 				
 	def countEntry(self, entry, day):
 		if (day not in self.dailyMetricCount):
 			self.dailyMetricCount[day] = defaultdict(int)
-		self.totalCount += 1
 		self.totalMetricCounts[entry] += 1
-		
-		self.dailyCount[day] += 1
 		self.dailyMetricCount[day][entry] += 1
+		
+	def countQuery(self, day):
+		if (day not in self.dailyMetricCount):
+			self.dailyMetricCount[day] = defaultdict(int)
+		self.totalCount += 1
+		self.dailyCount[day] += 1
 				
 	def writeOut(self):
 		self.writeCount(pathBase + "Full_Month_" + metric + "_Ranking.tsv", self.totalMetricCounts, self.totalCount)
