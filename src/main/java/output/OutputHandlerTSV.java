@@ -8,11 +8,11 @@ import query.Cache;
 import query.QueryHandler;
 import query.SparqlStatisticsCollector;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.zip.GZIPOutputStream;
 
 /**
  * @author adrian
@@ -38,6 +38,11 @@ public class OutputHandlerTSV extends OutputHandler
    */
   private TsvWriter writer;
 
+  /**
+   * The outputStream object we are writing too.
+   */
+  private OutputStream outputStream = null;
+
   private Cache cache = Cache.getInstance();
 
   /**
@@ -51,9 +56,16 @@ public class OutputHandlerTSV extends OutputHandler
    */
   public OutputHandlerTSV(String fileToWrite, Class queryHandlerClass) throws FileNotFoundException
   {
-    FileOutputStream outputWriter = new FileOutputStream(fileToWrite + ".tsv");
-    writer = new TsvWriter(outputWriter, new TsvWriterSettings());
-
+    if (Main.noGzipOutput) {
+      outputStream = new FileOutputStream(fileToWrite + ".tsv");
+    } else {
+      try {
+        outputStream = new GZIPOutputStream(new FileOutputStream(new File(fileToWrite + ".tsv.gz")));
+      } catch (IOException e) {
+        logger.error("Somehow we are unable to write the output to " + fileToWrite + ".tsv.gz", e);
+      }
+    }
+    writer = new TsvWriter(outputStream, new TsvWriterSettings());
     this.queryHandlerClass = queryHandlerClass;
 
     List<String> header = new ArrayList<>();
@@ -81,29 +93,17 @@ public class OutputHandlerTSV extends OutputHandler
     writer.writeHeaders(header);
   }
 
-  public void OutputHandlerTSV()
-  {
-    cache = Cache.getInstance();
-  }
-
   /**
    * Closes the writer this object was writing to.
    */
   public final void closeFiles()
   {
-/*    try {
-      FileOutputStream outputHourly = new FileOutputStream(file + "HourlyAgentCount.tsv");
-      TsvWriter hourlyWriter = new TsvWriter(outputHourly, new TsvWriterSettings());
-      hourlyWriter.writeHeaders("hour", "user_count", "spider_count");
-      for (int i = 0; i < hourly_user.length; i++) {
-        hourlyWriter.writeRow(new String[] {String.valueOf(i), String.valueOf(hourly_user[i]), String.valueOf(hourly_spider[i])});
-      }
-      hourlyWriter.close();
-    } catch (FileNotFoundException e) {
-      logger.error("Could not write the hourly agent_type count.", e);
-    }*/
-
     writer.close();
+    try {
+      outputStream.close();
+    } catch (IOException e) {
+      logger.error("Unable to close the outputStream ", e);
+    }
   }
 
   /**
@@ -117,17 +117,10 @@ public class OutputHandlerTSV extends OutputHandler
    * @param currentFile    The file from which the data to be written originates.
    */
   @Override
-  public final void writeLine(String queryToAnalyze, Integer validityStatus, String userAgent, long currentLine, String currentFile)
+  public final void writeLine(String queryToAnalyze, QueryHandler.Validity validityStatus, String userAgent, long currentLine, String currentFile)
   {
     QueryHandler queryHandler = cache.getQueryHandler(validityStatus, queryToAnalyze, queryHandlerClass);
-    /*try {
-      queryHandler = (QueryHandler) queryHandlerClass.getConstructor().newInstance();
-    } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
-      logger.error("Failed to create query handler object" + e);
-    }
-    queryHandler.setValidityStatus(validityStatus);
-    queryHandler.setQueryString(queryToAnalyze);
-    */
+
     queryHandler.setUserAgent(userAgent);
     queryHandler.setCurrentLine(currentLine);
     queryHandler.setCurrentFile(currentFile);
@@ -138,7 +131,7 @@ public class OutputHandlerTSV extends OutputHandler
     line.add(queryHandler.getValidityStatus());
     line.add(queryHandler.getToolName());
     line.add(queryHandler.getToolVersion());
-    if (Main.withBots || queryHandler.getToolName().equals("0") || queryHandler.getToolName().equals("USER")) {
+    if (Main.withBots || queryHandler.getToolName().equals("UNKNOWN") || queryHandler.getToolName().equals("USER")) {
       line.add(queryHandler.getExampleQueryStringMatch());
       line.add(queryHandler.getExampleQueryTupleMatch());
       line.add(queryHandler.getStringLength());
@@ -164,27 +157,6 @@ public class OutputHandlerTSV extends OutputHandler
     }
     line.add(currentFile + "_" + currentLine);
 
-    for (int i = 0; i < line.size(); i++) {
-      line.set(i, makeStringMoreReadable(line.get(i).toString()));
-    }
-
     writer.writeRow(line);
-  }
-
-  /**
-   * Converts the given string to UNKNOWN if it is -1 and to NULL if the object is null, returns the original in all other cases.
-   * @param inputString The string to be converted.
-   * @return UNKNOWN for '-1', NULL for null-objects, the original string in all other cases
-   */
-  final String makeStringMoreReadable(String inputString)
-  {
-    if (inputString == null) {
-      return "NULL";
-    }
-
-    if (inputString.equals("-1")) {
-      return "UNKNOWN";
-    }
-    return inputString;
   }
 }

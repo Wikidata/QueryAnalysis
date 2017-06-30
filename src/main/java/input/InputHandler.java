@@ -2,6 +2,7 @@ package input;
 
 import org.apache.log4j.Logger;
 import output.OutputHandler;
+import query.QueryHandler;
 import scala.Tuple2;
 
 import java.io.FileNotFoundException;
@@ -38,11 +39,11 @@ public abstract class InputHandler
    * @param inputFile The file this uri_query was read from.
    * @return The query as a Tuple2 Object, ._1 containing the pure string ._2 the validity code
    */
-  public final Tuple2<String, Integer> decode(String uriQuery, String inputFile, long line)
+  public final Tuple2<String, QueryHandler.Validity> decode(String uriQuery, String inputFile, long line)
   {
 
     String queryString = "";
-    Integer validityStatus = -1;
+    QueryHandler.Validity validityStatus = QueryHandler.Validity.INVALID;
     try {
       // the url needs to be transformed first into a URL and then later into a URI because the charachter ^
       // which is included in some Queries is apparently an illegal charachter which needs to be encoded
@@ -52,7 +53,7 @@ public abstract class InputHandler
       //parse url
       String temp = url.getQuery();
       if (temp == null) {
-        return new Tuple2<>("", -11);
+        return new Tuple2<>("", QueryHandler.Validity.INVALID_EMTPY_QUERY_STRING);
       }
       String[] pairs = temp.split("&");
       for (String pair : pairs) {
@@ -66,10 +67,10 @@ public abstract class InputHandler
       if (queryString == null) {
         queryString = "";
       }
-      validityStatus = 1;
+      validityStatus = QueryHandler.Validity.VALID;
 
     } catch (MalformedURLException e) {
-      validityStatus = -9;
+      validityStatus = QueryHandler.Validity.INVALID_SYNTAX;
       queryString = "INVALID"; //needs to be something != null
       logger.info("MAL length: " + uriQuery.length());
       logger.warn("There was a syntax error in the following URL: " + uriQuery + " \tFound at " + inputFile + ", line " + line + "\t" + e.getMessage());
@@ -77,7 +78,7 @@ public abstract class InputHandler
       logger.error("Your system apperently doesn't supports UTF-8 encoding. Please fix this before running this software again.");
     } catch (IllegalArgumentException e) {
       //increment counter for truncated queries
-      validityStatus = -10;
+      validityStatus = QueryHandler.Validity.INVALID_URL_TRUNCATED;
       queryString = "INVALID"; //needs to be something != null
       logger.debug("ILL length: " + uriQuery.length());
       logger.warn("There was an error while parsing the following URL, probably caused by a truncated URI: " + uriQuery + " \tFound at " + inputFile + ", line " + line + "\t" + e.getMessage());

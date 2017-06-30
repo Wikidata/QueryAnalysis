@@ -26,27 +26,20 @@ import com.univocity.parsers.common.ParsingContext;
 import com.univocity.parsers.common.processor.ObjectRowProcessor;
 import com.univocity.parsers.tsv.TsvParser;
 import com.univocity.parsers.tsv.TsvParserSettings;
-
-import input.InputHandler;
-import input.InputHandlerParquet;
 import input.InputHandlerTSV;
 import logging.LoggingHandler;
 import openrdffork.TupleExprWrapper;
-
 import org.apache.commons.cli.*;
-import org.apache.commons.collections.BidiMap;
 import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.apache.spark.SparkConf;
-import org.apache.spark.api.java.JavaSparkContext;
+import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.openrdf.query.algebra.TupleExpr;
 import org.openrdf.query.parser.ParsedQuery;
 import query.OpenRDFQueryHandler;
+import query.QueryHandler;
 import scala.Tuple2;
 
 import java.io.*;
@@ -99,6 +92,10 @@ public final class Main
    */
   public static final BiMap<String, String> prefixes = HashBiMap.create();
   /**
+   * Define a static logger variable.
+   */
+  private static final Logger logger = Logger.getLogger(Main.class);
+  /**
    * Saves if metrics should be calculated for bot queries.
    */
   public static boolean withBots;
@@ -111,13 +108,18 @@ public final class Main
    */
   public static boolean dynamicQueryTypes;
   /**
-   * Define a static logger variable.
+   * If set to true the resulting processed output files aren't being gzipped
    */
-  private static final Logger logger = Logger.getLogger(Main.class);
+  public static boolean noGzipOutput = false;
   /**
    * Saves the output folder name for query types.
    */
   private static String outputFolderNameQueryTypes;
+  /**
+   * Saves the output folder name for query types.
+   */
+  private static String outputFolderName;
+  private static boolean noExampleQueries = false;
 
   /**
    * Since this is a utility class, it should not be instantiated.
@@ -136,13 +138,14 @@ public final class Main
   {
     Options options = new Options();
     options.addOption("l", "logging", false, "enables file logging");
-    options.addOption("o", "outputDirectory", true, "The directory the output should be written to.");
-    options.addOption("f", "file", true, "The directory and input file name the program should process (e.g /home/name/data/queryCnt)");
+    options.addOption("w", "workingDirectory", true, "The directory we should be working on.");
     options.addOption("h", "help", false, "displays this help");
     options.addOption("t", "tsv", false, "reads from .tsv-files");
     options.addOption("n", "numberOfThreads", true, "number of used threads, default 1");
     options.addOption("b", "withBots", false, "enables metric calculation for bot queries+");
     options.addOption("d", "dynamicQueryTypes", false, "enables dynamic generation of query types");
+    options.addOption("g", "noGzipOutput", false, "disables the gzipped output of the output files");
+    options.addOption("e", "noExampleQueriesOutput", false, "disables the matching of example queries");
 
 
     //some parameters which can be changed through parameters
@@ -168,19 +171,16 @@ public final class Main
         inputFileSuffix = ".tsv";
         inputHandlerClass = InputHandlerTSV.class;
       }
-      if (cmd.hasOption("file")) {
-        inputFilePrefix = cmd.getOptionValue("file").trim();
-      } else {
-        System.out.println("Please specify the file which we should work on using the option '--file PREFIX' or '-f PREFIX'");
-        return;
-      }
-      if (cmd.hasOption("outputDirectory")) {
-        outputFolder = cmd.getOptionValue("outputDirectory").trim();
-        if (!outputFolder.endsWith("/")) {
-          outputFolder += "/";
+      if (cmd.hasOption("workingDirectory")) {
+        String workingDirectory = cmd.getOptionValue("workingDirectory").trim();
+        if (!workingDirectory.endsWith("/")) {
+          workingDirectory += "/";
         }
+        inputFilePrefix = workingDirectory + "rawLogData/queryCnt";
+
+        outputFolder = workingDirectory + "processedLogData/";
       } else {
-        System.out.println("Please specify the director to write the processed logs to using the option '--outputDirectry DIRECTORY' or '-o DIRECTORY'");
+        System.out.println("Please specify the directory which we should work on using the option '--workingDirectory DIRECTORY' or '-w DIRECTORY'");
         return;
       }
       if (cmd.hasOption("logging")) {
@@ -197,6 +197,12 @@ public final class Main
       }
       if (cmd.hasOption("dynamicQueryTypes")) {
         dynamicQueryTypes = true;
+      }
+      if (cmd.hasOption("noGzipOutput")) {
+        noGzipOutput = true;
+      }
+      if (cmd.hasOption("noExampleQueries")) {
+        noExampleQueries = true;
       }
     } catch (UnrecognizedOptionException e) {
       System.out.println("Unrecognized commandline option: " + e.getOption());
@@ -215,8 +221,10 @@ public final class Main
     loadStandardPrefixes();
     loadPreBuildQueryTypes();
     loadUserAgentRegex();
+    if (!noExampleQueries) {
+      getExampleQueries();
+    }
     loadPropertyGroupMapping();
-    getExampleQueries();
 
     long startTime = System.nanoTime();
 
@@ -236,7 +244,9 @@ public final class Main
     }
 
     // writeQueryTypes(queryTypes);
-    writeExampleQueries(outputFolder);
+    if (!noExampleQueries) {
+      writeExampleQueries(outputFolder);
+    }
 
     long stopTime = System.nanoTime();
     long millis = TimeUnit.MILLISECONDS.convert(stopTime - startTime, TimeUnit.NANOSECONDS);
@@ -284,8 +294,7 @@ public final class Main
 
     try {
       parser.parse(new InputStreamReader(new FileInputStream("parserSettings/standardPrefixes.tsv")));
-    }
-    catch (FileNotFoundException e) {
+    } catch (FileNotFoundException e) {
       logger.error("Could not open configuration file for standard prefixes.", e);
     }
   }
@@ -304,7 +313,7 @@ public final class Main
             OpenRDFQueryHandler queryHandler = new OpenRDFQueryHandler();
             //queryHandler.setValidityStatus(1);
             queryHandler.setQueryString(queryString);
-            if (queryHandler.getValidityStatus() != 1) {
+            if (queryHandler.getValidityStatus() != QueryHandler.Validity.VALID) {
               logger.info("The Pre-build query " + filePath + " is no valid SPARQL");
               continue;
             }
@@ -357,9 +366,6 @@ public final class Main
     }
   }
 
-  /**
-   * see {@link propertyGroupMapping}.
-   */
   private static void loadPropertyGroupMapping()
   {
     TsvParserSettings parserSettings = new TsvParserSettings();
@@ -399,9 +405,6 @@ public final class Main
     parser.parse(file);
   }
 
-  /**
-   * see {@link userAgentRegex}.
-   */
   private static void loadUserAgentRegex()
   {
     try (BufferedReader br = new BufferedReader(new FileReader("userAgentClassification/userAgentRegex.dat"))) {
@@ -422,25 +425,18 @@ public final class Main
   private static void getExampleQueries()
   {
     Document doc;
-    // Not an ideal solution since it duplicates code, but I have not yet found a way to set a fallback (no proxy)
+    Connection connection = Jsoup.connect("http://www.wikidata.org/wiki/Wikidata:SPARQL_query_service/queries/examples")
+        .header("Accept-Encoding", "gzip, deflate")
+        .userAgent("github.com/Wikidata/QueryAnalysis")
+        .maxBodySize(0);
     try {
-
-      doc = Jsoup.connect("http://www.wikidata.org/wiki/Wikidata:SPARQL_query_service/queries/examples")
-          .header("Accept-Encoding", "gzip, deflate")
-          .userAgent("github.com/Wikidata/QueryAnalysis")
-          .maxBodySize(0)
-          .proxy("webproxy.eqiad.wmnet", 8080)
-          .get();
+      doc = connection.get();
     } catch (IOException e) {
       try {
-        logger.warn("Could not connect to wikidata.org via the proxy.", e);
-        doc = Jsoup.connect("http://www.wikidata.org/wiki/Wikidata:SPARQL_query_service/queries/examples")
-            .header("Accept-Encoding", "gzip, deflate")
-            .userAgent("SPARQLQueryAnalyser")
-            .maxBodySize(0)
-            .get();
+        logger.warn("While trying to download the example queries could not connect directloy to wikidata.org, trying via a proxy now.");
+        doc = connection.proxy("webproxy.eqiad.wmnet", 8080).get();
       } catch (IOException e2) {
-        logger.error("Could not connect to wikidata.org.", e2);
+        logger.error("Could not even connect to wikidata.org via the proxy.", e2);
         return;
       }
     }
@@ -462,7 +458,7 @@ public final class Main
         exampleQueriesString.put(query, name);
         OpenRDFQueryHandler queryHandler = new OpenRDFQueryHandler();
         queryHandler.setQueryString(query);
-        if (queryHandler.getValidityStatus() != 1) {
+        if (queryHandler.getValidityStatus() != QueryHandler.Validity.VALID) {
           logger.warn("The example query " + name + " is no valid SPARQL.");
         } else {
           exampleQueriesTupleExpr.put(new TupleExprWrapper(queryHandler.getParsedQuery().getTupleExpr()), name);
@@ -475,16 +471,20 @@ public final class Main
 
   /**
    * Creates the output folder for query types (if necessary) and deletes the old files if we're creating new dynamic query types.
+   *
    * @param outputFolder The input folder to create the query type subfolder in
    */
   private static void prepareWritingQueryTypes(String outputFolder)
   {
-    outputFolderNameQueryTypes = outputFolder + "queryTypeFiles/";
-    File outputFolderFile = new File(outputFolderNameQueryTypes);
-    if (dynamicQueryTypes) {
-      FileUtils.deleteQuietly(outputFolderFile);
-    }
+    File outputFolderFile = new File(outputFolder);
     outputFolderFile.mkdir();
+
+    outputFolderNameQueryTypes = outputFolder + "queryTypeFiles/";
+    File outputQueryTypeFolderFile = new File(outputFolderNameQueryTypes);
+    if (dynamicQueryTypes) {
+      FileUtils.deleteQuietly(outputQueryTypeFolderFile);
+    }
+    outputQueryTypeFolderFile.mkdir();
     try (BufferedWriter bw = new BufferedWriter(new FileWriter(outputFolderNameQueryTypes + "README.md"))) {
       bw.write("This directory contains one file for each query type found in this month.\n" +
           "The name of the file (<name>.queryType) corresponds to the #QueryType entry in the processed logs.\n" +
@@ -537,8 +537,7 @@ public final class Main
 
       try (BufferedWriter bw = new BufferedWriter(new FileWriter(outputFolderNameExampleQueries + fileName + ".exampleQuery"))) {
         bw.write(exampleQuery.getKey());
-      }
-      catch (IOException e) {
+      } catch (IOException e) {
         logger.error("Could not write the example query " + exampleQuery.getValue() + ".", e);
       }
     }

@@ -1,25 +1,34 @@
-import csv
+import argparse
+import pprint
 from collections import defaultdict
-from pprint import pprint
 
-st = []
-for i in xrange(1, 32):
-    st.append("QueryProcessedOpenRDF" + "%02d" % i + ".tsv")
+import sys
 
-data = defaultdict(int)
+from postprocess import processdata
 
-for fileName in sorted(st):
+parser = argparse.ArgumentParser(description="Counts the used tools/bots in the given folder")
+parser.add_argument("--monthsFolder", "-m", default="/a/akrausetud/months", type=str,
+                    help="the folder in which the months directory are residing")
+parser.add_argument("month", type=str, help="the month which we're interested in")
 
-    print "Working on: " + fileName
-    with open(fileName) as tsvFile:
-        tsvFile = csv.reader(tsvFile, delimiter='\t')
+if (len(sys.argv[1:]) == 0):
+	parser.print_help()
+	parser.exit()
 
-        # skip tsv header
-        next(tsvFile, None)
+args = parser.parse_args()
 
-        for row in tsvFile:
-            if row[1] == "-1":
-                continue
-            data[row[7]] += 1
+class CountToolsHandler:
+	toolCounter = defaultdict(int)
 
-pprint(sorted(data.iteritems(), key=lambda x: x[1], reverse=True))
+	def handle(self, sparqlQuery, processed):
+		if (processed['#Valid'] == 'VALID' or processed['#Valid'] == '1'):
+			self.toolCounter[processed['#ToolName']] += 1
+
+	def __str__(self):
+		return pprint.pformat(sorted(self.toolCounter.iteritems(), key=lambda x: x[1], reverse=True))
+
+handler = CountToolsHandler()
+
+processdata.processMonth(handler, args.month, args.monthsFolder)
+
+print handler
