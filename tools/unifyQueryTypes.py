@@ -10,14 +10,11 @@ import sys
 from distutils.dir_util import copy_tree
 from duplicity.tempdir import TemporaryDirectory
 
+from utility import utility
+
 # This script uses fdupes to check the queryTypeFiles-Folder and the reference query types folder for duplicates.
 # If it finds duplicates it chooses one of the queryTypes (the one in the reference query types folder if one exists, otherwise at random)
 # and renames all other duplicate entries in #QueryType to that query type  
-
-def addMissingSlash(directoryString):
-	if not directoryString.endswith("/"):
-		return directoryString + "/"
-	return directoryString
 
 parser = argparse.ArgumentParser(
 	description="This script uses fdupes to check the queryTypeFiles-Folder and the reference query types folder for duplicates.\n" +
@@ -25,8 +22,9 @@ parser = argparse.ArgumentParser(
 	"and renames all other duplicate entries in #QueryType to that query type ")
 parser.add_argument("--monthsFolder", "-m", default="/a/akrausetud/months/", type=str,
                     help="The folder in which the months directories are residing.")
+parser.add_argument("--referenceDirectory", "-r", default="/a/akrausetud/queryTypeReferenceFolder/", type=str,
+				help="The directory with the reference query types.")
 parser.add_argument("month", type=str, help="The month whose query types should be unified.")
-parser.add_argument("referenceDirectory", default="/a/akrausetud/queryTypeReferenceFolder/", type=str, help="The directory with the reference query types.")
 
 if (len(sys.argv[1:]) == 0):
 	parser.print_help()
@@ -34,9 +32,9 @@ if (len(sys.argv[1:]) == 0):
 
 args = parser.parse_args()
 
-os.chdir(addMissingSlash(args.monthsFolder) + addMissingSlash(args.month))
+os.chdir(utility.addMissingSlash(args.monthsFolder) + utility.addMissingSlash(args.month))
 
-referenceQueryTypeDirectory = addMissingSlash(args.referenceDirectory)
+referenceQueryTypeDirectory = utility.addMissingSlash(args.referenceDirectory)
 
 readme = "README.md"
 

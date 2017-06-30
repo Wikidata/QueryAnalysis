@@ -9,6 +9,8 @@ import urlparse
 import sys
 from itertools import izip
 
+from utility import utility
+
 processedPrefix = "QueryProcessedOpenRDF"
 processedSuffix = ".tsv.gz"
 sourcePrefix = "queryCnt"
@@ -27,7 +29,7 @@ def processMonth(handler, month, monthsFolder):
 
 
 def processDay(handler, day, month, monthsFolder, startIdx=0, endIdx=sys.maxint):
-	processedFileName = monthsFolder + "/" + month + "/processedLogData/" + processedPrefix + "%02d" % day + processedSuffix
+	processedFileName = utility.addMissingSlash(monthsFolder) + month + "/processedLogData/" + processedPrefix + "%02d" % day + processedSuffix
 
 	print "Working on: " + processedFileName
 	with gzip.open(processedFileName) as p, open(monthsFolder + "/" + month
