@@ -7,7 +7,7 @@ from postprocess import processdata
 
 parser = argparse.ArgumentParser(description="Prints out the SPARQL statistic")
 parser.add_argument("--monthsFolder", "-m", default="/a/akrausetud/months", type=str,
-                    help="the folder in which the months directory are residing")
+					help="the folder in which the months directory are residing")
 parser.add_argument("month", type=str, help="the month which we're interested in")
 
 if (len(sys.argv[1:]) == 0):
@@ -19,11 +19,11 @@ args = parser.parse_args()
 
 class SparqlStatisticHandler:
 	notStatisticNames = ['#Valid', '#ToolName', '#ToolVersion', '#StringLengthWithComments', '#QuerySize',
-	                     '#VariableCountHead',
-	                     '#VariableCountPattern', '#TripleCountWithService', '#TripleCountNoService', '#QueryType',
-	                     '#QIDs',
-	                     '#original_line(filename_line)', '#ExampleQueryStringComparison',
-	                     '#ExampleQueryParsedComparison', '#Categories', '#Predicates', '#SubjectsAndObjects']
+						 '#VariableCountHead',
+						 '#VariableCountPattern', '#TripleCountWithService', '#TripleCountNoService', '#QueryType',
+						 '#QIDs',
+						 '#original_line(filename_line)', '#ExampleQueryStringComparison',
+						 '#ExampleQueryParsedComparison', '#Categories', '#Predicates', '#SubjectsAndObjects']
 	statistic = defaultdict(int)
 	totalCount = 0
 
@@ -40,7 +40,7 @@ class SparqlStatisticHandler:
 		result = ""
 		for featureName, featureCount in sorted(self.statistic.iteritems()):
 			result += '{:<28} {:>8}/{:<8} {:>5}%'.format(featureName, featureCount, self.totalCount,
-			                                             round(float(featureCount) / self.totalCount * 100, 2)) + "\n"
+														 round(float(featureCount) / self.totalCount * 100, 2)) + "\n"
 		return result
 
 

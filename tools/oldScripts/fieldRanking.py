@@ -40,7 +40,7 @@ for metric in metrics:
 		with open(processedPrefix + "%02d" % i + ".tsv") as p, open(sourcePrefix + "%02d" % i + ".tsv") as s:
 
 			dailyCount = 0
-            
+
 			dailyMetricCounts = defaultdict(int)
 
 			pReader = csv.DictReader(p, delimiter="\t")
@@ -51,7 +51,7 @@ for metric in metrics:
 
 				key = processed['#' + metric]
 
-                # Sort the entries in PIDs and QIDs to even out the count 
+				# Sort the entries in PIDs and QIDs to even out the count
 				if metric == "SubjectsAndObjects" or metric == "Predicates" or metric == "Categories":
 					keys_array = sorted(key.split(","))
 					if len(keys_array) == idCombinations or idCombinations == 0:
@@ -59,12 +59,11 @@ for metric in metrics:
 					elif idCombinations == -1:
 						for single_key in keys_array:
 							dailyCount += 1
-							dailyMetricCounts[single_key] += 1                 
+							dailyMetricCounts[single_key] += 1
 						totalCount += dailyCount
 						continue
 					else:
 						continue
-
 
 				dailyCount += 1
 				dailyMetricCounts[key] += 1

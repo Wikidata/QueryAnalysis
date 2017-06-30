@@ -7,7 +7,7 @@ from postprocess import processdata
 
 parser = argparse.ArgumentParser(description="Counts the valid queries")
 parser.add_argument("--monthsFolder", "-m", default="/a/akrausetud/months", type=str,
-                    help="the folder in which the months directory are residing")
+					help="the folder in which the months directory are residing")
 parser.add_argument("month", type=str, help="the month which we're interested in")
 
 if (len(sys.argv[1:]) == 0):
@@ -33,7 +33,7 @@ class CountValidityHandler:
 		return "Valid: \t\t" + str(validCount) + " " + str(
 			float(validCount) / (
 				validCount + invalidCount) * 100) + "%" + "\n" + \
-		       "Invalid:\t" + str(invalidCount) + " " + str(float(invalidCount) / (
+			   "Invalid:\t" + str(invalidCount) + " " + str(float(invalidCount) / (
 			validCount + invalidCount) * 100) + "%"
 
 

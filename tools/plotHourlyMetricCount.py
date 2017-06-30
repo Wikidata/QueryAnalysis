@@ -11,7 +11,7 @@ from matplotlib.pyplot import cm
 parser = argparse.ArgumentParser(
 	description="Generates hourly/daily/monthly plots per metric, please run getHourlyMetricCount.py before")
 parser.add_argument("--monthsFolder", "-m", type=str, default="/a/akrausetud/months",
-                    help="the folder in which the months directory are residing")
+					help="the folder in which the months directory are residing")
 parser.add_argument("metric", type=str, help="the metric which we want to count (without #)")
 parser.add_argument("month", default="/a/akrausetud/month", type=str, help="the month which we're interested in")
 
@@ -66,7 +66,7 @@ def plotHist(data, title, countTools, xlabel="hour", ylabel="count of queries", 
 			pass
 
 	scalarMappaple = cm.ScalarMappable(cmap=cm.nipy_spectral,
-	                                   norm=plt.Normalize(vmin=minMetricValue, vmax=maxMetricValue))
+									   norm=plt.Normalize(vmin=minMetricValue, vmax=maxMetricValue))
 	scalarMappaple._A = []
 	plt.colorbar(scalarMappaple)
 
@@ -158,4 +158,4 @@ sorted_data = sorted(totalDataPerDay.items(), cmp=compare)
 
 plotHist(sorted_data, metricName + "/plots/total", len(totalMetricNames), xlabel='day')
 plotHist(sorted_data, metricName + "/plots/total_log", len(totalMetricNames), xlabel='day',
-         log=True)
+		 log=True)

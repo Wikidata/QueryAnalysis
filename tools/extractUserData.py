@@ -10,7 +10,7 @@ from itertools import izip
 parser = argparse.ArgumentParser(
 	description="Creates a subset of the raw log files and the processed log files where #QueryType is USER")
 parser.add_argument("--monthsFolder", "-m", default="/a/akrausetud/months", type=str,
-                    help="the folder in which the months directory are residing")
+					help="the folder in which the months directory are residing")
 parser.add_argument("month", type=str, help="the month which we're interested in")
 
 if (len(sys.argv[1:]) == 0):
@@ -37,7 +37,7 @@ for i in xrange(1, 2):
 	print "Working on %02d" % i
 	with gzip.open(processedPrefix + "%02d" % i + ".tsv.gz") as p, open(
 							sourcePrefix + "%02d" % i + ".tsv") as s, gzip.open(
-									subfolder + processedPrefix + "%02d" % i + ".tsv.gz", "w") as user_p, open(
+								subfolder + processedPrefix + "%02d" % i + ".tsv.gz", "w") as user_p, open(
 								subfolder + sourcePrefix + "%02d" % i + ".tsv", "w") as user_s:
 		pReader = csv.DictReader(p, delimiter="\t")
 		sReader = csv.DictReader(s, delimiter="\t")

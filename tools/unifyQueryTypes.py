@@ -206,7 +206,7 @@ for i in xrange(1, 3):
 			sWriter.writerow(source)
 
 	shutil.copy(temporaryDirectory + processedPrefix + "%02d" % i + ".tsv",
-	            directory + processedPrefix + "%02d" % i + ".tsv")
+				directory + processedPrefix + "%02d" % i + ".tsv")
 	shutil.copy(temporaryDirectory + sourcePrefix + "%02d" % i + ".tsv", directory + sourcePrefix + "%02d" % i + ".tsv")
 
 shutil.rmtree(directory + "temp")
