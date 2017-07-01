@@ -11,25 +11,43 @@ var treeData = [
 	}
 ];
 
+function inArray(element, array) {
+	var ret = -1;
+	$.each(array, function (key, value) {
+		if (value.qid === element.qid) {
+			return (ret = key);
+		}
+	});
+	return ret;
+}
+
+function insertToTree(tree, node) {
+	//check if parent exists already in tree
+	if (inArray(node, tree.children) === -1) {
+		tree.children.push(node);
+	}
+}
+
 $.getJSON('https://query.wikidata.org/sparql', {
 	query: sparql
 }).done(function (data) {
 	$.each(data.results, function (binding, bindings) {
 		$.each(bindings, function (key, value) {
-			//check if parent exists already in tree
-
-			var children = {};
-			children.name = value.classLabel.value;
-			children.parent = "/";
-			children.children = [];
-			treeData[0].children.push([children]);
+			var element = {};
+			element.name = value.classLabel.value;
+			element.parent = "/";
+			element.children = [];
+			element.qid = value.class.value;
+			insertToTree(treeData[0], element);
 		});
 	});
+
+	console.log(treeData);
 
 // ************** Generate the tree diagram	 *****************
 	var margin = {top: 20, right: 120, bottom: 20, left: 120},
 		width = 960 - margin.right - margin.left,
-		height = 500 - margin.top - margin.bottom;
+		height = 1000 - margin.top - margin.bottom;
 
 	var i = 0,
 		duration = 750,
