@@ -23,8 +23,13 @@ function inArray(element, array) {
 
 function insertToTree(tree, node) {
 	//check if parent exists already in tree
-	if (inArray(node, tree.children) === -1) {
+	var index = inArray(node, tree.children);
+	if (index === -1) {
+		// doesn't exist, so insert it
 		tree.children.push(node);
+	} else {
+		// exist already, so look into the children of the children
+		insertToTree(tree.children[index], node);
 	}
 }
 
@@ -46,7 +51,7 @@ $.getJSON('https://query.wikidata.org/sparql', {
 
 // ************** Generate the tree diagram	 *****************
 	var margin = {top: 20, right: 120, bottom: 20, left: 120},
-		width = 960 - margin.right - margin.left,
+		width = 15600 - margin.right - margin.left,
 		height = 1000 - margin.top - margin.bottom;
 
 	var i = 0,
