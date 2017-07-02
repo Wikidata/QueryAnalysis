@@ -8,7 +8,6 @@ import shutil
 import sys
 
 from distutils.dir_util import copy_tree
-from duplicity.tempdir import TemporaryDirectory
 
 from utility import utility
 
@@ -24,6 +23,8 @@ parser.add_argument("--monthsFolder", "-m", default="/a/akrausetud/months/", typ
                     help="The folder in which the months directories are residing.")
 parser.add_argument("--referenceDirectory", "-r", default="/a/akrausetud/queryTypeReferenceFolder/", type=str,
 				help="The directory with the reference query types.")
+parser.add_argument("--fdupesExecutable", "-f", default="/a/akrausetud/utility/fdupes", type=str,
+				help="The location of the fdupes executable.")
 parser.add_argument("month", type=str, help="The month whose query types should be unified.")
 
 if (len(sys.argv[1:]) == 0):
@@ -58,13 +59,13 @@ if not os.path.exists(temporaryDirectory + processedFolder):
 
 duplicatesFile = "duplicates.txt"
 
-if not os.path.exists("fdupes"):
-	print "WARNING: Could not find fdupes executable next to this script. Assuming it is installed on this machine."
+if not os.path.exists(args.fdupesExecutable):
+	print "RROR: Could not find fdupes executable."
 
 if referenceQueryTypeDirectory != None:
-	os.system("fdupes " + queryTypeSubfolder + " " + referenceQueryTypeDirectory + " > " + duplicatesFile)
+	os.system(args.fdupesExecutable + " " + queryTypeSubfolder + " " + referenceQueryTypeDirectory + " > " + duplicatesFile)
 else:
-	os.system("fdupes " + queryTypeSubfolder + " > " + duplicatesFile)
+	os.system(args.fdupesExecutable + " " + queryTypeSubfolder + " > " + duplicatesFile)
 
 # Dictionary to hold the replacement query type for all duplicate query types
 # (separate because we might need to replace some of these that have the same name as the ones in the reference folder)
