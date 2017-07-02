@@ -3,34 +3,47 @@
 var sparql = "#Tool: jgonsior-tree \n" +
 	'SELECT ?class ?classLabel ?subclass ?subclassLabel WHERE { ?class wdt:P279* wd:Q18616576 . ?subclass wdt:P279 ?class SERVICE wikibase:label { bd:serviceParam wikibase:language "en" }}';
 
-var treeData = [
-	{
-		"name": "/",
-		"parent": null,
-		"children": [],
-	}
-];
 
-function inArray(element, array) {
-	var ret = -1;
-	$.each(array, function (key, value) {
-		if (value.qid === element.qid) {
-			return (ret = key);
-		}
-	});
-	return ret;
+var rootNode = {};
+rootNode.name = "/";
+rootNode.qid = "/";
+rootNode.parentQid = null;
+rootNode.parentName = null;
+rootNode.children = [];
+
+var orphans = [];
+var wantedParents = [];
+
+function searchParentNode(rootNode, childNode) {
+	if (rootNode.qid === childNode.parentQid) {
+		return rootNode;
+	} else {
+		$.each(rootNode.children, function (key, value) {
+			return searchParentNode(value, childNode);
+		});
+	}
+	return null;
 }
 
-function insertToTree(tree, node) {
-	//check if parent exists already in tree
-	var index = inArray(node, tree.children);
-	if (index === -1) {
-		// doesn't exist, so insert it
-		tree.children.push(node);
+
+function insertIntoTree(rootNode, childNode) {
+	//search for parent node
+	var parentNode = searchParentNode(rootNode, childNode);
+	if (parentNode !== null) {
+		parentNode.children.push(childNode);
 	} else {
-		// exist already, so look into the children of the children
-		insertToTree(tree.children[index], node);
+		parentNode = {};
+		parentNode.name = childNode.parentName;
+		parentNode.qid = childNode.parentQid;
+		parentNode.parentQid = "/";
+		parentNode.parentName = "/";
+		parentNode.children = [];
+		parentNode.children.push(childNode);
+		rootNode.children.push(parentNode);
+		//orphans.push(childNode);
+		//wantedParents.push(childNode.parentQid);
 	}
+
 }
 
 $.getJSON('https://query.wikidata.org/sparql', {
@@ -39,20 +52,23 @@ $.getJSON('https://query.wikidata.org/sparql', {
 	$.each(data.results, function (binding, bindings) {
 		$.each(bindings, function (key, value) {
 			var element = {};
-			element.name = value.classLabel.value;
-			element.parent = "/";
-			element.children = [];
+			element.name = value.subclassLabel.value;
 			element.qid = value.class.value;
-			insertToTree(treeData[0], element);
+			element.parentQid = value.class.value;
+			element.parentName = value.classLabel.value;
+			element.children = [];
+			insertIntoTree(rootNode, element);
 		});
 	});
 
-	console.log(treeData);
+	console.log(rootNode);
+	console.log(orphans);
+	console.log(wantedParents);
 
 // ************** Generate the tree diagram	 *****************
 	var margin = {top: 20, right: 120, bottom: 20, left: 120},
 		width = 15600 - margin.right - margin.left,
-		height = 1000 - margin.top - margin.bottom;
+		height = 1500 - margin.top - margin.bottom;
 
 	var i = 0,
 		duration = 750,
@@ -72,7 +88,7 @@ $.getJSON('https://query.wikidata.org/sparql', {
 		.append("g")
 		.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-	root = treeData[0];
+	root = rootNode;
 	root.x0 = height / 2;
 	root.y0 = 0;
 
