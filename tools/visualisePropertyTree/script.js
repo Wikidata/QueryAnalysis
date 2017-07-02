@@ -27,68 +27,52 @@ rootNode.parentName = null;
 rootNode.children = [];
 rootNode.orphans = false;
 
-
-function searchParentNode(rootNode, childNode) {
-	var parentNode = null;
-	if (rootNode.qid === childNode.parentQid) {
-		return (parentNode = rootNode);
-	} else {
-		$.each(rootNode.children, function (key, value) {
-			return (parentNode = searchParentNode(value, childNode));
-		});
-	}
-	return parentNode;
-}
-
-
-function insertIntoTree(rootNode, childNode) {
-	//search for parent node
-	var parentNode = searchParentNode(rootNode, childNode);
-	if (parentNode !== null) {
-		parentNode.children.push(childNode);
-	} else {
-		parentNode = {};
-		parentNode.name = childNode.parentName;
-		parentNode.qid = childNode.parentQid;
-		parentNode.parentQid = "/";
-		parentNode.parentName = "/";
-		parentNode.children = [];
-		parentNode.children.push(childNode);
-		parentNode.orphan = true;
-		orphans.push(parentNode);
-		rootNode.children.push(parentNode);
-	}
-
-}
-
-
 $.getJSON('https://query.wikidata.org/sparql', {
 	query: sparql
 }).done(function (data) {
 	$.each(data.results, function (binding, bindings) {
 		$.each(bindings, function (key, value) {
 
-			var parent = {};
+			var parent = null;
 
 			// does parent exists already?
-			parent.name = value.propertyLabel.value;
-			parent.qid = value.property.value;
-			parent.parentQid = "/";
-			parent.parentName = "/";
-			parent.children = [];
+			$.each(rootNode.children, function (key, possibleParent) {
+				if (possibleParent.qid === value.property.value) {
+					parent = possibleParent;
+				}
+			});
 
-			rootNode.children.push(parent);
+			if (parent === null) {
+				parent = {};
+				parent.name = value.propertyLabel.value;
+				parent.qid = value.property.value;
+				parent.parentQid = "/";
+				parent.parentName = "/";
+				parent.children = [];
 
+				rootNode.children.push(parent);
+			}
 			for (var i = 0; i < depth; i++) {
 				if (value.hasOwnProperty("subclass" + i)) {
-					var child = {};
+					var child = null;
+
+					// does parent exists already?
+					$.each(parent.children, function (key, possibleChild) {
+						if (possibleChild.qid === value["subclass" + i].value) {
+							child = possibleChild;
+						}
+					});
+
+					if (child === null) {
+						child = {};
 					child.name = value["subclass" + i + "Label"].value;
 					child.qid = value["subclass" + i].value;
 					child.parentQid = parent.qid;
 					child.parentName = parent.name;
 					child.children = [];
 
-					parent.children.push(child);
+						parent.children.push(child);
+					}
 
 					parent = child;
 				}
