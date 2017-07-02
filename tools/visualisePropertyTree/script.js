@@ -10,9 +10,9 @@ rootNode.qid = "/";
 rootNode.parentQid = null;
 rootNode.parentName = null;
 rootNode.children = [];
+rootNode.orphans = false;
 
 var orphans = [];
-var wantedParents = [];
 
 function searchParentNode(rootNode, childNode) {
 	var parentNode = null;
@@ -30,7 +30,6 @@ function searchParentNode(rootNode, childNode) {
 function insertIntoTree(rootNode, childNode) {
 	//search for parent node
 	var parentNode = searchParentNode(rootNode, childNode);
-	console.log(parentNode);
 	if (parentNode !== null) {
 		parentNode.children.push(childNode);
 	} else {
@@ -41,11 +40,18 @@ function insertIntoTree(rootNode, childNode) {
 		parentNode.parentName = "/";
 		parentNode.children = [];
 		parentNode.children.push(childNode);
+		parentNode.orphan = true;
+		orphans.push(parentNode);
 		rootNode.children.push(parentNode);
-		//orphans.push(childNode);
-		//wantedParents.push(childNode.parentQid);
 	}
 
+}
+
+// if an orphan is being found it is being removed, if not, then not
+function findOrphan(rootNode) {
+	var orphan = null;
+	if (rootNode.parentQid === "/")
+		return orpahn;
 }
 
 $.getJSON('https://query.wikidata.org/sparql', {
@@ -63,14 +69,37 @@ $.getJSON('https://query.wikidata.org/sparql', {
 		});
 	});
 
+	var orphan;
+	while (orphan = findOrphan(rootNode)) {
+		var parentNode = searchParentNode(rootNode, orphan);
+		if (parentNode !== null) {
+			parentNode.children.push(orphan);
+		}
+	}
+
+	while (orphans.length > 0) {
+		console.log("iiiiiiiiiiiiiiiiiiiiiiii");
+		console.log(rootNode);
+		console.log(orphans);
+
+		// put orphans into the tree
+		for (var i = 0; i < orphans.length; i++) {
+			var parentNode = searchParentNode(rootNode, orphans[i]);
+			if (parentNode !== null) {
+				parentNode.children.push(orphans[i]);
+				orphans.splice(i);
+			}
+		}
+	}
+
+
 	console.log(rootNode);
 	console.log(orphans);
-	console.log(wantedParents);
 
 // ************** Generate the tree diagram	 *****************
 	var margin = {top: 20, right: 120, bottom: 20, left: 120},
 		width = 15600 - margin.right - margin.left,
-		height = 1500 - margin.top - margin.bottom;
+		height = 3500 - margin.top - margin.bottom;
 
 	var i = 0,
 		duration = 750,
