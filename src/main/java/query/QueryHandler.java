@@ -539,10 +539,10 @@ public abstract class QueryHandler
   private String computeAnyIDString(Set<String> anyIDstoString)
   {
     if (anyIDstoString == null) {
-      return "D";
+      return "";
     }
     if (anyIDstoString.size() == 0) {
-      return "D";
+      return "";
     }
     String anyIDStringToReturn = "";
     for (String anyID : anyIDstoString) {
@@ -659,7 +659,7 @@ public abstract class QueryHandler
     Set<String> pids = this.getpIDs();
 
     if (pids == null) {
-      this.categories = "D";
+      this.categories = "";
       return;
     }
 
@@ -667,7 +667,7 @@ public abstract class QueryHandler
       for (Map.Entry<String, Set<String>> entry : Main.propertyGroupMapping.entrySet()) {
         if (predicate.endsWith(entry.getKey())) {
           for (Map.Entry<String, String> entryPrefixes : Main.prefixes.entrySet()) {
-            if (predicate.startsWith(entryPrefixes.getValue())) {
+            if (predicate.startsWith(entryPrefixes.getKey())) {
               categoriesFound.addAll(entry.getValue());
             }
           }

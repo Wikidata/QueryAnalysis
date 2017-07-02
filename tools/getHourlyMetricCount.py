@@ -67,4 +67,6 @@ handler = HourlyMetricCountHandler(args.metric)
 
 processdata.processMonth(handler, args.month, args.monthsFolder)
 
+print args.monthsFolder + "/" + args.month + "/processedLogData/hourlyMetricCountData"
+
 handler.saveToFiles(args.monthsFolder + "/" + args.month + "/processedLogData/hourlyMetricCountData")
