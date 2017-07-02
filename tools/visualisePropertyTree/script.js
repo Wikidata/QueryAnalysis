@@ -1,8 +1,23 @@
 "use strict";
+var depth = 10;
 
-var sparql = "#Tool: jgonsior-tree \n" +
-	'SELECT ?class ?classLabel ?subclass ?subclassLabel WHERE { ?class wdt:P279* wd:Q18616576 . ?subclass wdt:P279 ?class SERVICE wikibase:label { bd:serviceParam wikibase:language "en" }}';
+var sparql = "#Tool: jgonsior-tree \n";
+sparql += "SELECT ?property ?propertyLabel ?subclass0 ?subclass0Label";
+for (var i = 1; i < depth; i++) {
+	sparql += " ?subclass" + i + " ?subclass" + i + "Label ";
+}
 
+sparql += "\n WHERE {{ BIND (wd:Q18616576 as ?property) ?subclass0 wdt:P279 ?property .";
+
+for (var i = 1; i < depth; i++) {
+	sparql += "\n OPTIONAL {?subclass" + i + " wdt:P279 ?subclass" + (i - 1) + " ."
+}
+
+for (var i = 0; i < depth; i++) {
+	sparql += "}"
+}
+
+sparql += " SERVICE wikibase:label { bd:serviceParam wikibase:language \"en\" }}";
 
 var rootNode = {};
 rootNode.name = "/";
@@ -12,89 +27,32 @@ rootNode.parentName = null;
 rootNode.children = [];
 rootNode.orphans = false;
 
-var orphans = [];
-
-function searchParentNode(rootNode, childNode) {
-	var parentNode = null;
-	if (rootNode.qid === childNode.parentQid) {
-		return (parentNode = rootNode);
-	} else {
-		$.each(rootNode.children, function (key, value) {
-			return (parentNode = searchParentNode(value, childNode));
-		});
-	}
-	return parentNode;
-}
-
-
-function insertIntoTree(rootNode, childNode) {
-	//search for parent node
-	var parentNode = searchParentNode(rootNode, childNode);
-	if (parentNode !== null) {
-		parentNode.children.push(childNode);
-	} else {
-		parentNode = {};
-		parentNode.name = childNode.parentName;
-		parentNode.qid = childNode.parentQid;
-		parentNode.parentQid = "/";
-		parentNode.parentName = "/";
-		parentNode.children = [];
-		parentNode.children.push(childNode);
-		parentNode.orphan = true;
-		orphans.push(parentNode);
-		rootNode.children.push(parentNode);
-	}
-
-}
-
-// if an orphan is being found it is being removed, if not, then not
-function findOrphan(rootNode) {
-	var orphan = null;
-	if (rootNode.parentQid === "/")
-		return orpahn;
-}
-
 $.getJSON('https://query.wikidata.org/sparql', {
 	query: sparql
 }).done(function (data) {
 	$.each(data.results, function (binding, bindings) {
 		$.each(bindings, function (key, value) {
-			var element = {};
-			element.name = value.subclassLabel.value;
-			element.qid = value.class.value;
-			element.parentQid = value.class.value;
-			element.parentName = value.classLabel.value;
-			element.children = [];
-			insertIntoTree(rootNode, element);
+			var parent = {};
+			parent.name = value.propertyLabel.value;
+			parent.qid = value.property.value;
+			parent.parentQid = "/";
+			parent.parentName = "/";
+			parent.children = [];
+
+			var child = {};
+			child.name = value.subclass0Label.value;
+			child.qid = value.subclass0.value;
+			child.parentQid = parent.qid;
+			child.parentName = parent.name;
+
+			parent.children.push(child);
+
+			rootNode.children.push(parent);
+
 		});
 	});
 
-	var orphan;
-	while (orphan = findOrphan(rootNode)) {
-		var parentNode = searchParentNode(rootNode, orphan);
-		if (parentNode !== null) {
-			parentNode.children.push(orphan);
-		}
-	}
-
-	while (orphans.length > 0) {
-		console.log("iiiiiiiiiiiiiiiiiiiiiiii");
-		console.log(rootNode);
-		console.log(orphans);
-
-		// put orphans into the tree
-		for (var i = 0; i < orphans.length; i++) {
-			var parentNode = searchParentNode(rootNode, orphans[i]);
-			if (parentNode !== null) {
-				parentNode.children.push(orphans[i]);
-				orphans.splice(i);
-			}
-		}
-	}
-
-
 	console.log(rootNode);
-	console.log(orphans);
 
 // ************** Generate the tree diagram	 *****************
 	var margin = {top: 20, right: 120, bottom: 20, left: 120},
