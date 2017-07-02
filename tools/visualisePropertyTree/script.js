@@ -33,6 +33,7 @@ $.getJSON('https://query.wikidata.org/sparql', {
 	$.each(data.results, function (binding, bindings) {
 		$.each(bindings, function (key, value) {
 
+			// @todo: merge this code with the one below?!
 			var parent = null;
 
 			// does parent exists already?
@@ -83,9 +84,9 @@ $.getJSON('https://query.wikidata.org/sparql', {
 	console.log(rootNode);
 
 // ************** Generate the tree diagram	 *****************
-	var margin = {top: 20, right: 120, bottom: 20, left: 120},
-		width = 15600 - margin.right - margin.left,
-		height = 3500 - margin.top - margin.bottom;
+	var margin = {top: 20, right: 20, bottom: 20, left: 20},
+		width = 4000 - margin.right - margin.left,
+		height = 5000 - margin.top - margin.bottom;
 
 	var i = 0,
 		duration = 750,
@@ -111,7 +112,7 @@ $.getJSON('https://query.wikidata.org/sparql', {
 
 	update(root);
 
-	d3.select(self.frameElement).style("height", "500px");
+	d3.select(self.frameElement).style("height", "500000px");
 
 	function update(source) {
 
@@ -121,7 +122,7 @@ $.getJSON('https://query.wikidata.org/sparql', {
 
 		// Normalize for fixed-depth.
 		nodes.forEach(function (d) {
-			d.y = d.depth * 180;
+			d.y = d.depth * 480;
 		});
 
 		// Update the nodes…
