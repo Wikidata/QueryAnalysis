@@ -15,20 +15,22 @@ var orphans = [];
 var wantedParents = [];
 
 function searchParentNode(rootNode, childNode) {
+	var parentNode = null;
 	if (rootNode.qid === childNode.parentQid) {
-		return rootNode;
+		return (parentNode = rootNode);
 	} else {
 		$.each(rootNode.children, function (key, value) {
-			return searchParentNode(value, childNode);
+			return (parentNode = searchParentNode(value, childNode));
 		});
 	}
-	return null;
+	return parentNode;
 }
 
 
 function insertIntoTree(rootNode, childNode) {
 	//search for parent node
 	var parentNode = searchParentNode(rootNode, childNode);
+	console.log(parentNode);
 	if (parentNode !== null) {
 		parentNode.children.push(childNode);
 	} else {
