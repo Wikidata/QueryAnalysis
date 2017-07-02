@@ -84,7 +84,7 @@ $.getJSON('https://query.wikidata.org/sparql', {
 	console.log(rootNode);
 
 // ************** Generate the tree diagram	 *****************
-	var margin = {top: 20, right: 20, bottom: 20, left: 20},
+	var margin = {top: 20, right: 20, bottom: 20, left: 180},
 		width = 4000 - margin.right - margin.left,
 		height = 5000 - margin.top - margin.bottom;
 
@@ -106,11 +106,13 @@ $.getJSON('https://query.wikidata.org/sparql', {
 		.append("g")
 		.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-	root = rootNode;
+	root = rootNode.children[0];
 	root.x0 = height / 2;
 	root.y0 = 0;
 
 	update(root);
+
+	root.children.forEach(toggleAll);
 
 	d3.select(self.frameElement).style("height", "500000px");
 
@@ -137,7 +139,7 @@ $.getJSON('https://query.wikidata.org/sparql', {
 			.attr("transform", function (d) {
 				return "translate(" + source.y0 + "," + source.x0 + ")";
 			})
-			.on("click", click);
+			.on("click", toggle);
 
 		nodeEnter.append("circle")
 			.attr("r", 1e-6)
@@ -224,7 +226,7 @@ $.getJSON('https://query.wikidata.org/sparql', {
 	}
 
 // Toggle children on click.
-	function click(d) {
+	function toggle(d) {
 		if (d.children) {
 			d._children = d.children;
 			d.children = null;
@@ -234,5 +236,13 @@ $.getJSON('https://query.wikidata.org/sparql', {
 		}
 		update(d);
 	}
+
+	function toggleAll(d) {
+		if (d.children) {
+			d.children.forEach(toggleAll);
+			toggle(d);
+		}
+	}
+
 });
 
