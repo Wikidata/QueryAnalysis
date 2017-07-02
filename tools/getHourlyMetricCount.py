@@ -10,7 +10,7 @@ parser = argparse.ArgumentParser(
 	description="Counts for a given metric how often it occurs per hour. Creates then daily and a monthly tsv file containg the hour, the metric and the queryCount")
 parser.add_argument("metric", type=str, help="the metric which we want to count (without #)")
 parser.add_argument("--monthsFolder", "-m", default="/a/akrausetud/months", type=str,
-                    help="the folder in which the months directory are residing")
+					help="the folder in which the months directory are residing")
 parser.add_argument("month", type=str, help="the month which we're interested in")
 
 if (len(sys.argv[1:]) == 0):
@@ -48,21 +48,19 @@ class HourlyMetricCountHandler:
 		header = "hour\t" + self.metric + "\tcount\n"
 		for day, data in self.dailyData.iteritems():
 			with open(outputFolder + self.metric + "/" + "%02d" % day
-					          + "ClassifiedBotsData.tsv", "w") as outputFile:
+							  + "ClassifiedBotsData.tsv", "w") as outputFile:
 				outputFile.write(header)
 				for hour, metricDict in data.iteritems():
 					for metric in metricDict.iterkeys():
-
 						outputFile.write(str(hour) + "\t" + str(metric)
-						                 + "\t" + str(data[hour][metric]) + "\n")
+										 + "\t" + str(data[hour][metric]) + "\n")
 
 		with open(outputFolder + self.metric + "/" + "TotalClassifiedBotsData.tsv",
-		          "w") as outputFile:
+				  "w") as outputFile:
 			outputFile.write(header)
 			for hour, metricDict in self.monthlyData.iteritems():
 				for metric in metricDict.iterkeys():
 					outputFile.write(str(hour) + "\t" + str(metric) + "\t" + str(self.monthlyData[hour][metric]) + "\n")
-
 
 
 handler = HourlyMetricCountHandler(args.metric)

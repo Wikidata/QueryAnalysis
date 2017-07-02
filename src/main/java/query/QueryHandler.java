@@ -125,6 +125,7 @@ public abstract class QueryHandler
    * The categories as a string of comma separated values.
    */
   private String categories = null;
+
   /**
    *
    */

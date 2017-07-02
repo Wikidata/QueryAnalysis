@@ -82,7 +82,7 @@ for i in xrange(1, 2):
 for queryType, userAgentCountDict in queryTypeUserAgentCombinationsCount.iteritems():
 	for userAgent, valueDict in userAgentCountDict['userAgent'].iteritems():
 		path = "queryTypeUserAgentCombinations/" + queryType + "/" + str(valueDict['count']) + "_" \
-		       + str(userAgent).replace(
+			   + str(userAgent).replace(
 			'/',
 			'SLASH')[:100]
 
@@ -108,7 +108,7 @@ combinations = dict()
 for queryType, userAgentCountDict in queryTypeUserAgentCombinationsCount.iteritems():
 	for userAgent, valueDict in userAgentCountDict['userAgent'].iteritems():
 		combinations[valueDict['count']] = queryType + "/" + str(valueDict['count']) + "_" \
-		                                   + str(userAgent).replace(
+										   + str(userAgent).replace(
 			'/',
 			'SLASH')[:100]
 

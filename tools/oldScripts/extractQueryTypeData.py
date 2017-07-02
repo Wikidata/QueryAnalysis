@@ -10,24 +10,24 @@ from itertools import izip
 # TODO: Setup command line parameters  
 
 fieldBasedOnQueryType = ['#Valid', '#QuerySize', '#VariableCountHead', '#VariableCountPattern',
-                         '#TripleCountWithService', '#TripleCountNoService',
-                         '#PIDs', '#Add', '#And', '#ArbitraryLengthPath', '#Avg', '#BindingSetAssignment',
-                         '#BNodeGenerato', '#Bound',
-                         '#Clear', '#Coalesce', '#Compare', '#CompareAll', '#CompareAny', '#Copy', '#Count', '#Create',
-                         '#Datatype', '#DeleteData',
-                         '#DescripbeOperator', '#Difference', '#Distinct', '#EmptySet', '#Exists', '#Extension',
-                         '#ExtensionElem', '#Filter',
-                         '#FunctionCall', '#Group', '#GroupConcat', '#GroupElem', '#If', '#In', '#InsertData',
-                         '#Intersection', '#IRIFunction',
-                         '#IsBNode', '#IsLiteral', '#Isnumeric', '#IsResource', '#IsURI', '#Join', '#Label', '#Lang',
-                         '#LangMatches', '#LeftJoin',
-                         '#Like', '#ListMemberOperator', '#Load', '#LocalName', '#MathExpr', '#Max', '#Min', '#Modify',
-                         '#Move', '#MultiProjection',
-                         '#Namespace', '#Not', '#Or', '#Order', '#OrderElem', '#Projection', '#ProjectionElem',
-                         '#ProjectionElemList', '#QueryRoot',
-                         '#Reduced', '#Regex', '#SameTerm', '#Sample', '#Service', '#SingletonSet', '#Slice',
-                         '#StatementPattern', '#Str', '#Sum',
-                         '#Union', '#ValueConstant', '#Var', '#ZeroLengthPath']
+						 '#TripleCountWithService', '#TripleCountNoService',
+						 '#PIDs', '#Add', '#And', '#ArbitraryLengthPath', '#Avg', '#BindingSetAssignment',
+						 '#BNodeGenerato', '#Bound',
+						 '#Clear', '#Coalesce', '#Compare', '#CompareAll', '#CompareAny', '#Copy', '#Count', '#Create',
+						 '#Datatype', '#DeleteData',
+						 '#DescripbeOperator', '#Difference', '#Distinct', '#EmptySet', '#Exists', '#Extension',
+						 '#ExtensionElem', '#Filter',
+						 '#FunctionCall', '#Group', '#GroupConcat', '#GroupElem', '#If', '#In', '#InsertData',
+						 '#Intersection', '#IRIFunction',
+						 '#IsBNode', '#IsLiteral', '#Isnumeric', '#IsResource', '#IsURI', '#Join', '#Label', '#Lang',
+						 '#LangMatches', '#LeftJoin',
+						 '#Like', '#ListMemberOperator', '#Load', '#LocalName', '#MathExpr', '#Max', '#Min', '#Modify',
+						 '#Move', '#MultiProjection',
+						 '#Namespace', '#Not', '#Or', '#Order', '#OrderElem', '#Projection', '#ProjectionElem',
+						 '#ProjectionElemList', '#QueryRoot',
+						 '#Reduced', '#Regex', '#SameTerm', '#Sample', '#Service', '#SingletonSet', '#Slice',
+						 '#StatementPattern', '#Str', '#Sum',
+						 '#Union', '#ValueConstant', '#Var', '#ZeroLengthPath']
 
 # Number of query types to be extracted, use 0 for infinity
 
