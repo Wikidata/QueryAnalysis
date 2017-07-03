@@ -107,7 +107,7 @@ $.getJSON('https://query.wikidata.org/sparql', {
 		.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 	root = rootNode.children[0];
-	root.x0 = height / 2;
+	root.x0 = //height / 2;
 	root.y0 = 0;
 
 	update(root);
@@ -168,7 +168,7 @@ $.getJSON('https://query.wikidata.org/sparql', {
 			});
 
 		nodeUpdate.select("circle")
-			.attr("r", 10)
+			.attr("r", 4)
 			.style("fill", function (d) {
 				return d._children ? "lightsteelblue" : "#fff";
 			});
