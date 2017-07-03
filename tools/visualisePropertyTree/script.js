@@ -86,7 +86,7 @@ $.getJSON('https://query.wikidata.org/sparql', {
 // ************** Generate the tree diagram	 *****************
 	var margin = {top: 20, right: 20, bottom: 20, left: 180},
 		width = 4000 - margin.right - margin.left,
-		height = 5000 - margin.top - margin.bottom;
+		height = 2000 - margin.top - margin.bottom;
 
 	var i = 0,
 		duration = 750,
@@ -112,9 +112,9 @@ $.getJSON('https://query.wikidata.org/sparql', {
 
 	update(root);
 
-	root.children.forEach(toggleAll);
+	//root.children.forEach(toggleAll);
 
-	d3.select(self.frameElement).style("height", "500000px");
+	d3.select(self.frameElement).style("height", "5px");
 
 	function update(source) {
 
@@ -124,7 +124,7 @@ $.getJSON('https://query.wikidata.org/sparql', {
 
 		// Normalize for fixed-depth.
 		nodes.forEach(function (d) {
-			d.y = d.depth * 480;
+			d.y = d.depth * /*d.name.length * 2.6 +*/ 400;
 		});
 
 		// Update the nodes…
