@@ -58,3 +58,4 @@ test/
 /benchmark/
 tools/classifiedBotsData/
 /outputData/
+tools/visualisePropertyTree/ranking.json
