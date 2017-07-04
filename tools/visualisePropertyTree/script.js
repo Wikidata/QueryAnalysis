@@ -18,7 +18,7 @@ for (var i = 0; i < depth; i++) {
 }
 
 sparql += " SERVICE wikibase:label { bd:serviceParam wikibase:language \"en\" }}";
-
+console.log(sparql);
 var rootNode = {};
 rootNode.name = "/";
 rootNode.qid = "/";
