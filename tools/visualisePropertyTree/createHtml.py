@@ -1,6 +1,5 @@
 import argparse
 import csv
-from pprint import pprint
 
 from SPARQLWrapper import SPARQLWrapper, JSON
 
@@ -53,34 +52,87 @@ def createProperty(name, qid):
 
 
 def searchPropertyInTree(treeRoot, qid):
-	'''$.each(parent.children, function (key, possibleChild) {
-	if (possibleChild.qid === value["subclass" + i].value) {
-		child = possibleChild;
-	}
-	});'''
 	for possibleProperty in treeRoot['children']:
 		if possibleProperty['qid'] == qid:
 			return possibleProperty
 	return None
 
 
-parentProperty = createProperty("/", "/")
+rootProperty = createProperty("/", "/")
 
 for property in sparqlResult['results']['bindings']:
-	parentProperty = searchPropertyInTree(parentProperty, property['property']['value'])
+	parentProperty = searchPropertyInTree(rootProperty, property['property']['value'])
 	if parentProperty is None:
 		parentProperty = createProperty(property['propertyLabel']['value'], property['property']['value'])
+		rootProperty['children'].append(parentProperty)
 
-	parentProperty['children'].append(parentProperty)
 	for i in range(0, 9):
 		if 'subclass' + str(i) in property:
-
 			childProperty = searchPropertyInTree(parentProperty, property['subclass' + str(i)]['value'])
 			if childProperty is None:
 				childProperty = createProperty(property['subclass' + str(i) + "Label"]['value'],
 											   property['subclass' + str(i)]['value'])
-			parentProperty['children'].append(childProperty)
-			childProperty = parentProperty
+				parentProperty['children'].append(childProperty)
+			parentProperty = childProperty
 		else:
 			break
-pprint(parentProperty)
+
+html = """
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+
+	<style>
+
+		.node {
+			cursor: pointer;
+		}
+
+		.node circle {
+			fill: #fff;
+			stroke: steelblue;
+			stroke-width: 2px;
+		}
+
+		.node text {
+			font: 12px sans-serif;
+		}
+
+		.link {
+			fill: none;
+			stroke: #ccc;
+			stroke-width: 1px;
+		}
+
+	</style>
+</head>
+<body>
+<table id="propertyTreeTable">
+"""
+
+
+def createTr(property, parent):
+	html = ""
+	html += "<tr data-tt-id=\"" + property['qid'] + "\" data-tt-parent-id=\"" + parent['qid'] + "\">"
+	html += "<td>" + property['name'] + "</td>"
+	html += "<td>" + property['qid'] + "</td>"
+	html += "</tr>\n"
+	for child in property['children']:
+		html += createTr(child, property)
+	return html
+
+
+html += createTr(rootProperty['children'][0], rootProperty)
+html += """
+
+<script src="bower_components/jquery/dist/jquery.js"></script>
+<script src="bower_components/jquery-treetable/jquery.treetable.js"></script>
+<script type="text/javascript" src="script.js"></script>
+</table>
+</body>
+</html>
+"""
+
+with open("table.htm", "w") as htmlFile:
+	htmlFile.write(html)
