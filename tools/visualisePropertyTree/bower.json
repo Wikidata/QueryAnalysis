@@ -1,0 +1,21 @@
+{
+  "name": "visualisePropertyTree",
+  "homepage": "https://github.com/Wikidata/QueryAnalysis",
+  "authors": [
+    "Julius Gonsior <julius@gaenseri.ch>"
+  ],
+  "description": "",
+  "main": "",
+  "license": "Apache-2.0",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery-treetable": "^3.2.0"
+  }
+}

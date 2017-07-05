@@ -58,3 +58,9 @@ test/
 /benchmark/
 tools/classifiedBotsData/
 /outputData/
+tools/visualisePropertyTree/ranking.json
+
+
+
+tools/visualisePropertyTree/.venv
+tools/visualisePropertyTree/bower_components/
