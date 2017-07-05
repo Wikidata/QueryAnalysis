@@ -83,56 +83,64 @@ html = """
 <head>
 	<meta charset="utf-8">
 
+	
+	<link rel="stylesheet" href="bower_components/jquery-treetable/css/jquery.treetable.css" />
+	<link rel="stylesheet" href="bower_components/jquery-treetable/css/jquery.treetable.theme.default.css" />
+	
 	<style>
 
-		.node {
-			cursor: pointer;
+		.zero {
+			color: #444;
 		}
-
-		.node circle {
-			fill: #fff;
-			stroke: steelblue;
-			stroke-width: 2px;
+		
+		tr.branch td.property {
+			cursor:pointer !important;
 		}
-
-		.node text {
-			font: 12px sans-serif;
-		}
-
-		.link {
-			fill: none;
-			stroke: #ccc;
-			stroke-width: 1px;
-		}
+		
+		
 
 	</style>
 </head>
 <body>
-<table id="propertyTreeTable">
+<table id="propertyTreeTable" border="1">
+<thead>
+<tr>
+<th>Property label</th>
+<th>QID</th>
+<th>User Queries which had this query</th>
+</tr>
+</thead>
+<tbody>
 """
 
 
-def createTr(property, parent):
+def createTr(property, parent, parentPrefix):
 	html = ""
-	html += "<tr data-tt-id=\"" + property['qid'] + "\" data-tt-parent-id=\"" + parent['qid'] + "\">"
-	html += "<td>" + property['name'] + "</td>"
-	html += "<td>" + property['qid'] + "</td>"
+	parentPrefix += parent['qid']
+	html += "<tr data-tt-id=\"" + parentPrefix + property['qid'] + "\" data-tt-parent-id=\"" + parentPrefix + "\">"
+	html += "<td class=\"property\">" + property['name'] + "</td>"
+	html += "<td>" + property['qid'][31:] + "</td>"
+	if property['qid'] in rankings:
+		html += "<td>" + str(rankings[property["qid"]][0]) + "</td>"
+	else:
+		html += '<td class="zero"> 0 </td>'
+
 	html += "</tr>\n"
 	for child in property['children']:
-		html += createTr(child, property)
+		html += createTr(child, property, parentPrefix)
 	return html
 
 
-html += createTr(rootProperty['children'][0], rootProperty)
+html += createTr(rootProperty['children'][0], rootProperty, "")
 html += """
-
+</tbody>
+</table>
 <script src="bower_components/jquery/dist/jquery.js"></script>
 <script src="bower_components/jquery-treetable/jquery.treetable.js"></script>
 <script type="text/javascript" src="script.js"></script>
-</table>
 </body>
 </html>
 """
 
-with open("table.htm", "w") as htmlFile:
+with open("index.html", "w") as htmlFile:
 	htmlFile.write(html)

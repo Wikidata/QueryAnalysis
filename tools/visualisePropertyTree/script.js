@@ -1,2 +1,7 @@
 "use strict";
-var treeTable = $('#propertyTreeTable').treetable({expandable: false});
+$('#propertyTreeTable').treetable({
+	expandable: true,
+	clickableNodeNames: true
+});
+
+$('#propertyTreeTable').treetable("expandNode", "/http://www.wikidata.org/entity/Q18616576");
