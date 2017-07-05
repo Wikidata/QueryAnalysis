@@ -1,5 +1,6 @@
 import argparse
 import csv
+from functools import cmp_to_key
 
 from SPARQLWrapper import SPARQLWrapper, JSON
 
@@ -18,7 +19,7 @@ with open(args.rankingFile, "r") as rankingFile:
 
 	for ranking in rankingReader:
 		rankings["http://www.wikidata.org/entity/" + ranking["Categories"]] = (
-			ranking["Categories_count"], ranking["percentage"])
+			int(ranking["Categories_count"]), float(ranking["percentage"]))
 
 # pprint(rankings)
 
@@ -47,6 +48,11 @@ def createProperty(name, qid):
 	property = dict()
 	property['name'] = name
 	property['qid'] = qid
+	if qid in rankings:
+		property['countUserQueries'] = rankings[qid][0]
+	else:
+		property['countUserQueries'] = 0
+
 	property['children'] = list()
 	return property
 
@@ -76,6 +82,16 @@ for property in sparqlResult['results']['bindings']:
 			parentProperty = childProperty
 		else:
 			break
+
+
+def compareProperties(property1, property2):
+	if property1['countUserQueries'] < property2['countUserQueries']:
+		return -1
+	elif property1['countUserQueries'] > property2['countUserQueries']:
+		return 1
+	else:
+		return 0
+
 
 html = """
 <!DOCTYPE html>
@@ -113,20 +129,16 @@ html = """
 <tbody>
 """
 
-
 def createTr(property, parent, parentPrefix):
 	html = ""
 	parentPrefix += parent['qid']
 	html += "<tr data-tt-id=\"" + parentPrefix + property['qid'] + "\" data-tt-parent-id=\"" + parentPrefix + "\">"
 	html += "<td class=\"property\">" + property['name'] + "</td>"
 	html += "<td>" + property['qid'][31:] + "</td>"
-	if property['qid'] in rankings:
-		html += "<td>" + str(rankings[property["qid"]][0]) + "</td>"
-	else:
-		html += '<td class="zero"> 0 </td>'
+	html += "<td>" + str(property['countUserQueries']) + "</td>"
 
 	html += "</tr>\n"
-	for child in property['children']:
+	for child in sorted(property['children'], reverse=True, key=cmp_to_key(compareProperties)):
 		html += createTr(child, property, parentPrefix)
 	return html
 
