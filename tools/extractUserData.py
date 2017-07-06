@@ -31,9 +31,9 @@ if not os.path.exists(subfolder):
 	os.makedirs(subfolder + "processedLogData")
 	os.makedirs(subfolder + "rawLogData")
 
-queryTypes = set()
-
-for i in xrange(1, 2):
+for i in xrange(1, 32):
+	if not (os.path.exists(processedPrefix + "%02d" % i + ".tsv.gz") and os.path.exists(sourcePrefix + "%02d" % i + ".tsv")):
+		continue
 	print "Working on %02d" % i
 	with gzip.open(processedPrefix + "%02d" % i + ".tsv.gz") as p, open(
 							sourcePrefix + "%02d" % i + ".tsv") as s, gzip.open(
@@ -70,16 +70,3 @@ for i in xrange(1, 2):
 				processed['#ts'] = source['ts']
 				pWriter.writerow(processed)
 				sWriter.writerow(source)
-				queryTypes.add(processed["#QueryType"])
-
-queryTypeFolder = "queryType/queryTypeFiles/"
-
-if not os.path.exists(subfolder + queryTypeFolder):
-	os.makedirs(subfolder + queryTypeFolder)
-
-for queryType in queryTypes:
-	original = queryTypeFolder + queryType + ".queryType"
-	try:
-		copyfile(original, "userData/" + original)
-	except:
-		print original + " does not exist."
