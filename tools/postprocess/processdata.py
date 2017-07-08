@@ -47,6 +47,7 @@ def processDay(handler, day, month, monthsFolder, startIdx=0, endIdx=sys.maxint)
 					sparqlQuery = None
 				processed['#hour'] = source['hour']
 				processed['#day'] = day
+				processed['#user_agent'] = source['user_agent']
 				handler.handle(sparqlQuery, processed)
 			elif i > endIdx:
 				break
