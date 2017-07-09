@@ -7,8 +7,6 @@ import os
 import sys
 import urlparse
 
-from pip._vendor.distlib.util import proceed
-
 from utility import utility
 from postprocess import processdata
 
