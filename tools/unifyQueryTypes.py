@@ -92,6 +92,7 @@ def handleNewQueryTypes(queryTypeBlock):
 
 
 # Reads the lines from fdupes output and separates it into blocks (each terminated by endline character)
+
 with open(duplicatesFile) as dupes:
 	block = []
 
@@ -166,6 +167,7 @@ for localFile in localFiles:
 		localFileParts = localFile.split(".")
 		newName = localFileParts[0] + "_%d" % i
 		while (newName + "." + localFileParts[1] in referenceFiles):
+			newName = localFileParts[0] + "_%d" % i
 			i += 1
 		replacementReplacementDict[localFileParts[0]] = newName
 		replacementDict[localFileParts[0]] = newName
