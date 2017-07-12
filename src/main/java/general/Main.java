@@ -215,7 +215,7 @@ public final class Main
     File lockFile;
 
     try {
-      lockFile = new File(workingDirectory + "lock");
+      lockFile = new File(workingDirectory + "locked");
 
       if (!lockFile.createNewFile()) {
         logger.info("Cannot work on " + workingDirectory + " because another instance is already working on it.");

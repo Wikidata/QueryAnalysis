@@ -33,6 +33,10 @@ if (len(sys.argv[1:]) == 0):
 
 args = parser.parse_args()
 
+if os.path.isfile(utility.addMissingSlash(args.monthsFolder) + utility.addMissingSlash(args.month) + "locked"):
+	print "ERROR: The month " + args.month + " is being edited at the moment."
+	sys.exit()
+
 os.chdir(utility.addMissingSlash(args.monthsFolder) + utility.addMissingSlash(args.month))
 
 referenceQueryTypeDirectory = utility.addMissingSlash(args.referenceDirectory)

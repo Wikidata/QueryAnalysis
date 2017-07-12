@@ -40,6 +40,7 @@ parser = argparse.ArgumentParser(
     description="Generates a list of all query types sorted in descending order by nomber of appearance based on fieldRanking.py's output for the field #QueryType")
 parser.add_argument("--monthsFolder", "-m", default="/a/akrausetud/months", type=str,
                     help="The folder in which the months directories are residing.")
+parser.add_argument("--ignoreLock", "-i", help="Ignore locked file and execute anyways", action="store_true")
 parser.add_argument("--topNumber", "-n", default=0, type=int, help="The top n query types should be present in the generated file.")
 parser.add_argument("month", type=str, help="The month from which the query type file should be generated.")
 
@@ -49,7 +50,11 @@ if (len(sys.argv[1:]) == 0):
 
 args = parser.parse_args()
 
-os.chdir(utility.addMissingSlash(args.monthsFolder) + "/" + utility.addMissingSlash(args.month))
+if os.path.isfile(utility.addMissingSlash(args.monthsFolder) + utility.addMissingSlash(args.month) + "locked") and not args.ignoreLock:
+    print "ERROR: The month " + args.month + " is being edited at the moment. Use -i if you want to force the execution of this script."
+    sys.exit()
+
+os.chdir(utility.addMissingSlash(args.monthsFolder) + utility.addMissingSlash(args.month))
 
 pathBase = "queryTypeData/"
 

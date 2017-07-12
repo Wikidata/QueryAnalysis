@@ -14,6 +14,7 @@ parser = argparse.ArgumentParser(
 	description="This script lists the top N query types with their respective user agents and some example queries.")
 parser.add_argument("--monthsFolder", "-m", default="/a/akrausetud/months", type=str,
                     help="The folder in which the months directory are residing.")
+parser.add_argument("--ignoreLock", "-i", help="Ignore locked file and execute anyways", action="store_true")
 parser.add_argument("--outputPath", "-o", type=str, help="The path where the output files should be generated.")
 parser.add_argument("--numberOfQueryTypes", "-n", default=10, type=int, help="The top n query types to list.")
 parser.add_argument("--queryTypeRanking", "-q", default="Full_Month_QueryType_Ranking.tsv", type=str, help="The file in the QueryType-Folder to use as the ranking.")
@@ -24,6 +25,10 @@ if (len(sys.argv[1:]) == 0):
 	parser.exit()
 
 args = parser.parse_args()
+
+if os.path.isfile(utility.addMissingSlash(args.monthsFolder) + utility.addMissingSlash(args.month) + "locked") and not args.ignoreLock:
+	print "ERROR: The month " + args.month + " is being edited at the moment. Use -i if you want to force the execution of this script."
+	sys.exit()
 
 monthPath = utility.addMissingSlash(args.monthsFolder) + utility.addMissingSlash(args.month)
 pathBase = monthPath + "userAgentQueryTypeCombinations/"
