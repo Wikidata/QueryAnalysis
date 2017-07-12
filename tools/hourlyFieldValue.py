@@ -28,6 +28,10 @@ parser = argparse.ArgumentParser(
 parser.add_argument("--monthsFolder", "-m", default="/a/akrausetud/months", type=str,
                     help="The folder in which the months directory are residing.")
 parser.add_argument("--outputPath", "-o", type=str, help="The path where the output files should be generated.")
+parser.add_argument("--filter", "-f",default="Valid=^VALID$", type=str, help="Constraints used to limit the lines used to generate the output."
+				+ " Default filter is Valid=^VALID$."
+				+ " Enter as <metric>=<regex>,<othermetric>/<regex> (e.g. QueryType=wikidataLastModified,ToolName=^USER$)"
+				+ " NOTE: If you use this option you should probably also set the --outputPath to some value other than the default.")
 parser.add_argument("metric", type=str, help="The metric that should be ranked")
 parser.add_argument("month", type=str, help="The month for which the ranking should be generated.")
 
@@ -49,6 +53,10 @@ pathBase = utility.addMissingSlash(args.monthsFolder) + utility.addMissingSlash(
 
 if not os.path.exists(pathBase):
 	os.makedirs(pathBase)
+	
+filter = utility.filter()
+
+filter.setup(args.filter)
 
 class hourlyFieldValueHandler:
 	monthlyFieldValues = set()
@@ -60,7 +68,7 @@ class hourlyFieldValueHandler:
 	allDailyData = dict()
 	
 	def handle(self, sparqlQuery, processed):
-		if processed['#Valid'] != "VALID":
+		if not filter.checkLine(processed):
 			return
 		
 		day = processed["#day"]

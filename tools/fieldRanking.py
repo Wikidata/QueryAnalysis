@@ -18,7 +18,11 @@ parser = argparse.ArgumentParser(
 parser.add_argument("--monthsFolder", "-m", default="/a/akrausetud/months", type=str,
                     help="The folder in which the months directory are residing.")
 parser.add_argument("--outputPath", "-o", type=str, help="The path where the output files should be generated.")
-parser.add_argument("--nosplitting", "-n", help="Check if you do not want the script to split entries at commas and count each part separately\n" +
+parser.add_argument("--filter", "-f",default="Valid=^VALID$", type=str, help="Constraints used to limit the lines used to generate the output."
+				+ " Default filter is Valid=^VALID$."
+				+ " Enter as <metric>=<regex>,<othermetric>/<regex> (e.g. QueryType=wikidataLastModified,ToolName=^USER$)"
+				+ " NOTE: If you use this option you should probably also set the --outputPath to some value other than the default.")
+parser.add_argument("--nosplitting", "-n", help="Check if you do not want the script to split entries at commas and count each part separately" +
 				"but instead just to sort such entries and count them as a whole.", action="store_true")
 parser.add_argument("metric", type=str, help="The metric that should be ranked")
 parser.add_argument("month", type=str, help="The month for which the ranking should be generated.")
@@ -48,6 +52,10 @@ if not os.path.exists(pathBase):
 
 header = metric + "\t" + metric + "_count\tpercentage\n"
 
+filter = utility.filter()
+
+filter.setup(args.filter)
+
 class FieldRankingHandler:
 	totalCount = 0
 	totalMetricCounts = defaultdict(int)
@@ -56,7 +64,7 @@ class FieldRankingHandler:
 	dailyMetricCount = dict()
 	
 	def handle(self, sparqlQuery, processed):
-		if processed['#Valid'] != "VALID":
+		if not filter.checkLine(processed):
 			return
 		field_array = str(processed["#" + metric]).split(",")
 		if args.nosplitting:			
