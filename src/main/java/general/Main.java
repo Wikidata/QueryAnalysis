@@ -149,6 +149,7 @@ public final class Main
 
     //some parameters which can be changed through parameters
     //QueryHandler queryHandler = new OpenRDFQueryHandler();
+    String workingDirectory;
     String inputFilePrefix;
     String inputFileSuffix = ".tsv";
     String outputFolder;
@@ -167,7 +168,7 @@ public final class Main
         return;
       }
       if (cmd.hasOption("workingDirectory")) {
-        String workingDirectory = cmd.getOptionValue("workingDirectory").trim();
+        workingDirectory = cmd.getOptionValue("workingDirectory").trim();
         if (!workingDirectory.endsWith("/")) {
           workingDirectory += "/";
         }
@@ -211,6 +212,20 @@ public final class Main
       return;
     }
 
+    File lockFile;
+
+    try {
+      lockFile = new File(workingDirectory + "lock");
+
+      if (!lockFile.createNewFile()) {
+        logger.info("Cannot work on " + workingDirectory + " because another instance is already working on it.");
+        return;
+      }
+    } catch (IOException e) {
+      logger.error("Unexpected error while trying to create the lock file.", e);
+      return;
+    }
+
     LoggingHandler.initConsoleLog();
 
     loadStandardPrefixes();
@@ -242,6 +257,8 @@ public final class Main
     if (!noExampleQueries) {
       writeExampleQueries(outputFolder);
     }
+
+    lockFile.delete();
 
     long stopTime = System.nanoTime();
     long millis = TimeUnit.MILLISECONDS.convert(stopTime - startTime, TimeUnit.NANOSECONDS);
