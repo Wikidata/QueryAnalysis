@@ -13,6 +13,11 @@ def addMissingSlash(directoryString):
         return directoryString + "/"
     return directoryString
 
+def addMissingDoubleCross(text):
+    if not text.startswith("#"):
+        return "#" + text
+    return text
+
 class filter:
     
     parameters = dict()

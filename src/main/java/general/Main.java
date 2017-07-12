@@ -140,7 +140,6 @@ public final class Main
     options.addOption("l", "logging", false, "enables file logging");
     options.addOption("w", "workingDirectory", true, "The directory we should be working on.");
     options.addOption("h", "help", false, "displays this help");
-    options.addOption("t", "tsv", false, "reads from .tsv-files");
     options.addOption("n", "numberOfThreads", true, "number of used threads, default 1");
     options.addOption("b", "withBots", false, "enables metric calculation for bot queries+");
     options.addOption("d", "dynamicQueryTypes", false, "enables dynamic generation of query types");
@@ -166,10 +165,6 @@ public final class Main
         HelpFormatter formatter = new HelpFormatter();
         formatter.printHelp("help", options);
         return;
-      }
-      if (cmd.hasOption("tsv")) {
-        inputFileSuffix = ".tsv";
-        inputHandlerClass = InputHandlerTSV.class;
       }
       if (cmd.hasOption("workingDirectory")) {
         String workingDirectory = cmd.getOptionValue("workingDirectory").trim();

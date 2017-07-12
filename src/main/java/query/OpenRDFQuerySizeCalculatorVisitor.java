@@ -9,7 +9,7 @@ import org.openrdf.query.algebra.helpers.QueryModelVisitorBase;
  * Calculates size metric for a SPARQL query while counting basically
  * nodes of the abstract syntax tree from OpenRDF
  *
- * @author: Julius Gonsior
+ * @author Julius Gonsior
  */
 public class OpenRDFQuerySizeCalculatorVisitor extends QueryModelVisitorBase
 {

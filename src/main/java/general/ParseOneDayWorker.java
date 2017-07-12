@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @author: Julius Gonsior
+ * @author Julius Gonsior
  */
 public class ParseOneDayWorker implements Runnable
 {

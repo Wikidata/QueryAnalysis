@@ -6,7 +6,7 @@ import org.openrdf.query.algebra.helpers.QueryModelVisitorBase;
 import java.util.LinkedHashMap;
 
 /**
- * @author: Julius Gonsior
+ * @author Julius Gonsior
  */
 public class SparqlStatisticsCollector extends QueryModelVisitorBase
 {
