@@ -45,7 +45,7 @@ if argMetric.startswith("#"):
 else:
 	metric = argMetric
 
-pathBase = utility.addMissingSlash(args.monthsFolder) + utility.addMissingSlash(args.month) + utility.addMissingSlash(metric)
+pathBase = utility.addMissingSlash(args.monthsFolder) + utility.addMissingSlash(args.month) + utility.addMissingSlash(metric) + "hourly/"
 
 if not os.path.exists(pathBase):
 	os.makedirs(pathBase)

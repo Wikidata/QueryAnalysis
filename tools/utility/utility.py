@@ -10,3 +10,8 @@ def addMissingSlash(directoryString):
     if not directoryString.endswith("/"):
         return directoryString + "/"
     return directoryString
+
+def addMissingDoubleCross(text):
+    if not text.startswith("#"):
+        return "#" + text
+    return text
