@@ -92,25 +92,25 @@ public final class Main
    */
   public static final BiMap<String, String> prefixes = HashBiMap.create();
   /**
-   * Define a static logger variable.
-   */
-  private static final Logger logger = Logger.getLogger(Main.class);
-  /**
    * Saves if metrics should be calculated for bot queries.
    */
-  public static boolean withBots;
-  /**
-   * Saves if the input files should be modified with additional prefixes.
-   */
-  public static boolean readPreprocessed;
+  public static boolean withBots = true;
   /**
    * Saves if the query types should be generated dynamically.
    */
-  public static boolean dynamicQueryTypes;
+  public static boolean dynamicQueryTypes = true;
   /**
-   * If set to true the resulting processed output files aren't being gzipped
+   * If set to true the resulting processed output files are being gzipped.
    */
-  public static boolean noGzipOutput = false;
+  public static boolean gzipOutput = true;
+  /**
+   * Saves if example queries should be matched.
+   */
+  private static boolean exampleQueries = true;
+  /**
+   * Define a static logger variable.
+   */
+  private static final Logger logger = Logger.getLogger(Main.class);
   /**
    * Saves the output folder name for query types.
    */
@@ -119,7 +119,6 @@ public final class Main
    * Saves the output folder name for query types.
    */
   private static String outputFolderName;
-  private static boolean noExampleQueries = false;
 
   /**
    * Since this is a utility class, it should not be instantiated.
@@ -137,14 +136,14 @@ public final class Main
   public static void main(String[] args) throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException
   {
     Options options = new Options();
-    options.addOption("l", "logging", false, "enables file logging");
+    options.addOption("l", "logging", false, "Enables file logging.");
     options.addOption("w", "workingDirectory", true, "The directory we should be working on.");
-    options.addOption("h", "help", false, "displays this help");
-    options.addOption("n", "numberOfThreads", true, "number of used threads, default 1");
-    options.addOption("b", "withBots", false, "enables metric calculation for bot queries+");
-    options.addOption("d", "dynamicQueryTypes", false, "enables dynamic generation of query types");
-    options.addOption("g", "noGzipOutput", false, "disables the gzipped output of the output files");
-    options.addOption("e", "noExampleQueriesOutput", false, "disables the matching of example queries");
+    options.addOption("h", "help", false, "Displays this help.");
+    options.addOption("n", "numberOfThreads", true, "Number of used threads, default 1");
+    options.addOption("b", "noBotMetrics", false, "Disables metric calculation for bot queries.");
+    options.addOption("d", "noDynamicQueryTypes", false, "Disables dynamic generation of query types.");
+    options.addOption("g", "noGzipOutput", false, "Disables gzipping of the output files.");
+    options.addOption("e", "noExampleQueriesOutput", false, "Disables the matching of example queries.");
 
 
     //some parameters which can be changed through parameters
@@ -185,20 +184,17 @@ public final class Main
       if (cmd.hasOption("numberOfThreads")) {
         numberOfThreads = Integer.parseInt(cmd.getOptionValue("numberOfThreads"));
       }
-      if (cmd.hasOption("withBots")) {
-        withBots = true;
+      if (cmd.hasOption("noBotMetrics")) {
+        withBots = false;
       }
-      if (cmd.hasOption("readPreprocessed")) {
-        readPreprocessed = true;
-      }
-      if (cmd.hasOption("dynamicQueryTypes")) {
-        dynamicQueryTypes = true;
+      if (cmd.hasOption("noDynamicQueryTypes")) {
+        dynamicQueryTypes = false;
       }
       if (cmd.hasOption("noGzipOutput")) {
-        noGzipOutput = true;
+        gzipOutput = false;
       }
-      if (cmd.hasOption("noExampleQueries")) {
-        noExampleQueries = true;
+      if (cmd.hasOption("noExampleQueriesOutput")) {
+        exampleQueries = false;
       }
     } catch (UnrecognizedOptionException e) {
       System.out.println("Unrecognized commandline option: " + e.getOption());
@@ -231,7 +227,7 @@ public final class Main
     loadStandardPrefixes();
     loadPreBuildQueryTypes();
     loadUserAgentRegex();
-    if (!noExampleQueries) {
+    if (exampleQueries) {
       getExampleQueries();
     }
     loadPropertyGroupMapping();
@@ -254,7 +250,7 @@ public final class Main
     }
 
     // writeQueryTypes(queryTypes);
-    if (!noExampleQueries) {
+    if (exampleQueries) {
       writeExampleQueries(outputFolder);
     }
 

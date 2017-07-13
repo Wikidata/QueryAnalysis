@@ -56,7 +56,7 @@ public class OutputHandlerTSV extends OutputHandler
    */
   public OutputHandlerTSV(String fileToWrite, Class queryHandlerClass) throws FileNotFoundException
   {
-    if (Main.noGzipOutput) {
+    if (!Main.gzipOutput) {
       outputStream = new FileOutputStream(fileToWrite + ".tsv");
     } else {
       try {
