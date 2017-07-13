@@ -15,7 +15,7 @@ parser.add_argument("--monthsFolder", "-m", default="/a/akrausetud/months", type
                     help="The folder in which the months directory are residing.")
 parser.add_argument("--ignoreLock", "-i", help="Ignore locked file and execute anyways", action="store_true")
 parser.add_argument("--outputPath", "-o", type=str, help="The path where the output files should be generated.")
-parser.add_argument("--filter", "-f",default="Valid=^VALID$", type=str, help="Constraints used to limit the lines used to generate the output."
+parser.add_argument("--filter", "-f",default="", type=str, help="Constraints used to limit the lines used to generate the output."
 				+ " Default filter is Valid=^VALID$."
 				+ " Enter as <metric>=<regex>,<othermetric>/<regex> (e.g. QueryType=wikidataLastModified,ToolName=^USER$)"
 				+ " NOTE: If you use this option you should probably also set the --outputPath to some value other than the default.")

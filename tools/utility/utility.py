@@ -23,6 +23,8 @@ class filter:
     parameters = dict()
     
     def setup(self, filterParameter):
+        self.parameters["#Valid"] = re.compile("^VALID$")
+        
         filters = filterParameter.split(",")
         
         for element in filters:
