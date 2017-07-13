@@ -122,6 +122,10 @@ owd = os.getcwd()
 os.chdir("..")
 
 print "Starting data processing using QueryAnalysis for " + args.month + "."  
+
+if subprocess.call(['mvn', 'clean', 'package']) != 0:
+    print "ERROR: Could not package the java application."
+    sys.exit(1)
     
 if subprocess.call(mavenCall) != 0:
     print "ERROR: Could not execute the java application. Check the logs for details or rerun this script with -l to generate logs."
