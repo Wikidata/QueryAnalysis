@@ -26,6 +26,9 @@ class filter:
         self.parameters["#Valid"] = re.compile("^VALID$")
         
         filters = filterParameter.split(",")
+
+        if filters == ['']:
+            return
         
         for element in filters:
             arguments = element.split("=")
