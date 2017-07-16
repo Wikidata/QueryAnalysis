@@ -31,7 +31,7 @@ parser.add_argument("--fdupesExecutable", "-f", default=unifyQueryTypes.defaultF
 parser.add_argument("--monthsFolder", "-m", default="/a/akrausetud/months", type=str,
                     help="The folder in which the months directory are residing.")
 parser.add_argument("--year", "-y", default=datetime.now().year, type=int, help="The year to be processed (default current year).")
-parser.add_argument("month", type=str, help="The month to be processed")
+parser.add_argument("months", type=str, help="The months to be processed")
 
 # These are the field we extract from wmf.wdqs_extract that form the raw log data.
 # They are not configurable via argument because the java program does not detect headers and thus depends on this specific order. 
@@ -51,90 +51,91 @@ args = parser.parse_args()
 if calendar.isleap(args.year):
     months['february'][1] = 29
 
-if os.path.isfile(utility.addMissingSlash(args.monthsFolder) + utility.addMissingSlash(args.month) + "locked") and not args.ignoreLock:
-    print "ERROR: The month " + args.month + " is being edited at the moment. Use -i if you want to force the execution of this script."
-    sys.exit()
-    
-month = os.path.abspath(utility.addMissingSlash(args.monthsFolder) + utility.addMissingSlash(args.month))
-
-processedLogDataDirectory = month + "processedLogData/"
-rawLogDataDirectory = month + "rawLogData/"
-tempDirectory = rawLogDataDirectory + "temp/"
-
-# If the month directory does not exist it is being created along with the directories for raw and processed log data.
-if not os.path.exists(month):
-    
-    print "Starting data extraction from wmf.wdqs_extract for " + args.month + "."
-    
-    os.makedirs(month)
-    os.makedirs(processedLogDataDirectory)
-    os.makedirs(rawLogDataDirectory)
-    
-    arguments = ['hive', '-e']
-    
-    # For each day we send a command to hive that extracts all entries for this day (in the given month and year) and writes them to temporary files.
-    for day in xrange(1, months[args.month][1] + 1):
-        os.makedirs(tempDirectory)
-        hive_call = 'insert overwrite local directory \'' + tempDirectory + '\' row format delimited fields terminated by \'\\t\' select '
+for monthName in args.months.split(","):
+    if os.path.isfile(utility.addMissingSlash(args.monthsFolder) + utility.addMissingSlash(monthName) + "locked") and not args.ignoreLock:
+        print "ERROR: The month " + monthName + " is being edited at the moment. Use -i if you want to force the execution of this script."
+        sys.exit()
         
-        # We add all the fields to the request
-        for field in fields:
-            hive_call += field + " "
-            
-        hive_call += ' from wmf.wdqs_extract where uri_query<>"" and year=\'' + str(args.year) +  '\' and month=\'' + months[args.month][0] + '\' and day=\'' + day + '\''
+    month = os.path.abspath(utility.addMissingSlash(args.monthsFolder) + utility.addMissingSlash(monthName))
+    
+    processedLogDataDirectory = month + "processedLogData/"
+    rawLogDataDirectory = month + "rawLogData/"
+    tempDirectory = rawLogDataDirectory + "temp/"
+    
+    # If the month directory does not exist it is being created along with the directories for raw and processed log data.
+    if not os.path.exists(month):
         
-        arguments.append(hive_call)
-        if subprocess.call(arguments) != 0:
-            print "ERROR: Raw data for month " + args.month + " does not exist but could not be extracted using hive."
-            sys.exit(1)
-
-        # The content of the temporary files is then copied to the actual raw log data file (with added headers)
-        with open(rawLogDataDirectory + "QueryCnt" + day + ".tsv", "w") as dayfile:            
-            dayfile.write(header)
+        print "Starting data extraction from wmf.wdqs_extract for " + monthName+ "."
+        
+        os.makedirs(month)
+        os.makedirs(processedLogDataDirectory)
+        os.makedirs(rawLogDataDirectory)
+        
+        arguments = ['hive', '-e']
+        
+        # For each day we send a command to hive that extracts all entries for this day (in the given month and year) and writes them to temporary files.
+        for day in xrange(1, months[monthName][1] + 1):
+            os.makedirs(tempDirectory)
+            hive_call = 'insert overwrite local directory \'' + tempDirectory + '\' row format delimited fields terminated by \'\\t\' select '
             
-            for filename in glob.glob('*'):
-                with open(filename) as temp:
-                    for line in temp:
-                        dayfile.write(line)
+            # We add all the fields to the request
+            for field in fields:
+                hive_call += field + " "
+                
+            hive_call += ' from wmf.wdqs_extract where uri_query<>"" and year=\'' + str(args.year) +  '\' and month=\'' + months[monthName][0] + '\' and day=\'' + day + '\''
+            
+            arguments.append(hive_call)
+            if subprocess.call(arguments) != 0:
+                print "ERROR: Raw data for month " + monthName + " does not exist but could not be extracted using hive."
+                sys.exit(1)
     
-        shutil.rmtree(tempDirectory)
-
-# We build the call to execute the java application with the location of the files, the number of threads to use and any optional arguments needed
-
-mavenCall = ['mvn', 'exec:java']    
-
-mavenArguments = '-Dexec.args=-w ' + month + ' -n ' + str(args.threads)
-
-if args.logging:
-    mavenArguments += " -l"
-if args.noBotMetrics:
-    mavenArguments += " -b"
-if args.noDynamicQueryTypes:
-    mavenArguments += " -d"
-if args.noGzipOutput:
-    mavenArguments += " -g"
-if args.noExampleQueriesOutput:
-    mavenArguments += " -e"
-
-mavenCall.append(mavenArguments)
-
-owd = os.getcwd()
-os.chdir("..")
-
-print "Starting data processing using QueryAnalysis for " + args.month + "."  
-
-if subprocess.call(['mvn', 'clean', 'package']) != 0:
-    print "ERROR: Could not package the java application."
-    sys.exit(1)
+            # The content of the temporary files is then copied to the actual raw log data file (with added headers)
+            with open(rawLogDataDirectory + "QueryCnt" + day + ".tsv", "w") as dayfile:            
+                dayfile.write(header)
+                
+                for filename in glob.glob('*'):
+                    with open(filename) as temp:
+                        for line in temp:
+                            dayfile.write(line)
+        
+            shutil.rmtree(tempDirectory)
     
-if subprocess.call(mavenCall) != 0:
-    print "ERROR: Could not execute the java application. Check the logs for details or rerun this script with -l to generate logs."
-    sys.exit(1)
+    # We build the call to execute the java application with the location of the files, the number of threads to use and any optional arguments needed
     
-os.chdir(owd)
-
-# Finally we call the query type unification (see python unifyQueryTypes.py for details)
-
-print "Starting to unify the query types for " + args.month + "."
-
-unifyQueryTypes.unifyQueryTypes(args.month, args.monthsFolder, args.referenceDirectory, args.fdupesExecutable)
+    mavenCall = ['mvn', 'exec:java']    
+    
+    mavenArguments = '-Dexec.args=-w ' + month + ' -n ' + str(args.threads)
+    
+    if args.logging:
+        mavenArguments += " -l"
+    if args.noBotMetrics:
+        mavenArguments += " -b"
+    if args.noDynamicQueryTypes:
+        mavenArguments += " -d"
+    if args.noGzipOutput:
+        mavenArguments += " -g"
+    if args.noExampleQueriesOutput:
+        mavenArguments += " -e"
+    
+    mavenCall.append(mavenArguments)
+    
+    owd = os.getcwd()
+    os.chdir("..")
+    
+    print "Starting data processing using QueryAnalysis for " + monthName + "."  
+    
+    if subprocess.call(['mvn', 'clean', 'package']) != 0:
+        print "ERROR: Could not package the java application."
+        sys.exit(1)
+        
+    if subprocess.call(mavenCall) != 0:
+        print "ERROR: Could not execute the java application. Check the logs for details or rerun this script with -l to generate logs."
+        sys.exit(1)
+        
+    os.chdir(owd)
+    
+    # Finally we call the query type unification (see python unifyQueryTypes.py for details)
+    
+    print "Starting to unify the query types for " + monthName + "."
+    
+    unifyQueryTypes.unifyQueryTypes(monthName, args.monthsFolder, args.referenceDirectory, args.fdupesExecutable)
