@@ -47,6 +47,10 @@ public abstract class QueryHandler
    */
   protected Set<String> pIDs;
   /**
+   * The geocoordinates used in this query.
+   */
+  protected Set<String> coordinates;
+  /**
    * Kind of the complexity of the query.
    */
   protected Integer querySize = null;
@@ -108,7 +112,7 @@ public abstract class QueryHandler
    * True if the tool information got already computed.
    * useful for lazy-loading of tool information
    */
-  private boolean toolComputed = false;
+  private boolean toolComputed;
   /**
    * The userAgent string which executed this query.
    */
@@ -116,11 +120,15 @@ public abstract class QueryHandler
   /**
    * The Q-IDs as a string of comma separated values.
    */
-  private String qIDString = null;
+  private String qIDString;
   /**
    * The P-IDs as a string of comma separated values.
    */
-  private String pIDString = null;
+  private String pIDString;
+  /**
+   * The geo coordinates as a string of comma separated values.
+   */
+  private String coordinatesString = null;
   /**
    * The categories as a string of comma separated values.
    */
@@ -686,6 +694,34 @@ public abstract class QueryHandler
       this.computeCategoriesString();
     }
     return categories;
+  }
+
+  /**
+   * Computes the coordinates as a string of comma separated values.
+   */
+  private void computeCoordinatesString()
+  {
+    if (coordinates == null) {
+      this.computeCoordinates();
+    }
+
+    this.coordinatesString = this.computeAnyIDString(coordinates);
+  }
+
+  /**
+   * Extracts the geo coordinates from the query and stores them in {@link #coordinates}.
+   */
+  public abstract void computeCoordinates();
+
+  /**
+   * @return {@link #coordinates}
+   */
+  public String getCoordinatesString()
+  {
+    if (this.coordinatesString == null) {
+      this.computeCoordinatesString();
+    }
+    return coordinatesString;
   }
 
   /**

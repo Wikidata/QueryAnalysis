@@ -14,9 +14,21 @@ import org.openrdf.query.algebra.Var;
 import org.openrdf.query.algebra.helpers.QueryModelVisitorBase;
 import org.openrdf.query.algebra.helpers.StatementPatternCollector;
 import org.openrdf.query.parser.ParsedQuery;
+import org.openrdf.query.parser.sparql.ASTVisitorBase;
+import org.openrdf.query.parser.sparql.ast.ASTLimit;
+import org.openrdf.query.parser.sparql.ast.ASTNumericLiteral;
+import org.openrdf.query.parser.sparql.ast.ASTQueryContainer;
+import org.openrdf.query.parser.sparql.ast.ASTRDFLiteral;
+import org.openrdf.query.parser.sparql.ast.ASTString;
+import org.openrdf.query.parser.sparql.ast.ASTVar;
+import org.openrdf.query.parser.sparql.ast.ParseException;
+import org.openrdf.query.parser.sparql.ast.SyntaxTreeBuilder;
+import org.openrdf.query.parser.sparql.ast.TokenMgrError;
 import org.openrdf.query.parser.sparql.ast.VisitorException;
 
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author jgonsior
@@ -344,6 +356,36 @@ public class OpenRDFQueryHandler extends QueryHandler
       return "NONE";
     }
     return name;
+  }
+
+  @Override
+  public void computeCoordinates()
+  {
+    this.coordinates = new HashSet<String>();
+    if (getValidityStatus() != QueryHandler.Validity.VALID) {
+      this.coordinates.add("NONE");
+      return;
+    }
+
+    try {
+      ASTQueryContainer qc = SyntaxTreeBuilder.parseQuery(getQueryString());
+      qc.jjtAccept(new ASTVisitorBase()
+      {
+        @Override
+        public Object visit(ASTString string, Object data) throws VisitorException
+        {
+          Pattern pattern = Pattern.compile("^Point\\(([-+]?[\\d]{1,2}\\.\\d+\\s*[-+]?[\\d]{1,3}\\.\\d+?)\\)$");
+          Matcher matcher = pattern.matcher(string.getValue());
+          if (matcher.find()) {
+            coordinates.add(matcher.group(1));
+          }
+          return super.visit(string, data);
+        }
+      }, null);
+    }
+    catch (TokenMgrError | ParseException | VisitorException e) {
+      logger.error("Unexpected error while computing the coordinates in " + getQueryString(), e);
+    }
   }
 
 }

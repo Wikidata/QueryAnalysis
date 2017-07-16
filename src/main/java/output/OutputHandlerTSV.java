@@ -83,6 +83,7 @@ public class OutputHandlerTSV extends OutputHandler
     header.add("#SubjectsAndObjects");
     header.add("#Predicates");
     header.add("#Categories");
+    header.add("#Coordinates");
 
     //add all sparqlStatisticNodes
     for (String sparqlStatisticFeature : SparqlStatisticsCollector.getDefaultMap().keySet()) {
@@ -143,6 +144,7 @@ public class OutputHandlerTSV extends OutputHandler
       line.add(queryHandler.getqIDString());
       line.add(queryHandler.getpIDString());
       line.add(queryHandler.getCategoriesString());
+      line.add(queryHandler.getCoordinatesString());
 
       Map<String, Integer> sparqlStatistics = queryHandler.getSparqlStatistics();
       //add all sparqlStatisticNodes
@@ -151,7 +153,7 @@ public class OutputHandlerTSV extends OutputHandler
       }
 
     } else {
-      for (int i = 0; i < 10 + SparqlStatisticsCollector.getDefaultMap().size(); i++) {
+      for (int i = 0; i < 12 + SparqlStatisticsCollector.getDefaultMap().size(); i++) {
         line.add(-1);
       }
     }
