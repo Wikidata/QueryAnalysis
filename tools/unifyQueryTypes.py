@@ -23,6 +23,8 @@ def unifyQueryTypes(month, monthsFolder = defaultMonthsFolder, referenceDirector
 	if os.path.isfile(utility.addMissingSlash(monthsFolder) + utility.addMissingSlash(month) + "locked"):
 		print "ERROR: The month " + month + " is being edited at the moment."
 		sys.exit()
+	else:
+		open(utility.addMissingSlash(monthsFolder) + utility.addMissingSlash(month) + "locked", 'a').close()
 	
 	os.chdir(utility.addMissingSlash(monthsFolder) + utility.addMissingSlash(month))
 	
@@ -204,6 +206,8 @@ def unifyQueryTypes(month, monthsFolder = defaultMonthsFolder, referenceDirector
 		shutil.copy(temporaryDirectory + filename, filename)
 	
 	shutil.rmtree(temporaryDirectory)
+	
+	os.remove(utility.addMissingSlash(monthsFolder) + utility.addMissingSlash(month) + "locked")
 
 if __name__ == '__main__':
 	parser = argparse.ArgumentParser(
