@@ -208,6 +208,16 @@ public final class Main
       return;
     }
 
+    LoggingHandler.initConsoleLog();
+
+    loadStandardPrefixes();
+    loadPreBuildQueryTypes();
+    loadUserAgentRegex();
+    if (exampleQueries) {
+      getExampleQueries();
+    }
+    loadPropertyGroupMapping();
+
     File lockFile;
 
     try {
@@ -221,16 +231,6 @@ public final class Main
       logger.error("Unexpected error while trying to create the lock file.", e);
       return;
     }
-
-    LoggingHandler.initConsoleLog();
-
-    loadStandardPrefixes();
-    loadPreBuildQueryTypes();
-    loadUserAgentRegex();
-    if (exampleQueries) {
-      getExampleQueries();
-    }
-    loadPropertyGroupMapping();
 
     long startTime = System.nanoTime();
 
