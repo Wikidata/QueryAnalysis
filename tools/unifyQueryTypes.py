@@ -25,7 +25,8 @@ def unifyQueryTypes(month, monthsFolder = defaultMonthsFolder, referenceDirector
 		sys.exit()
 	else:
 		open(utility.addMissingSlash(monthsFolder) + utility.addMissingSlash(month) + "locked", 'a').close()
-	
+
+	owd = os.getcwd()
 	os.chdir(utility.addMissingSlash(monthsFolder) + utility.addMissingSlash(month))
 	
 	referenceQueryTypeDirectory = utility.addMissingSlash(referenceDirectory)
@@ -208,6 +209,7 @@ def unifyQueryTypes(month, monthsFolder = defaultMonthsFolder, referenceDirector
 	shutil.rmtree(temporaryDirectory)
 	
 	os.remove(utility.addMissingSlash(monthsFolder) + utility.addMissingSlash(month) + "locked")
+	os.chdir(owd)
 
 if __name__ == '__main__':
 	parser = argparse.ArgumentParser(
