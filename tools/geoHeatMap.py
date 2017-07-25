@@ -6,6 +6,9 @@ from collections import defaultdict
 import os.path
 import sys
 
+import cartopy.crs as ccrs 
+import matplotlib.pyplot as plt
+
 from postprocess import processdata
 from utility import utility
 
@@ -25,7 +28,6 @@ if os.path.isfile(utility.addMissingSlash(args.monthsFolder) + utility.addMissin
     print "ERROR: The month " + args.month + " is being edited at the moment. Use -i if you want to force the execution of this script."
     sys.exit()
 
-# first get all geo coordinates and save them to a file
 class GeoCoordinateCollectorHandler:
     coordinates = set()
 
@@ -43,12 +45,25 @@ class GeoCoordinateCollectorHandler:
 
 
 if not os.path.isfile('geoCoordinates.tsv'):
+    # first get all geo coordinates and save them to a file
     handler = GeoCoordinateCollectorHandler()
     processdata.processDay(handler, 19, args.month, args.monthsFolder)
     handler.saveSetToJson()
 
 else:
     # parse geoCoordinates.tsv and create choropleth map
+    
+    
+    ax = plt.axes(projection=ccrs.PlateCarree()) 
+    ax.coastlines()
+    ax.stock_img()
+
+
+
     with open('geoCoordinates.tsv', 'r') as file:
         for line in file:
-            pprint(line.split(" "))
+            lat,lon = line.strip('\n').split(" ")
+            plt.plot(float(lat), float(lon), color='red', alpha=.3, marker='.',transform=ccrs.PlateCarree())
+            #pprint(line.split(" "))
+    
+    plt.show()
