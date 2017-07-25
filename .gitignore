@@ -64,3 +64,6 @@ tools/visualisePropertyTree/ranking.json
 
 tools/visualisePropertyTree/.venv
 tools/visualisePropertyTree/bower_components/
+
+*.venv
+*.pyc
