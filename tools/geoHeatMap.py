@@ -26,21 +26,23 @@ if os.path.isfile(utility.addMissingSlash(args.monthsFolder) + utility.addMissin
     sys.exit()
 
 
-class GeoHeatmapHandler:
-    toolCounter = defaultdict(int)
+class GeoCoordinateCollectorHandler:
+    coordinates = set()
 
     def handle(self, sparqlQuery, processed):
         if (processed['#Valid'] == 'VALID' or processed['#Valid'] == '1'):
             if(processed['#Coordinates'] is not ''):
-                pprint(processed['#Coordinates'])
-            self.toolCounter[processed['#ToolName']] += 1
+                self.coordinates.add(processed['#Coordinates'])
+                pprint(self.coordinates)
+    
+    def saveSetToJson(self):
+        with open(geoCoordinates.tsv, 'w') as geoCoordinatesFile:
+            for coordinate in self.coordinates:
+                geoCoordinatesFile.write(coordinate.replace(" ", "\t") + "\n")
 
-    def __str__(self):
-        return pprint.pformat(sorted(self.toolCounter.iteritems(), key=lambda x: x[1], reverse=True))
+handler = GeoCoordinateCollectorHandler()
 
+processdata.processDay(handler, 19, args.month, args.monthsFolder)
 
-handler = GeoHeatmapHandler()
+handler.saveSetToJson()
 
-processdata.processMonth(handler, args.month, args.monthsFolder)
-
-#print handler
