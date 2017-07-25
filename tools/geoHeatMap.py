@@ -1,6 +1,6 @@
 import argparse
 import os
-import pprint
+from pprint import pprint
 import sys
 from collections import defaultdict
 
@@ -31,6 +31,8 @@ class GeoHeatmapHandler:
 
     def handle(self, sparqlQuery, processed):
         if (processed['#Valid'] == 'VALID' or processed['#Valid'] == '1'):
+            if(processed['#Coordinates'] is not ''):
+                pprint(processed['#Coordinates'])
             self.toolCounter[processed['#ToolName']] += 1
 
     def __str__(self):
@@ -41,4 +43,4 @@ handler = GeoHeatmapHandler()
 
 processdata.processMonth(handler, args.month, args.monthsFolder)
 
-print handler
+#print handler
