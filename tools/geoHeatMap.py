@@ -3,7 +3,7 @@ import os
 from pprint import pprint
 import sys
 from collections import defaultdict
-
+import os.path
 import sys
 
 from postprocess import processdata
@@ -25,24 +25,30 @@ if os.path.isfile(utility.addMissingSlash(args.monthsFolder) + utility.addMissin
     print "ERROR: The month " + args.month + " is being edited at the moment. Use -i if you want to force the execution of this script."
     sys.exit()
 
-
+# first get all geo coordinates and save them to a file
 class GeoCoordinateCollectorHandler:
     coordinates = set()
 
     def handle(self, sparqlQuery, processed):
         if (processed['#Valid'] == 'VALID' or processed['#Valid'] == '1'):
             if(processed['#Coordinates'] is not ''):
-                self.coordinates.add(processed['#Coordinates'])
-                pprint(self.coordinates)
+                for coordinate in processed['#Coordinates'].split(","):
+                    self.coordinates.add(coordinate)
     
     def saveSetToJson(self):
-        with open(geoCoordinates.tsv, 'w') as geoCoordinatesFile:
+        pprint(self.coordinates)
+        with open('geoCoordinates.tsv', 'w') as geoCoordinatesFile:
             for coordinate in self.coordinates:
                 geoCoordinatesFile.write(coordinate.replace(" ", "\t") + "\n")
 
-handler = GeoCoordinateCollectorHandler()
 
-processdata.processDay(handler, 19, args.month, args.monthsFolder)
+if not os.path.isfile('geoCoordinates.tsv'):
+    handler = GeoCoordinateCollectorHandler()
+    processdata.processDay(handler, 19, args.month, args.monthsFolder)
+    handler.saveSetToJson()
 
-handler.saveSetToJson()
-
+else:
+    # parse geoCoordinates.tsv and create choropleth map
+    with open('geoCoordinates.tsv', 'r') as file:
+        for line in file:
+            pprint(line.split(" "))
