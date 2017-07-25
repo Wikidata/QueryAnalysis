@@ -6,6 +6,7 @@ from collections import defaultdict
 import sys
 
 from postprocess import processdata
+from utility import utility
 
 parser = argparse.ArgumentParser(description="Counts the valid queries")
 parser.add_argument("--monthsFolder", "-m", default="/a/akrausetud/months", type=str,
