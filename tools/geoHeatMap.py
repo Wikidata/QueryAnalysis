@@ -47,7 +47,7 @@ class GeoCoordinateCollectorHandler:
 if not os.path.isfile('geoCoordinates.tsv'):
     # first get all geo coordinates and save them to a file
     handler = GeoCoordinateCollectorHandler()
-    processdata.processDay(handler, 19, args.month, args.monthsFolder)
+    processdata.processMonth(handler, args.month, args.monthsFolder)
     handler.saveSetToJson()
 
 else:
