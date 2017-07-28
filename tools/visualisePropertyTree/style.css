@@ -1,8 +1,43 @@
 
-.zero {
-    color: #444;
+table.treetable {
+    table-layout: fixed !important;
+    width: 47em;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+th {
+    font-weight: bold !important;
+    vertical-align: middle !important;
+    text-align: center !important;
+    font-size: 1.1em;
+    border: 0 !important;
+    background: #f9f9f9 !important;
+}
+
+th.property {
+    text-align: left !important;
+    padding-left: 2em !important;
+}
+
+th.property, th.qid {
+    font-size: 1.6em;
 }
 
 tr.branch td.property {
     cursor:pointer !important;
+}
+
+.property {
+    width: 30em;
+}
+
+.qid {
+    text-align: center;
+    width: 7em;
+}
+
+.percentage {
+    text-align: right !important;
+    width: 10em;
 }

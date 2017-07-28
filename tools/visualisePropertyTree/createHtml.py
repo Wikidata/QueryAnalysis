@@ -102,15 +102,17 @@ html = """
 	
 	<link rel="stylesheet" href="bower_components/jquery-treetable/css/jquery.treetable.css" />
 	<link rel="stylesheet" href="bower_components/jquery-treetable/css/jquery.treetable.theme.default.css" />
+	<link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" />
+	<link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap-theme.css" />
 	<link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body>
-<table id="propertyTreeTable">
+<table id="propertyTreeTable" class="table">
 <thead>
 <tr>
-<th>Property label</th>
-<th>QID</th>
-<th>User Queries which had this query</th>
+<th class="property" >Property label</th>
+<th class="qid">QID</th>
+<th class="percentage">User Queries which had this query</th>
 </tr>
 </thead>
 <tbody>
@@ -121,8 +123,8 @@ def createTr(property, parent, parentPrefix):
 	parentPrefix += parent['qid']
 	html += "<tr data-tt-id=\"" + parentPrefix + property['qid'] + "\" data-tt-parent-id=\"" + parentPrefix + "\">"
 	html += "<td class=\"property\">" + property['name'] + "</td>"
-	html += "<td>" + property['qid'][31:] + "</td>"
-	html += "<td>" + str(property['countUserQueries']) + "</td>"
+	html += "<td class=\"qid\" >" + property['qid'][31:] + "</td>"
+	html += "<td class=\"percentage\">" + str(property['countUserQueries']) + "</td>"
 
 	html += "</tr>\n"
 	for child in sorted(property['children'], reverse=True, key=cmp_to_key(compareProperties)):
