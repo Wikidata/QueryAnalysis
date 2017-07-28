@@ -102,23 +102,10 @@ html = """
 	
 	<link rel="stylesheet" href="bower_components/jquery-treetable/css/jquery.treetable.css" />
 	<link rel="stylesheet" href="bower_components/jquery-treetable/css/jquery.treetable.theme.default.css" />
-	
-	<style>
-
-		.zero {
-			color: #444;
-		}
-		
-		tr.branch td.property {
-			cursor:pointer !important;
-		}
-		
-		
-
-	</style>
+	<link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body>
-<table id="propertyTreeTable" border="1">
+<table id="propertyTreeTable">
 <thead>
 <tr>
 <th>Property label</th>

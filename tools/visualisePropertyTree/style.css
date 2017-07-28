@@ -1,0 +1,8 @@
+
+.zero {
+    color: #444;
+}
+
+tr.branch td.property {
+    cursor:pointer !important;
+}
