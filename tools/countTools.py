@@ -5,11 +5,11 @@ import sys
 from collections import defaultdict
 from postprocess import processdata
 from utility import utility
-from config import *
+import config
 
 parser = argparse.ArgumentParser(
     description="Counts the used tools/bots in the given folder")
-parser.add_argument("--monthsFolder", "-m", default=monthsFolder,
+parser.add_argument("--monthsFolder", "-m", default=config.monthsFolder,
                     type=str, help="the folder in which the months"
                     + " directory are residing")
 parser.add_argument("--ignoreLock", "-i",
