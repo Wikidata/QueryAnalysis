@@ -4,7 +4,7 @@ import glob
 import gzip
 import os
 import urlparse
-
+from pprint import pprint
 import sys
 from itertools import izip
 
@@ -31,7 +31,8 @@ def processMonth(handler, month, monthsFolder):
 def processDay(handler, day, month, monthsFolder,
                startIdx=0, endIdx=sys.maxint):
     processedFileName = utility.addMissingSlash(monthsFolder) + month \
-    + "/processedLogData/" + processedPrefix + "%02d" % day + processedSuffix
+            + "/processedLogData/" + processedPrefix + "%02d" % day \
+            + processedSuffix
 
     print "Working on: " + processedFileName
     with gzip.open(processedFileName) as p, \
@@ -45,14 +46,16 @@ def processDay(handler, day, month, monthsFolder,
             if startIdx <= i <= endIdx:
                 requestParameters = dict(urlparse.parse_qsl(urlparse.urlsplit(
                     source['uri_query']).query))
+
                 if 'query' in requestParameters.keys():
                     sparqlQuery = requestParameters['query']
                 else:
                     sparqlQuery = None
-                    processed['#hour'] = source['hour']
-                    processed['#day'] = day
-                    processed['#user_agent'] = source['user_agent']
-                    handler.handle(sparqlQuery, processed)
+
+                processed['#hour'] = source['hour']
+                processed['#day'] = day
+                processed['#user_agent'] = source['user_agent']
+                handler.handle(sparqlQuery, processed)
             elif i > endIdx:
                 break
             i += 1

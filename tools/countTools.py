@@ -6,7 +6,7 @@ from collections import defaultdict
 from postprocess import processdata
 from utility import utility
 import config
-print "test"
+
 parser = argparse.ArgumentParser(
     description="Counts the used tools/bots in the given folder")
 parser.add_argument("--monthsFolder", "-m", default=config.monthsFolder,
