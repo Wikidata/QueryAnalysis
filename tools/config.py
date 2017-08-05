@@ -1,1 +1,1 @@
-monthsFolder = "/home/mkroetzsch/querydata"
+monthsFolder = "/home/mkroetzsch/querydata/months"
