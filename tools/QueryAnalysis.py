@@ -119,7 +119,7 @@ for monthName in args.months.split(","):
 
             hive_call += ' from wmf.wdqs_extract where uri_query<>"" ' \
                     + 'and year=\'' + str(args.year) +  '\' and month=\'' \
-                    + months[monthName][0] + '\' and day=\'' + day + '\''
+                    + str(months[monthName][0]) + '\' and day=\'' + str(day) + '\''
 
             arguments.append(hive_call)
             if subprocess.call(arguments) != 0:
