@@ -6,6 +6,7 @@ import os
 import shutil
 import subprocess
 import sys
+import gzip
 import unifyQueryTypes
 from utility import utility
 import config
@@ -128,8 +129,8 @@ for monthName in args.months.split(","):
 
             # The content of the temporary files is then copied to the actual
             # raw log data file (with added headers)
-            with open(rawLogDataDirectory + "QueryCnt"
-                      + day + ".tsv", "w") as dayfile:
+            with gzip.open(rawLogDataDirectory + "QueryCnt"
+                           + day + ".tsv.gz", "wb") as dayfile:
                 dayfile.write(header)
 
                 for filename in glob.glob('*'):
