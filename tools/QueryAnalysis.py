@@ -1,6 +1,6 @@
 import argparse
 import calendar
-import datetime
+from datetime import datetime
 import glob
 import os
 import shutil
