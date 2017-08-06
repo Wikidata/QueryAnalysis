@@ -43,11 +43,11 @@ parser.add_argument("--noGzipOutput", "-g", help="Disables gzipping of the "
 parser.add_argument("--noExampleQueriesOutput", "-e", help="Disables the "
                     + "matching of example queries.", action="store_true")
 parser.add_argument("--referenceDirectory", "-r",
-                    default=unifyQueryTypes.defaultReferenceDirectory,
+                    default=config.queryReferenceDirectory,
                     type=str,
                     help="The directory with the reference query types.")
 parser.add_argument("--fdupesExecutable", "-f",
-                    default=unifyQueryTypes.defaultFdupesExecutable, type=str,
+                    default=config.fdupesExecutable, type=str,
                     help="The location of the fdupes executable.")
 parser.add_argument("--monthsFolder", "-m", default=config.monthsFolder,
                     type=str,
