@@ -81,7 +81,8 @@ for monthName in args.months.split(","):
     if os.path.isfile(utility.addMissingSlash(args.monthsFolder)
                       + utility.addMissingSlash(monthName) + "locked") \
        and not args.ignoreLock:
-        print "ERROR: The month " + monthName + " is being edited at the " + "moment. Use -i if you want to force the execution of this script."
+        print "ERROR: The month " + monthName + " is being edited at the " \
+        + "moment. Use -i if you want to force the execution of this script."
         sys.exit()
 
     month = utility.addMissingSlash(os.path.abspath(utility.addMissingSlash(args.monthsFolder)
@@ -109,8 +110,8 @@ for monthName in args.months.split(","):
         for day in xrange(1, months[monthName][1] + 1):
             os.makedirs(tempDirectory)
             hive_call = 'insert overwrite local directory \'' + tempDirectory \
-                    + '\' row format delimited fields terminated " \
-                    + "by \'\\t\' select '
+                    + '\' row format delimited fields terminated ' \
+                    + 'by \'\\t\' select '
 
             # We add all the fields to the request
             for field in fields:
@@ -121,6 +122,8 @@ for monthName in args.months.split(","):
                     + str(months[monthName][0]) + '\' and day=\'' + str(day) + '\''
 
             arguments.append(hive_call)
+            print arguments
+            sys.exit()
             if subprocess.call(arguments) != 0:
                 print("ERROR: Raw data for month " + monthName + " does not "
                       + "exist but could not be extracted using hive.")
