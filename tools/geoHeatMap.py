@@ -41,6 +41,9 @@ class GeoCoordinateCollectorHandler:
         if (processed['#Valid'] == 'VALID' or processed['#Valid'] == '1'):
             if(processed['#Coordinates'] is not ''):
                 for coordinate in processed['#Coordinates'].split(","):
+                    coordinate += " " + processed['#ToolName']
+                    coordinate += " " + "2017-07-" + str(processed['#day']) \
+                            + "-" + str(processed['#hour'])
                     self.coordinates.add(coordinate)
 
     def saveSetToFile(self):
