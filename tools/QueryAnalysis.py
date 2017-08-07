@@ -115,7 +115,8 @@ for monthName in args.months.split(","):
 
             # We add all the fields to the request
             for field in fields:
-                hive_call += field + " "
+                hive_call += field + ", "
+            hive_call = hive_call[:-2] + " "
 
             hive_call += ' from wmf.wdqs_extract where uri_query<>"" ' \
                     + 'and year=\'' + str(args.year) +  '\' and month=\'' \
