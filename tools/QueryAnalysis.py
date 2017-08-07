@@ -131,7 +131,7 @@ for monthName in args.months.split(","):
             # The content of the temporary files is then copied to the actual
             # raw log data file (with added headers)
             with gzip.open(rawLogDataDirectory + "QueryCnt"
-                           + str(day) + ".tsv.gz", "wb") as dayfile:
+                           + "%02d"%day  + ".tsv.gz", "wb") as dayfile:
                 dayfile.write(header)
 
                 for filename in glob.glob(tempDirectory + '*'):
