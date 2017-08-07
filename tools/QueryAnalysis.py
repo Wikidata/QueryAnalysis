@@ -81,12 +81,11 @@ for monthName in args.months.split(","):
     if os.path.isfile(utility.addMissingSlash(args.monthsFolder)
                       + utility.addMissingSlash(monthName) + "locked") \
        and not args.ignoreLock:
-        print "ERROR: The month " + monthName + " is being edited at the "
-        + "moment. Use -i if you want to force the execution of this script."
+        print "ERROR: The month " + monthName + " is being edited at the " + "moment. Use -i if you want to force the execution of this script."
         sys.exit()
 
-    month = os.path.abspath(utility.addMissingSlash(args.monthsFolder)
-                            + utility.addMissingSlash(monthName))
+    month = utility.addMissingSlash(os.path.abspath(utility.addMissingSlash(args.monthsFolder)
+                            + utility.addMissingSlash(monthName)))
 
     processedLogDataDirectory = month + "processedLogData/"
     rawLogDataDirectory = month + "rawLogData/"
