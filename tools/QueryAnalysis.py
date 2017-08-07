@@ -134,7 +134,7 @@ for monthName in args.months.split(","):
                            + str(day) + ".tsv.gz", "wb") as dayfile:
                 dayfile.write(header)
 
-                for filename in glob.glob('*'):
+                for filename in glob.glob(tempDirectory + '*'):
                     with open(filename) as temp:
                         for line in temp:
                             dayfile.write(line)
