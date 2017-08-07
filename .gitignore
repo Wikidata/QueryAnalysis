@@ -60,6 +60,8 @@ tools/classifiedBotsData/
 /outputData/
 tools/visualisePropertyTree/ranking.json
 
+*.venv
+*.pyc
 
 
 tools/visualisePropertyTree/.venv
