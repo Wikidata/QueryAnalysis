@@ -122,8 +122,6 @@ for monthName in args.months.split(","):
                     + str(months[monthName][0]) + '\' and day=\'' + str(day) + '\''
 
             arguments.append(hive_call)
-            print arguments
-            sys.exit()
             if subprocess.call(arguments) != 0:
                 print("ERROR: Raw data for month " + monthName + " does not "
                       + "exist but could not be extracted using hive.")
