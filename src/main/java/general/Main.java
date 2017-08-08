@@ -171,7 +171,7 @@ public final class Main
         if (!workingDirectory.endsWith("/")) {
           workingDirectory += "/";
         }
-        inputFilePrefix = workingDirectory + "rawLogData/queryCnt";
+        inputFilePrefix = workingDirectory + "rawLogData/QueryCnt";
 
         outputFolder = workingDirectory + "processedLogData/";
       } else {
