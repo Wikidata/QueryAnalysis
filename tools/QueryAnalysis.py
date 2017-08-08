@@ -66,7 +66,7 @@ fields = ["uri_query", "uri_path", "user_agent", "ts", "agent_type",
 header = ""
 for field in fields:
     header += field + "\t"
-    header = header[:-1] + "\n"
+header = header[:-1] + "\n"
 
 if (len(sys.argv[1:]) == 0):
     parser.print_help()
