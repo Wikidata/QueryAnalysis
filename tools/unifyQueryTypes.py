@@ -11,15 +11,13 @@ from distutils.dir_util import copy_tree
 
 from utility import utility
 
+import config
+
 # This script uses fdupes to check the queryTypeFiles-Folder and the reference query types folder for duplicates.
 # If it finds duplicates it chooses one of the queryTypes (the one in the reference query types folder if one exists, otherwise at random)
 # and renames all other duplicate entries in #QueryType to that query type
 
-defaultMonthsFolder = "/a/akrausetud/months/"
-defaultReferenceDirectory = "/a/akrausetud/queryTypeReferenceFolder/"
-defaultFdupesExecutable = "/a/akrausetud/utility/fdupes"
-
-def unifyQueryTypes(month, monthsFolder = defaultMonthsFolder, referenceDirectory = defaultReferenceDirectory, fdupesExecutable = defaultFdupesExecutable):
+def unifyQueryTypes(month, monthsFolder = config.monthsFolder, referenceDirectory = config.queryReferenceDirectory, fdupesExecutable = config.fdupesExecutable):
 	if os.path.isfile(utility.addMissingSlash(monthsFolder) + utility.addMissingSlash(month) + "locked"):
 		print "ERROR: The month " + month + " is being edited at the moment."
 		sys.exit()
@@ -216,11 +214,11 @@ if __name__ == '__main__':
 		description="This script uses fdupes to check the queryTypeFiles-Folder and the reference query types folder for duplicates.\n" +
 		"If it finds duplicates it chooses one of the queryTypes (the one in the reference query types folder if one exists, otherwise at random)\n" +
 		"and renames all other duplicate entries in #QueryType to that query type ")
-	parser.add_argument("--monthsFolder", "-m", default=defaultMonthsFolder, type=str,
+	parser.add_argument("--monthsFolder", "-m", default=config.monthsFolder, type=str,
 	                    help="The folder in which the months directories are residing.")
-	parser.add_argument("--referenceDirectory", "-r", default=defaultReferenceDirectory, type=str,
+	parser.add_argument("--referenceDirectory", "-r", default=config.queryReferenceDirectory, type=str,
 					help="The directory with the reference query types.")
-	parser.add_argument("--fdupesExecutable", "-f", default=defaultFdupesExecutable, type=str,
+	parser.add_argument("--fdupesExecutable", "-f", default=config.fdupesExecutable, type=str,
 					help="The location of the fdupes executable.")
 	parser.add_argument("month", type=str, help="The month whose query types should be unified.")
 	

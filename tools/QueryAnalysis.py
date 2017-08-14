@@ -30,8 +30,8 @@ parser = argparse.ArgumentParser("This script extracts the raw log data (if "
                                  + "the query types.")
 parser.add_argument("--ignoreLock", "-i", help="Ignore locked file and "
                     + "execute anyways", action="store_true")
-parser.add_argument("--threads", "-t", default=5, type=int, help="The number "
-                    + "of threads to run the java program with (default 5).")
+parser.add_argument("--threads", "-t", default=10, type=int, help="The number "
+                    + "of threads to run the java program with (default 10).")
 parser.add_argument("--logging", "-l", help="Enables file logging.",
                     action="store_true")
 parser.add_argument("--noBotMetrics", "-b", help="Disables metric calculation"
@@ -43,11 +43,11 @@ parser.add_argument("--noGzipOutput", "-g", help="Disables gzipping of the "
 parser.add_argument("--noExampleQueriesOutput", "-e", help="Disables the "
                     + "matching of example queries.", action="store_true")
 parser.add_argument("--referenceDirectory", "-r",
-                    default=unifyQueryTypes.defaultReferenceDirectory,
+                    default=config.queryReferenceDirectory,
                     type=str,
                     help="The directory with the reference query types.")
 parser.add_argument("--fdupesExecutable", "-f",
-                    default=unifyQueryTypes.defaultFdupesExecutable, type=str,
+                    default=config.fdupesExecutable, type=str,
                     help="The location of the fdupes executable.")
 parser.add_argument("--monthsFolder", "-m", default=config.monthsFolder,
                     type=str,
@@ -66,7 +66,7 @@ fields = ["uri_query", "uri_path", "user_agent", "ts", "agent_type",
 header = ""
 for field in fields:
     header += field + "\t"
-    header = header[:-1] + "\n"
+header = header[:-1] + "\n"
 
 if (len(sys.argv[1:]) == 0):
     parser.print_help()
@@ -81,12 +81,12 @@ for monthName in args.months.split(","):
     if os.path.isfile(utility.addMissingSlash(args.monthsFolder)
                       + utility.addMissingSlash(monthName) + "locked") \
        and not args.ignoreLock:
-        print "ERROR: The month " + monthName + " is being edited at the "
+        print "ERROR: The month " + monthName + " is being edited at the " \
         + "moment. Use -i if you want to force the execution of this script."
         sys.exit()
 
-    month = os.path.abspath(utility.addMissingSlash(args.monthsFolder)
-                            + utility.addMissingSlash(monthName))
+    month = utility.addMissingSlash(os.path.abspath(utility.addMissingSlash(args.monthsFolder)
+                            + utility.addMissingSlash(monthName)))
 
     processedLogDataDirectory = month + "processedLogData/"
     rawLogDataDirectory = month + "rawLogData/"
@@ -110,12 +110,13 @@ for monthName in args.months.split(","):
         for day in xrange(1, months[monthName][1] + 1):
             os.makedirs(tempDirectory)
             hive_call = 'insert overwrite local directory \'' + tempDirectory \
-                    + '\' row format delimited fields terminated " \
-                    + "by \'\\t\' select '
+                    + '\' row format delimited fields terminated ' \
+                    + 'by \'\\t\' select '
 
             # We add all the fields to the request
             for field in fields:
-                hive_call += field + " "
+                hive_call += field + ", "
+            hive_call = hive_call[:-2] + " "
 
             hive_call += ' from wmf.wdqs_extract where uri_query<>"" ' \
                     + 'and year=\'' + str(args.year) +  '\' and month=\'' \
@@ -130,10 +131,10 @@ for monthName in args.months.split(","):
             # The content of the temporary files is then copied to the actual
             # raw log data file (with added headers)
             with gzip.open(rawLogDataDirectory + "QueryCnt"
-                           + day + ".tsv.gz", "wb") as dayfile:
+                           + "%02d"%day  + ".tsv.gz", "wb") as dayfile:
                 dayfile.write(header)
 
-                for filename in glob.glob('*'):
+                for filename in glob.glob(tempDirectory + '*'):
                     with open(filename) as temp:
                         for line in temp:
                             dayfile.write(line)
