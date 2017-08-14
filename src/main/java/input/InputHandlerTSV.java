@@ -12,8 +12,10 @@ import scala.Tuple2;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.util.zip.GZIPInputStream;
 
 /**
  * @author adrian
@@ -38,14 +40,15 @@ public class InputHandlerTSV extends InputHandler
 
   /**
    * @param fileToRead The file the parse()-method should read from.
+   * @throws IOException if an I/O error has occurred
    * @throws FileNotFoundException If the file does not exist,
    *                               is a directory rather than a regular file,
    *                               or for some other reason cannot be opened for reading.
    */
-  public void setInputFile(String fileToRead) throws FileNotFoundException
+  public void setInputFile(String fileToRead) throws FileNotFoundException, IOException
   {
     this.inputFile = fileToRead;
-    this.reader = new InputStreamReader(new FileInputStream(fileToRead));
+    this.reader = new InputStreamReader(new GZIPInputStream(new FileInputStream(fileToRead)));
   }
 
   /**
