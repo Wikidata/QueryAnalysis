@@ -150,7 +150,7 @@ public final class Main
     //QueryHandler queryHandler = new OpenRDFQueryHandler();
     String workingDirectory;
     String inputFilePrefix;
-    String inputFileSuffix = ".tsv";
+    String inputFileSuffix = ".tsv.gz";
     String outputFolder;
     String queryParserName = "OpenRDF";
     Class inputHandlerClass = InputHandlerTSV.class;
@@ -171,7 +171,7 @@ public final class Main
         if (!workingDirectory.endsWith("/")) {
           workingDirectory += "/";
         }
-        inputFilePrefix = workingDirectory + "rawLogData/queryCnt";
+        inputFilePrefix = workingDirectory + "rawLogData/QueryCnt";
 
         outputFolder = workingDirectory + "processedLogData/";
       } else {

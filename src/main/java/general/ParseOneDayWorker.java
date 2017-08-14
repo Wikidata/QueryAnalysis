@@ -7,6 +7,7 @@ import org.apache.log4j.Logger;
 import output.OutputHandlerTSV;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
@@ -67,7 +68,7 @@ public class ParseOneDayWorker implements Runnable
       } catch (FileNotFoundException e) {
         logger.error("File " + outputFile + "could not be created or written to.", e);
       }
-    } catch (FileNotFoundException e) {
+    } catch (IOException e) {
       logger.warn("File " + inputFile + " could not be found.");
     }
   }

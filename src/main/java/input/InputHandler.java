@@ -6,6 +6,7 @@ import query.QueryHandler;
 import scala.Tuple2;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -32,7 +33,7 @@ public abstract class InputHandler
    */
   public abstract void parseTo(OutputHandler outputHandler);
 
-  public abstract void setInputFile(String fileToRead) throws FileNotFoundException;
+  public abstract void setInputFile(String fileToRead) throws FileNotFoundException, IOException;
 
   /**
    * @param uriQuery  The uri_query entry from the logs.
