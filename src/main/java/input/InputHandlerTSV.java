@@ -81,7 +81,12 @@ public class InputHandlerTSV extends InputHandler
         String user_agent = row[2].toString();
         Long current_line = parsingContext.currentLine();
 
-        outputHandler.writeLine(query, validity, user_agent, current_line, inputFile);
+        try {
+          outputHandler.writeLine(query, validity, user_agent, current_line, inputFile);
+        }
+        catch (NullPointerException e) {
+          logger.error("Unexpected Null Pointer Exception in writeLine.", e);
+        }
       }
     };
 
