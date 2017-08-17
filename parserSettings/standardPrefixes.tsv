@@ -1,33 +1,33 @@
-prefix	uri
-hint	http://www.bigdata.com/queryHints#
-hint	http://www.bigdata.com/queryHints#
-gas	http://www.bigdata.com/rdf/gas#
-bds	http://www.bigdata.com/rdf/search#
-bd	http://www.bigdata.com/rdf#
-schema	http://schema.org/
-cc	http://creativecommons.org/ns#
-geo	http://www.opengis.net/ont/geosparql#
-prov	http://www.w3.org/ns/prov#
-xsd	http://www.w3.org/2001/XMLSchema#
-skos	http://www.w3.org/2004/02/skos/core#
-owl	http://www.w3.org/2002/07/owl#
-rdf	http://www.w3.org/1999/02/22-rdf-syntax-ns#
-rdfs	http://www.w3.org/2000/01/rdf-schema#
-wdata	http://www.wikidata.org/wiki/Special:EntityData/
-wdno	http://www.wikidata.org/prop/novalue/
-prn	http://www.wikidata.org/prop/reference/value-normalized/
-prv	http://www.wikidata.org/prop/reference/value/
-pr	http://www.wikidata.org/prop/reference/
-pqn	http://www.wikidata.org/prop/qualifier/value-normalized/
-pqv	http://www.wikidata.org/prop/qualifier/value/
-pq	http://www.wikidata.org/prop/qualifier/
-psn	http://www.wikidata.org/prop/statement/value-normalized/
-psv	http://www.wikidata.org/prop/statement/value/
-ps	http://www.wikidata.org/prop/statement/
-wdv	http://www.wikidata.org/value/
-wdref	http://www.wikidata.org/reference/
-p	http://www.wikidata.org/prop/
-wds	http://www.wikidata.org/entity/statement/
-wdt	http://www.wikidata.org/prop/direct/
-wd	http://www.wikidata.org/entity/
-wikibase	http://wikiba.se/ontology#
+prefix	uri	
+hint	http://www.bigdata.com/queryHints#	
+hint	http://www.bigdata.com/queryHints#	
+gas	http://www.bigdata.com/rdf/gas#	
+bds	http://www.bigdata.com/rdf/search#	
+bd	http://www.bigdata.com/rdf#	
+schema	http://schema.org/	
+cc	http://creativecommons.org/ns#	
+geo	http://www.opengis.net/ont/geosparql#	
+prov	http://www.w3.org/ns/prov#	x
+xsd	http://www.w3.org/2001/XMLSchema#	
+skos	http://www.w3.org/2004/02/skos/core#	
+owl	http://www.w3.org/2002/07/owl#	
+rdf	http://www.w3.org/1999/02/22-rdf-syntax-ns#	
+rdfs	http://www.w3.org/2000/01/rdf-schema#	
+wdata	http://www.wikidata.org/wiki/Special:EntityData/	
+wdno	http://www.wikidata.org/prop/novalue/	
+prn	http://www.wikidata.org/prop/reference/value-normalized/	x
+prv	http://www.wikidata.org/prop/reference/value/	x
+pr	http://www.wikidata.org/prop/reference/	x
+pqn	http://www.wikidata.org/prop/qualifier/value-normalized/	x
+pqv	http://www.wikidata.org/prop/qualifier/value/	x
+pq	http://www.wikidata.org/prop/qualifier/	x
+psn	http://www.wikidata.org/prop/statement/value-normalized/	x
+psv	http://www.wikidata.org/prop/statement/value/	x
+ps	http://www.wikidata.org/prop/statement/	x
+wdv	http://www.wikidata.org/value/	x
+wdref	http://www.wikidata.org/reference/	
+p	http://www.wikidata.org/prop/	
+wds	http://www.wikidata.org/entity/statement/	x
+wdt	http://www.wikidata.org/prop/direct/	
+wd	http://www.wikidata.org/entity/	
+wikibase	http://wikiba.se/ontology#	
