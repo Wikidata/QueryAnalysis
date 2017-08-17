@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+
+    <title>Data Visualisation</title>
+
+    <script src='static/Chart.min.js'></script>
+
+    <link rel="stylesheet" media="screen" href ="static/bootstrap-3.3.7-dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="static/bootstrap-3.3.7-dist/css/bootstrap-theme.min.css">
+    <meta name="viewport" content = "width=device-width, initial-scale=1.0">
+  </head>
+
+  <body>
+    <div class="container-fluid">
+      <h2 style = text-align: center;>Data Visualisation</h2>
+      <div class = "row">
+        <div class = "col-sm-3" id = "formDiv">
+          <form id = "thisForm" action="http://localhost:5000/" method="post">
+            <fieldset>
+              <legend>Visualisation Parameters</legend>
+              {{ form.hidden_tag()}}
+
+              <div style = font-size:20px; font-weight:bold; margin-left:150px;>
+
+                {{ form.month.label }} <br>
+                {{ form.month(**{"onChange":"document.getElementById('thisForm').submit();"}) }} <br>
+
+                {{ form.chartType.label }} <br>
+                {{ form.chartType }} <br>
+
+                {{ form.field.label }} <br>
+                {{ form.field(**{"onChange":"document.getElementById('thisForm').submit();"}) }} <br>
+
+              </div>
+            </fieldset>
+          </form>
+        </div>
+        <div class = "col-sm-9" id = "chartCanvas">
+          <canvas id="chart" width="1200" height="800"></canvas>
+          <script>
+          // bar chart data
+          var barData = {
+          labels : [{% for item in labels %}
+                         "{{ item }}",
+                     {% endfor %}],
+          datasets: [{% for label, color, set in values %}
+            {
+              label: "{{ label }}",
+              backgroundColor: "rgba({{ color }})",
+              data : [
+                {% for entry in set %}
+                {{ entry }},
+                {% endfor %}
+              ]
+            },
+            {% endfor%}
+          ]
+          }
+
+          // get bar chart canvas
+          var mychart = document.getElementById("chart").getContext("2d");
+
+          steps = 10
+          max = 10
+          // draw bar chart
+          new Chart(mychart).Bar(barData, {
+               scaleShowVerticalLines: true,
+               scaleShowGridLines : true,
+               barShowStroke : true,
+               scaleShowLabels: true
+          });
+          </script>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
