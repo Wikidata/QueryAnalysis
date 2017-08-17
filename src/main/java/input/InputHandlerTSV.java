@@ -85,6 +85,7 @@ public class InputHandlerTSV extends InputHandler
           outputHandler.writeLine(query, validity, user_agent, current_line, inputFile);
         }
         catch (NullPointerException e) {
+          outputHandler.writeLine("", QueryHandler.Validity.INTERNAL_ERROR, user_agent, current_line, inputFile);
           logger.error("Unexpected Null Pointer Exception in writeLine.", e);
         }
       }
