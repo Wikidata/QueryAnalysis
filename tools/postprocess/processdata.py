@@ -10,15 +10,15 @@ from itertools import izip
 
 from utility import utility
 
+processedFolder = "processedLogData/"
 processedPrefix = "QueryProcessedOpenRDF"
 processedSuffix = ".tsv.gz"
 sourcePrefix = "QueryCnt"
 
-
 # iterates over all processed files in the given folder
 def processMonth(handler, month, monthsFolder):
     for filename in glob.glob(utility.addMissingSlash(monthsFolder) + utility.addMissingSlash(month)
-                              + "processedLogData/" + processedPrefix + "*"
+                              + processedFolder + processedPrefix + "*"
                               + processedSuffix):
         day = os.path.basename(filename)[len(processedPrefix):][:-len(processedSuffix)]
         processDay(handler, int(day), month, monthsFolder)
@@ -31,7 +31,7 @@ def processMonth(handler, month, monthsFolder):
 def processDay(handler, day, month, monthsFolder,
                startIdx=0, endIdx=sys.maxint):
     processedFileName = utility.addMissingSlash(monthsFolder) + utility.addMissingSlash(month) \
-            + "processedLogData/" + processedPrefix + "%02d" % day \
+            + processedFolder + processedPrefix + "%02d" % day \
             + processedSuffix
 
     print "Working on: " + processedFileName

@@ -91,9 +91,6 @@ def fieldRanking(month, metric, monthsFolder = config.monthsFolder, ignoreLock =
 		            percentage = float(v) / count * 100
 		            file.write(str(k) + "\t" + str(v) + "\t"
 		                       + str(percentage) + "\n")
-		            
-		def getResults(self):
-			return self.totalMetricCounts
 
 	handler = FieldRankingHandler()
 
