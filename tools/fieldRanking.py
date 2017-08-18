@@ -32,9 +32,6 @@ def fieldRanking(month, metric, monthsFolder = config.monthsFolder, ignoreLock =
 	if outputPath is not None:
 		pathBase = outputPath
 
-	if not os.path.exists(pathBase):
-		os.makedirs(pathBase)
-
 	header = metric + "\t" + metric + "_count\tpercentage\n"
 
 	filter = utility.filter()
@@ -97,6 +94,8 @@ def fieldRanking(month, metric, monthsFolder = config.monthsFolder, ignoreLock =
 	processdata.processMonth(handler, month, monthsFolder)
 	
 	if writeOut:
+		if not os.path.exists(pathBase):
+			os.makedirs(pathBase)
 		handler.writeOut()
 	return handler.totalMetricCounts
 

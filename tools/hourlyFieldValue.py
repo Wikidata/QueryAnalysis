@@ -43,9 +43,6 @@ def hourlyFieldValue(month, metric, monthsFolder = config.monthsFolder, ignoreLo
             + utility.addMissingSlash(month) \
             + utility.addMissingSlash(metric) + "hourly/"
 
-    if not os.path.exists(pathBase):
-        os.makedirs(pathBase)
-
     filter = utility.filter()
 
     filter.setup(filterParams)
@@ -111,6 +108,8 @@ def hourlyFieldValue(month, metric, monthsFolder = config.monthsFolder, ignoreLo
     processdata.processMonth(handler, month, monthsFolder)
 
     if writeOut:
+        if not os.path.exists(pathBase):
+            os.makedirs(pathBase)
         handler.writeHourlyValues()
     return (handler.monthlyFieldValues, handler.monthlyData)
 
