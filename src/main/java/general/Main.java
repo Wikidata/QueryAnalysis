@@ -448,21 +448,30 @@ public final class Main
         return;
       }
     }
+    doc.select("span.lineno").remove();
     Elements links = doc.select("pre");
     for (Element link : links) {
 
-      Element parent = link.parent();
+      Element previous = link.parent();
       String name = null;
-      while (parent.previousElementSibling() != null) {
-        parent = parent.previousElementSibling();
-        if (parent.nodeName().matches("h[1-6]")) {
-          name = parent.child(0).text();
+      while (name == null) {
+        if (previous.nodeName().matches("h[1-6]")) {
+          name = previous.child(0).text();
+          break;
+        }
+        if (previous.previousElementSibling() != null) {
+          previous = previous.previousElementSibling();
+        }
+        else if (previous.parent() != null) {
+          previous = previous.parent();
+        }
+        else {
           break;
         }
       }
 
       if (name != null) {
-        String query = "#" + name + "\n" + link.text();
+        String query = link.text();
         exampleQueriesString.put(query, name);
         OpenRDFQueryHandler queryHandler = new OpenRDFQueryHandler();
         queryHandler.setQueryString(query);
