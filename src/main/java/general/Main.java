@@ -391,7 +391,7 @@ public final class Main
           logger.warn("Ignoring line without tab while parsing.");
           return;
         }
-        if (row.length == 2) {
+        if (row.length == 3) {
           if (row[1] == null) {
             return;
           }
