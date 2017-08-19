@@ -38,7 +38,7 @@ os.chdir(utility.addMissingSlash(args.monthsFolder)
 subfolder = "userData/"
 
 processedPrefix = "processedLogData/QueryProcessedOpenRDF"
-sourcePrefix = "rawLogData/queryCnt"
+sourcePrefix = "rawLogData/QueryCnt"
 
 if not os.path.exists(subfolder):
     os.makedirs(subfolder)
@@ -47,15 +47,15 @@ if not os.path.exists(subfolder):
 
 for i in xrange(1, 32):
     if not (os.path.exists(processedPrefix + "%02d" % i + ".tsv.gz")
-            and os.path.exists(sourcePrefix + "%02d" % i + ".tsv")):
+            and gzip.os.path.exists(sourcePrefix + "%02d" % i + ".tsv.gz")):
         continue
     print "Working on %02d" % i
     with gzip.open(processedPrefix + "%02d" % i + ".tsv.gz") as p, \
-            open(sourcePrefix + "%02d" % i + ".tsv") as s, \
+            gzip.open(sourcePrefix + "%02d" % i + ".tsv.gz") as s, \
             gzip.open(subfolder + processedPrefix + "%02d" % i
                       + ".tsv.gz", "w") as user_p, \
-            open(subfolder + sourcePrefix + "%02d" % i
-                 + ".tsv", "w") as user_s:
+            gzip.open(subfolder + sourcePrefix + "%02d" % i
+                 + ".tsv.gz", "w") as user_s:
         pReader = csv.DictReader(p, delimiter="\t")
         sReader = csv.DictReader(s, delimiter="\t")
 
