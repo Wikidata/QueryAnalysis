@@ -88,6 +88,8 @@ class botClassification():
         queryTypeDict[userAgent].append(sparqlQuery)
         
     def writeOut(self):
+        tooLong = 0
+        
         with open(pathBase + "readme.md", "w") as readmeFile:
             print("This directory contains all top {} queryType-userAgent-Combinations.".format(self.actualNumber), file = readmeFile)
             print("count\tQueryType", file = readmeFile)
@@ -109,7 +111,13 @@ class botClassification():
                     
                     print(str(len(queries)) + "\t" + userAgent, file = infoQueryTypeFile)
                     
-                    userAgentPath = queryTypePath + userAgent.replace("/", "SLASH") + "/"
+                    replacedUserAgent = userAgent.replace("/", "SLASH")
+                    
+                    if len(replacedUserAgent) > 140:
+                        replacedUserAgent = replacedUserAgent[:140] + str(tooLong)
+                        tooLong += 1
+                    
+                    userAgentPath = queryTypePath + replacedUserAgent + "/"
                 
                     if not os.path.exists(userAgentPath):
                         os.makedirs(userAgentPath)
