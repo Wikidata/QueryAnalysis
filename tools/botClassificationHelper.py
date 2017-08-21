@@ -27,7 +27,7 @@ parser.add_argument("--filter", "-f", default="", type=str, help="Constraints "
                     + " set the --outputPath to some value other than the "
                     + "default.")
 parser.add_argument("--numberOfCombinations", "-n", type=int, help="The number N for which combinations should be generated."
-                    + " Default is 100.", default = 5)
+                    + " Default is 100.", default = 100)
 parser.add_argument("month", type=str,
                     help="The month for which the ranking should be " 
                     +"generated.")
@@ -116,7 +116,7 @@ class botClassification():
                         
                     for i, query in enumerate(queries):
                         with open(userAgentPath + "{}.query".format(i), "w") as queryFile:
-                            queryFile.write(query)
+                            queryFile.write(str(query))
         
 handler = botClassification()
 
