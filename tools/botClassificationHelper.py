@@ -93,7 +93,7 @@ class botClassification():
         with open(pathBase + "readme.md", "w") as readmeFile:
             print("This directory contains all top {} queryType-userAgent-Combinations.".format(self.actualNumber), file = readmeFile)
             print("count\tQueryType", file = readmeFile)
-            for queryType, count in self.queryTypesCount.iteritems():
+            for queryType, count in sorted(self.queryTypesCount.iteritems(), key = lambda (k, v): (v, k), reverse = True):
                 print(str(count) + "\t" + queryType, file = readmeFile)
         
         for queryType, userAgentsDict in self.queryTypes.iteritems():
