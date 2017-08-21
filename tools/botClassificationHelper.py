@@ -103,7 +103,10 @@ class botClassification():
             with open(queryTypePath + "info.txt", "w") as infoQueryTypeFile:
                 print("count\tuser_agent", file = infoQueryTypeFile)
                 
-                for userAgent, queries in sorted(userAgentsDict.iteritems(), key = lambda (k, v): (v, k), reverse = True):
+                for i, (userAgent, queries) in enumerate(sorted(userAgentsDict.iteritems(), key = lambda (k, v): (len(v), k), reverse = True)):
+                    if i >= args.numberOfCombinations:
+                        break
+                    
                     print(str(len(queries)) + "\t" + userAgent, file = infoQueryTypeFile)
                     
                     userAgentPath = queryTypePath + userAgent.replace("/", "SLASH") + "/"
