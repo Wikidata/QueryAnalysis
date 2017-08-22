@@ -65,15 +65,7 @@ for i in xrange(1, 32):
         for processed, source in izip(pReader, sReader):
             if pWriter.fieldnames is None:
                 ph = dict((h, h) for h in pReader.fieldnames)
-                ph['#uri_query'] = '#uri_query'
-                ph['#hour'] = '#hour'
-                ph['#agent_type'] = '#agent_type'
-                ph['#ts'] = '#ts'
                 pWriter.fieldnames = pReader.fieldnames
-                pWriter.fieldnames.append('#uri_query')
-                pWriter.fieldnames.append('#hour')
-                pWriter.fieldnames.append('#agent_type')
-                pWriter.fieldnames.append('#ts')
                 pWriter.writerow(ph)
 
             if sWriter.fieldnames is None:
@@ -82,8 +74,5 @@ for i in xrange(1, 32):
                 sWriter.writerow(sh)
 
             if (processed["#ToolName"] == "USER"):
-                processed['#uri_query'] = source['uri_query']
-                processed['#hour'] = source['hour']
-                processed['#ts'] = source['ts']
                 pWriter.writerow(processed)
                 sWriter.writerow(source)
