@@ -1,0 +1,12 @@
+SELECT ?item ?itemLabel ?_image ?prenom ?dob ?dod ?yob ?yod ?link
+WHERE
+{
+  ?item ?link "David Tennant"@fr.
+  ?item wdt:P735 ?prenom.
+  ?item wdt:P569 ?dob.
+  ?item wdt:P570 ?dod.
+  BIND(YEAR(?dob) as ?yob) .
+  BIND(YEAR(?dod) as ?yod) .
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "fr". }
+  OPTIONAL { ?item wdt:P18 ?_image. }
+}

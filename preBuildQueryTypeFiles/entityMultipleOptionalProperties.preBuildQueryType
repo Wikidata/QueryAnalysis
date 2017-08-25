@@ -1,0 +1,11 @@
+SELECT ?class ?birth ?death ?gender ?country ?imdb ?image ?occupation
+WHERE {
+  OPTIONAL {wd:Q214601 wdt:P31 ?class.}
+  OPTIONAL {wd:Q214601 wdt:P569 ?birth.}
+  OPTIONAL {wd:Q214601 wdt:P570 ?death.}
+  OPTIONAL {wd:Q214601 wdt:P21 ?gender.}
+  OPTIONAL {wd:Q214601 wdt:P27 ?country.}
+  OPTIONAL {wd:Q214601 wdt:P345 ?imdb.}
+  OPTIONAL {wd:Q214601 wdt:P18 ?image.}
+  OPTIONAL {wd:Q214601 wdt:P106 ?occupation.}
+}
