@@ -150,7 +150,7 @@ public final class Main
     //QueryHandler queryHandler = new OpenRDFQueryHandler();
     String workingDirectory;
     String inputFilePrefix;
-    String inputFileSuffix = ".tsv";
+    String inputFileSuffix = ".tsv.gz";
     String outputFolder;
     String queryParserName = "OpenRDF";
     Class inputHandlerClass = InputHandlerTSV.class;
@@ -171,7 +171,7 @@ public final class Main
         if (!workingDirectory.endsWith("/")) {
           workingDirectory += "/";
         }
-        inputFilePrefix = workingDirectory + "rawLogData/queryCnt";
+        inputFilePrefix = workingDirectory + "rawLogData/QueryCnt";
 
         outputFolder = workingDirectory + "processedLogData/";
       } else {
@@ -282,7 +282,7 @@ public final class Main
           logger.warn("Ignoring line without tab while parsing.");
           return;
         }
-        if (row.length == 2) {
+        if (row.length == 3) {
           try {
             prefixes.put(row[0].toString(), row[1].toString());
           } catch (IllegalArgumentException e) {
@@ -448,21 +448,30 @@ public final class Main
         return;
       }
     }
+    doc.select("span.lineno").remove();
     Elements links = doc.select("pre");
     for (Element link : links) {
 
-      Element parent = link.parent();
+      Element previous = link.parent();
       String name = null;
-      while (parent.previousElementSibling() != null) {
-        parent = parent.previousElementSibling();
-        if (parent.nodeName().matches("h[1-6]")) {
-          name = parent.child(0).text();
+      while (name == null) {
+        if (previous.nodeName().matches("h[1-6]")) {
+          name = previous.child(0).text();
+          break;
+        }
+        if (previous.previousElementSibling() != null) {
+          previous = previous.previousElementSibling();
+        }
+        else if (previous.parent() != null) {
+          previous = previous.parent();
+        }
+        else {
           break;
         }
       }
 
       if (name != null) {
-        String query = "#" + name + "\n" + link.text();
+        String query = link.text();
         exampleQueriesString.put(query, name);
         OpenRDFQueryHandler queryHandler = new OpenRDFQueryHandler();
         queryHandler.setQueryString(query);

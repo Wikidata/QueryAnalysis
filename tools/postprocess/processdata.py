@@ -10,15 +10,15 @@ from itertools import izip
 
 from utility import utility
 
+processedFolder = "processedLogData/"
 processedPrefix = "QueryProcessedOpenRDF"
 processedSuffix = ".tsv.gz"
-sourcePrefix = "queryCnt"
-
+sourcePrefix = "QueryCnt"
 
 # iterates over all processed files in the given folder
 def processMonth(handler, month, monthsFolder):
-    for filename in glob.glob(monthsFolder + "/" + month
-                              + "/processedLogData/" + processedPrefix + "*"
+    for filename in glob.glob(utility.addMissingSlash(monthsFolder) + utility.addMissingSlash(month)
+                              + processedFolder + processedPrefix + "*"
                               + processedSuffix):
         day = os.path.basename(filename)[len(processedPrefix):][:-len(processedSuffix)]
         processDay(handler, int(day), month, monthsFolder)
@@ -30,13 +30,13 @@ def processMonth(handler, month, monthsFolder):
 
 def processDay(handler, day, month, monthsFolder,
                startIdx=0, endIdx=sys.maxint):
-    processedFileName = utility.addMissingSlash(monthsFolder) + month \
-            + "/processedLogData/" + processedPrefix + "%02d" % day \
+    processedFileName = utility.addMissingSlash(monthsFolder) + utility.addMissingSlash(month) \
+            + processedFolder + processedPrefix + "%02d" % day \
             + processedSuffix
 
     print "Working on: " + processedFileName
     with gzip.open(processedFileName) as p, \
-            gzip.open(monthsFolder + "/" + month + "/rawLogData/"
+            gzip.open(utility.addMissingSlash(monthsFolder) + utility.addMissingSlash(month) + "rawLogData/"
                       + sourcePrefix + "%02d" % day + ".tsv.gz") as s:
         pReader = csv.DictReader(p, delimiter="\t")
         sReader = csv.DictReader(s, delimiter="\t")

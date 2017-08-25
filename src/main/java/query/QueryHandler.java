@@ -769,7 +769,11 @@ public abstract class QueryHandler
     /**
      * The query string was empty and was therefore not being parsed.
      */
-    INVALID_EMTPY_QUERY_STRING(-11);
+    INVALID_EMTPY_QUERY_STRING(-11),
+    /**
+     * If some internal error occured.
+     */
+    INTERNAL_ERROR(-12);
 
     /**
      * The value representing the validity.

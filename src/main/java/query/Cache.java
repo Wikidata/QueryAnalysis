@@ -29,7 +29,7 @@ public class Cache
    */
   private static Cache instance;
 
-  private Map<String, ASTQueryContainer> astQueryContainerLRUMap = (Map<String, ASTQueryContainer>) Collections.synchronizedMap(new LRUMap(100000));
+  private Map<String, ASTQueryContainer> astQueryContainerLRUMap = (Map<String, ASTQueryContainer>) Collections.synchronizedMap(new LRUMap(10000));
 
   /**
    * the memory cached query handler objects
