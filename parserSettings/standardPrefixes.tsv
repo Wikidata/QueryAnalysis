@@ -1,33 +1,33 @@
-prefix	uri
-hint	http://www.bigdata.com/queryHints#
-hint	http://www.bigdata.com/queryHints#
-gas	http://www.bigdata.com/rdf/gas#
-bds	http://www.bigdata.com/rdf/search#
-bd	http://www.bigdata.com/rdf#
-schema	http://schema.org/
-cc	http://creativecommons.org/ns#
-geo	http://www.opengis.net/ont/geosparql#
-prov	http://www.w3.org/ns/prov#
-xsd	http://www.w3.org/2001/XMLSchema#
-skos	http://www.w3.org/2004/02/skos/core#
-owl	http://www.w3.org/2002/07/owl#
-rdf	http://www.w3.org/1999/02/22-rdf-syntax-ns#
-rdfs	http://www.w3.org/2000/01/rdf-schema#
-wdata	http://www.wikidata.org/wiki/Special:EntityData/
-wdno	http://www.wikidata.org/prop/novalue/
-prn	http://www.wikidata.org/prop/reference/value-normalized/
-prv	http://www.wikidata.org/prop/reference/value/
-pr	http://www.wikidata.org/prop/reference/
-pqn	http://www.wikidata.org/prop/qualifier/value-normalized/
-pqv	http://www.wikidata.org/prop/qualifier/value/
-pq	http://www.wikidata.org/prop/qualifier/
-psn	http://www.wikidata.org/prop/statement/value-normalized/
-psv	http://www.wikidata.org/prop/statement/value/
-ps	http://www.wikidata.org/prop/statement/
-wdv	http://www.wikidata.org/value/
-wdref	http://www.wikidata.org/reference/
-p	http://www.wikidata.org/prop/
-wds	http://www.wikidata.org/entity/statement/
-wdt	http://www.wikidata.org/prop/direct/
-wd	http://www.wikidata.org/entity/
-wikibase	http://wikiba.se/ontology#
+prefix	uri	complex
+hint	http://www.bigdata.com/queryHints#	simple
+hint	http://www.bigdata.com/queryHints#	simple
+gas	http://www.bigdata.com/rdf/gas#	simple
+bds	http://www.bigdata.com/rdf/search#	simple
+bd	http://www.bigdata.com/rdf#	simple
+schema	http://schema.org/	simple
+cc	http://creativecommons.org/ns#	simple
+geo	http://www.opengis.net/ont/geosparql#	simple
+prov	http://www.w3.org/ns/prov#	complex
+xsd	http://www.w3.org/2001/XMLSchema#	simple
+skos	http://www.w3.org/2004/02/skos/core#	simple
+owl	http://www.w3.org/2002/07/owl#	simple
+rdf	http://www.w3.org/1999/02/22-rdf-syntax-ns#	simple
+rdfs	http://www.w3.org/2000/01/rdf-schema#	simple
+wdata	http://www.wikidata.org/wiki/Special:EntityData/	simple
+wdno	http://www.wikidata.org/prop/novalue/	simple
+prn	http://www.wikidata.org/prop/reference/value-normalized/	complex
+prv	http://www.wikidata.org/prop/reference/value/	complex
+pr	http://www.wikidata.org/prop/reference/	complex
+pqn	http://www.wikidata.org/prop/qualifier/value-normalized/	complex
+pqv	http://www.wikidata.org/prop/qualifier/value/	complex
+pq	http://www.wikidata.org/prop/qualifier/	complex
+psn	http://www.wikidata.org/prop/statement/value-normalized/	complex
+psv	http://www.wikidata.org/prop/statement/value/	complex
+ps	http://www.wikidata.org/prop/statement/	complex
+wdv	http://www.wikidata.org/value/	complex
+wdref	http://www.wikidata.org/reference/	simple
+p	http://www.wikidata.org/prop/	simple
+wds	http://www.wikidata.org/entity/statement/	complex
+wdt	http://www.wikidata.org/prop/direct/	simple
+wd	http://www.wikidata.org/entity/	simple
+wikibase	http://wikiba.se/ontology#	simple
