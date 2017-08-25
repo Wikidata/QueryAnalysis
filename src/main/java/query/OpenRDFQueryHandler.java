@@ -38,7 +38,7 @@ public class OpenRDFQueryHandler extends QueryHandler
   /**
    * The base URI to resolve any possible relative URIs against.
    */
-  private static final String BASE_URI = "https://query.wikidata.org/bigdata/namespace/wdq/sparql";
+  public static final String BASE_URI = "https://query.wikidata.org/bigdata/namespace/wdq/sparql";
   /**
    * Define a static logger variable.
    */
