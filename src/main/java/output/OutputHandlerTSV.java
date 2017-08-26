@@ -85,10 +85,14 @@ public class OutputHandlerTSV extends OutputHandler
     header.add("#Categories");
     header.add("#Coordinates");
 
+    // contains comma separated all in this query used sparqlfeatures
+    String sparqlFeatures = "";
     //add all sparqlStatisticNodes
     for (String sparqlStatisticFeature : SparqlStatisticsCollector.getDefaultMap().keySet()) {
-      header.add("#" + sparqlStatisticFeature);
+      sparqlFeatures += sparqlStatisticFeature;
     }
+
+    header.add("#" + sparqlFeature);
 
     header.add("#original_line(filename_line)");
     writer.writeHeaders(header);

@@ -5,6 +5,7 @@ from collections import defaultdict
 from postprocess import processdata
 from utility import utility
 import config
+from pprint import pprint
 
 parser = argparse.ArgumentParser(description="Prints out the SPARQL statistic")
 parser.add_argument("--monthsFolder", "-m", default=config.monthsFolder,
@@ -43,6 +44,7 @@ class SparqlStatisticHandler:
     totalCount = 0
 
     def handle(self, sparqlQuery, processed):
+        pprint(sparqlQuery)
         if (processed['#Valid'] == 'VALID' or processed['#Valid'] == '1'):
             self.totalCount += 1
             for featureName in processed:
@@ -57,11 +59,12 @@ class SparqlStatisticHandler:
             result += '{:<28} {:>8}/{:<8} {:>5}%'.format(
                 featureName, featureCount, self.totalCount,
                 round(float(featureCount) / self.totalCount * 100, 2)) + "\n"
-            return result
+
+        return result
 
 
 handler = SparqlStatisticHandler()
 
 processdata.processMonth(handler, args.month, args.monthsFolder)
 
-print handler
+print(handler)
