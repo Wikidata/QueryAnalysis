@@ -7,7 +7,11 @@ You need to have `Maven`, `OpenJDK 8` and `Python 2` installed.
 
 ### Running the main Java log analyser
 ```shell
-mvn -T 1.5C exec:java -Dexec.mainClass=general.Main -Dexec.args="-w exampleMonthsFolder/exampleMonth -logging"
+# Processes the example SPARQL log files into exampleMonthsFolder/exampleMonth/processedLogData
+$ mvn -T 1.5C exec:java -Dexec.mainClass=general.Main -Dexec.args="-w exampleMonthsFolder/exampleMonth -logging"
+
+# There are more (useful) CLI parameter available, you can list them with:
+$ mvn -T 1.5C exec:java -Dexec.mainClass=general.Main -Dexec.args="--help"
 
 ```
 
