@@ -22,5 +22,5 @@ $ mvn -T 1.5C exec:java -Dexec.mainClass=general.Main -Dexec.args="--help"
 ```
 
 ## License
-The code in this repository is released under the [Apache 2.0](LICENSE) license. External libraries used may have their own licensing terms.
+The code in this repository is released under the [Apache 2.0](LICENSE.txt) license. External libraries used may have their own licensing terms.
 
