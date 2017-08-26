@@ -5,6 +5,12 @@
 ### Prerequisites
 You need to have `Maven`, `OpenJDK 8` and `Python 2` installed.
 
+### Installing
+```shell
+$ mvn -T 1.5C install
+
+```
+
 ### Running the main Java log analyser
 ```shell
 # Processes the example SPARQL log files into exampleMonthsFolder/exampleMonth/processedLogData
