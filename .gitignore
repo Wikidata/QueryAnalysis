@@ -69,3 +69,9 @@ tools/visualisePropertyTree/bower_components/
 
 *.venv
 *.pyc
+
+
+# example log files
+exampleMonthsFolder/exampleMonth/processedLogData/
+
+
