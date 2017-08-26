@@ -1,0 +1,4 @@
+SELECT ?item
+WHERE {
+  ?item wdt:P2704 "10.5240/4408-DF8B-1043-2587-308F-0"
+}

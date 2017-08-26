@@ -1,0 +1,8 @@
+PREFIX dbo: <urn:dbo>
+select ?label ?desc ?image
+where {
+  OPTIONAL { wd:Q6669738 rdfs:label ?label .
+            FILTER (lang(?label)="en") . }
+  OPTIONAL{ wd:Q6669738 wdt:P18 ?image . }
+  OPTIONAL{ wd:Q6669738 schema:description ?desc. FILTER (lang(?desc)="en") . }
+}

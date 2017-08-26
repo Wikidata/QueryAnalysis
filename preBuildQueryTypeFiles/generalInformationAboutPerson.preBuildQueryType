@@ -1,0 +1,17 @@
+SELECT DISTINCT  ?person ?sportLabel ?dateOfBirth ?personLabel ?nationalityLabel ?nationalityStart ?nationalityEnd ?placeOfBirthLabel ?countryOfBirthLabel ?image (CONCAT("_",str(?gallery)) as ?_gallery)?occupationLabel
+WHERE {
+  ?person wdt:P569 ?dateOfBirth;
+          p:P27 ?nationalityStmt;
+          wdt:P18 ?image;
+          wdt:P19 ?placeOfBirth.
+  ?nationalityStmt ps:P27 ?nationality.
+  ?placeOfBirth wdt:P17 ?countryOfBirth.
+  <https://fr.wikipedia.org/wiki/Alex%20Scott%20%28football%2C%201984%29> schema:about ?person.
+  OPTIONAL{ ?person wdt:P641 ?sport }
+  OPTIONAL{ ?person wdt:P106 ?occupation }
+  OPTIONAL{ ?person wdt:P2416 ?discCompetedIn }
+  OPTIONAL{ ?person wdt:P373 ?gallery }
+  OPTIONAL{ ?nationalityStmt pq:P580 ?nationalityStart }
+  OPTIONAL{ ?nationalityStmt pq:P582 ?nationalityEnd }
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "fr" }
+}

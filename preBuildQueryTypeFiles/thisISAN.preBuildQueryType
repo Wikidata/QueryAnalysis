@@ -1,0 +1,4 @@
+SELECT ?item
+WHERE {
+  ?item wdt:P3212 "0000-0000-F148-0000-Q-0000-0000-X"
+}

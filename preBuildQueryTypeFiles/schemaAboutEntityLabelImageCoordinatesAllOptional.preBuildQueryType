@@ -1,0 +1,11 @@
+SELECT ?label ?image ?coordinates ?wikilink
+where {
+  OPTIONAL{ <http://www.wikidata.org/entity/Q3329362> rdfs:label ?label .
+           FILTER (lang(?label)=?lang) .
+           values (?lang ?lang_) { ("en" 1) ("en" 2) ("de" 3) ("fr" 4) ("it" 5)} }
+  OPTIONAL{ <http://www.wikidata.org/entity/Q3329362> wdt:P18 ?image . }
+  OPTIONAL{ <http://www.wikidata.org/entity/Q3329362> wdt:P625 ?coordinates . }
+  OPTIONAL{ ?wikilink a schema:Article ; schema:about <http://www.wikidata.org/entity/Q3329362> ;
+                        schema:inLanguage "en" ; schema:isPartOf <https://en.wikipedia.org/> .}
+}
+order by ?lang_ 
