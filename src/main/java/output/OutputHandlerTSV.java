@@ -43,6 +43,9 @@ public class OutputHandlerTSV extends OutputHandler
    */
   private OutputStream outputStream = null;
 
+  /**
+   * The Caching module object.
+   */
   private Cache cache = Cache.getInstance();
 
   /**
@@ -84,15 +87,7 @@ public class OutputHandlerTSV extends OutputHandler
     header.add("#Predicates");
     header.add("#Categories");
     header.add("#Coordinates");
-
-    // contains comma separated all in this query used sparqlfeatures
-    String sparqlFeatures = "";
-    //add all sparqlStatisticNodes
-    for (String sparqlStatisticFeature : SparqlStatisticsCollector.getDefaultMap().keySet()) {
-      sparqlFeatures += sparqlStatisticFeature;
-    }
-
-    header.add("#" + sparqlFeature);
+    header.add("#UsedSparqlFeatures");
 
     header.add("#original_line(filename_line)");
     writer.writeHeaders(header);
@@ -132,6 +127,7 @@ public class OutputHandlerTSV extends OutputHandler
     queryHandler.setThreadNumber(threadNumber);
     queryHandler.setQueryTypes(queryTypes);
 
+    // the order in which fields are being written to this list is important - it needs to be the same as the one for the header above!
     List<Object> line = new ArrayList<>();
     line.add(queryHandler.getValidityStatus());
     line.add(queryHandler.getToolName());
@@ -152,9 +148,14 @@ public class OutputHandlerTSV extends OutputHandler
 
       Map<String, Integer> sparqlStatistics = queryHandler.getSparqlStatistics();
       //add all sparqlStatisticNodes
-      for (String sparqlStatisticFeature : sparqlStatistics.keySet()) {
-        line.add(sparqlStatistics.get(sparqlStatisticFeature));
+      String sparqlStatisticsLine = "";
+      for (Map.Entry<String, Integer> sparqlStatisticFeature : sparqlStatistics.entrySet()) {
+        if (sparqlStatisticFeature.getValue() != 0) {
+          sparqlStatisticsLine += sparqlStatisticFeature.getKey() + ", ";
+
+        }
       }
+      line.add(sparqlStatisticsLine);
 
     } else {
       for (int i = 0; i < 12 + SparqlStatisticsCollector.getDefaultMap().size(); i++) {
