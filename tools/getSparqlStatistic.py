@@ -5,6 +5,7 @@ from collections import defaultdict
 from postprocess import processdata
 from utility import utility
 import config
+from pprint import pprint
 
 parser = argparse.ArgumentParser(description="Prints out the SPARQL statistic")
 parser.add_argument("--monthsFolder", "-m", default=config.monthsFolder,
@@ -43,25 +44,34 @@ class SparqlStatisticHandler:
     totalCount = 0
 
     def handle(self, sparqlQuery, processed):
-        if (processed['#Valid'] == 'VALID' or processed['#Valid'] == '1'):
+        if (processed['#Valid'] == 'VALID'):
             self.totalCount += 1
-            for featureName in processed:
-                if featureName in self.notStatisticNames:
-                    continue
-                if processed[featureName] is not "0":
-                    self.statistic[featureName] += 1
+            usedSparqlFeatures = processed['#UsedSparqlFeatures']
 
-    def __str__(self):
+            for usedSparqlFeature in usedSparqlFeatures.split(","):
+                self.statistic[usedSparqlFeature.lstrip()] += 1
+
+    def printWithAstNames(self):
         result = ""
         for featureName, featureCount in sorted(self.statistic.iteritems()):
             result += '{:<28} {:>8}/{:<8} {:>5}%'.format(
                 featureName, featureCount, self.totalCount,
                 round(float(featureCount) / self.totalCount * 100, 2)) + "\n"
-            return result
+
+        print(result)
+
+    def printSparqlTranslation(self):
+        result = ""
+        for featureName, featureCount in sorted(self.statistic.iteritems()):
+            result += '{:<28} {:>8}/{:<8} {:>5}%'.format(
+                featureName, featureCount, self.totalCount,
+                round(float(featureCount) / self.totalCount * 100, 2)) + "\n"
+
+        print(result)
 
 
 handler = SparqlStatisticHandler()
 
 processdata.processMonth(handler, args.month, args.monthsFolder)
 
-print handler
+handler.printSparqlTranslation()
