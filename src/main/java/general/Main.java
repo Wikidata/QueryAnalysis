@@ -88,9 +88,13 @@ public final class Main
    */
   public static final Map<TupleExprWrapper, String> exampleQueriesTupleExpr = new HashMap<TupleExprWrapper, String>();
   /**
-   * Saves the standard prefixes.
+   * Saves the standard prefixes. Format is (prefix, uri).
    */
   public static final BiMap<String, String> prefixes = HashBiMap.create();
+  /**
+   * Saves if a prefix excludes a query from the simple dataset.
+   */
+  public static final Set<String> simpleQueryWhitelist =  new HashSet<String>();
   /**
    * Saves if metrics should be calculated for bot queries.
    */
@@ -238,6 +242,10 @@ public final class Main
 
     prepareWritingQueryTypes(outputFolder);
 
+    String testQuery = "SELECT * WHERE { ?var wdt:P31/wdt:P279* wd:Q123 }";
+    QueryHandler testHandler = new OpenRDFQueryHandler();
+    testHandler.setQueryString(testQuery);
+
     for (int day = 1; day <= 31; day++) {
       String inputFile = inputFilePrefix + String.format("%02d", day) + inputFileSuffix;
       Runnable parseOneMonthWorker = new ParseOneDayWorker(inputFile, inputFilePrefix, outputFolder, inputHandlerClass, queryParserName, queryHandlerClass, day);
@@ -288,9 +296,12 @@ public final class Main
           } catch (IllegalArgumentException e) {
             logger.error("Prefix or uri for standard prefixes defined multiple times", e);
           }
+          if (row[2].toString().equals("simple")) {
+            simpleQueryWhitelist.add(row[0].toString());
+          }
           return;
         }
-        logger.warn("Line with row length " + row.length + " found. Is the formatting of toolMapping.tsv correct?");
+        logger.warn("Line with row length " + row.length + " found. Is the formatting of standardPrefixes.tsv correct?");
         return;
       }
 

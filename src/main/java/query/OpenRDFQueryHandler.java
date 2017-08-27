@@ -292,6 +292,7 @@ public class OpenRDFQueryHandler extends QueryHandler
         statementPattern.setObjectVar(normalizeHelper(statementPattern.getObjectVar(), strings));
 
         normalizeHelper(statementPattern.getPredicateVar(), pIDs);
+        checkForVariable(statementPattern.getPredicateVar());
       }
     });
     normalizedQuery.getTupleExpr().visit(new QueryModelVisitorBase<VisitorException>()
@@ -310,6 +311,19 @@ public class OpenRDFQueryHandler extends QueryHandler
   }
 
   /**
+   * A helper function to check if a Var is an actual variable.
+   * @param var The Var to check.
+   */
+  private void checkForVariable(Var var)
+  {
+    if (var != null) {
+      if (!var.isConstant()) {
+        this.simpleOrComplex = QueryHandler.Complexity.COMPLEX;
+      }
+    }
+  }
+
+  /**
    * A helper function to find the fitting replacement value for wikidata uri normalization.
    *
    * @param var        The variable to be normalized
@@ -319,6 +333,7 @@ public class OpenRDFQueryHandler extends QueryHandler
   private Var normalizeHelper(Var var, Map<String, Integer> foundNames)
   {
     if (var != null) {
+
       Value value = var.getValue();
       if (value != null) {
         if (value.getClass().equals(URIImpl.class)) {
@@ -359,7 +374,7 @@ public class OpenRDFQueryHandler extends QueryHandler
   }
 
   @Override
-  public void computeCoordinates()
+  public final void computeCoordinates()
   {
     this.coordinates = new HashSet<String>();
     if (getValidityStatus() != QueryHandler.Validity.VALID) {
@@ -385,7 +400,44 @@ public class OpenRDFQueryHandler extends QueryHandler
     }
     catch (TokenMgrError | ParseException | VisitorException e) {
       logger.error("Unexpected error while computing the coordinates in " + getQueryString(), e);
+      this.coordinates.add("ERROR");
     }
   }
 
+  @Override
+  public final void computeSimpleOrComplex()
+  {
+    if (getValidityStatus() != QueryHandler.Validity.VALID) {
+      this.simpleOrComplex = QueryHandler.Complexity.NONE;
+      return;
+    }
+
+    if (this.queryType == null) {
+      this.computeQueryType();
+    }
+
+    if (this.simpleOrComplex != QueryHandler.Complexity.COMPLEX) {
+      for (String predicate : this.getpIDs()) {
+        if (checkConstantForWhitelist(predicate) == QueryHandler.Complexity.COMPLEX) {
+          this.simpleOrComplex = QueryHandler.Complexity.COMPLEX;
+          return;
+        }
+      }
+      this.simpleOrComplex = QueryHandler.Complexity.SIMPLE;
+    }
+  }
+
+  /**
+   * @param constant The constant that should be checked.
+   * @return The complexity based on the constant.
+   */
+  private Complexity checkConstantForWhitelist(String constant)
+  {
+    for (String whitelistedPredicate : Main.simpleQueryWhitelist) {
+      if (constant.matches("^" + whitelistedPredicate + ":.*")) {
+        return QueryHandler.Complexity.SIMPLE;
+      }
+    }
+    return QueryHandler.Complexity.COMPLEX;
+  }
 }
