@@ -31,15 +31,6 @@ if os.path.isfile(utility.addMissingSlash(args.monthsFolder)
 
 
 class SparqlStatisticHandler:
-    notStatisticNames = ['#Valid', '#ToolName', '#ToolVersion',
-                         '#StringLengthWithComments', '#QuerySize',
-                         '#VariableCountHead', '#VariableCountPattern',
-                         '#TripleCountWithService', '#TripleCountNoService',
-                         '#QueryType', '#QIDs',
-                         '#original_line(filename_line)',
-                         '#ExampleQueryStringComparison',
-                         '#ExampleQueryParsedComparison',
-                         '#Categories', '#Predicates', '#SubjectsAndObjects']
     statistic = defaultdict(int)
     totalCount = 0
 
@@ -53,7 +44,9 @@ class SparqlStatisticHandler:
 
     def printWithAstNames(self):
         result = ""
-        for featureName, featureCount in sorted(self.statistic.iteritems()):
+        for featureName, featureCount in sorted(self.statistic.iteritems(),
+                                                key=lambda x: x[1],
+                                                reverse=True):
             result += '{:<28} {:>8}/{:<8} {:>5}%'.format(
                 featureName, featureCount, self.totalCount,
                 round(float(featureCount) / self.totalCount * 100, 2)) + "\n"
@@ -62,7 +55,15 @@ class SparqlStatisticHandler:
 
     def printSparqlTranslation(self):
         result = ""
-        for featureName, featureCount in sorted(self.statistic.iteritems()):
+        translation = {}
+        translation["ProjectionElemList"] = "Select"
+        translation["Order"] = "Order By"
+        translation["Group"] = "Group By"
+        for featureName, featureCount in sorted(self.statistic.iteritems(),
+                                                key=lambda x: x[0],
+                                                reverse=True):
+            if featureName in translation:
+                featureName = translation[featureName]
             result += '{:<28} {:>8}/{:<8} {:>5}%'.format(
                 featureName, featureCount, self.totalCount,
                 round(float(featureCount) / self.totalCount * 100, 2)) + "\n"
