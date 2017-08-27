@@ -21,6 +21,8 @@ $ mvn -T 1.5C exec:java -Dexec.mainClass=general.Main -Dexec.args="--help"
 
 ```
 
+**Important:** In order to not flush the command line with error messages all uncatched Runtime Exceptions are being written to the log files, residing in the logs/ folder, so please take a look into there regularily.
+
 ## License
 The code in this repository is released under the [Apache 2.0](LICENSE.txt) license. External libraries used may have their own licensing terms.
 
