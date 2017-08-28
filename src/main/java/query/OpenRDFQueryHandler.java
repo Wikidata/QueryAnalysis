@@ -139,6 +139,7 @@ public class OpenRDFQueryHandler extends QueryHandler
     SparqlStatisticsCollector sparqlStatisticsCollector = new SparqlStatisticsCollector();
     try {
       this.query.getTupleExpr().visitChildren(sparqlStatisticsCollector);
+      this.query.getTupleExpr().visit(sparqlStatisticsCollector);
     } catch (Exception e) {
       logger.error("An unknown error occured while computing the sparql statistics: ", e);
     }
@@ -282,24 +283,20 @@ public class OpenRDFQueryHandler extends QueryHandler
     final Map<String, Integer> strings = new HashMap<>();
     final Map<String, Integer> pIDs = new HashMap<String, Integer>();
 
-    normalizedQuery.getTupleExpr().visit(new QueryModelVisitorBase<VisitorException>()
-    {
+    normalizedQuery.getTupleExpr().visit(new QueryModelVisitorBase<VisitorException>() {
 
       @Override
-      public void meet(StatementPattern statementPattern)
-      {
+      public void meet(StatementPattern statementPattern) {
         statementPattern.setSubjectVar(normalizeHelper(statementPattern.getSubjectVar(), strings));
         statementPattern.setObjectVar(normalizeHelper(statementPattern.getObjectVar(), strings));
 
         normalizeHelper(statementPattern.getPredicateVar(), pIDs);
       }
     });
-    normalizedQuery.getTupleExpr().visit(new QueryModelVisitorBase<VisitorException>()
-    {
+    normalizedQuery.getTupleExpr().visit(new QueryModelVisitorBase<VisitorException>() {
 
       @Override
-      public void meet(ArbitraryLengthPath arbitraryLengthPath)
-      {
+      public void meet(ArbitraryLengthPath arbitraryLengthPath) {
         arbitraryLengthPath.setSubjectVar(normalizeHelper(arbitraryLengthPath.getSubjectVar(), strings));
         arbitraryLengthPath.setObjectVar(normalizeHelper(arbitraryLengthPath.getObjectVar(), strings));
       }
@@ -333,7 +330,7 @@ public class OpenRDFQueryHandler extends QueryHandler
             lastIndexOf = ":";
           } else {
             logger.error("Variable " + var.toString() + " could not be normalized because the urn formatting is not recognized.\n" +
-                "Query was: " + this.getQueryStringWithoutPrefixes());
+                         "Query was: " + this.getQueryStringWithoutPrefixes());
             return var;
           }
           String uri = subjectString.substring(0, subjectString.lastIndexOf(lastIndexOf)) + lastIndexOf + "QName" + foundNames.get(subjectString);
@@ -369,11 +366,9 @@ public class OpenRDFQueryHandler extends QueryHandler
 
     try {
       ASTQueryContainer qc = SyntaxTreeBuilder.parseQuery(getQueryString());
-      qc.jjtAccept(new ASTVisitorBase()
-      {
+      qc.jjtAccept(new ASTVisitorBase() {
         @Override
-        public Object visit(ASTString string, Object data) throws VisitorException
-        {
+        public Object visit(ASTString string, Object data) throws VisitorException {
           Pattern pattern = Pattern.compile("^Point\\(([-+]?[\\d]{1,2}\\.\\d+\\s*[-+]?[\\d]{1,3}\\.\\d+?)\\)$");
           Matcher matcher = pattern.matcher(string.getValue());
           if (matcher.find()) {
@@ -382,8 +377,7 @@ public class OpenRDFQueryHandler extends QueryHandler
           return super.visit(string, data);
         }
       }, null);
-    }
-    catch (TokenMgrError | ParseException | VisitorException e) {
+    } catch (TokenMgrError | ParseException | VisitorException e) {
       logger.error("Unexpected error while computing the coordinates in " + getQueryString(), e);
     }
   }

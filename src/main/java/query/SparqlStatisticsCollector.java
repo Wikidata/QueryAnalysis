@@ -1,9 +1,12 @@
 package query;
 
+import java.util.LinkedHashMap;
+
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.openrdf.query.algebra.QueryModelNode;
 import org.openrdf.query.algebra.helpers.QueryModelVisitorBase;
-
-import java.util.LinkedHashMap;
+import org.openrdf.query.algebra.Slice;
+import org.openrdf.query.algebra.Projection;
 
 /**
  * @author Julius Gonsior
@@ -64,6 +67,7 @@ public class SparqlStatisticsCollector extends QueryModelVisitorBase
     defaultMap.put("LangMatches", 0);
     defaultMap.put("LeftJoin", 0);
     defaultMap.put("Like", 0);
+    defaultMap.put("Limit", 0);
     defaultMap.put("ListMemberOperator", 0);
     defaultMap.put("Load", 0);
     defaultMap.put("LocalName", 0);
@@ -75,6 +79,7 @@ public class SparqlStatisticsCollector extends QueryModelVisitorBase
     defaultMap.put("MultiProjection", 0);
     defaultMap.put("Namespace", 0);
     defaultMap.put("Not", 0);
+    defaultMap.put("Offset", 0);
     defaultMap.put("Or", 0);
     defaultMap.put("Order", 0);
     defaultMap.put("OrderElem", 0);
@@ -116,6 +121,22 @@ public class SparqlStatisticsCollector extends QueryModelVisitorBase
   {
     String className = node.getClass().getSimpleName();
     statistics.put(className, statistics.get(className) + 1);
+    super.meetNode(node);
+  }
+
+  /**
+   * Because of reasons the AST doesn't distinguish between Limit and Offset, so a little manual interference is in need of here.
+   */
+  @Override
+  public void meet(Slice node) throws Exception
+  {
+    if (node.getOffset() != -1) {
+      statistics.put("Offset", statistics.get("Offset") + 1);
+    }
+    if (node.getLimit() != -1) {
+      statistics.put("Limit", statistics.get("Limit") + 1);
+    }
+
     super.meetNode(node);
   }
 
