@@ -59,7 +59,8 @@ class SparqlStatisticHandler:
         translation["ProjectionElemList"] = "Select"
         translation["Order"] = "Order By"
         translation["Group"] = "Group By"
-        translation["Slice"] = "Limit"
+        translation["Slice"] = "LimitAndOffset"
+        translation["Difference"] = "Minus"
         for featureName, featureCount in sorted(self.statistic.iteritems(),
                                                 key=lambda x: x[0],
                                                 reverse=True):
