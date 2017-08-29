@@ -265,7 +265,7 @@ public final class Main
   /**
    * Loads all standard prefixes.
    */
-  private static void loadStandardPrefixes()
+  public static void loadStandardPrefixes()
   {
     TsvParserSettings parserSettings = new TsvParserSettings();
     parserSettings.setLineSeparatorDetectionEnabled(true);

@@ -46,7 +46,7 @@ public class Anonymizer
    */
   public static void main(String[] args)
   {
-    loadStandardPrefixes();
+    Main.loadStandardPrefixes();
 
     LoggingHandler.initFileLog("Anonymizer", "nothing");
 
@@ -59,18 +59,35 @@ public class Anonymizer
       for (Path filePath : directoryStream) {
         if (Files.isRegularFile(filePath)) {
           String queryString = new String(readAllBytes(filePath));
+          // String queryString = "SELECT * WHERE { ?x (wdt:P31|wdt:P297)+ wd:123 }";
           String renderedQueryString;
+
+          /*
+          try {
+            ASTQueryContainer qc = SyntaxTreeBuilder.parseQuery(queryString);
+            renderedQueryString = (String) qc.jjtAccept(new RenderVisitor(), null);
+          } catch (TokenMgrError | ParseException e) {
+            continue;
+          }
+          catch (VisitorException e) {
+            e.printStackTrace();
+          }
+          */
+
           try {
             ParsedQuery parsedQuery = new StandardizingSPARQLParser().parseQuery(queryString, query.OpenRDFQueryHandler.BASE_URI);
             renderedQueryString = new SPARQLQueryRenderer().render(parsedQuery);
           }
           catch (MalformedQueryException e) {
             failedToParse += 1;
+            /*
             if (!e.toString().matches(".*projection alias .* was previously used.*")) {
+              System.out.println(queryString);
               String filePathString = filePath.toString();
               System.out.println(filePathString.substring(filePathString.lastIndexOf("/"), filePathString.length()));
               System.out.println(e.getMessage());
             }
+            */
             continue;
           }
           catch (Exception e) {
@@ -92,50 +109,5 @@ public class Anonymizer
     }
 
     System.out.println("Worked: " + worked + " Failed: " + failed + " Failed to parse: " + failedToParse);
-  }
-
-  /**
-   * Loads all standard prefixes.
-   */
-  private static void loadStandardPrefixes()
-  {
-    TsvParserSettings parserSettings = new TsvParserSettings();
-    parserSettings.setLineSeparatorDetectionEnabled(true);
-    parserSettings.setHeaderExtractionEnabled(true);
-    parserSettings.setSkipEmptyLines(true);
-    parserSettings.setReadInputOnSeparateThread(true);
-
-    ObjectRowProcessor rowProcessor = new ObjectRowProcessor()
-    {
-      @Override
-      public void rowProcessed(Object[] row, ParsingContext parsingContext)
-      {
-        if (row.length <= 1) {
-          logger.warn("Ignoring line without tab while parsing.");
-          return;
-        }
-        if (row.length == 3) {
-          try {
-            Main.prefixes.put(row[0].toString(), row[1].toString());
-          } catch (IllegalArgumentException e) {
-            logger.error("Prefix or uri for standard prefixes defined multiple times", e);
-          }
-          return;
-        }
-        logger.warn("Line with row length " + row.length + " found. Is the formatting of toolMapping.tsv correct?");
-        return;
-      }
-
-    };
-
-    parserSettings.setProcessor(rowProcessor);
-
-    TsvParser parser = new TsvParser(parserSettings);
-
-    try {
-      parser.parse(new InputStreamReader(new FileInputStream("parserSettings/standardPrefixes.tsv")));
-    } catch (FileNotFoundException e) {
-      logger.error("Could not open configuration file for standard prefixes.", e);
-    }
   }
 }
