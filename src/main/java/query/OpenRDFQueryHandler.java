@@ -138,6 +138,9 @@ public class OpenRDFQueryHandler extends QueryHandler
 
     SparqlStatisticsCollector sparqlStatisticsCollector = new SparqlStatisticsCollector();
     try {
+      System.out.println("\n\n\n\n");
+      System.out.println(this.query.getSourceString());
+      System.out.println(this.query.getTupleExpr());
       this.query.getTupleExpr().visitChildren(sparqlStatisticsCollector);
       this.query.getTupleExpr().visit(sparqlStatisticsCollector);
     } catch (Exception e) {

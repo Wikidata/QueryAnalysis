@@ -6,7 +6,9 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.openrdf.query.algebra.QueryModelNode;
 import org.openrdf.query.algebra.helpers.QueryModelVisitorBase;
 import org.openrdf.query.algebra.Slice;
-import org.openrdf.query.algebra.Projection;
+import org.openrdf.query.algebra.Not;
+import org.openrdf.query.algebra.Exists;
+
 
 /**
  * @author Julius Gonsior
@@ -79,6 +81,7 @@ public class SparqlStatisticsCollector extends QueryModelVisitorBase
     defaultMap.put("MultiProjection", 0);
     defaultMap.put("Namespace", 0);
     defaultMap.put("Not", 0);
+    defaultMap.put("Not Exists", 0);
     defaultMap.put("Offset", 0);
     defaultMap.put("Or", 0);
     defaultMap.put("Order", 0);
@@ -137,6 +140,20 @@ public class SparqlStatisticsCollector extends QueryModelVisitorBase
       statistics.put("Limit", statistics.get("Limit") + 1);
     }
 
+    super.meetNode(node);
+  }
+
+  /**
+   * To catch a Not Exists you need to check the parent node.
+   */
+  @Override
+  public void meet(Exists node) throws Exception
+  {
+    if (node.getParentNode() instanceof Not) {
+      statistics.put("Not Exists", statistics.get("Not Exists") + 1);
+    } else {
+      statistics.put("Exists", statistics.get("Exists") + 1);
+    }
     super.meetNode(node);
   }
 

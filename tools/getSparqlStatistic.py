@@ -54,23 +54,14 @@ class SparqlStatisticHandler:
         print(result)
 
     def printSparqlTranslation(self):
-        result = ""
-        translation = {}
-        translation["ProjectionElemList"] = "Select"
-        translation["Order"] = "Order By"
-        translation["Group"] = "Group By"
-        translation["Slice"] = "LimitAndOffset"
-        translation["Difference"] = "Minus"
-        for featureName, featureCount in sorted(self.statistic.iteritems(),
-                                                key=lambda x: x[0],
-                                                reverse=True):
-            if featureName in translation:
-                featureName = translation[featureName]
-            result += '{:<28} {:>8}/{:<8} {:>5}%'.format(
-                featureName, featureCount, self.totalCount,
-                round(float(featureCount) / self.totalCount * 100, 2)) + "\n"
+        self.statistic["Select"] = self.statistic["ProjectionElemList"]
+        self.statistic["Order By"] = self.statistic["Order"]
+        self.statistic["Group By"] = self.statistic["Group"]
+        self.statistic["LimitAndOffset"] = self.statistic["Slice"]
+        self.statistic["Minus"] = self.statistic["Difference"]
+        self.statistic["Optional"] = self.statistic["LeftJoin"]
 
-        print(result)
+        self.printWithAstNames()
 
 
 handler = SparqlStatisticHandler()
