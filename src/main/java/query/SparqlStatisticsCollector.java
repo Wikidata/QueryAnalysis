@@ -1,9 +1,16 @@
 package query;
 
+import java.util.LinkedHashMap;
+
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.openrdf.query.algebra.QueryModelNode;
 import org.openrdf.query.algebra.helpers.QueryModelVisitorBase;
+import org.openrdf.query.algebra.Slice;
+import org.openrdf.query.algebra.Not;
+import org.openrdf.query.algebra.Exists;
+import org.openrdf.query.algebra.StatementPattern;
+import org.openrdf.query.algebra.Service;
 
-import java.util.LinkedHashMap;
 
 /**
  * @author Julius Gonsior
@@ -48,6 +55,7 @@ public class SparqlStatisticsCollector extends QueryModelVisitorBase
     defaultMap.put("Group", 0);
     defaultMap.put("GroupConcat", 0);
     defaultMap.put("GroupElem", 0);
+    defaultMap.put("Having", 0);
     defaultMap.put("If", 0);
     defaultMap.put("In", 0);
     defaultMap.put("InsertData", 0);
@@ -62,8 +70,10 @@ public class SparqlStatisticsCollector extends QueryModelVisitorBase
     defaultMap.put("Label", 0);
     defaultMap.put("Lang", 0);
     defaultMap.put("LangMatches", 0);
+    defaultMap.put("LangService", 0);
     defaultMap.put("LeftJoin", 0);
     defaultMap.put("Like", 0);
+    defaultMap.put("Limit", 0);
     defaultMap.put("ListMemberOperator", 0);
     defaultMap.put("Load", 0);
     defaultMap.put("LocalName", 0);
@@ -75,6 +85,8 @@ public class SparqlStatisticsCollector extends QueryModelVisitorBase
     defaultMap.put("MultiProjection", 0);
     defaultMap.put("Namespace", 0);
     defaultMap.put("Not", 0);
+    defaultMap.put("Not Exists", 0);
+    defaultMap.put("Offset", 0);
     defaultMap.put("Or", 0);
     defaultMap.put("Order", 0);
     defaultMap.put("OrderElem", 0);
@@ -119,5 +131,45 @@ public class SparqlStatisticsCollector extends QueryModelVisitorBase
     super.meetNode(node);
   }
 
+  /**
+   * Because of reasons the AST doesn't distinguish between Limit and Offset, so a little manual interference is in need of here.
+   */
+  @Override
+  public void meet(Slice node) throws Exception
+  {
+    if (node.getOffset() != -1) {
+      statistics.put("Offset", statistics.get("Offset") + 1);
+    }
+    if (node.getLimit() != -1) {
+      statistics.put("Limit", statistics.get("Limit") + 1);
+    }
+
+    super.meetNode(node);
+  }
+
+  /**
+   * To catch a Not Exists you need to check the parent node.
+   */
+  @Override
+  public void meet(Exists node) throws Exception
+  {
+    if (node.getParentNode() instanceof Not) {
+      statistics.put("Not Exists", statistics.get("Not Exists") + 1);
+    } else {
+      statistics.put("Exists", statistics.get("Exists") + 1);
+    }
+    super.meetNode(node);
+  }
+
+
+  public void meet(StatementPattern node) throws Exception
+  {
+    if (node.getParentNode() instanceof Service && node.getSubjectVar().getName().equals("-const-http://www.bigdata.com/rdf#serviceParam-uri") && node.getPredicateVar().getName().equals("-const-http://wikiba.se/ontology#language-uri")) {
+      statistics.put("LangService", statistics.get("LangService") + 1);
+      statistics.put("Service", statistics.get("Service") - 1);
+    }
+    super.meetNode(node);
+
+  }
 
 }
