@@ -6,24 +6,24 @@ from utility import utility
 import config
 
 
-def writeOut(filename, fieldValues, dictionary):
+def writeOutMethod(filename, fieldValues, dictionary):
     with open(filename, "w") as file:
         header = "hour"
         for field in sorted(fieldValues):
             header += "\t" + field
-            file.write(header + "\n")
-            for j in sorted(dictionary.keys()):
-                line = str(j)
-                for field in sorted(fieldValues):
-                    if field in dictionary[j].keys():
-                        line += "\t" + str(dictionary[j][field])
-                    else:
-                        line += "\t0"
-                        file.write(line + "\n")
+        file.write(header + "\n")
+        for j in sorted(dictionary.keys()):
+            line = str(j)
+            for field in sorted(fieldValues):
+                if field in dictionary[j].keys():
+                    line += "\t" + str(dictionary[j][field])
+                else:
+                    line += "\t0"
+            file.write(line + "\n")
 
 
 
-def hourlyFieldValue(month, metric, monthsFolder = config.monthsFolder, ignoreLock = False, outputPath = None, filterParams = "", nosplitting = False, writeOut = False):
+def hourlyFieldValue(month, metric, monthsFolder = config.monthsFolder, ignoreLock = False, outputPath = None, filterParams = "", writeOut = False):
     if os.path.isfile(utility.addMissingSlash(monthsFolder)
                       + utility.addMissingSlash(month) + "locked") \
        and not ignoreLock:
@@ -94,11 +94,9 @@ def hourlyFieldValue(month, metric, monthsFolder = config.monthsFolder, ignoreLo
                 print hour + " is not in 0-23"
 
         def writeHourlyValues(self):
-            writeOut(pathBase + "Full_Month_" + metric
-                     + "_Hourly_Values.tsv", self.monthlyFieldValues,
-                     self.monthlyData)
+            writeOutMethod(pathBase + "Full_Month_" + metric + "_Hourly_Values.tsv", self.monthlyFieldValues, self.monthlyData)
             for day in self.allDailyFieldValues:
-                writeOut(pathBase + "Day_" + str(day) + "_" + metric
+                writeOutMethod(pathBase + "Day_" + str(day) + "_" + metric
                          + "_Hourly_Values.tsv",
                          self.allDailyFieldValues[day], self.allDailyData[day])
 
@@ -143,4 +141,7 @@ if __name__ == '__main__':
         parser.print_help()
         parser.exit()
 
-    args = parser.parse_args(args.month, args.metric, monthsFolder = args.monthsFolder, ignoreLock = args.ignoreLock, outputPath = args.outputPath, filterParams = args.filter, nosplitting = args.nosplitting, writeOut = True)
+    args = parser.parse_args()
+        
+    
+    hourlyFieldValue(args.month, args.metric, monthsFolder = args.monthsFolder, ignoreLock = args.ignoreLock, outputPath = args.outputPath, filterParams = args.filter, writeOut = True)
