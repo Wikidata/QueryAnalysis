@@ -31,15 +31,6 @@ if os.path.isfile(utility.addMissingSlash(args.monthsFolder)
 
 
 class SparqlStatisticHandler:
-    notStatisticNames = ['#Valid', '#ToolName', '#ToolVersion',
-                         '#StringLengthWithComments', '#QuerySize',
-                         '#VariableCountHead', '#VariableCountPattern',
-                         '#TripleCountWithService', '#TripleCountNoService',
-                         '#QueryType', '#QIDs',
-                         '#original_line(filename_line)',
-                         '#ExampleQueryStringComparison',
-                         '#ExampleQueryParsedComparison',
-                         '#Categories', '#Predicates', '#SubjectsAndObjects']
     statistic = defaultdict(int)
     totalCount = 0
 
@@ -53,7 +44,9 @@ class SparqlStatisticHandler:
 
     def printWithAstNames(self):
         result = ""
-        for featureName, featureCount in sorted(self.statistic.iteritems()):
+        for featureName, featureCount in sorted(self.statistic.iteritems(),
+                                                key=lambda x: x[0],
+                                                reverse=True):
             result += '{:<28} {:>8}/{:<8} {:>5}%'.format(
                 featureName, featureCount, self.totalCount,
                 round(float(featureCount) / self.totalCount * 100, 2)) + "\n"
@@ -61,13 +54,15 @@ class SparqlStatisticHandler:
         print(result)
 
     def printSparqlTranslation(self):
-        result = ""
-        for featureName, featureCount in sorted(self.statistic.iteritems()):
-            result += '{:<28} {:>8}/{:<8} {:>5}%'.format(
-                featureName, featureCount, self.totalCount,
-                round(float(featureCount) / self.totalCount * 100, 2)) + "\n"
+        self.statistic["Select"] = self.statistic["ProjectionElemList"]
+        self.statistic["Order By"] = self.statistic["Order"]
+        self.statistic["Group By"] = self.statistic["Group"]
+        self.statistic["LimitAndOffset"] = self.statistic["Slice"]
+        self.statistic["Minus"] = self.statistic["Difference"]
+        self.statistic["Optional"] = self.statistic["LeftJoin"]
+        self.statistic["Having*"] = self.statistic["Having"]
 
-        print(result)
+        self.printWithAstNames()
 
 
 handler = SparqlStatisticHandler()
