@@ -53,6 +53,7 @@ public class SparqlStatisticsCollector extends QueryModelVisitorBase
     defaultMap.put("Group", 0);
     defaultMap.put("GroupConcat", 0);
     defaultMap.put("GroupElem", 0);
+    defaultMap.put("Having", 0);
     defaultMap.put("If", 0);
     defaultMap.put("In", 0);
     defaultMap.put("InsertData", 0);

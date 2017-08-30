@@ -45,7 +45,7 @@ class SparqlStatisticHandler:
     def printWithAstNames(self):
         result = ""
         for featureName, featureCount in sorted(self.statistic.iteritems(),
-                                                key=lambda x: x[1],
+                                                key=lambda x: x[0],
                                                 reverse=True):
             result += '{:<28} {:>8}/{:<8} {:>5}%'.format(
                 featureName, featureCount, self.totalCount,
@@ -60,6 +60,7 @@ class SparqlStatisticHandler:
         self.statistic["LimitAndOffset"] = self.statistic["Slice"]
         self.statistic["Minus"] = self.statistic["Difference"]
         self.statistic["Optional"] = self.statistic["LeftJoin"]
+        self.statistic["Having*"] = self.statistic["Having"]
 
         self.printWithAstNames()
 
