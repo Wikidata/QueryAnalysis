@@ -8,6 +8,8 @@ import org.openrdf.query.algebra.helpers.QueryModelVisitorBase;
 import org.openrdf.query.algebra.Slice;
 import org.openrdf.query.algebra.Not;
 import org.openrdf.query.algebra.Exists;
+import org.openrdf.query.algebra.StatementPattern;
+import org.openrdf.query.algebra.Service;
 
 
 /**
@@ -68,6 +70,7 @@ public class SparqlStatisticsCollector extends QueryModelVisitorBase
     defaultMap.put("Label", 0);
     defaultMap.put("Lang", 0);
     defaultMap.put("LangMatches", 0);
+    defaultMap.put("LangService", 0);
     defaultMap.put("LeftJoin", 0);
     defaultMap.put("Like", 0);
     defaultMap.put("Limit", 0);
@@ -158,5 +161,15 @@ public class SparqlStatisticsCollector extends QueryModelVisitorBase
     super.meetNode(node);
   }
 
+
+  public void meet(StatementPattern node) throws Exception
+  {
+    if (node.getParentNode() instanceof Service && node.getSubjectVar().getName().equals("-const-http://www.bigdata.com/rdf#serviceParam-uri") && node.getPredicateVar().getName().equals("-const-http://wikiba.se/ontology#language-uri")) {
+      statistics.put("LangService", statistics.get("LangService") + 1);
+      statistics.put("Service", statistics.get("Service") - 1);
+    }
+    super.meetNode(node);
+
+  }
 
 }
