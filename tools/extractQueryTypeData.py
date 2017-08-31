@@ -2,14 +2,17 @@ import argparse
 import csv
 import gzip
 import os
+import shutil
 import sys
 import urlparse
 
 import pandas
 from itertools import izip
 
-from utility import utility
 import config
+import fieldRanking
+
+from utility import utility
 
 # Generates a list of all query types sorted in descending order by number of
 # appearance based on fieldRanking.tsv's output for the field #QueryType
@@ -19,29 +22,9 @@ import config
 # TODO: Setup command line parameters  
 
 fieldBasedOnQueryType = ['#Valid', '#QuerySize', '#VariableCountHead',
-                         '#VariableCountPattern', '#TripleCountWithService',
-                         '#TripleCountNoService', '#PIDs', '#Add', '#And',
-                         '#ArbitraryLengthPath', '#Avg',
-                         '#BindingSetAssignment', '#BNodeGenerato', '#Bound',
-                         '#Clear', '#Coalesce', '#Compare', '#CompareAll',
-                         '#CompareAny', '#Copy', '#Count', '#Create',
-                         '#Datatype', '#DeleteData', '#DescripbeOperator',
-                         '#Difference', '#Distinct', '#EmptySet', '#Exists',
-                         '#Extension',         '#ExtensionElem', '#Filter',
-                         '#FunctionCall', '#Group', '#GroupConcat',
-                         '#GroupElem', '#If', '#In', '#InsertData',
-                         '#Intersection', '#IRIFunction', '#IsBNode',
-                         '#IsLiteral', '#Isnumeric', '#IsResource', '#IsURI',
-                         '#Join', '#Label', '#Lang', '#LangMatches',
-                         '#LeftJoin', '#Like', '#ListMemberOperator',
-                         '#Load', '#LocalName', '#MathExpr', '#Max', '#Min',
-                         '#Modify', '#Move', '#MultiProjection', '#Namespace',
-                         '#Not', '#Or', '#Order', '#OrderElem', '#Projection',
-                         '#ProjectionElem', '#ProjectionElemList',
-                         '#QueryRoot', '#Reduced', '#Regex', '#SameTerm',
-                         '#Sample', '#Service', '#SingletonSet', '#Slice',
-                         '#StatementPattern', '#Str', '#Sum', '#Union',
-                         '#ValueConstant', '#Var', '#ZeroLengthPath']
+                         '#VariableCountPattern', '#TripleCountWithService', 
+                         '#QueryComplexity', '#SubjectsAndObjects', '#Predicates',
+                         '#Categories', '#UsedSparqlFeatures']
 
 # Number of query types to be extracted, use 0 for infinity
 
@@ -81,49 +64,42 @@ os.chdir(utility.addMissingSlash(args.monthsFolder)
 pathBase = "queryTypeData/"
 
 processedPrefix = "processedLogData/QueryProcessedOpenRDF"
-sourcePrefix = "rawLogData/queryCnt"
+sourcePrefix = "rawLogData/QueryCnt"
 
 if not os.path.exists(pathBase):
     os.makedirs(pathBase)
 
-with open("QueryType/ranking/Full_Month_QueryType_Ranking.tsv") as rankingFile, \
-        open(pathBase + "Query_Type_Data.tsv", "w") as types:
-    rankingReader = csv.DictReader(rankingFile, delimiter="\t")
+with open(pathBase + "Query_Type_Data.tsv", "w") as types:
     typeWriter = csv.DictWriter(types, None, delimiter="\t")
 
-    th = dict()
+    th = {"#QueryType":"#QueryType", "#QueryTypeCount":"#QueryTypeCount", "#ExampleQuery":"#ExampleQuery"}
 
-    for h in rankingReader.fieldnames:
-        th[h] = h
-
-    typeWriter.fieldnames = list(rankingReader.fieldnames)
-
-    th['#example_query'] = '#example_query'
-    typeWriter.fieldnames.append('#example_query')
+    typeWriter.fieldnames = ["#QueryType", "#QueryTypeCount", "#ExampleQuery"]
 
     for h in fieldBasedOnQueryType:
         th[h] = h
         typeWriter.fieldnames.append(h)
-        typeWriter.writerow(th)
+    typeWriter.writerow(th)
 
     i = 0
 
     queryTypes = dict()
 
-    for line in rankingReader:
+    queryTypeCount = fieldRanking.fieldRanking(args.month, "QueryType", monthsFolder = args.monthsFolder, ignoreLock = args.ignoreLock)
+    for i, (k, v) in enumerate(sorted(queryTypeCount.iteritems(), key=lambda (k, v): (v, k), reverse=True)):
         if i >= args.topNumber and args.topNumber != 0:
             break
         i += 1
 
-        queryTypes[line["QueryType"]] = line
+        queryTypes[k] = v
 
     for i in xrange(1, 32):
         if not (os.path.exists(processedPrefix + "%02d" % i + ".tsv.gz")
-                and os.path.exists(sourcePrefix + "%02d" % i + ".tsv")):
+                and os.path.exists(sourcePrefix + "%02d" % i + ".tsv.gz")):
             continue
         print "Working on %02d" % i
         with gzip.open(processedPrefix + "%02d" % i + ".tsv.gz") as p, \
-                open(sourcePrefix + "%02d" % i + ".tsv") as s:
+                gzip.open(sourcePrefix + "%02d" % i + ".tsv.gz") as s:
             pReader = csv.DictReader(p, delimiter="\t")
             sReader = csv.DictReader(s, delimiter="\t")
 
@@ -136,18 +112,18 @@ with open("QueryType/ranking/Full_Month_QueryType_Ranking.tsv") as rankingFile, 
                     d = dict(urlparse.parse_qsl(
                         urlparse.urlsplit(source['uri_query']).query))
                     if 'query' in d.keys():
-                        processedToWrite['#example_query'] = d['query']
+                        processedToWrite['#ExampleQuery'] = d['query']
                     else:
-                        processedToWrite['#example_query'] = ""
+                        processedToWrite['#ExampleQuery'] = ""
                         print "ERROR: Could not find query in uri_query:"
                         print source['uri_query']
 
                     for key in processed:
                         if key in fieldBasedOnQueryType:
                             processedToWrite[key] = processed[key]
-
-                    for key in queryTypes[queryType]:
-                        processedToWrite[key] = queryTypes[queryType][key]
+                            
+                    processedToWrite["#QueryType"] = queryType
+                    processedToWrite["#QueryTypeCount"] = queryTypes[queryType]
 
                     typeWriter.writerow(processedToWrite)
                     del queryTypes[queryType]
@@ -159,7 +135,12 @@ if len(queryTypes) > 0:
 
 df = pandas.read_csv(pathBase + "Query_Type_Data.tsv", sep="\t", 
                      header=0, index_col=0)
-df = df.sort(["QueryType_count"], ascending=False)
+df = df.sort(["#QueryTypeCount"], ascending=False)
 df.to_csv(pathBase + "Query_Type_Data.tsv", sep="\t")
+
+with open(pathBase + "Query_Type_Data.tsv", 'rb') as f_in, gzip.open(pathBase + "Query_Type_Data.tsv.gz", 'wb') as f_out:
+    shutil.copyfileobj(f_in, f_out)
+
+os.remove(pathBase + "Query_Type_Data.tsv")
 
 print "Done."
