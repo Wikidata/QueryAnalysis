@@ -28,6 +28,7 @@ parser.add_argument("--filter", "-f", default="", type=str, help="Constraints "
                     + "default.")
 parser.add_argument("--numberOfCombinations", "-n", type=int, help="The number N for which combinations should be generated."
                     + " Default is 100.", default = 100)
+parser.add_argument("--switchKeys", "-s", help="Switch to searching for top N user agents and their top N query types.", action="store_true")
 parser.add_argument("month", type=str,
                     help="The month for which the ranking should be " 
                     +"generated.")
@@ -55,75 +56,85 @@ if args.outputPath is not None:
 filter = utility.filter()
 
 filter.setup(args.filter)
+
+key1 = "QueryType"
+
+key2 = "user_agent"
+
+if args.switchKeys:
+    key1, key2 = key2, key1
+                            
+def preparePath(path, directory, i):
+    replacedDirectory = directory.replace("/", "SLASH")
+    
+    if len(replacedDirectory) > 140:
+        replacedDirectory = replacedDirectory[:140] + str(i)
+        i += 1
+    
+    fullPath = path + replacedDirectory + "/"
+    
+    if not os.path.exists(fullPath):
+        os.makedirs(fullPath)
+    
+    return fullPath
     
 class botClassification():
     
-    queryTypes = dict()
+    firstKeys = dict()
     
-    queryTypesCount = dict()
+    firstKeysCount = dict()
     
     actualNumber = 0
     
     def prepare(self):
-        result = fieldRanking.fieldRanking(args.month, "QueryType", args.monthsFolder, ignoreLock = args.ignoreLock, filterParams = args.filter)
+        result = fieldRanking.fieldRanking(args.month, key1, args.monthsFolder, ignoreLock = args.ignoreLock, filterParams = args.filter)
         for i, (k, v) in enumerate(sorted(result.iteritems(), key=lambda (k, v): (v, k), reverse = True)):
+            self.actualNumber = i
             if i >= args.numberOfCombinations:
-                self.actualNumber = i
                 break
-            self.queryTypes[k] = dict()
-            self.queryTypesCount[k] = v
+            self.firstKeys[k] = dict()
+            self.firstKeysCount[k] = v
     
     def handle(self, sparqlQuery, processed):
         if not filter.checkLine(processed):
             return
         
-        queryType = processed["#QueryType"]
-        if queryType not in self.queryTypes:
+        firstKey = processed["#" + key1]
+        if firstKey not in self.firstKeys:
             return
         
-        queryTypeDict = self.queryTypes[queryType]
-        userAgent = processed["#user_agent"]
-        if userAgent not in queryTypeDict:
-            queryTypeDict[userAgent] = list()
-        queryTypeDict[userAgent].append(sparqlQuery)
+        firstKeyDict = self.firstKeys[firstKey]
+        secondKey = processed["#" + key2]
+        if secondKey not in firstKeyDict:
+            firstKeyDict[secondKey] = list()
+        firstKeyDict[secondKey].append(sparqlQuery)
         
     def writeOut(self):
         tooLong = 0
         
         with open(pathBase + "readme.md", "w") as readmeFile:
-            print("This directory contains all top {} queryType-userAgent-Combinations.".format(self.actualNumber), file = readmeFile)
-            print("count\tQueryType", file = readmeFile)
-            for queryType, count in sorted(self.queryTypesCount.iteritems(), key = lambda (k, v): (v, k), reverse = True):
-                print(str(count) + "\t" + queryType, file = readmeFile)
+            print("This directory contains all top {}".format(self.actualNumber) + " " + key1 + "-" + key2 + "-Combinations.", file = readmeFile)
+            print("count\t" + key1, file = readmeFile)
+            for firstKey, count in sorted(self.firstKeysCount.iteritems(), key = lambda (k, v): (v, k), reverse = True):
+                print(str(count) + "\t" + firstKey, file = readmeFile)
         
-        for queryType, userAgentsDict in self.queryTypes.iteritems():
-
-            queryTypePath = pathBase + queryType + "/"
-            if not os.path.exists(queryTypePath):
-                os.makedirs(queryTypePath)
-
-            with open(queryTypePath + "info.txt", "w") as infoQueryTypeFile:
-                print("count\tuser_agent", file = infoQueryTypeFile)
+        for firstKey, secondKeyDict in self.firstKeys.iteritems():
                 
-                for i, (userAgent, queries) in enumerate(sorted(userAgentsDict.iteritems(), key = lambda (k, v): (len(v), k), reverse = True)):
+            firstKeyPath = preparePath(pathBase, firstKey, tooLong)
+
+            with open(firstKeyPath + "info.txt", "w") as infoFirstKeyFile:
+                print("count\t" + key2, file = infoFirstKeyFile)
+                
+                for i, (secondKey, queries) in enumerate(sorted(secondKeyDict.iteritems(), key = lambda (k, v): (len(v), k), reverse = True)):
                     if i >= args.numberOfCombinations:
                         break
                     
-                    print(str(len(queries)) + "\t" + userAgent, file = infoQueryTypeFile)
-                    
-                    replacedUserAgent = userAgent.replace("/", "SLASH")
-                    
-                    if len(replacedUserAgent) > 140:
-                        replacedUserAgent = replacedUserAgent[:140] + str(tooLong)
-                        tooLong += 1
-                    
-                    userAgentPath = queryTypePath + replacedUserAgent + "/"
-                
-                    if not os.path.exists(userAgentPath):
-                        os.makedirs(userAgentPath)
+                    print(str(len(queries)) + "\t" + secondKey, file = infoFirstKeyFile)
+                        
+                    secondKeyPath = preparePath(firstKeyPath, secondKey, tooLong)
                         
                     for i, query in enumerate(queries):
-                        with open(userAgentPath + "{}.query".format(i), "w") as queryFile:
+                        with open(secondKeyPath + "{}.query".format(i), "w") as queryFile:
                             queryFile.write(str(query))
         
 handler = botClassification()
