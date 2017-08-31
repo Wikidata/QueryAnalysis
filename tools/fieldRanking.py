@@ -9,6 +9,9 @@ import config
 # This script creates descending rankings for each day for all metrics (in the
 # array metrics)
 
+# This list contains all fields that should not be split because they could contain commas
+notToSplit = ["user_agent"]
+
 def fieldRanking(month, metric, monthsFolder = config.monthsFolder, ignoreLock = False, outputPath = None, filterParams = "", nosplitting = False, writeOut = False):
 	if os.path.isfile(utility.addMissingSlash(monthsFolder)
 		              + utility.addMissingSlash(month) + "locked") \
@@ -49,16 +52,23 @@ def fieldRanking(month, metric, monthsFolder = config.monthsFolder, ignoreLock =
 		def handle(self, sparqlQuery, processed):
 		    if not filter.checkLine(processed):
 		        return
-		    field_array = str(processed["#" + metric]).split(",")
-		    if nosplitting:
-		        field_array = sorted(field_array)
-		        self.countQuery(processed["#day"])
-		        self.countEntry(
-		            utility.listToString(field_array), processed["#day"])
+		       
+		    day = processed["#day"]
+		    entry = str(processed["#" + metric])
+		    
+		    if metric in notToSplit:
+		    	self.countQuery(day)
+		    	self.countEntry(entry, day)
 		    else:
-		        self.countQuery(processed["#day"])
-		        for entry in field_array:
-		            self.countEntry(entry, processed["#day"])
+		    	field_array = entry.split(",")
+		    	if nosplitting:
+		    		field_array = sorted(field_array)
+		        	self.countQuery(day)
+		        	self.countEntry(utility.listToString(field_array), day)
+		    	else:
+		        	self.countQuery(day)
+		        	for entry in field_array:
+		        		self.countEntry(entry, day)
 
 		def countEntry(self, entry, day):
 		    if (day not in self.dailyMetricCount):
