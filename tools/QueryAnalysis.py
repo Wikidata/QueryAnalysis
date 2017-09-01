@@ -11,6 +11,8 @@ import unifyQueryTypes
 from utility import utility
 import config
 
+os.nice(19)
+
 months = {'january': [1, 31],
           'february': [2, 28],
           'march': [3, 31],
