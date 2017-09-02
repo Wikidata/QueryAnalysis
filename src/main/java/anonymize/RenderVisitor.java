@@ -19,10 +19,23 @@ public class RenderVisitor implements SyntaxTreeBuilderVisitor
    */
   private String visitChildren(Node node, Object data) throws VisitorException
   {
+    return visitChildren(node, data, "");
+  }
+
+  /**
+   * @param node The node to be visited.
+   * @param data The data to be passed along.
+   * @param childrenLink The String connecting the results of two nodes visited.
+   * @return The results of the individual children, concatenated by childrenLink
+   * @throws VisitorException If an exception occurs while visiting the children.
+   */
+  private String visitChildren(Node node, Object data, String childrenLink) throws VisitorException
+  {
     String result = "";
     for (int i = 0; i < node.jjtGetNumChildren(); i++) {
-      result += node.jjtGetChild(i).jjtAccept(this, data.toString()).toString();
+      result += node.jjtGetChild(i).jjtAccept(this, data.toString()).toString() + childrenLink;
     }
+    //result = result.substring(0, result.length() - childrenLink.length());
     return result;
   }
 
@@ -56,7 +69,7 @@ public class RenderVisitor implements SyntaxTreeBuilderVisitor
   @Override
   public final Object visit(ASTQueryContainer node, Object data) throws VisitorException
   {
-    // System.out.println(node.dump(""));
+    System.out.println(node.dump(""));
     return visitChildren(node, data.toString());
   }
 
@@ -119,27 +132,23 @@ public class RenderVisitor implements SyntaxTreeBuilderVisitor
   @Override
   public final Object visit(ASTConstructQuery node, Object data) throws VisitorException
   {
-    // TODO Auto-generated method stub
-    String result = data.toString() + node.toString() + "\n";
-    result += visitChildren(node, data.toString() + " ");
+    String result = visitChildren(node, data.toString());
     return result;
   }
 
   @Override
   public final Object visit(ASTConstruct node, Object data) throws VisitorException
   {
-    // TODO Auto-generated method stub
-    String result = data.toString() + node.toString() + "\n";
-    result += visitChildren(node, data.toString() + " ");
+    String result = data.toString() + "CONSTRUCT {\n";
+    result += visitChildren(node, data.toString() + " ", ".\n");
+    result += data.toString() + "}\n";
     return result;
   }
 
   @Override
   public final Object visit(ASTDescribeQuery node, Object data) throws VisitorException
   {
-    // TODO Auto-generated method stub
-    String result = data.toString() + node.toString() + "\n";
-    result += visitChildren(node, data.toString() + " ");
+    String result = visitChildren(node, data.toString());
     return result;
   }
 
@@ -298,19 +307,16 @@ public class RenderVisitor implements SyntaxTreeBuilderVisitor
   @Override
   public final Object visit(ASTBasicGraphPattern node, Object data) throws VisitorException
   {
-    String result = "";
-    for (int i = 0; i < node.jjtGetNumChildren(); i++) {
-      result += node.jjtGetChild(i).jjtAccept(this, data.toString()).toString() + ".\n";
-    }
+    String result = visitChildren(node, data, ".\n");
     return result;
   }
 
   @Override
   public final Object visit(ASTOptionalGraphPattern node, Object data) throws VisitorException
   {
-    // TODO Auto-generated method stub
-    String result = data.toString() + node.toString() + "\n";
-    result += visitChildren(node, data.toString() + " ");
+    String result = data.toString() + "OPTIONAL {\n";
+    result += visitChildren(node, data.toString());
+    result += data.toString() + "}\n";
     return result;
   }
 
@@ -429,7 +435,8 @@ public class RenderVisitor implements SyntaxTreeBuilderVisitor
   @Override
   public final Object visit(ASTPathSequence node, Object data) throws VisitorException
   {
-    String result = visitChildren(node, data.toString() + " ");
+    String result = visitChildren(node, data.toString() + " ", "/");
+    result = result.substring(0, result.length() - 1);
     return result;
   }
 
@@ -462,9 +469,17 @@ public class RenderVisitor implements SyntaxTreeBuilderVisitor
   @Override
   public final Object visit(ASTPathMod node, Object data) throws VisitorException
   {
-    // TODO Auto-generated method stub
-    String result = data.toString() + node.toString() + "\n";
-    result += visitChildren(node, data.toString() + " ");
+    String result;
+    if (node.getLowerBound() == 1) {
+      result = "+";
+    } else {
+      if (node.getUpperBound() == 1) {
+        result = "?";
+      } else {
+        result = "*";
+      }
+    }
+    result += visitChildren(node, data.toString());
     return result;
   }
 

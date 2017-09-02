@@ -51,12 +51,14 @@ public class Anonymizer
       for (Path filePath : directoryStream) {
         if (Files.isRegularFile(filePath)) {
           // String queryString = new String(readAllBytes(filePath));
-          String queryString = "CONSTRUCT {  wd:Q35869 ?p ?o .  ?o ?qualifier ?f .  ?o prov:wasDerivedFrom ?u .  ?u ?a ?b .  }WHERE {  wd:Q35869 ?p ?o .  optional {?o ?qualifier ?f .}  OPTIONAL {?o prov:wasDerivedFrom ?u .  ?u ?a ?b .}  }";
+          String queryString = "SELECT ?item ?itemLabel ?adjacent ?adjacentL ?coords {  ?item wdt:P31/wdt:P279* wd:Q928830 ;        wdt:P81 wd:Q13224 ;        wdt:P625 ?coords .  OPTIONAL {    ?item p:P197 [ ps:P197 ?adjacent ; pq:P560 wd:Q585752 ] .    ?adjacent rdfs:label ?adjacentL filter (lang(?adjacentL) = \"en\")  }  SERVICE wikibase:label { bd:serviceParam wikibase:language \"en\" . }} ORDER BY ?itemLabel";
           String renderedQueryString = "";
 
           try {
             ASTQueryContainer qc = SyntaxTreeBuilder.parseQuery(queryString);
             renderedQueryString = (String) qc.jjtAccept(new RenderVisitor(), "");
+            System.out.println(renderedQueryString);
+            System.exit(0);
           }
           catch (TokenMgrError | ParseException e) {
             continue;
