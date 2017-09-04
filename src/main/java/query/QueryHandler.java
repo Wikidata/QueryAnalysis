@@ -1,12 +1,15 @@
 package query;
 
+import java.util.Map.Entry;
+
+import com.googlecode.cqengine.attribute.Attribute;
+import com.googlecode.cqengine.attribute.SimpleAttribute;
+import com.googlecode.cqengine.query.option.QueryOptions;
 import general.Main;
+import java.util.*;
 import openrdffork.TupleExprWrapper;
 import org.apache.log4j.Logger;
 import scala.Tuple2;
-
-import java.util.*;
-import java.util.Map.Entry;
 
 /**
  * @author adrian
@@ -133,6 +136,16 @@ public abstract class QueryHandler
    * The categories as a string of comma separated values.
    */
   private String categories = null;
+
+  /**
+   * The attribute for the cqengine search index (for identying unique queries).
+   */
+  public static final Attribute<QueryHandler, String> QUERY_STRING = new SimpleAttribute<QueryHandler, String>("queryString")
+  {
+    public String getValue(QueryHandler queryHandler, QueryOptions queryOptions) {
+      return queryHandler.getQueryStringWithoutPrefixes();
+    }
+  };
 
   /**
    *
