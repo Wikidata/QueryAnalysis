@@ -1,15 +1,15 @@
 package query;
 
-import java.util.Map.Entry;
-
 import com.googlecode.cqengine.attribute.Attribute;
-import com.googlecode.cqengine.attribute.SimpleAttribute;
-import com.googlecode.cqengine.query.option.QueryOptions;
 import general.Main;
-import java.util.*;
 import openrdffork.TupleExprWrapper;
 import org.apache.log4j.Logger;
 import scala.Tuple2;
+
+import java.util.*;
+import java.util.Map.Entry;
+
+import static com.googlecode.cqengine.query.QueryFactory.attribute;
 
 /**
  * @author adrian
@@ -140,12 +140,7 @@ public abstract class QueryHandler
   /**
    * The attribute for the cqengine search index (for identying unique queries).
    */
-  public static final Attribute<QueryHandler, String> QUERY_STRING = new SimpleAttribute<QueryHandler, String>("queryString")
-  {
-    public String getValue(QueryHandler queryHandler, QueryOptions queryOptions) {
-      return queryHandler.getQueryStringWithoutPrefixes();
-    }
-  };
+  public static final Attribute<QueryHandler, String> QUERY_STRING = attribute("queryString", QueryHandler::getQueryStringWithoutPrefixes);
 
   /**
    *
@@ -528,10 +523,12 @@ public abstract class QueryHandler
   private Set<String> setAnyIDs(Set<String> anyIDstoSet)
   {
     List<Map.Entry<String, String>> prefixList = new ArrayList<Map.Entry<String, String>>(Main.prefixes.entrySet());
-    Collections.sort(prefixList, new Comparator<Map.Entry<String, String>>() {
+    Collections.sort(prefixList, new Comparator<Map.Entry<String, String>>()
+    {
 
       @Override
-      public int compare(Entry<String, String> arg0, Entry<String, String> arg1) {
+      public int compare(Entry<String, String> arg0, Entry<String, String> arg1)
+      {
         return Integer.valueOf(arg1.getValue().length()).compareTo(Integer.valueOf(arg0.getValue().length()));
       }
     });
@@ -737,9 +734,10 @@ public abstract class QueryHandler
 
   /**
    * @author adrian
-   *         An enumeration specifying the different validity states.
+   * An enumeration specifying the different validity states.
    */
-  public enum Validity {
+  public enum Validity
+  {
     /**
      * Valid, but empty query.
      */

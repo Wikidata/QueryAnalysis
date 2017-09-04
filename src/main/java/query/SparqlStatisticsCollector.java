@@ -1,15 +1,9 @@
 package query;
 
-import java.util.LinkedHashMap;
-
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.openrdf.query.algebra.QueryModelNode;
+import org.openrdf.query.algebra.*;
 import org.openrdf.query.algebra.helpers.QueryModelVisitorBase;
-import org.openrdf.query.algebra.Slice;
-import org.openrdf.query.algebra.Not;
-import org.openrdf.query.algebra.Exists;
-import org.openrdf.query.algebra.StatementPattern;
-import org.openrdf.query.algebra.Service;
+
+import java.util.LinkedHashMap;
 
 
 /**

@@ -1,12 +1,9 @@
 package query;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.Collections;
-import java.util.Map;
-import com.googlecode.cqengine.index.hash.HashIndex;
-import com.googlecode.cqengine.IndexedCollection;
 import com.googlecode.cqengine.ConcurrentIndexedCollection;
-import com.googlecode.cqengine.query.Query;
+import com.googlecode.cqengine.IndexedCollection;
+import com.googlecode.cqengine.index.hash.HashIndex;
+import com.googlecode.cqengine.resultset.ResultSet;
 import org.apache.commons.collections.map.LRUMap;
 import org.apache.log4j.Logger;
 import org.openrdf.query.MalformedQueryException;
@@ -15,6 +12,12 @@ import org.openrdf.query.parser.sparql.ast.ParseException;
 import org.openrdf.query.parser.sparql.ast.SyntaxTreeBuilder;
 import org.openrdf.query.parser.sparql.ast.TokenMgrError;
 import scala.Tuple2;
+
+import java.lang.reflect.InvocationTargetException;
+import java.util.Collections;
+import java.util.Map;
+
+import static com.googlecode.cqengine.query.QueryFactory.equal;
 
 /**
  * @author Julius Gonsior
@@ -52,7 +55,7 @@ public class Cache
     //nothing to see here
   }
 
-  public static Cache getInstance()
+  public static synchronized Cache getInstance()
   {
     if (instance == null) {
       Cache.queryHandlerCgMap.addIndex(HashIndex.onAttribute(QueryHandler.QUERY_STRING));
@@ -117,24 +120,31 @@ public class Cache
   public QueryHandler getQueryHandler(QueryHandler.Validity validityStatus, String queryToAnalyze, Class queryHandlerClass)
   {
     //check if requested object already exists in cache
-    Query<QueryHandler> query = equal(QueryHandler.QUERY_STRING, queryToAnalyze); 
-    if(!)
-    if (!queryHandlerLRUMap.containsKey(tuple)) {
-      //if not create a new one
-      QueryHandler queryHandler = null;
-      try {
-        queryHandler = (QueryHandler) queryHandlerClass.getConstructor().newInstance();
-      } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
-        logger.error("Failed to create query handler object" + e);
+    try (ResultSet<QueryHandler> results = Cache.queryHandlerCgMap.retrieve(equal(QueryHandler.QUERY_STRING, queryToAnalyze))) {
+
+      Tuple2<QueryHandler.Validity, String> tuple = new Tuple2<QueryHandler.Validity, String>(validityStatus, queryToAnalyze);
+      for (QueryHandler result : results) {
+        if (result.getQueryStringWithoutPrefixes().equals(queryToAnalyze)) {
+          System.out.println("hui");
+        }
+
       }
-      queryHandler.setValidityStatus(validityStatus);
-      queryHandler.setQueryString(queryToAnalyze);
-      queryHandlerLRUMap.put(tuple, queryHandler);
-      Cache.queryHandlerCgMap.add(queryHandler);
+      if (results.isEmpty()) {
+        //if not create a new one
+        QueryHandler queryHandler = null;
+        try {
+          queryHandler = (QueryHandler) queryHandlerClass.getConstructor().newInstance();
+        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+          logger.error("Failed to create query handler object" + e);
+        }
+        queryHandler.setValidityStatus(validityStatus);
+        queryHandler.setQueryString(queryToAnalyze);
+        queryHandlerLRUMap.put(tuple, queryHandler);
+        Cache.queryHandlerCgMap.add(queryHandler);
+      }
+
+      //and return it
+      return queryHandlerLRUMap.get(tuple);
     }
-
-    //and return it
-    return queryHandlerLRUMap.get(tuple);
-
   }
 }

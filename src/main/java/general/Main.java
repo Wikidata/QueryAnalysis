@@ -144,6 +144,7 @@ public final class Main
     options.addOption("d", "noDynamicQueryTypes", false, "Disables dynamic generation of query types.");
     options.addOption("g", "noGzipOutput", false, "Disables gzipping of the output files.");
     options.addOption("e", "noExampleQueriesOutput", false, "Disables the matching of example queries.");
+    options.addOption("i", "ignoreLock", false, "Ignores the lock file.");
 
 
     //some parameters which can be changed through parameters
@@ -218,18 +219,19 @@ public final class Main
     }
     loadPropertyGroupMapping();
 
-    File lockFile;
+    File lockFile = null;
+    if (!cmd.hasOption("ignoreLock")) {
+      try {
+        lockFile = new File(workingDirectory + "locked");
 
-    try {
-      lockFile = new File(workingDirectory + "locked");
-
-      if (!lockFile.createNewFile()) {
-        logger.info("Cannot work on " + workingDirectory + " because another instance is already working on it.");
+        if (!lockFile.createNewFile()) {
+          logger.info("Cannot work on " + workingDirectory + " because another instance is already working on it.");
+          return;
+        }
+      } catch (IOException e) {
+        logger.error("Unexpected error while trying to create the lock file.", e);
         return;
       }
-    } catch (IOException e) {
-      logger.error("Unexpected error while trying to create the lock file.", e);
-      return;
     }
 
     long startTime = System.nanoTime();
@@ -254,7 +256,9 @@ public final class Main
       writeExampleQueries(outputFolder);
     }
 
-    lockFile.delete();
+    if (!cmd.hasOption("ignoreLock")) {
+      lockFile.delete();
+    }
 
     long stopTime = System.nanoTime();
     long millis = TimeUnit.MILLISECONDS.convert(stopTime - startTime, TimeUnit.NANOSECONDS);
@@ -461,11 +465,9 @@ public final class Main
         }
         if (previous.previousElementSibling() != null) {
           previous = previous.previousElementSibling();
-        }
-        else if (previous.parent() != null) {
+        } else if (previous.parent() != null) {
           previous = previous.parent();
-        }
-        else {
+        } else {
           break;
         }
       }
