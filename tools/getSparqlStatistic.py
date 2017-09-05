@@ -42,13 +42,12 @@ class SparqlStatisticHandler:
             for usedSparqlFeature in usedSparqlFeatures.split(","):
                 self.statistic[usedSparqlFeature.lstrip()] += 1
 
-    def printWithAstNames(self):
+    def printKeys(self, keys):
         result = ""
-        for featureName, featureCount in sorted(self.statistic.iteritems(),
-                                                key=lambda x: x[0],
-                                                reverse=True):
-            result += '{:<28} {:>8}/{:<8} {:>5}%'.format(
-                featureName, featureCount, self.totalCount,
+        for featureName in keys:
+            featureCount = self.statistic[featureName]
+            result += '{:<28} {:>8}\t{:>5}%'.format(
+                featureName, featureCount,
                 round(float(featureCount) / self.totalCount * 100, 2)) + "\n"
 
         print(result)
@@ -62,7 +61,13 @@ class SparqlStatisticHandler:
         self.statistic["Optional"] = self.statistic["LeftJoin"]
         self.statistic["Having*"] = self.statistic["Having"]
 
-        self.printWithAstNames()
+        # only print specified columns
+        toPrintKeys = ["Select", "Distinct", "Limit", "Offset", "Order By",
+                       "Filter", "And", "Union", "Opt", "Graph", "Not Exists",
+                       "Minus", "Exists", "Count", "Max", "Min", "Avg", "Sum",
+                       "Group By", "Having", "Service", "LangService"]
+
+        self.printKeys(toPrintKeys)
 
 
 handler = SparqlStatisticHandler()
