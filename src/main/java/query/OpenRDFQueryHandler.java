@@ -135,8 +135,17 @@ public class OpenRDFQueryHandler extends QueryHandler
       this.sparqlStatistics = SparqlStatisticsCollector.getDefaultMap();
       return;
     }
-
     SparqlStatisticsCollector sparqlStatisticsCollector = new SparqlStatisticsCollector();
+
+    // grep for having or ask
+    if (this.getQueryStringWithoutPrefixes().toLowerCase().contains("ask")) {
+      sparqlStatisticsCollector.add("Ask");
+    } else if (this.getQueryStringWithoutPrefixes().toLowerCase().contains("construct")) {
+      sparqlStatisticsCollector.add("Construct");
+    } else if (this.getQueryStringWithoutPrefixes().toLowerCase().contains("having")) {
+      sparqlStatisticsCollector.add("Having");
+    }
+
     try {
       this.query.getTupleExpr().visitChildren(sparqlStatisticsCollector);
       this.query.getTupleExpr().visit(sparqlStatisticsCollector);
@@ -146,11 +155,8 @@ public class OpenRDFQueryHandler extends QueryHandler
 
     this.sparqlStatistics = sparqlStatisticsCollector.getStatistics();
 
-    // grep for having
-    if (this.getQueryStringWithoutPrefixes().toLowerCase().contains("having")) {
-      this.sparqlStatistics.put("Having", this.sparqlStatistics.get("Having") + 1);
-    }
   }
+
 
   /**
    * {@inheritDoc}

@@ -29,6 +29,7 @@ public class SparqlStatisticsCollector extends QueryModelVisitorBase
     defaultMap.put("Add", 0);
     defaultMap.put("And", 0);
     defaultMap.put("ArbitraryLengthPath", 0);
+    defaultMap.put("Ask", 0);
     defaultMap.put("Avg", 0);
     defaultMap.put("BindingSetAssignment", 0);
     defaultMap.put("BNodeGenerator", 0);
@@ -40,10 +41,11 @@ public class SparqlStatisticsCollector extends QueryModelVisitorBase
     defaultMap.put("CompareAny", 0);
     defaultMap.put("Copy", 0);
     defaultMap.put("Count", 0);
+    defaultMap.put("Construct", 0);
     defaultMap.put("Create", 0);
     defaultMap.put("Datatype", 0);
     defaultMap.put("DeleteData", 0);
-    defaultMap.put("DescripbeOperator", 0);
+    defaultMap.put("DescribeOperator", 0);
     defaultMap.put("Difference", 0);
     defaultMap.put("Distinct", 0);
     defaultMap.put("EmptySet", 0);
@@ -117,6 +119,11 @@ public class SparqlStatisticsCollector extends QueryModelVisitorBase
     return statistics;
   }
 
+  public void add(String keyword)
+  {
+    statistics.put(keyword, statistics.get(keyword) + 1);
+  }
+
   /**
    * default method which get's called by all meet statements
    *
@@ -126,8 +133,9 @@ public class SparqlStatisticsCollector extends QueryModelVisitorBase
   @Override
   public void meetNode(QueryModelNode node) throws Exception
   {
+    System.out.println(node.getParentNode());
     String className = node.getClass().getSimpleName();
-    statistics.put(className, statistics.get(className) + 1);
+    this.add(className);
     super.meetNode(node);
   }
 
@@ -138,10 +146,10 @@ public class SparqlStatisticsCollector extends QueryModelVisitorBase
   public void meet(Slice node) throws Exception
   {
     if (node.getOffset() != -1) {
-      statistics.put("Offset", statistics.get("Offset") + 1);
+      this.add("Offset");
     }
     if (node.getLimit() != -1) {
-      statistics.put("Limit", statistics.get("Limit") + 1);
+      this.add("Limit");
     }
 
     super.meetNode(node);
@@ -154,9 +162,9 @@ public class SparqlStatisticsCollector extends QueryModelVisitorBase
   public void meet(Exists node) throws Exception
   {
     if (node.getParentNode() instanceof Not) {
-      statistics.put("Not Exists", statistics.get("Not Exists") + 1);
+      this.add("Not Exists");
     } else {
-      statistics.put("Exists", statistics.get("Exists") + 1);
+      this.add("Exists");
     }
     super.meetNode(node);
   }
@@ -165,11 +173,10 @@ public class SparqlStatisticsCollector extends QueryModelVisitorBase
   public void meet(StatementPattern node) throws Exception
   {
     if (node.getParentNode() instanceof Service && node.getSubjectVar().getName().equals("-const-http://www.bigdata.com/rdf#serviceParam-uri") && node.getPredicateVar().getName().equals("-const-http://wikiba.se/ontology#language-uri")) {
-      statistics.put("LangService", statistics.get("LangService") + 1);
-      statistics.put("Service", statistics.get("Service") - 1);
+      this.add("LangService");
+      this.add("Service");
     }
     super.meetNode(node);
-
   }
 
 }

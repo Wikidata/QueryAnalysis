@@ -25,8 +25,8 @@ args = parser.parse_args()
 if os.path.isfile(utility.addMissingSlash(args.monthsFolder)
                   + utility.addMissingSlash(args.month) + "locked") \
    and not args.ignoreLock:
-    print "ERROR: The month " + args.month + " is being edited at the moment."
-    + " Use -i if you want to force the execution of this script."
+    print("ERROR: The month " + str(args.month) + " is being edited at the moment." +
+          " Use -i if you want to force the execution of this script.")
     sys.exit()
 
 
@@ -53,6 +53,7 @@ class SparqlStatisticHandler:
         print(result)
 
     def printSparqlTranslation(self):
+        pprint(self.statistic)
         self.statistic["Select"] = self.statistic["ProjectionElemList"]
         self.statistic["Order By"] = self.statistic["Order"]
         self.statistic["Group By"] = self.statistic["Group"]
@@ -60,12 +61,13 @@ class SparqlStatisticHandler:
         self.statistic["Minus"] = self.statistic["Difference"]
         self.statistic["Optional"] = self.statistic["LeftJoin"]
         self.statistic["Having*"] = self.statistic["Having"]
+        self.statistic["Describe"] = self.statistic["DescribeOperator"]
 
         # only print specified columns
-        toPrintKeys = ["Select", "Distinct", "Limit", "Offset", "Order By",
+        toPrintKeys = ["Select", "Ask", "Describe", "Construct", "Distinct", "Limit", "Offset", "Order By",
                        "Filter", "And", "Union", "Opt", "Graph", "Not Exists",
                        "Minus", "Exists", "Count", "Max", "Min", "Avg", "Sum",
-                       "Group By", "Having", "Service", "LangService"]
+                       "Group By", "Having*", "Service", "LangService"]
 
         self.printKeys(toPrintKeys)
 
