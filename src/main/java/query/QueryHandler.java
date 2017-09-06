@@ -1,6 +1,6 @@
 package query;
 
-import com.googlecode.cqengine.attribute.Attribute;
+import com.googlecode.cqengine.attribute.SimpleAttribute;
 import general.Main;
 import openrdffork.TupleExprWrapper;
 import org.apache.log4j.Logger;
@@ -140,7 +140,7 @@ public abstract class QueryHandler
   /**
    * The attribute for the cqengine search index (for identying unique queries).
    */
-  public static final Attribute<QueryHandler, String> QUERY_STRING = attribute("queryString", QueryHandler::getQueryStringWithoutPrefixes);
+  public static final SimpleAttribute<QueryHandler, String> QUERY_STRING = attribute("queryString", QueryHandler::getQueryStringWithoutPrefixes);
 
   /**
    * The day at which the Query was being created;

@@ -3,6 +3,7 @@ package query;
 import com.googlecode.cqengine.ConcurrentIndexedCollection;
 import com.googlecode.cqengine.IndexedCollection;
 import com.googlecode.cqengine.index.hash.HashIndex;
+import com.googlecode.cqengine.persistence.disk.DiskPersistence;
 import com.googlecode.cqengine.resultset.ResultSet;
 import org.apache.commons.collections.map.LRUMap;
 import org.apache.log4j.Logger;
@@ -44,7 +45,7 @@ public class Cache
    */
   private Map<Tuple2<QueryHandler.Validity, String>, QueryHandler> queryHandlerLRUMap = (Map<Tuple2<QueryHandler.Validity, String>, QueryHandler>) Collections.synchronizedMap(new LRUMap(100000));
 
-  private static IndexedCollection<QueryHandler> queryHandlerCgMap = new ConcurrentIndexedCollection<QueryHandler>();
+  private static IndexedCollection<QueryHandler> queryHandlerCgMap = new ConcurrentIndexedCollection<>(DiskPersistence.onPrimaryKey(QueryHandler.QUERY_STRING));
 
 
   /**
@@ -123,6 +124,7 @@ public class Cache
     try (ResultSet<QueryHandler> results = Cache.queryHandlerCgMap.retrieve(equal(QueryHandler.QUERY_STRING, queryToAnalyze))) {
 
       if (results.isEmpty()) {
+        results.close();
         //if not create a new one
         QueryHandler queryHandler = null;
         try {
@@ -138,6 +140,7 @@ public class Cache
         return queryHandler;
       } else {
         for (QueryHandler queryHandler : results) {
+          results.close();
           queryHandler.setLine(line);
           queryHandler.setDay(day);
           queryHandler.updateOriginalId();
