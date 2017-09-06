@@ -63,7 +63,7 @@ class SparqlStatisticHandler:
 
         # only print specified columns
         toPrintKeys = ["Select", "Distinct", "Limit", "Offset", "Order By",
-                       "Filter", "And", "Union", "Opt", "Graph", "Not Exists",
+                       "Filter", "And", "Union", "Optional", "Graph", "Not Exists",
                        "Minus", "Exists", "Count", "Max", "Min", "Avg", "Sum",
                        "Group By", "Having", "Service", "LangService"]
 
