@@ -117,18 +117,11 @@ public class Cache
     return queryHandlerLRUMap.get(tuple);
   }
 
-  public QueryHandler getQueryHandler(QueryHandler.Validity validityStatus, String queryToAnalyze, Class queryHandlerClass)
+  public QueryHandler getQueryHandler(QueryHandler.Validity validityStatus, String queryToAnalyze, long line, int day, Class queryHandlerClass)
   {
     //check if requested object already exists in cache
     try (ResultSet<QueryHandler> results = Cache.queryHandlerCgMap.retrieve(equal(QueryHandler.QUERY_STRING, queryToAnalyze))) {
 
-      Tuple2<QueryHandler.Validity, String> tuple = new Tuple2<QueryHandler.Validity, String>(validityStatus, queryToAnalyze);
-      for (QueryHandler result : results) {
-        if (result.getQueryStringWithoutPrefixes().equals(queryToAnalyze)) {
-          System.out.println("hui");
-        }
-
-      }
       if (results.isEmpty()) {
         //if not create a new one
         QueryHandler queryHandler = null;
@@ -138,13 +131,21 @@ public class Cache
           logger.error("Failed to create query handler object" + e);
         }
         queryHandler.setValidityStatus(validityStatus);
+        queryHandler.setLine(line);
+        queryHandler.setDay(day);
         queryHandler.setQueryString(queryToAnalyze);
-        queryHandlerLRUMap.put(tuple, queryHandler);
         Cache.queryHandlerCgMap.add(queryHandler);
+        return queryHandler;
+      } else {
+        for (QueryHandler queryHandler : results) {
+          queryHandler.setLine(line);
+          queryHandler.setDay(day);
+          queryHandler.updateOriginalId();
+          return queryHandler;
+        }
+        //will never be reached
+        return null;
       }
-
-      //and return it
-      return queryHandlerLRUMap.get(tuple);
     }
   }
 }

@@ -384,4 +384,11 @@ public class OpenRDFQueryHandler extends QueryHandler
     }
   }
 
+  @Override
+  public void updateOriginalId()
+  {
+    this.setOriginalId(this.getUniqeId());
+    this.setUniqeId(this.day, this.line, this.getQueryStringWithoutPrefixes());
+  }
+
 }

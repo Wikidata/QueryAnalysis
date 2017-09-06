@@ -73,6 +73,8 @@ public class OutputHandlerTSV extends OutputHandler
 
     List<String> header = new ArrayList<>();
     header.add("#Valid");
+    header.add("#UniqueId");
+    header.add("#OriginalId");
     header.add("#ToolName");
     header.add("#ToolVersion");
     header.add("#ExampleQueryStringComparison");
@@ -117,12 +119,11 @@ public class OutputHandlerTSV extends OutputHandler
    * @param currentFile    The file from which the data to be written originates.
    */
   @Override
-  public final void writeLine(String queryToAnalyze, QueryHandler.Validity validityStatus, String userAgent, long currentLine, String currentFile)
+  public final void writeLine(String queryToAnalyze, QueryHandler.Validity validityStatus, String userAgent, long currentLine, int day, String currentFile)
   {
-    QueryHandler queryHandler = cache.getQueryHandler(validityStatus, queryToAnalyze, queryHandlerClass);
+    QueryHandler queryHandler = cache.getQueryHandler(validityStatus, queryToAnalyze, currentLine, day, queryHandlerClass);
 
     queryHandler.setUserAgent(userAgent);
-    queryHandler.setCurrentLine(currentLine);
     queryHandler.setCurrentFile(currentFile);
     queryHandler.setThreadNumber(threadNumber);
     queryHandler.setQueryTypes(queryTypes);
@@ -130,6 +131,8 @@ public class OutputHandlerTSV extends OutputHandler
     // the order in which fields are being written to this list is important - it needs to be the same as the one for the header above!
     List<Object> line = new ArrayList<>();
     line.add(queryHandler.getValidityStatus());
+    line.add(queryHandler.getUniqeId());
+    line.add(queryHandler.getOriginalId());
     line.add(queryHandler.getToolName());
     line.add(queryHandler.getToolVersion());
     if (Main.withBots || queryHandler.getToolName().equals("UNKNOWN") || queryHandler.getToolName().equals("USER")) {

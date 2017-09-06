@@ -62,7 +62,7 @@ public class InputHandlerParquet extends InputHandler implements Serializable
   }
 
   @Override
-  public final void parseTo(final OutputHandler outputHandler)
+  public final void parseTo(final OutputHandler outputHandler, int day)
   {
     Iterator<Row> iterator = inputDF.toLocalIterator();
     while (iterator.hasNext()) {
@@ -75,7 +75,7 @@ public class InputHandlerParquet extends InputHandler implements Serializable
       convertedRow[3] = row.get(columnNames.get("ts"));
       convertedRow[4] = row.get(columnNames.get("agent_type"));
       convertedRow[5] = row.get(columnNames.get("hour"));
-      outputHandler.writeLine(queryTuple._1, queryTuple._2, convertedRow[2].toString(), -1, inputFile);
+      outputHandler.writeLine(queryTuple._1, queryTuple._2, convertedRow[2].toString(), -1, day, inputFile);
     }
     outputHandler.closeFiles();
   }

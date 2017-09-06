@@ -91,7 +91,7 @@ public abstract class QueryHandler
   /**
    * Saves the current line the query was from.
    */
-  private long currentLine;
+  protected long line;
   /**
    * Saves the current file the query was from.
    */
@@ -141,6 +141,43 @@ public abstract class QueryHandler
    * The attribute for the cqengine search index (for identying unique queries).
    */
   public static final Attribute<QueryHandler, String> QUERY_STRING = attribute("queryString", QueryHandler::getQueryStringWithoutPrefixes);
+
+  /**
+   * The day at which the Query was being created;
+   * Used for the calculation of the uniqueId.
+   */
+  protected int day;
+
+  public String getUniqeId()
+  {
+    return uniqeId;
+  }
+
+  public String getOriginalId()
+  {
+    return originalId;
+  }
+
+  protected void setUniqeId(int day, long line, String queryStringToSet)
+  {
+    this.uniqeId = day + "_" + line + "_" + queryStringToSet.hashCode();
+  }
+
+  /**
+   * The unique id consists of the hash of the QueryString combined with the line it was being executed.
+   */
+  private String uniqeId;
+
+  protected void setOriginalId(String originalId)
+  {
+    this.originalId = originalId;
+  }
+
+  /**
+   * The id of the first queryHandler with this queryString.
+   */
+  private String originalId;
+
 
   /**
    *
@@ -193,6 +230,8 @@ public abstract class QueryHandler
    */
   public final void setQueryString(String queryStringToSet)
   {
+    this.setUniqeId(this.day, this.line, queryStringToSet);
+    this.setOriginalId(this.getUniqeId());
     if (queryStringToSet.equals("")) {
       this.validityStatus = Validity.EMPTY;
     } else if (validityStatus.getValue() > -1) {
@@ -336,17 +375,17 @@ public abstract class QueryHandler
   /**
    * @return the line the query originated from
    */
-  public final long getCurrentLine()
+  public final long getLine()
   {
-    return currentLine;
+    return line;
   }
 
   /**
-   * @param currentLine the current line the query was from
+   * @param line the current line the query was from
    */
-  public final void setCurrentLine(long currentLine)
+  public final void setLine(long line)
   {
-    this.currentLine = currentLine;
+    this.line = line;
   }
 
   /**
@@ -731,6 +770,13 @@ public abstract class QueryHandler
     }
     return coordinatesString;
   }
+
+  public void setDay(int day)
+  {
+    this.day = day;
+  }
+
+  public abstract void updateOriginalId();
 
   /**
    * @author adrian
