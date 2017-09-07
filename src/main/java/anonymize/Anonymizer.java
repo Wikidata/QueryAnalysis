@@ -50,17 +50,25 @@ public class Anonymizer
         Files.newDirectoryStream(Paths.get("/home/adrian/workspace/java/months/inputData/processedLogData/exampleQueries/"))) {
       for (Path filePath : directoryStream) {
         if (Files.isRegularFile(filePath)) {
-          // String queryString = new String(readAllBytes(filePath));
-          String queryString = "SELECT ?item ?itemLabel ?adjacent ?adjacentL ?coords {  ?item wdt:P31/wdt:P279* wd:Q928830 ;        wdt:P81 wd:Q13224 ;        wdt:P625 ?coords .  OPTIONAL {    ?item p:P197 [ ps:P197 ?adjacent ; pq:P560 wd:Q585752 ] .    ?adjacent rdfs:label ?adjacentL filter (lang(?adjacentL) = \"en\")  }  SERVICE wikibase:label { bd:serviceParam wikibase:language \"en\" . }} ORDER BY ?itemLabel";
+          String queryString = new String(readAllBytes(filePath));
+
+          // Weeding out the ones we can't actually parse
+          try {
+            ParsedQuery parsedQuery = new StandardizingSPARQLParser().parseQuery(queryString, query.OpenRDFQueryHandler.BASE_URI);
+          } catch (MalformedQueryException e) {
+            continue;
+          }
+
+
           String renderedQueryString = "";
 
           try {
             ASTQueryContainer qc = SyntaxTreeBuilder.parseQuery(queryString);
+            StandardizingSPARQLParser.debug(qc);
             renderedQueryString = (String) qc.jjtAccept(new RenderVisitor(), "");
-            System.out.println(renderedQueryString);
-            System.exit(0);
           }
           catch (TokenMgrError | ParseException e) {
+            e.printStackTrace();
             continue;
           }
           catch (VisitorException e) {

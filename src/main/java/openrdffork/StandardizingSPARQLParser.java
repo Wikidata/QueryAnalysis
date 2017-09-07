@@ -31,7 +31,7 @@ public class StandardizingSPARQLParser extends SPARQLParser
    *
    * @param queryToBeDebugged The query to be debugged
    */
-  private void debug(ASTQueryContainer queryToBeDebugged)
+  public static void debug(ASTQueryContainer queryToBeDebugged)
   {
     try {
       queryToBeDebugged.jjtAccept(new ASTVisitorBase()
@@ -77,7 +77,7 @@ public class StandardizingSPARQLParser extends SPARQLParser
    * @param queryContainer The query to be normalized
    * @throws MalformedQueryException if the query was malformed
    */
-  private void normalize(ASTQueryContainer queryContainer) throws MalformedQueryException
+  public static void normalize(ASTQueryContainer queryContainer) throws MalformedQueryException
   {
     final Map<String, Integer> variables = new HashMap<>();
     final Map<String, Integer> strings = new HashMap<>();

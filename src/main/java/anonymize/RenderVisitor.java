@@ -1,5 +1,6 @@
 package anonymize;
 
+import org.openrdf.query.algebra.Compare.CompareOp;
 import org.openrdf.query.parser.sparql.ast.*;
 
 /**
@@ -9,17 +10,24 @@ import org.openrdf.query.parser.sparql.ast.*;
 public class RenderVisitor implements SyntaxTreeBuilderVisitor
 {
   /**
-   * @param node
-   *          The node to be visited.
-   * @param data
-   *          The data to be passed along.
+   * The default value to link two visited children.
+   */
+  private String defaultChildrenLink = "";
+
+  /**
+   * The default value to start visiting children.
+   */
+  private int defaultStartIndex = 0;
+
+  /**
+   * @param node The node to be visited.
+   * @param data The data to be passed along.
    * @return The concatenated results of the children visit methods.
-   * @throws VisitorException
-   *           If an exception occurs while visiting the children.
+   * @throws VisitorException If an exception occurs while visiting the children.
    */
   private String visitChildren(Node node, Object data) throws VisitorException
   {
-    return visitChildren(node, data, "");
+    return visitChildren(node, data, defaultChildrenLink, defaultStartIndex);
   }
 
   /**
@@ -31,11 +39,87 @@ public class RenderVisitor implements SyntaxTreeBuilderVisitor
    */
   private String visitChildren(Node node, Object data, String childrenLink) throws VisitorException
   {
+    return visitChildren(node, data, childrenLink, defaultStartIndex);
+  }
+
+  /**
+   * @param node The node to be visited.
+   * @param data The data to be passed along.
+   * @param startIndex The start index for the children to be visited.
+   * @return The results of the individual children, concatenated by childrenLink
+   * @throws VisitorException If an exception occurs while visiting the children.
+   */
+  private String visitChildren(Node node, Object data, int startIndex) throws VisitorException
+  {
+    return visitChildren(node, data, defaultChildrenLink, startIndex);
+  }
+
+  /**
+   * @param node The node to be visited.
+   * @param data The data to be passed along.
+   * @param childrenLink The String connecting the results of two nodes visited.
+   * @param startIndex The start index for the children to be visited.
+   * @return The results of the individual children, concatenated by childrenLink
+   * @throws VisitorException If an exception occurs while visiting the children.
+   */
+  private String visitChildren(Node node, Object data, String childrenLink, int startIndex) throws VisitorException
+  {
     String result = "";
-    for (int i = 0; i < node.jjtGetNumChildren(); i++) {
-      result += node.jjtGetChild(i).jjtAccept(this, data.toString()).toString() + childrenLink;
+    for (int i = startIndex; i < node.jjtGetNumChildren(); i++) {
+      result += node.jjtGetChild(i).jjtAccept(this, data.toString()).toString();
+      if (i < node.jjtGetNumChildren() - 1) {
+        result += childrenLink;
+      }
     }
-    //result = result.substring(0, result.length() - childrenLink.length());
+    return result;
+  }
+  /**
+   * @param node The node to be visited.
+   * @param data The data to be passed along.
+   * @param call The call to be constructed.
+   * @return The content of the child nodes wrapped in <call> ( <child nodes> ).
+   * @throws VisitorException If an exception occurs while visiting the children.
+   */
+  private String BuiltInCall(Node node, Object data, String call) throws VisitorException
+  {
+    return BuiltInCall(node, data, call, "");
+  }
+  /**
+   * @param node The node to be visited.
+   * @param data The data to be passed along.
+   * @param call The call to be constructed.
+   * @param childrenLink The string used to concatenate the child nodes.
+   * @return The content of the child nodes wrapped in <call> ( <child nodes> ).
+   * @throws VisitorException If an exception occurs while visiting the children.
+   */
+  private String BuiltInCall(Node node, Object data, String call, String childrenLink) throws VisitorException
+  {
+    String result = " " + call + " ( ";
+    for (int i = 0; i < node.jjtGetNumChildren(); i++) {
+      result += node.jjtGetChild(i).jjtAccept(this, data).toString();
+      if (i < node.jjtGetNumChildren() - 1) {
+        result += childrenLink;
+      }
+    }
+    result += " ) ";
+    return result;
+  }
+
+  /**
+   * @param node The node to be visited.
+   * @param data The data to be passed along.
+   * @param call The call to be constructed.
+   * @return The content of the child nodes wrapped in <call> ( DISTINCT? <child nodes> ).
+   * @throws VisitorException If an exception occurs while visiting the children.
+   */
+  private String Aggregate(ASTAggregate node, Object data, String call) throws VisitorException
+  {
+    String result = " " + call + " (";
+    if (node.isDistinct()) {
+      result += " DISTINCT ";
+    }
+    result += visitChildren(node, data.toString());
+    result += " )";
     return result;
   }
 
@@ -69,7 +153,7 @@ public class RenderVisitor implements SyntaxTreeBuilderVisitor
   @Override
   public final Object visit(ASTQueryContainer node, Object data) throws VisitorException
   {
-    System.out.println(node.dump(""));
+    //System.out.println(node.dump(""));
     return visitChildren(node, data.toString());
   }
 
@@ -85,9 +169,16 @@ public class RenderVisitor implements SyntaxTreeBuilderVisitor
   @Override
   public final Object visit(ASTPrefixDecl node, Object data) throws VisitorException
   {
-    // TODO Auto-generated method stub
-    String result = data.toString() + node.toString() + "\n";
-    result += visitChildren(node, data.toString() + " ");
+    // TODO Could this have a number of children different from 1?
+    String result;
+    if (node.jjtGetNumChildren() == 1) {
+      result = data.toString() + "PREFIX ";
+      result += node.getPrefix() + ":";
+      result += node.jjtGetChild(0).jjtAccept(this, data);
+      result += "\n";
+    } else {
+      result = visitChildren(node, data.toString() + " ");
+    }
     return result;
   }
 
@@ -120,9 +211,11 @@ public class RenderVisitor implements SyntaxTreeBuilderVisitor
   {
     String result;
     if (node.jjtGetNumChildren() == 2) {
-      result = node.jjtGetChild(0).jjtAccept(this, data.toString()).toString();
+      result = "( ";
+      result += node.jjtGetChild(0).jjtAccept(this, data.toString()).toString();
       result += " AS ";
       result += node.jjtGetChild(1).jjtAccept(this, data.toString()).toString();
+      result += " )";
     } else {
       result = visitChildren(node, data.toString() + " ");
     }
@@ -141,6 +234,7 @@ public class RenderVisitor implements SyntaxTreeBuilderVisitor
   {
     String result = data.toString() + "CONSTRUCT {\n";
     result += visitChildren(node, data.toString() + " ", ".\n");
+    result += "\n";
     result += data.toString() + "}\n";
     return result;
   }
@@ -199,27 +293,36 @@ public class RenderVisitor implements SyntaxTreeBuilderVisitor
   @Override
   public final Object visit(ASTInlineData node, Object data) throws VisitorException
   {
-    // TODO Auto-generated method stub
-    String result = data.toString() + node.toString() + "\n";
-    result += visitChildren(node, data.toString() + " ");
+    String result = data.toString() + " VALUES ( ";
+    int i = 0;
+    while (node.jjtGetChild(i) instanceof ASTVar) {
+      result += node.jjtGetChild(i).jjtAccept(this, data).toString();
+      i++;
+    }
+    result += " ) {\n";
+    result += visitChildren(node, data.toString() + " ", i);
+    result += data.toString() + " }\n";
     return result;
   }
 
   @Override
   public final Object visit(ASTBindingSet node, Object data) throws VisitorException
   {
-    // TODO Auto-generated method stub
-    String result = data.toString() + node.toString() + "\n";
-    result += visitChildren(node, data.toString() + " ");
+    String result = data.toString() + " ( ";
+    result += visitChildren(node, data.toString());
+    result += " )\n";
     return result;
   }
 
   @Override
   public final Object visit(ASTBindingValue node, Object data) throws VisitorException
   {
-    // TODO Auto-generated method stub
-    String result = data.toString() + node.toString() + "\n";
-    result += visitChildren(node, data.toString() + " ");
+    String result;
+    if (node.jjtGetNumChildren() == 0) {
+      result = " UNDEF ";
+    } else {
+      result = visitChildren(node, data.toString());
+    }
     return result;
   }
 
@@ -259,9 +362,9 @@ public class RenderVisitor implements SyntaxTreeBuilderVisitor
   @Override
   public final Object visit(ASTHavingClause node, Object data) throws VisitorException
   {
-    // TODO Auto-generated method stub
-    String result = data.toString() + node.toString() + "\n";
-    result += visitChildren(node, data.toString() + " ");
+    String result = " HAVING ";
+    result += visitChildren(node, data.toString());
+    result += " ";
     return result;
   }
 
@@ -270,11 +373,12 @@ public class RenderVisitor implements SyntaxTreeBuilderVisitor
   {
     String result;
     if (node.isAscending()) {
-      result = " ASC ";
+      result = "ASC(";
     } else {
-      result = " DESC ";
+      result = " DESC(";
     }
     result += visitChildren(node, data.toString() + " ");
+    result += ")";
     return result;
   }
 
@@ -282,16 +386,17 @@ public class RenderVisitor implements SyntaxTreeBuilderVisitor
   public final Object visit(ASTLimit node, Object data) throws VisitorException
   {
     String result = data.toString() + "LIMIT " + node.getValue();
-    result += visitChildren(node, data.toString() + " ") + "\n";
+    result += visitChildren(node, data.toString());
+    result += "\n";
     return result;
   }
 
   @Override
   public final Object visit(ASTOffset node, Object data) throws VisitorException
   {
-    // TODO Auto-generated method stub
-    String result = data.toString() + node.toString() + "\n";
-    result += visitChildren(node, data.toString() + " ");
+    String result = data.toString() + "OFFSET " + node.getValue();
+    result += visitChildren(node, data.toString());
+    result += "\n";
     return result;
   }
 
@@ -307,7 +412,18 @@ public class RenderVisitor implements SyntaxTreeBuilderVisitor
   @Override
   public final Object visit(ASTBasicGraphPattern node, Object data) throws VisitorException
   {
-    String result = visitChildren(node, data, ".\n");
+    String result = "";
+    for (int i = 0; i < node.jjtGetNumChildren(); i++) {
+      // TODO Ugly workaround, but the tree does not differentiate between filter and constraint.
+      if (node.jjtGetChild(i) instanceof ASTConstraint) {
+        result += " FILTER (";
+        result += node.jjtGetChild(i).jjtAccept(this, data.toString()).toString();
+        result += ") ";
+      } else {
+        result += node.jjtGetChild(i).jjtAccept(this, data.toString()).toString();
+      }
+      result += ".\n";
+    }
     return result;
   }
 
@@ -332,17 +448,22 @@ public class RenderVisitor implements SyntaxTreeBuilderVisitor
   @Override
   public final Object visit(ASTUnionGraphPattern node, Object data) throws VisitorException
   {
-    // TODO Auto-generated method stub
-    String result = data.toString() + node.toString() + "\n";
-    result += visitChildren(node, data.toString() + " ");
+    // TODO Could this have a number of children different from 2?
+    String result;
+    if (node.jjtGetNumChildren() == 2) {
+      result = node.jjtGetChild(0).jjtAccept(this, data).toString();
+      result += data.toString() + " UNION\n";
+      result += node.jjtGetChild(1).jjtAccept(this, data).toString();
+    } else {
+      result = visitChildren(node, data.toString());
+    }
     return result;
   }
 
   @Override
   public final Object visit(ASTMinusGraphPattern node, Object data) throws VisitorException
   {
-    // TODO Auto-generated method stub
-    String result = data.toString() + node.toString() + "\n";
+    String result = data.toString() + " MINUS ";
     result += visitChildren(node, data.toString() + " ");
     return result;
   }
@@ -359,18 +480,20 @@ public class RenderVisitor implements SyntaxTreeBuilderVisitor
   @Override
   public final Object visit(ASTConstraint node, Object data) throws VisitorException
   {
-    // TODO Auto-generated method stub
-    String result = data.toString() + node.toString() + "\n";
-    result += visitChildren(node, data.toString() + " ");
+    // TODO Could there be cases where this does not represent filter?
+    String result = data.toString() + " ( ";
+    result += visitChildren(node, data.toString());
+    result += " ) \n";
     return result;
   }
 
   @Override
   public final Object visit(ASTFunctionCall node, Object data) throws VisitorException
   {
-    // TODO Auto-generated method stub
-    String result = data.toString() + node.toString() + "\n";
-    result += visitChildren(node, data.toString() + " ");
+    String result = node.jjtGetChild(0).jjtAccept(this, data).toString();
+    result += " (";
+    result += this.visitChildren(node, data, ", ", 1);
+    result += ") ";
     return result;
   }
 
@@ -395,7 +518,7 @@ public class RenderVisitor implements SyntaxTreeBuilderVisitor
   @Override
   public final Object visit(ASTObjectList node, Object data) throws VisitorException
   {
-    String result = visitChildren(node, data.toString());
+    String result = visitChildren(node, data.toString(), ", ");
     return result;
   }
 
@@ -428,7 +551,7 @@ public class RenderVisitor implements SyntaxTreeBuilderVisitor
   @Override
   public final Object visit(ASTPathAlternative node, Object data) throws VisitorException
   {
-    String result = visitChildren(node, data.toString() + " ");
+    String result = visitChildren(node, data.toString() + " ", "|");
     return result;
   }
 
@@ -436,7 +559,6 @@ public class RenderVisitor implements SyntaxTreeBuilderVisitor
   public final Object visit(ASTPathSequence node, Object data) throws VisitorException
   {
     String result = visitChildren(node, data.toString() + " ", "/");
-    result = result.substring(0, result.length() - 1);
     return result;
   }
 
@@ -486,9 +608,9 @@ public class RenderVisitor implements SyntaxTreeBuilderVisitor
   @Override
   public final Object visit(ASTBlankNodePropertyList node, Object data) throws VisitorException
   {
-    // TODO Auto-generated method stub
-    String result = data.toString() + node.toString() + "\n";
-    result += visitChildren(node, data.toString() + " ");
+    String result = " [ ";
+    result += visitChildren(node, data.toString());
+    result += " ] ";
     return result;
   }
 
@@ -512,62 +634,68 @@ public class RenderVisitor implements SyntaxTreeBuilderVisitor
   @Override
   public final Object visit(ASTOr node, Object data) throws VisitorException
   {
-    // TODO Auto-generated method stub
-    String result = data.toString() + node.toString() + "\n";
-    result += visitChildren(node, data.toString() + " ");
+    String result = "";
+    result += visitChildren(node, data.toString(), " || ");
     return result;
   }
 
   @Override
   public final Object visit(ASTAnd node, Object data) throws VisitorException
   {
-    // TODO Auto-generated method stub
-    String result = data.toString() + node.toString() + "\n";
-    result += visitChildren(node, data.toString() + " ");
+    String result = "";
+    result += visitChildren(node, data.toString(), " && ");
     return result;
   }
 
   @Override
   public final Object visit(ASTCompare node, Object data) throws VisitorException
   {
-    // TODO Auto-generated method stub
-    String result = data.toString() + node.toString() + "\n";
-    result += visitChildren(node, data.toString() + " ");
+    // TODO Could this have a number of children different from 2?
+    String result;
+    if (node.jjtGetNumChildren() == 2) {
+      result = "( " + node.jjtGetChild(0).jjtAccept(this, data).toString();
+      result += " " + node.getOperator().getSymbol() + " ";
+      result += node.jjtGetChild(1).jjtAccept(this, data).toString();
+      result += " )";
+    } else {
+      result = visitChildren(node, data.toString());
+    }
     return result;
   }
 
   @Override
   public final Object visit(ASTInfix node, Object data) throws VisitorException
   {
-    // TODO Auto-generated method stub
-    String result = data.toString() + node.toString() + "\n";
-    result += visitChildren(node, data.toString() + " ");
+    // TODO Could there be other infix forms?
+    String result = visitChildren(node, data.toString());
     return result;
   }
 
   @Override
   public final Object visit(ASTMath node, Object data) throws VisitorException
   {
-    // TODO Auto-generated method stub
-    String result = data.toString() + node.toString() + "\n";
-    result += visitChildren(node, data.toString() + " ");
+    // TODO Are we setting the brackets correct?
+    String result = " ( ";
+    result += visitChildren(node, data.toString(), node.getOperator().getSymbol());
+    result += " ) ";
     return result;
   }
 
   @Override
   public final Object visit(ASTNot node, Object data) throws VisitorException
   {
-    // TODO Auto-generated method stub
-    String result = data.toString() + node.toString() + "\n";
-    result += visitChildren(node, data.toString() + " ");
+    String result = "!";
+    result += visitChildren(node, data.toString());
     return result;
   }
 
   @Override
   public final Object visit(ASTNumericLiteral node, Object data) throws VisitorException
   {
-    // TODO Auto-generated method stub
-    String result = data.toString() + node.toString() + "\n";
+    // TODO Find out if this can have a RDFValue
+    String result = '"' + node.getValue() + "\"^^<";
+    result += node.getDatatype();
+    result += "> ";
     result += visitChildren(node, data.toString() + " ");
     return result;
   }
@@ -584,565 +712,410 @@ public class RenderVisitor implements SyntaxTreeBuilderVisitor
     } else {
       result += visitChildren(node, data.toString());
     }
-    result += ")";
+    result += " )";
     return result;
   }
 
   @Override
   public final Object visit(ASTSum node, Object data) throws VisitorException
   {
-    // TODO Auto-generated method stub
-    String result = data.toString() + node.toString() + "\n";
-    result += visitChildren(node, data.toString() + " ");
-    return result;
+    return Aggregate(node, data, "SUM");
   }
 
   @Override
   public final Object visit(ASTMin node, Object data) throws VisitorException
   {
-    // TODO Auto-generated method stub
-    String result = data.toString() + node.toString() + "\n";
-    result += visitChildren(node, data.toString() + " ");
-    return result;
+    return Aggregate(node, data, "MIN");
   }
 
   @Override
   public final Object visit(ASTMax node, Object data) throws VisitorException
   {
-    // TODO Auto-generated method stub
-    String result = data.toString() + node.toString() + "\n";
-    result += visitChildren(node, data.toString() + " ");
-    return result;
+    return Aggregate(node, data, "MAX");
   }
 
   @Override
   public final Object visit(ASTAvg node, Object data) throws VisitorException
   {
-    // TODO Auto-generated method stub
-    String result = data.toString() + node.toString() + "\n";
-    result += visitChildren(node, data.toString() + " ");
-    return result;
+    return Aggregate(node, data, "AVG");
   }
 
   @Override
   public final Object visit(ASTSample node, Object data) throws VisitorException
   {
-    // TODO Auto-generated method stub
-    String result = data.toString() + node.toString() + "\n";
-    result += visitChildren(node, data.toString() + " ");
-    return result;
+    return Aggregate(node, data, "SAMPLE");
   }
 
   @Override
   public final Object visit(ASTGroupConcat node, Object data) throws VisitorException
   {
-    // TODO Auto-generated method stub
-    String result = data.toString() + node.toString() + "\n";
-    result += visitChildren(node, data.toString() + " ");
+    // TODO Could this have a number of children not in [1, 2]?
+    String result;
+    if (node.jjtGetNumChildren() == 1 || node.jjtGetNumChildren() == 2) {
+      result = " GROUP_CONCAT ( ";
+      if (node.isDistinct()) {
+        result += " DISTINCT ";
+      }
+      result += node.jjtGetChild(0).jjtAccept(this, data).toString();
+      if (node.jjtGetNumChildren() == 2) {
+        result += "; SEPARATOR = " + node.jjtGetChild(1).jjtAccept(this, data).toString();
+      }
+      result += " ) ";
+    } else {
+      result = visitChildren(node, data.toString());
+    }
     return result;
   }
 
   @Override
   public final Object visit(ASTMD5 node, Object data) throws VisitorException
   {
-    // TODO Auto-generated method stub
-    String result = data.toString() + node.toString() + "\n";
-    result += visitChildren(node, data.toString() + " ");
-    return result;
+    return BuiltInCall(node, data, "MD5");
   }
 
   @Override
   public final Object visit(ASTSHA1 node, Object data) throws VisitorException
   {
-    // TODO Auto-generated method stub
-    String result = data.toString() + node.toString() + "\n";
-    result += visitChildren(node, data.toString() + " ");
-    return result;
+    return BuiltInCall(node, data, "SHA1");
   }
 
   @Override
   public final Object visit(ASTSHA224 node, Object data) throws VisitorException
   {
-    // TODO Auto-generated method stub
-    String result = data.toString() + node.toString() + "\n";
-    result += visitChildren(node, data.toString() + " ");
-    return result;
+    // TODO There is no SHA224 in the SPARQL specifications, not sure if I interpret this correctly.
+    return BuiltInCall(node, data, "SHA224");
   }
 
   @Override
   public final Object visit(ASTSHA256 node, Object data) throws VisitorException
   {
-    // TODO Auto-generated method stub
-    String result = data.toString() + node.toString() + "\n";
-    result += visitChildren(node, data.toString() + " ");
-    return result;
+    return BuiltInCall(node, data, "SHA256");
   }
 
   @Override
   public final Object visit(ASTSHA384 node, Object data) throws VisitorException
   {
-    // TODO Auto-generated method stub
-    String result = data.toString() + node.toString() + "\n";
-    result += visitChildren(node, data.toString() + " ");
-    return result;
+    return BuiltInCall(node, data, "SHA384");
   }
 
   @Override
   public final Object visit(ASTSHA512 node, Object data) throws VisitorException
   {
-    // TODO Auto-generated method stub
-    String result = data.toString() + node.toString() + "\n";
-    result += visitChildren(node, data.toString() + " ");
-    return result;
+    return BuiltInCall(node, data, "SHA512");
   }
 
   @Override
   public final Object visit(ASTNow node, Object data) throws VisitorException
   {
-    // TODO Auto-generated method stub
-    String result = data.toString() + node.toString() + "\n";
-    result += visitChildren(node, data.toString() + " ");
-    return result;
+    return BuiltInCall(node, data, "NOW");
   }
 
   @Override
   public final Object visit(ASTYear node, Object data) throws VisitorException
   {
-    // TODO Auto-generated method stub
-    String result = data.toString() + node.toString() + "\n";
-    result += visitChildren(node, data.toString() + " ");
-    return result;
+    return BuiltInCall(node, data, "YEAR");
   }
 
   @Override
   public final Object visit(ASTMonth node, Object data) throws VisitorException
   {
-    // TODO Auto-generated method stub
-    String result = data.toString() + node.toString() + "\n";
-    result += visitChildren(node, data.toString() + " ");
-    return result;
+    return BuiltInCall(node, data, "MONTH");
   }
 
   @Override
   public final Object visit(ASTDay node, Object data) throws VisitorException
   {
-    // TODO Auto-generated method stub
-    String result = data.toString() + node.toString() + "\n";
-    result += visitChildren(node, data.toString() + " ");
-    return result;
+    return BuiltInCall(node, data, "DAY");
   }
 
   @Override
   public final Object visit(ASTHours node, Object data) throws VisitorException
   {
-    // TODO Auto-generated method stub
-    String result = data.toString() + node.toString() + "\n";
-    result += visitChildren(node, data.toString() + " ");
-    return result;
+    return BuiltInCall(node, data, "HOURS");
   }
 
   @Override
   public final Object visit(ASTMinutes node, Object data) throws VisitorException
   {
-    // TODO Auto-generated method stub
-    String result = data.toString() + node.toString() + "\n";
-    result += visitChildren(node, data.toString() + " ");
-    return result;
+    return BuiltInCall(node, data, "MINUTES");
   }
 
   @Override
   public final Object visit(ASTSeconds node, Object data) throws VisitorException
   {
-    // TODO Auto-generated method stub
-    String result = data.toString() + node.toString() + "\n";
-    result += visitChildren(node, data.toString() + " ");
-    return result;
+    return BuiltInCall(node, data, "SECONDS");
   }
 
   @Override
   public final Object visit(ASTTimezone node, Object data) throws VisitorException
   {
-    // TODO Auto-generated method stub
-    String result = data.toString() + node.toString() + "\n";
-    result += visitChildren(node, data.toString() + " ");
-    return result;
+    return BuiltInCall(node, data, "TIMEZONE");
   }
 
   @Override
   public final Object visit(ASTTz node, Object data) throws VisitorException
   {
-    // TODO Auto-generated method stub
-    String result = data.toString() + node.toString() + "\n";
-    result += visitChildren(node, data.toString() + " ");
-    return result;
+    return BuiltInCall(node, data, "TZ ");
   }
 
   @Override
   public final Object visit(ASTRand node, Object data) throws VisitorException
   {
-    // TODO Auto-generated method stub
-    String result = data.toString() + node.toString() + "\n";
-    result += visitChildren(node, data.toString() + " ");
-    return result;
+    return BuiltInCall(node, data, "RAND");
   }
 
   @Override
   public final Object visit(ASTAbs node, Object data) throws VisitorException
   {
-    // TODO Auto-generated method stub
-    String result = data.toString() + node.toString() + "\n";
-    result += visitChildren(node, data.toString() + " ");
-    return result;
+    return BuiltInCall(node, data, "ABS");
   }
 
   @Override
   public final Object visit(ASTCeil node, Object data) throws VisitorException
   {
-    // TODO Auto-generated method stub
-    String result = data.toString() + node.toString() + "\n";
-    result += visitChildren(node, data.toString() + " ");
-    return result;
+    return BuiltInCall(node, data, "CEIL");
   }
 
   @Override
   public final Object visit(ASTFloor node, Object data) throws VisitorException
   {
-    // TODO Auto-generated method stub
-    String result = data.toString() + node.toString() + "\n";
-    result += visitChildren(node, data.toString() + " ");
-    return result;
+    return BuiltInCall(node, data, "FLOOR");
   }
 
   @Override
   public final Object visit(ASTRound node, Object data) throws VisitorException
   {
-    // TODO Auto-generated method stub
-    String result = data.toString() + node.toString() + "\n";
-    result += visitChildren(node, data.toString() + " ");
-    return result;
+    return BuiltInCall(node, data, "ROUND");
   }
 
   @Override
   public final Object visit(ASTSubstr node, Object data) throws VisitorException
   {
-    // TODO Auto-generated method stub
-    String result = data.toString() + node.toString() + "\n";
-    result += visitChildren(node, data.toString() + " ");
-    return result;
+    return BuiltInCall(node, data, "SUBSTR", ",");
   }
 
   @Override
   public final Object visit(ASTStrLen node, Object data) throws VisitorException
   {
-    // TODO Auto-generated method stub
-    String result = data.toString() + node.toString() + "\n";
-    result += visitChildren(node, data.toString() + " ");
-    return result;
+    return BuiltInCall(node, data, "STRLEN");
   }
 
   @Override
   public final Object visit(ASTUpperCase node, Object data) throws VisitorException
   {
-    // TODO Auto-generated method stub
-    String result = data.toString() + node.toString() + "\n";
-    result += visitChildren(node, data.toString() + " ");
-    return result;
+    return BuiltInCall(node, data, "UCASE");
   }
 
   @Override
   public final Object visit(ASTLowerCase node, Object data) throws VisitorException
   {
-    // TODO Auto-generated method stub
-    String result = data.toString() + node.toString() + "\n";
-    result += visitChildren(node, data.toString() + " ");
-    return result;
+    return BuiltInCall(node, data, "LCASE");
   }
 
   @Override
   public final Object visit(ASTStrStarts node, Object data) throws VisitorException
   {
-    // TODO Auto-generated method stub
-    String result = data.toString() + node.toString() + "\n";
-    result += visitChildren(node, data.toString() + " ");
-    return result;
+    return BuiltInCall(node, data, "STRSTARTS", ",");
   }
 
   @Override
   public final Object visit(ASTStrEnds node, Object data) throws VisitorException
   {
-    // TODO Auto-generated method stub
-    String result = data.toString() + node.toString() + "\n";
-    result += visitChildren(node, data.toString() + " ");
-    return result;
+    return BuiltInCall(node, data, "STRENDS", ",");
   }
 
   @Override
   public final Object visit(ASTStrBefore node, Object data) throws VisitorException
   {
-    // TODO Auto-generated method stub
-    String result = data.toString() + node.toString() + "\n";
-    result += visitChildren(node, data.toString() + " ");
-    return result;
+    return BuiltInCall(node, data, "STRBEFORE", ",");
   }
 
   @Override
   public final Object visit(ASTStrAfter node, Object data) throws VisitorException
   {
-    // TODO Auto-generated method stub
-    String result = data.toString() + node.toString() + "\n";
-    result += visitChildren(node, data.toString() + " ");
-    return result;
+    return BuiltInCall(node, data, "STRAFTER", ",");
   }
 
   @Override
   public final Object visit(ASTReplace node, Object data) throws VisitorException
   {
-    // TODO Auto-generated method stub
-    String result = data.toString() + node.toString() + "\n";
-    result += visitChildren(node, data.toString() + " ");
-    return result;
+    return BuiltInCall(node, data, "REPLACE", ",");
   }
 
   @Override
   public final Object visit(ASTConcat node, Object data) throws VisitorException
   {
-    // TODO Auto-generated method stub
-    String result = data.toString() + node.toString() + "\n";
-    result += visitChildren(node, data.toString() + " ");
-    return result;
+    return BuiltInCall(node, data, "CONCAT", ",");
   }
 
   @Override
   public final Object visit(ASTContains node, Object data) throws VisitorException
   {
-    // TODO Auto-generated method stub
-    String result = data.toString() + node.toString() + "\n";
-    result += visitChildren(node, data.toString() + " ");
-    return result;
+    return BuiltInCall(node, data, "CONTAINS", ",");
   }
 
   @Override
   public final Object visit(ASTEncodeForURI node, Object data) throws VisitorException
   {
-    // TODO Auto-generated method stub
-    String result = data.toString() + node.toString() + "\n";
-    result += visitChildren(node, data.toString() + " ");
-    return result;
+    return BuiltInCall(node, data, "ENCODE_FOR_URI");
   }
 
   @Override
   public final Object visit(ASTIf node, Object data) throws VisitorException
   {
-    // TODO Auto-generated method stub
-    String result = data.toString() + node.toString() + "\n";
-    result += visitChildren(node, data.toString() + " ");
-    return result;
+    return BuiltInCall(node, data, "IF", ",");
   }
 
   @Override
   public final Object visit(ASTIn node, Object data) throws VisitorException
   {
-    // TODO Auto-generated method stub
-    String result = data.toString() + node.toString() + "\n";
-    result += visitChildren(node, data.toString() + " ");
-    return result;
+    return BuiltInCall(node, data, "IN", ",");
   }
 
   @Override
   public final Object visit(ASTNotIn node, Object data) throws VisitorException
   {
-    // TODO Auto-generated method stub
-    String result = data.toString() + node.toString() + "\n";
-    result += visitChildren(node, data.toString() + " ");
-    return result;
+    return BuiltInCall(node, data, "NOT IN", ",");
   }
 
   @Override
   public final Object visit(ASTCoalesce node, Object data) throws VisitorException
   {
-    // TODO Auto-generated method stub
-    String result = data.toString() + node.toString() + "\n";
-    result += visitChildren(node, data.toString() + " ");
-    return result;
+    return BuiltInCall(node, data, "COALESCE", ",");
   }
 
   @Override
   public final Object visit(ASTStr node, Object data) throws VisitorException
   {
-    // TODO Auto-generated method stub
-    String result = data.toString() + node.toString() + "\n";
-    result += visitChildren(node, data.toString() + " ");
-    return result;
+    return BuiltInCall(node, data, "STR");
   }
 
   @Override
   public final Object visit(ASTLang node, Object data) throws VisitorException
   {
-    // TODO Auto-generated method stub
-    String result = data.toString() + node.toString() + "\n";
-    result += visitChildren(node, data.toString() + " ");
-    return result;
+    return BuiltInCall(node, data, "LANG");
   }
 
   @Override
   public final Object visit(ASTLangMatches node, Object data) throws VisitorException
   {
-    // TODO Auto-generated method stub
-    String result = data.toString() + node.toString() + "\n";
-    result += visitChildren(node, data.toString() + " ");
-    return result;
+    return BuiltInCall(node, data, "LANGMATCHES");
   }
 
   @Override
   public final Object visit(ASTDatatype node, Object data) throws VisitorException
   {
-    // TODO Auto-generated method stub
-    String result = data.toString() + node.toString() + "\n";
-    result += visitChildren(node, data.toString() + " ");
-    return result;
+    return BuiltInCall(node, data, "DATATYPE");
   }
 
   @Override
   public final Object visit(ASTBound node, Object data) throws VisitorException
   {
-    // TODO Auto-generated method stub
-    String result = data.toString() + node.toString() + "\n";
-    result += visitChildren(node, data.toString() + " ");
-    return result;
+    return BuiltInCall(node, data, "BOUND");
   }
 
   @Override
   public final Object visit(ASTSameTerm node, Object data) throws VisitorException
   {
-    // TODO Auto-generated method stub
-    String result = data.toString() + node.toString() + "\n";
-    result += visitChildren(node, data.toString() + " ");
-    return result;
+    return BuiltInCall(node, data, "sameTerm", ",");
   }
 
   @Override
   public final Object visit(ASTIsIRI node, Object data) throws VisitorException
   {
-    // TODO Auto-generated method stub
-    String result = data.toString() + node.toString() + "\n";
-    result += visitChildren(node, data.toString() + " ");
-    return result;
+    return BuiltInCall(node, data, "isIRI");
   }
 
   @Override
   public final Object visit(ASTIsBlank node, Object data) throws VisitorException
   {
-    // TODO Auto-generated method stub
-    String result = data.toString() + node.toString() + "\n";
-    result += visitChildren(node, data.toString() + " ");
-    return result;
+    return BuiltInCall(node, data, "isBLANK");
   }
 
   @Override
   public final Object visit(ASTIsLiteral node, Object data) throws VisitorException
   {
-    // TODO Auto-generated method stub
-    String result = data.toString() + node.toString() + "\n";
-    result += visitChildren(node, data.toString() + " ");
-    return result;
+    return BuiltInCall(node, data, "isLITERAL");
   }
 
   @Override
   public final Object visit(ASTIsNumeric node, Object data) throws VisitorException
   {
-    // TODO Auto-generated method stub
-    String result = data.toString() + node.toString() + "\n";
-    result += visitChildren(node, data.toString() + " ");
-    return result;
+    return BuiltInCall(node, data, "isNUMERIC");
   }
 
   @Override
   public final Object visit(ASTBNodeFunc node, Object data) throws VisitorException
   {
-    // TODO Auto-generated method stub
-    String result = data.toString() + node.toString() + "\n";
-    result += visitChildren(node, data.toString() + " ");
-    return result;
+    return BuiltInCall(node, data, "BNODE");
   }
 
   @Override
   public final Object visit(ASTIRIFunc node, Object data) throws VisitorException
   {
-    // TODO Auto-generated method stub
-    String result = data.toString() + node.toString() + "\n";
-    result += visitChildren(node, data.toString() + " ");
-    return result;
+    return BuiltInCall(node, data, "IRI");
   }
 
   @Override
   public final Object visit(ASTStrDt node, Object data) throws VisitorException
   {
-    // TODO Auto-generated method stub
-    String result = data.toString() + node.toString() + "\n";
-    result += visitChildren(node, data.toString() + " ");
-    return result;
+    return BuiltInCall(node, data, "STRDT", ",");
   }
 
   @Override
   public final Object visit(ASTStrLang node, Object data) throws VisitorException
   {
-    // TODO Auto-generated method stub
-    String result = data.toString() + node.toString() + "\n";
-    result += visitChildren(node, data.toString() + " ");
-    return result;
+    return BuiltInCall(node, data, "STRLANG", ",");
   }
 
   @Override
   public final Object visit(ASTUUID node, Object data) throws VisitorException
   {
-    // TODO Auto-generated method stub
-    String result = data.toString() + node.toString() + "\n";
-    result += visitChildren(node, data.toString() + " ");
-    return result;
+    return BuiltInCall(node, data, "UUID");
   }
 
   @Override
   public final Object visit(ASTSTRUUID node, Object data) throws VisitorException
   {
-    // TODO Auto-generated method stub
-    String result = data.toString() + node.toString() + "\n";
-    result += visitChildren(node, data.toString() + " ");
-    return result;
+    return BuiltInCall(node, data, "STRUUID");
   }
 
   @Override
   public final Object visit(ASTBind node, Object data) throws VisitorException
   {
-    // TODO Auto-generated method stub
-    String result = data.toString() + node.toString() + "\n";
-    result += visitChildren(node, data.toString() + " ");
+    // TODO Could this have a number of children different from 2?
+    String result;
+    if (node.jjtGetNumChildren() == 2) {
+      result = data.toString() + " BIND ( ";
+      result += node.jjtGetChild(0).jjtAccept(this, data).toString();
+      result += " AS ";
+      result += node.jjtGetChild(1).jjtAccept(this, data).toString();
+      result += ")";
+    } else {
+      result = visitChildren(node, data.toString());
+    }
     return result;
   }
 
   @Override
   public final Object visit(ASTRegexExpression node, Object data) throws VisitorException
   {
-    // TODO Auto-generated method stub
-    String result = data.toString() + node.toString() + "\n";
-    result += visitChildren(node, data.toString() + " ");
-    return result;
+    return BuiltInCall(node, data, "REGEX", ",");
   }
 
   @Override
   public final Object visit(ASTExistsFunc node, Object data) throws VisitorException
   {
-    // TODO Auto-generated method stub
-    String result = data.toString() + node.toString() + "\n";
-    result += visitChildren(node, data.toString() + " ");
+    String result = " EXISTS ";
+    result += visitChildren(node, data.toString());
     return result;
   }
 
   @Override
   public final Object visit(ASTNotExistsFunc node, Object data) throws VisitorException
   {
-    // TODO Auto-generated method stub
-    String result = data.toString() + node.toString() + "\n";
-    result += visitChildren(node, data.toString() + " ");
+    String result = " NOT EXISTS ";
+    result += visitChildren(node, data.toString());
     return result;
   }
 
@@ -1150,8 +1123,18 @@ public class RenderVisitor implements SyntaxTreeBuilderVisitor
   public final Object visit(ASTRDFLiteral node, Object data) throws VisitorException
   {
     // TODO Check what happens if the value field is set
-    String result = '"' + visitChildren(node, data) + '"';
-    result += "@" + node.getLang();
+    // TODO Could this have a number of children different from two?
+    String result;
+    if (node.jjtGetNumChildren() == 1 || node.jjtGetNumChildren() == 2) {
+      result = " " + '"' + node.jjtGetChild(0).jjtAccept(this, data).toString() + '"';
+      if (node.getLang() != null) {
+        result += "@" + node.getLang() + " ";
+      } else if (node.jjtGetNumChildren() == 2) {
+        result += "^^" + node.jjtGetChild(1).jjtAccept(this, data).toString().trim() + " ";
+      }
+    } else {
+      result = visitChildren(node, data.toString());
+    }
     return result;
   }
 
@@ -1192,8 +1175,12 @@ public class RenderVisitor implements SyntaxTreeBuilderVisitor
   @Override
   public final Object visit(ASTBlankNode node, Object data) throws VisitorException
   {
-    // TODO Auto-generated method stub
-    String result = data.toString() + node.toString() + "\n";
+    String result;
+    if (node.getID() != null) {
+      result = " _:" + node.getID() + " ";
+    } else {
+      result = " [] ";
+    }
     result += visitChildren(node, data.toString() + " ");
     return result;
   }
