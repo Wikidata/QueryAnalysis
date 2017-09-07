@@ -135,6 +135,9 @@ public class OpenRDFQueryHandler extends QueryHandler
       this.sparqlStatistics = SparqlStatisticsCollector.getDefaultMap();
       return;
     }
+    System.out.println("\n\n\n");
+    System.out.println(this.query.getTupleExpr());
+    System.out.println(this.getQueryStringWithoutPrefixes());
     SparqlStatisticsCollector sparqlStatisticsCollector = new SparqlStatisticsCollector();
 
     // grep for having or ask
