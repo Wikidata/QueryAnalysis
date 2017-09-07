@@ -10,6 +10,7 @@ import org.openrdf.query.algebra.Not;
 import org.openrdf.query.algebra.Exists;
 import org.openrdf.query.algebra.ProjectionElem;
 import org.openrdf.query.algebra.StatementPattern;
+import org.openrdf.query.algebra.ArbitraryLengthPath;
 import org.openrdf.query.algebra.Service;
 import java.util.ArrayList;
 
@@ -28,7 +29,8 @@ public class SparqlStatisticsCollector extends QueryModelVisitorBase
   public static LinkedHashMap<String, Integer> getDefaultMap()
   {
     LinkedHashMap<String, Integer> defaultMap = new LinkedHashMap<>();
-    defaultMap.put("Add", 0);
+    defaultMap.put("+", 0);
+    defaultMap.put("*", 0);
     defaultMap.put("And", 0);
     defaultMap.put("ArbitraryLengthPath", 0);
     defaultMap.put("Ask", 0);
@@ -139,10 +141,7 @@ public class SparqlStatisticsCollector extends QueryModelVisitorBase
   public void meetNode(QueryModelNode node) throws Exception
   {
     String className = node.getClass().getSimpleName();
-
-    if (!className.equals("Projection") || node.getParentNode() == null) {
-      this.add(className);
-    }
+    this.add(className);
     super.meetNode(node);
   }
 
@@ -188,11 +187,19 @@ public class SparqlStatisticsCollector extends QueryModelVisitorBase
 
   public void meet(ProjectionElem node) throws Exception
   {
-    if (node.getSourceName().startsWith("-")) {
-      System.out.println(node.getSourceName());
-    }
     if (node.getSourceName().startsWith("-const-")) {
       this.add("Construct");
+    }
+    this.add("ProjectionElem");
+    super.meetNode(node);
+  }
+
+  public void meet(ArbitraryLengthPath node) throws Exception
+  {
+    if(node.getMinLength() == 0) {
+      this.add("+");
+    } else {
+      this.add("*");
     }
     super.meetNode(node);
   }
