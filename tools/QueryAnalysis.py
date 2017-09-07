@@ -144,7 +144,7 @@ for monthName in args.months.split(","):
     # We build the call to execute the java application with the location of
     # the files, the number of threads to use and any optional arguments needed
 
-    mavenCall = ['mvn', 'exec:java']
+    mavenCall = ['mvn', 'exec:java@QueryAnalysis']
 
     mavenArguments = '-Dexec.args=-w ' + month + ' -n ' + str(args.threads)
 

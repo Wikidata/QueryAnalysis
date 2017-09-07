@@ -55,12 +55,7 @@ public class Anonymizer
     String inputFileSuffix = ".tsv.gz";
     String outputFolder;
 
-    String queryParserName = "OpenRDF";
-
     int numberOfThreads = 1;
-
-    Class inputHandlerClass = InputHandlerTSV.class;
-    Class queryHandlerClass = OpenRDFQueryHandler.class;
 
     try {
       cmd = parser.parse(options, args);
