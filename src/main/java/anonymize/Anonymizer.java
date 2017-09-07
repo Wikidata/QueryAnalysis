@@ -1,25 +1,33 @@
 package anonymize;
 
-import java.io.IOException;
-import java.nio.file.DirectoryStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
-import static java.nio.file.Files.readAllBytes;
-
 import general.Main;
+import general.ParseOneDayWorker;
+import input.InputHandler;
+import input.InputHandlerTSV;
 import logging.LoggingHandler;
-import openrdffork.StandardizingSPARQLParser;
+import output.OutputHandler;
+import output.OutputHandlerTSV;
+import query.OpenRDFQueryHandler;
+import query.QueryHandler;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
+import org.apache.commons.cli.UnrecognizedOptionException;
 import org.apache.log4j.Logger;
-import org.openrdf.query.MalformedQueryException;
-import org.openrdf.query.parser.ParsedQuery;
-import org.openrdf.query.parser.sparql.ast.ASTQueryContainer;
-import org.openrdf.query.parser.sparql.ast.ParseException;
-import org.openrdf.query.parser.sparql.ast.SyntaxTreeBuilder;
-import org.openrdf.query.parser.sparql.ast.TokenMgrError;
-import org.openrdf.query.parser.sparql.ast.VisitorException;
-import org.openrdf.queryrender.sparql.SPARQLQueryRenderer;
 
 /**
  * @author adrian
@@ -33,63 +41,125 @@ public class Anonymizer
    */
   private static final Logger logger = Logger.getLogger(Main.class);
 
-  /**
-   * @param args
-   */
-  public static void main(String[] args)
+  public static void main(String[] args) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException
   {
-    Main.loadStandardPrefixes();
+    Options options = new Options();
+    options.addOption("w", "workingDirectory", true, "The directory we should be working on.");
+    options.addOption("n", "numberOfThreads", true, "Number of used threads, default 1");
 
-    LoggingHandler.initFileLog("Anonymizer", "nothing");
+    CommandLineParser parser = new DefaultParser();
+    CommandLine cmd;
 
-    int worked = 0;
-    int failed = 0;
-    int messedUp = 0;
+    String workingDirectory;
+    String inputFilePrefix;
+    String inputFileSuffix = ".tsv.gz";
+    String outputFolder;
 
-    try (DirectoryStream<Path> directoryStream =
-        Files.newDirectoryStream(Paths.get("/home/adrian/workspace/java/months/inputData/processedLogData/exampleQueries/"))) {
-      for (Path filePath : directoryStream) {
-        if (Files.isRegularFile(filePath)) {
-          String queryString = new String(readAllBytes(filePath));
+    String queryParserName = "OpenRDF";
 
-          // Weeding out the ones we can't actually parse
-          try {
-            ParsedQuery parsedQuery = new StandardizingSPARQLParser().parseQuery(queryString, query.OpenRDFQueryHandler.BASE_URI);
-          } catch (MalformedQueryException e) {
-            continue;
-          }
+    int numberOfThreads = 1;
 
+    Class inputHandlerClass = InputHandlerTSV.class;
+    Class queryHandlerClass = OpenRDFQueryHandler.class;
 
-          String renderedQueryString = "";
-
-          try {
-            ASTQueryContainer qc = SyntaxTreeBuilder.parseQuery(queryString);
-            StandardizingSPARQLParser.debug(qc);
-            renderedQueryString = (String) qc.jjtAccept(new RenderVisitor(), "");
-          }
-          catch (TokenMgrError | ParseException e) {
-            e.printStackTrace();
-            continue;
-          }
-          catch (VisitorException e) {
-            e.printStackTrace();
-          }
-
-          try {
-            ParsedQuery parsedQuery = new StandardizingSPARQLParser().parseQuery(renderedQueryString, query.OpenRDFQueryHandler.BASE_URI);
-            worked++;
-          }
-          catch (MalformedQueryException e) {
-            System.out.println("--------------------------------------------------------");
-            System.out.println(queryString);
-            failed++;
-          }
+    try {
+      cmd = parser.parse(options, args);
+      if (cmd.hasOption("help")) {
+        HelpFormatter formatter = new HelpFormatter();
+        formatter.printHelp("help", options);
+        return;
+      }
+      if (cmd.hasOption("numberOfThreads")) {
+        numberOfThreads = Integer.parseInt(cmd.getOptionValue("numberOfThreads"));
+      }
+      if (cmd.hasOption("workingDirectory")) {
+        workingDirectory = cmd.getOptionValue("workingDirectory").trim();
+        if (!workingDirectory.endsWith("/")) {
+          workingDirectory += "/";
         }
+        inputFilePrefix = workingDirectory + "rawLogData/QueryCnt";
+
+        outputFolder = workingDirectory + "anonymousRawData/";
+        File outputFolderFile = new File(outputFolder);
+        outputFolderFile.mkdir();
+      } else {
+        System.out.println("Please specify the directory which we should work on using the option '--workingDirectory DIRECTORY' or '-w DIRECTORY'");
+        return;
       }
     }
-    catch (IOException e1) {
-      e1.printStackTrace();
+    catch (UnrecognizedOptionException e) {
+      System.out.println("Unrecognized commandline option: " + e.getOption());
+      HelpFormatter formatter = new HelpFormatter();
+      formatter.printHelp("help", options);
+      return;
+    }
+    catch (ParseException e) {
+      System.out.println("There was an error while parsing your command line input. Did you rechecked your syntax before running?");
+      HelpFormatter formatter = new HelpFormatter();
+      formatter.printHelp("help", options);
+      return;
     }
 
-    System.out.println("Worked: " + worked + " Failed: " + failed);  }
+    LoggingHandler.initConsoleLog();
+    LoggingHandler.initFileLog("Anonymizer", "nothing");
+
+    Main.loadStandardPrefixes();
+
+    File lockFile;
+
+    try {
+      lockFile = new File(workingDirectory + "locked");
+
+      if (!lockFile.createNewFile()) {
+        logger.info("Cannot work on " + workingDirectory + " because another instance is already working on it.");
+        return;
+      }
+    } catch (IOException e) {
+      logger.error("Unexpected error while trying to create the lock file.", e);
+      return;
+    }
+
+    long startTime = System.nanoTime();
+
+    ExecutorService executor = Executors.newFixedThreadPool(numberOfThreads);
+
+    for (int day = 1; day <= 31; day++) {
+      String inputFile = inputFilePrefix + String.format("%02d", day) + inputFileSuffix;
+      InputHandler inputHandler;
+      try {
+        inputHandler = new InputHandlerTSV(inputFile);
+      }
+      catch (IOException e) {
+        logger.warn("File " + inputFile + " could not be found.");
+        continue;
+      }
+
+      QueryHandler queryHandler = new OpenRDFQueryHandler();
+
+      String outputFile = outputFolder + "/AnonymousQueryCnt" + String.format("%02d", day);
+      OutputHandler outputHandler;
+      try {
+        outputHandler = new OutputHandlerAnonymizer(outputFile, queryHandler.getClass());
+      }
+      catch (FileNotFoundException e) {
+        logger.error("File " + outputFile + "could not be created or written to.", e);
+        continue;
+      }
+
+      Runnable parseOneMonthWorker = new ParseOneDayWorker(inputHandler, outputHandler, day, false);
+      executor.execute(parseOneMonthWorker);
+    }
+    executor.shutdown();
+
+    while (!executor.isTerminated()) {
+      //wait until all workers are finished
+    }
+
+    lockFile.delete();
+
+    long stopTime = System.nanoTime();
+    long millis = TimeUnit.MILLISECONDS.convert(stopTime - startTime, TimeUnit.NANOSECONDS);
+    Date date = new Date(millis);
+    System.out.println("Finished executing with all threads: " + new SimpleDateFormat("mm-dd HH:mm:ss:SSSSSSS").format(date));
+  }
 }

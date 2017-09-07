@@ -4,7 +4,10 @@ package general;
 import input.InputHandler;
 import openrdffork.TupleExprWrapper;
 import org.apache.log4j.Logger;
+
+import output.OutputHandler;
 import output.OutputHandlerTSV;
+import query.QueryHandler;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -21,24 +24,18 @@ public class ParseOneDayWorker implements Runnable
    * Define a static logger variable.
    */
   private static final Logger logger = Logger.getLogger(ParseOneDayWorker.class);
-  private final String inputFile;
-  private final String inputFilePrefix;
-  private final String outputFolder;
   private InputHandler inputHandler;
-  private String queryParserName;
-  private Class queryHandlerClass;
+  private OutputHandler outputHandler;
   private int day;
+  private Boolean writeQueryTypes;
   private HashMap<TupleExprWrapper, String> queryTypes = new HashMap<TupleExprWrapper, String>();
 
-  public ParseOneDayWorker(String inputFile, String inputFilePrefix, String outputFolder, Class inputHandlerClass, String queryParserName, Class queryHandlerClass, int day) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException
+  public ParseOneDayWorker(InputHandler inputHandlerToSet, OutputHandler outputHandlerToSet, int day, Boolean writeQueryTypes) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException
   {
-    this.inputFile = inputFile;
-    this.inputFilePrefix = inputFilePrefix;
-    this.outputFolder = outputFolder;
-    this.inputHandler = (InputHandler) inputHandlerClass.getConstructor().newInstance();
-    this.queryParserName = queryParserName;
-    this.queryHandlerClass = queryHandlerClass;
+    this.inputHandler = inputHandlerToSet;
+    this.outputHandler = outputHandlerToSet;
     this.day = day;
+    this.writeQueryTypes = writeQueryTypes;
     for (Map.Entry<TupleExprWrapper, String> entry : Main.queryTypes.entrySet()) {
       this.queryTypes.put(entry.getKey(), entry.getValue());
     }
@@ -48,29 +45,14 @@ public class ParseOneDayWorker implements Runnable
   @Override
   public void run()
   {
-    //create directory for the output
-    String outputFile = outputFolder + "/QueryProcessed" + queryParserName + String.format("%02d", day);
-    try {
-      inputHandler.setInputFile(inputFile);
+    logger.info("Start processing " + inputHandler.getInputFile());
+    outputHandler.setThreadNumber(day);
+    outputHandler.setQueryTypes(queryTypes);
+    inputHandler.parseTo(outputHandler);
+    logger.info("Done processing " + inputHandler.getInputFile() + " to " + outputHandler.getOutputFile() + ".");
 
-      logger.info("Start processing " + inputFile);
-      try {
-        OutputHandlerTSV outputHandler = new OutputHandlerTSV(outputFile, queryHandlerClass);
-        outputHandler.setThreadNumber(day);
-        outputHandler.setQueryTypes(queryTypes);
-        //try {
-        inputHandler.parseTo(outputHandler);
-        logger.info("Done processing " + inputFile + " to " + outputFile + ".");
-        Main.writeQueryTypes(queryTypes);
-        //   } catch (Exception e) {
-        //    logger.error("Unexpected error while parsing " + inputFile + ".", e);
-        //  }
-      } catch (FileNotFoundException e) {
-        logger.error("File " + outputFile + "could not be created or written to.", e);
-      }
-    } catch (IOException e) {
-      logger.warn("File " + inputFile + " could not be found.");
+    if (writeQueryTypes) {
+      Main.writeQueryTypes(queryTypes);
     }
   }
-
 }
