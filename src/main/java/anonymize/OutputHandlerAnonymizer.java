@@ -122,7 +122,12 @@ public class OutputHandlerAnonymizer extends OutputHandler
         logger.error("Failed to parse the query although it was found valid - this is a serious bug.", e);
         return;
       }
-      StandardizingSPARQLParser.debug(qc);
+      try {
+        StandardizingSPARQLParser.debug(qc);
+        StandardizingSPARQLParser.anonymize(qc);
+      } catch (MalformedQueryException e) {
+        logger.error("Failed to debug or anonymize query. " + queryToAnalyze);
+      }
       String renderedQueryString;
       try {
         renderedQueryString = qc.jjtAccept(new RenderVisitor(), "").toString();
