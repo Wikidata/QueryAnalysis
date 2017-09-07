@@ -133,9 +133,11 @@ public class SparqlStatisticsCollector extends QueryModelVisitorBase
   @Override
   public void meetNode(QueryModelNode node) throws Exception
   {
-    System.out.println(node.getParentNode());
     String className = node.getClass().getSimpleName();
-    this.add(className);
+
+    if (!className.equals("Projection") || node.getParentNode() == null) {
+      this.add(className);
+    }
     super.meetNode(node);
   }
 

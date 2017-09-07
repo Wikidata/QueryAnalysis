@@ -54,7 +54,7 @@ class SparqlStatisticHandler:
 
     def printSparqlTranslation(self):
         pprint(self.statistic)
-        self.statistic["Select"] = self.statistic["ProjectionElemList"]
+        self.statistic["Select"] = self.statistic["Projection"]
         self.statistic["Order By"] = self.statistic["Order"]
         self.statistic["Group By"] = self.statistic["Group"]
         self.statistic["LimitAndOffset"] = self.statistic["Slice"]
@@ -69,7 +69,7 @@ class SparqlStatisticHandler:
                        "Limit", "Offset", "Order By", "Filter", "And", "Union",
                        "Opt", "Graph", "Not Exists", "Minus", "Exists", "Count",
                        "Max", "Min", "Avg", "Sum", "Group By", "Having", "Service",
-                       "LangService", "Join", "LeftJoin", "Sample", "Bind", "GroupConcat",
+                       "LangService", "Join", "Sample", "Bind", "GroupConcat",
                        "Reduced"]
 
         self.printKeys(toPrintKeys)
