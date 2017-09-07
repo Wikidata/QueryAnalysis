@@ -197,9 +197,9 @@
       <version>2.7.12</version>
     </dependency>
     <dependency>
-      <groupId>com.googlecode.cqengine</groupId>
-      <artifactId>cqengine</artifactId>
-      <version>2.12.1</version>
+        <groupId>org.mapdb</groupId>
+        <artifactId>mapdb</artifactId>
+        <version>3.0.5</version>
     </dependency>
   </dependencies>
 </project>

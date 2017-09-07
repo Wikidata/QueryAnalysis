@@ -1,6 +1,5 @@
 package query;
 
-import com.googlecode.cqengine.attribute.SimpleAttribute;
 import general.Main;
 import openrdffork.TupleExprWrapper;
 import org.apache.log4j.Logger;
@@ -8,8 +7,6 @@ import scala.Tuple2;
 
 import java.util.*;
 import java.util.Map.Entry;
-
-import static com.googlecode.cqengine.query.QueryFactory.attribute;
 
 /**
  * @author adrian
@@ -138,11 +135,6 @@ public abstract class QueryHandler
   private String categories = null;
 
   /**
-   * The attribute for the cqengine search index (for identying unique queries).
-   */
-  public static final SimpleAttribute<QueryHandler, String> QUERY_STRING = attribute("queryString", QueryHandler::getQueryStringWithoutPrefixes);
-
-  /**
    * The day at which the Query was being created;
    * Used for the calculation of the uniqueId.
    */
@@ -158,9 +150,22 @@ public abstract class QueryHandler
     return originalId;
   }
 
-  protected void setUniqeId(int day, long line, String queryStringToSet)
+  protected void setUniqeId(int day, long line, String queryString)
   {
-    this.uniqeId = day + "_" + line + "_" + queryStringToSet.hashCode();
+    this.uniqeId = QueryHandler.generateId(day, line, queryString);
+  }
+
+  /**
+   * Generates an id based on the parameters.
+   *
+   * @param day
+   * @param line
+   * @param queryString
+   * @return
+   */
+  public static String generateId(int day, long line, String queryString)
+  {
+    return day + "_" + line + "_" + queryString.hashCode();
   }
 
   /**

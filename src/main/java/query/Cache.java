@@ -1,12 +1,9 @@
 package query;
 
-import com.googlecode.cqengine.ConcurrentIndexedCollection;
-import com.googlecode.cqengine.IndexedCollection;
-import com.googlecode.cqengine.index.hash.HashIndex;
-import com.googlecode.cqengine.persistence.disk.DiskPersistence;
-import com.googlecode.cqengine.resultset.ResultSet;
 import org.apache.commons.collections.map.LRUMap;
 import org.apache.log4j.Logger;
+import org.mapdb.DB;
+import org.mapdb.DBMaker;
 import org.openrdf.query.MalformedQueryException;
 import org.openrdf.query.parser.sparql.ast.ASTQueryContainer;
 import org.openrdf.query.parser.sparql.ast.ParseException;
@@ -17,8 +14,7 @@ import scala.Tuple2;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 import java.util.Map;
-
-import static com.googlecode.cqengine.query.QueryFactory.equal;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * @author Julius Gonsior
@@ -45,8 +41,9 @@ public class Cache
    */
   private Map<Tuple2<QueryHandler.Validity, String>, QueryHandler> queryHandlerLRUMap = (Map<Tuple2<QueryHandler.Validity, String>, QueryHandler>) Collections.synchronizedMap(new LRUMap(100000));
 
-  private static IndexedCollection<QueryHandler> queryHandlerCgMap = new ConcurrentIndexedCollection<>(DiskPersistence.onPrimaryKey(QueryHandler.QUERY_STRING));
 
+  private static DB db = DBMaker.memoryDB().make();
+  private static ConcurrentMap queryHandlerCache = Cache.db.hashMap("queryHandlerCache").createOrOpen();
 
   /**
    * exists only to prevent this Class from being instantiated
@@ -56,10 +53,15 @@ public class Cache
     //nothing to see here
   }
 
+  protected void finalize() throws Throwable
+  {
+    Cache.db.close();
+    super.finalize();
+  }
+
   public static synchronized Cache getInstance()
   {
     if (instance == null) {
-      Cache.queryHandlerCgMap.addIndex(HashIndex.onAttribute(QueryHandler.QUERY_STRING));
       instance = new Cache();
     }
     return instance;
@@ -121,12 +123,10 @@ public class Cache
   public QueryHandler getQueryHandler(QueryHandler.Validity validityStatus, String queryToAnalyze, long line, int day, Class queryHandlerClass)
   {
     //check if requested object already exists in cache
-    try (ResultSet<QueryHandler> results = Cache.queryHandlerCgMap.retrieve(equal(QueryHandler.QUERY_STRING, queryToAnalyze))) {
-
-      if (results.isEmpty()) {
-        results.close();
-        //if not create a new one
-        QueryHandler queryHandler = null;
+    QueryHandler queryHandler = null;
+    String id = QueryHandler.generateId(day, line, queryToAnalyze);
+    if (!Cache.queryHandlerCache.containsKey(id)) {
+      //if not create a new one
         try {
           queryHandler = (QueryHandler) queryHandlerClass.getConstructor().newInstance();
         } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
@@ -136,19 +136,13 @@ public class Cache
         queryHandler.setLine(line);
         queryHandler.setDay(day);
         queryHandler.setQueryString(queryToAnalyze);
-        Cache.queryHandlerCgMap.add(queryHandler);
-        return queryHandler;
+      Cache.queryHandlerCache.put(queryHandler.getUniqeId(), queryHandler);
       } else {
-        for (QueryHandler queryHandler : results) {
-          results.close();
-          queryHandler.setLine(line);
-          queryHandler.setDay(day);
-          queryHandler.updateOriginalId();
-          return queryHandler;
-        }
-        //will never be reached
-        return null;
-      }
+      queryHandler = (QueryHandler) Cache.queryHandlerCache.get(id);
     }
+          return queryHandler;
+
   }
+
+
 }
