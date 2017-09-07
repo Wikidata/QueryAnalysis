@@ -8,8 +8,10 @@ import org.openrdf.query.algebra.helpers.QueryModelVisitorBase;
 import org.openrdf.query.algebra.Slice;
 import org.openrdf.query.algebra.Not;
 import org.openrdf.query.algebra.Exists;
+import org.openrdf.query.algebra.ProjectionElem;
 import org.openrdf.query.algebra.StatementPattern;
 import org.openrdf.query.algebra.Service;
+import java.util.ArrayList;
 
 
 /**
@@ -119,9 +121,12 @@ public class SparqlStatisticsCollector extends QueryModelVisitorBase
     return statistics;
   }
 
+  /**
+   * Increment the statistic by one per keyword, but only once per Query.
+   */
   public void add(String keyword)
   {
-    statistics.put(keyword, statistics.get(keyword) + 1);
+    statistics.put(keyword, 1);
   }
 
   /**
@@ -181,4 +186,14 @@ public class SparqlStatisticsCollector extends QueryModelVisitorBase
     super.meetNode(node);
   }
 
+  public void meet(ProjectionElem node) throws Exception
+  {
+    if (node.getSourceName().startsWith("-")) {
+      System.out.println(node.getSourceName());
+    }
+    if (node.getSourceName().startsWith("-const-")) {
+      this.add("Construct");
+    }
+    super.meetNode(node);
+  }
 }

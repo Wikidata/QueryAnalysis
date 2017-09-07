@@ -63,6 +63,8 @@ class SparqlStatisticHandler:
         self.statistic["Having*"] = self.statistic["Having"]
         self.statistic["Describe"] = self.statistic["DescribeOperator"]
         self.statistic["Bind"] = self.statistic["BindingSetAssignment"]
+        self.statistic["And"] = self.statistic["Join"]
+        self.statistic["Value"] = self.statistic["ValueConstant"]
 
         # only print specified columns
         toPrintKeys = ["Select", "Ask", "Describe", "Construct", "Distinct",
@@ -70,7 +72,7 @@ class SparqlStatisticHandler:
                        "Opt", "Graph", "Not Exists", "Minus", "Exists", "Count",
                        "Max", "Min", "Avg", "Sum", "Group By", "Having", "Service",
                        "LangService", "Join", "Sample", "Bind", "GroupConcat",
-                       "Reduced"]
+                       "Reduced", "Value"]
 
         self.printKeys(toPrintKeys)
 

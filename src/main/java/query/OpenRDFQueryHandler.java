@@ -135,16 +135,14 @@ public class OpenRDFQueryHandler extends QueryHandler
       this.sparqlStatistics = SparqlStatisticsCollector.getDefaultMap();
       return;
     }
-    System.out.println("\n\n\n");
+   // System.out.println("\n\n\n");
     System.out.println(this.getQueryStringWithoutPrefixes());
     System.out.println(this.query.getTupleExpr());
     SparqlStatisticsCollector sparqlStatisticsCollector = new SparqlStatisticsCollector();
-
+    
     // grep for having or ask
     if (this.getQueryStringWithoutPrefixes().toLowerCase().contains("ask")) {
       sparqlStatisticsCollector.add("Ask");
-    } else if (this.getQueryStringWithoutPrefixes().toLowerCase().contains("construct")) {
-      sparqlStatisticsCollector.add("Construct");
     } else if (this.getQueryStringWithoutPrefixes().toLowerCase().contains("having")) {
       sparqlStatisticsCollector.add("Having");
     }
