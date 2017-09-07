@@ -91,54 +91,5 @@ public class Anonymizer
       e1.printStackTrace();
     }
 
-    System.out.println("Worked: " + worked + " Failed: " + failed);
-
-    /*
-    int worked = 0;
-    int failed = 0;
-    int failedToParse = 0;
-
-    try (DirectoryStream<Path> directoryStream =
-        Files.newDirectoryStream(Paths.get("/home/adrian/workspace/java/months/inputData/processedLogData/exampleQueries/"))) {
-      for (Path filePath : directoryStream) {
-        if (Files.isRegularFile(filePath)) {
-          //String queryString = new String(readAllBytes(filePath));
-          String queryString = "SELECT * WHERE { ?x wdt:P31 wd:Q123 }";
-          String renderedQueryString = "";
-
-          try {
-            ParsedQuery parsedQuery = new StandardizingSPARQLParser().parseQuery(queryString, query.OpenRDFQueryHandler.BASE_URI);
-            renderedQueryString = new SPARQLQueryRenderer().render(parsedQuery);
-          }
-          catch (MalformedQueryException e) {
-            failedToParse += 1;
-            if (!e.toString().matches(".*projection alias .* was previously used.*")) {
-              System.out.println(queryString);
-              String filePathString = filePath.toString();
-              System.out.println(filePathString.substring(filePathString.lastIndexOf("/"), filePathString.length()));
-              System.out.println(e.getMessage());
-            }
-            continue;
-          }
-          catch (Exception e) {
-            // e.printStackTrace();
-            continue;
-          }
-          try {
-            ParsedQuery parsedRenderedQuery = new StandardizingSPARQLParser().parseQuery(renderedQueryString, query.OpenRDFQueryHandler.BASE_URI);
-            worked += 1;
-          }
-          catch (MalformedQueryException e) {
-            failed += 1;
-          }
-        }
-      }
-    }
-    catch (IOException e) {
-      e.printStackTrace();
-    }
-
-    System.out.println("Worked: " + worked + " Failed: " + failed + " Failed to parse: " + failedToParse);
-    */
-  }
+    System.out.println("Worked: " + worked + " Failed: " + failed);  }
 }
