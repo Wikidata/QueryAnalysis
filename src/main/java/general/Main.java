@@ -94,7 +94,7 @@ public final class Main
   /**
    * Saves if a prefix excludes a query from the simple dataset.
    */
-  public static final Set<String> simpleQueryWhitelist =  new HashSet<String>();
+  public static final Set<String> simpleQueryWhitelist = new HashSet<String>();
   /**
    * Saves if metrics should be calculated for bot queries.
    */
@@ -472,11 +472,9 @@ public final class Main
         }
         if (previous.previousElementSibling() != null) {
           previous = previous.previousElementSibling();
-        }
-        else if (previous.parent() != null) {
+        } else if (previous.parent() != null) {
           previous = previous.parent();
-        }
-        else {
+        } else {
           break;
         }
       }

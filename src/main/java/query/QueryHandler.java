@@ -75,11 +75,9 @@ public abstract class QueryHandler
    */
   protected Integer tripleCountWithService = null;
   /**
-   * Contains the sparql statistics. Needs to be a linked map in order to
-   * ensure consistency in the order of the keys (the OutputHandler first iterates
-   * over the keys for the output TSV headers, and LATER over the values)
+   * Contains the sparql statistics.
    */
-  protected LinkedHashMap<String, Integer> sparqlStatistics;
+  protected HashMap<String, Integer> sparqlStatistics;
   /**
    * Saves the query-string with added prefixes.
    */
@@ -265,7 +263,7 @@ public abstract class QueryHandler
    * @return a map containing the number of occurrences of each sparql features
    * existing in the AST tupleExpr tree
    */
-  public LinkedHashMap<String, Integer> getSparqlStatistics()
+  public HashMap<String, Integer> getSparqlStatistics()
   {
     if (this.sparqlStatistics == null) {
       this.computeSparqlStatistics();
@@ -522,10 +520,12 @@ public abstract class QueryHandler
   private Set<String> setAnyIDs(Set<String> anyIDstoSet)
   {
     List<Map.Entry<String, String>> prefixList = new ArrayList<Map.Entry<String, String>>(Main.prefixes.entrySet());
-    Collections.sort(prefixList, new Comparator<Map.Entry<String, String>>() {
+    Collections.sort(prefixList, new Comparator<Map.Entry<String, String>>()
+    {
 
       @Override
-      public int compare(Entry<String, String> arg0, Entry<String, String> arg1) {
+      public int compare(Entry<String, String> arg0, Entry<String, String> arg1)
+      {
         return Integer.valueOf(arg1.getValue().length()).compareTo(Integer.valueOf(arg0.getValue().length()));
       }
     });
@@ -732,7 +732,8 @@ public abstract class QueryHandler
   /**
    * @return {@link #simpleOrComplex}
    */
-  public Complexity getSimpleOrComplex() {
+  public Complexity getSimpleOrComplex()
+  {
     if (this.simpleOrComplex == null) {
       this.computeSimpleOrComplex();
     }
@@ -747,7 +748,6 @@ public abstract class QueryHandler
   /**
    * @author adrian
    * An enumeration specifying the complexity of the query.
-   *
    */
   public enum Complexity
   {
@@ -771,9 +771,10 @@ public abstract class QueryHandler
 
   /**
    * @author adrian
-   *         An enumeration specifying the different validity states.
+   * An enumeration specifying the different validity states.
    */
-  public enum Validity {
+  public enum Validity
+  {
     /**
      * Valid, but empty query.
      */
