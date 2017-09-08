@@ -68,16 +68,6 @@ public class SparqlStatisticsCollector extends ASTVisitorBase
     return this.visitNode(node, data);
   }
 
-  public Object visit(ASTOrderCondition node, Object data) throws VisitorException
-  {
-    return this.visitNode(node, data);
-  }
-
-  public Object visit(ASTAnd node, Object data) throws VisitorException
-  {
-    return this.visitNode(node, data);
-  }
-
   public Object visit(ASTUnionGraphPattern node, Object data) throws VisitorException
   {
     return this.visitNode(node, data);
@@ -162,45 +152,4 @@ public class SparqlStatisticsCollector extends ASTVisitorBase
   {
     return this.visitNode(node, data);
   }
-
-  public Object visit(ASTRDFValue node, Object data) throws VisitorException
-  {
-    return this.visitNode(node, data);
-  }
-
-  public Object visit(ASTBindingValue node, Object data) throws VisitorException
-  {
-    return this.visitNode(node, data);
-  }
-
-  public Object visit(ASTPathAlternative node, Object data) throws VisitorException
-  {
-    return this.visitNode(node, data);
-  }
-
-  public Object visit(ASTPathElt node, Object data) throws VisitorException
-  {
-    return this.visitNode(node, data);
-  }
-
-  public Object visit(ASTPathMod node, Object data) throws VisitorException
-  {
-    return this.visitNode(node, data);
-  }
-
-  public Object visit(ASTPathOneInPropertySet node, Object data) throws VisitorException
-  {
-    return this.visitNode(node, data);
-  }
-
-  public Object visit(ASTPathSequence node, Object data) throws VisitorException
-  {
-    return this.visitNode(node, data);
-  }
-
-  public Object visit(ASTPathNegatedPropertySet node, Object data) throws VisitorException
-  {
-    return this.visitNode(node, data);
-  }
-
 }

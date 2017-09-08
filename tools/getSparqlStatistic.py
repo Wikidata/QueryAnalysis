@@ -54,16 +54,20 @@ class SparqlStatisticHandler:
 
     def printSparqlTranslation(self):
         pprint(self.statistic)
-        self.statistic["Select"] = self.statistic["Projection"]
-        self.statistic["Order By"] = self.statistic["Order"]
-        self.statistic["Group By"] = self.statistic["Group"]
-        self.statistic["LimitAndOffset"] = self.statistic["Slice"]
-        self.statistic["Minus"] = self.statistic["Difference"]
-        self.statistic["Describe"] = self.statistic["DescribeOperator"]
-        self.statistic["Bind"] = self.statistic["BindingSetAssignment"]
-        self.statistic["And"] = self.statistic["Join"]
-        self.statistic["Value"] = self.statistic["ValueConstant"]
-        self.statistic["Optional"] = self.statistic["LeftJoin"]
+        self.statistic["Select"] = self.statistic["SelectQuery"]
+        self.statistic["Ask"] = self.statistic["AskQuery"]
+        self.statistic["Describe"] = self.statistic["DescribeQuery"]
+        self.statistic["Construct"] = self.statistic["ConstructQuery"]
+        self.statistic["Order By"] = self.statistic["OrderClause"]
+        self.statistic["Union"] = self.statistic["UnionGraphPattern"]
+        self.statistic["Optional"] = self.statistic["OptionalGraphPattern"]
+        self.statistic["Graph"] = self.statistic["GraphPatternGroup"]
+        self.statistic["Not Exists"] = self.statistic["NotExistsFunc"]
+        self.statistic["Minus"] = self.statistic["MinusGraphPattern"]
+        self.statistic["Exists"] = self.statistic["ExistsFunc"]
+        self.statistic["Group By"] = self.statistic["GroupClause"]
+        self.statistic["Having"] = self.statistic["HavingClause"]
+        self.statistic["Service"] = self.statistic["ServiceGraphPattern"]
 
         # only print specified columns
         toPrintKeys = ["Select", "Ask", "Describe", "Construct", "Distinct",
