@@ -79,6 +79,7 @@ class SparqlStatisticHandler:
                        "LangService", "Join", "Sample", "Bind", "GroupConcat",
                        "Reduced", "Value", "+", "*"]
 
+
         self.printKeys(toPrintKeys)
 
 
