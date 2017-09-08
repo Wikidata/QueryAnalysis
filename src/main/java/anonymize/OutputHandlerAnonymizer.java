@@ -3,9 +3,11 @@
  */
 package anonymize;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
@@ -58,6 +60,10 @@ public class OutputHandlerAnonymizer extends OutputHandler
    * The outputStream object we are writing too.
    */
   private OutputStream outputStream;
+  /**
+   * The number of failed queries.
+   */
+  private int failedQueriesNumber = 0;
 
   /**
    * @param fileToWrite The file to write the anonymized queries to.
@@ -140,7 +146,14 @@ public class OutputHandlerAnonymizer extends OutputHandler
         ParsedQuery parsedQuery = new StandardizingSPARQLParser().parseQuery(renderedQueryString, OpenRDFQueryHandler.BASE_URI);
       }
       catch (MalformedQueryException e) {
-        logger.error("Anonymized query was not valid anymore. " + queryToAnalyze, e);
+        String queryName = this.threadNumber + "_" + this.failedQueriesNumber + ".query";
+        logger.error("Anonymized query was not valid anymore. " + queryName, e);
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(this.outputFile.substring(0, this.outputFile.lastIndexOf("/")) + "failedQueriesFolder/" + queryName))) {
+          bw.write(queryToAnalyze);
+          this.failedQueriesNumber++;
+        } catch (IOException i) {
+          logger.error("Could not write the readme for example queries folder.", i);
+        }
         return;
       }
 

@@ -77,6 +77,8 @@ public class Anonymizer
         outputFolder = workingDirectory + "anonymousRawData/";
         File outputFolderFile = new File(outputFolder);
         outputFolderFile.mkdir();
+        File failedQueriesFolder = new File(outputFolder + "failedQueriesFolder/");
+        failedQueriesFolder.mkdir();
       } else {
         System.out.println("Please specify the directory which we should work on using the option '--workingDirectory DIRECTORY' or '-w DIRECTORY'");
         return;
