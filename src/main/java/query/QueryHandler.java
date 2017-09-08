@@ -5,13 +5,14 @@ import openrdffork.TupleExprWrapper;
 import org.apache.log4j.Logger;
 import scala.Tuple2;
 
+import java.io.Serializable;
 import java.util.*;
 import java.util.Map.Entry;
 
 /**
  * @author adrian
  */
-public abstract class QueryHandler
+public abstract class QueryHandler implements Serializable
 {
   /**
    * Define a static logger variable.

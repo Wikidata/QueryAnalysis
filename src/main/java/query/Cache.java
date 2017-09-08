@@ -4,6 +4,7 @@ import org.apache.commons.collections.map.LRUMap;
 import org.apache.log4j.Logger;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
+import org.mapdb.HTreeMap;
 import org.openrdf.query.MalformedQueryException;
 import org.openrdf.query.parser.sparql.ast.ASTQueryContainer;
 import org.openrdf.query.parser.sparql.ast.ParseException;
@@ -14,7 +15,6 @@ import scala.Tuple2;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 import java.util.Map;
-import java.util.concurrent.ConcurrentMap;
 
 /**
  * @author Julius Gonsior
@@ -43,7 +43,7 @@ public class Cache
 
 
   private static DB db = DBMaker.memoryDB().make();
-  private static ConcurrentMap queryHandlerCache = Cache.db.hashMap("queryHandlerCache").createOrOpen();
+  private static HTreeMap queryHandlerCache = Cache.db.hashMap("queryHandlerCache").createOrOpen();
 
   /**
    * exists only to prevent this Class from being instantiated
