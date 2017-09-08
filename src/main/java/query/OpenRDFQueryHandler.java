@@ -15,16 +15,7 @@ import org.openrdf.query.algebra.helpers.QueryModelVisitorBase;
 import org.openrdf.query.algebra.helpers.StatementPatternCollector;
 import org.openrdf.query.parser.ParsedQuery;
 import org.openrdf.query.parser.sparql.ASTVisitorBase;
-import org.openrdf.query.parser.sparql.ast.ASTLimit;
-import org.openrdf.query.parser.sparql.ast.ASTNumericLiteral;
-import org.openrdf.query.parser.sparql.ast.ASTQueryContainer;
-import org.openrdf.query.parser.sparql.ast.ASTRDFLiteral;
-import org.openrdf.query.parser.sparql.ast.ASTString;
-import org.openrdf.query.parser.sparql.ast.ASTVar;
-import org.openrdf.query.parser.sparql.ast.ParseException;
-import org.openrdf.query.parser.sparql.ast.SyntaxTreeBuilder;
-import org.openrdf.query.parser.sparql.ast.TokenMgrError;
-import org.openrdf.query.parser.sparql.ast.VisitorException;
+import org.openrdf.query.parser.sparql.ast.*;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -132,29 +123,51 @@ public class OpenRDFQueryHandler extends QueryHandler
   {
 
     if (getValidityStatus() != QueryHandler.Validity.VALID) {
-      this.sparqlStatistics = SparqlStatisticsCollector.getDefaultMap();
+      this.sparqlStatistics = SparqlStatisticsCollector2.getDefaultMap();
       return;
     }
-   // System.out.println("\n\n\n");
+    try {
+      ASTQueryContainer astQueryContainer = SyntaxTreeBuilder.parseQuery(this.getQueryString());
+
+      SparqlStatisticsCollector sparqlStatisticsCollector = new SparqlStatisticsCollector();
+      astQueryContainer.jjtAccept(sparqlStatisticsCollector, null);
+
+      this.sparqlStatistics = sparqlStatisticsCollector.getStatistics();
+    } catch (TokenMgrError | ParseException e) {
+      logger.error("Failed to parse the query although it was found valid - this is a serious bug.", e);
+    } catch (VisitorException e) {
+      logger.error("Failed to calculate the SPARQL Keyword Statistics. Error occured while visiting the query.", e);
+    }
+  }
+
+  protected void computeSparqlStatistics2()
+  {
+
+    if (getValidityStatus() != QueryHandler.Validity.VALID) {
+      this.sparqlStatistics = SparqlStatisticsCollector2.getDefaultMap();
+      return;
+    }
+    // System.out.println("\n\n\n");
     System.out.println(this.getQueryStringWithoutPrefixes());
     System.out.println(this.query.getTupleExpr());
-    SparqlStatisticsCollector sparqlStatisticsCollector = new SparqlStatisticsCollector();
-    
+
+    SparqlStatisticsCollector2 sparqlStatisticsCollector2 = new SparqlStatisticsCollector2();
+
     // grep for having or ask
     if (this.getQueryStringWithoutPrefixes().toLowerCase().contains("ask")) {
-      sparqlStatisticsCollector.add("Ask");
+      sparqlStatisticsCollector2.add("Ask");
     } else if (this.getQueryStringWithoutPrefixes().toLowerCase().contains("having")) {
-      sparqlStatisticsCollector.add("Having");
+      sparqlStatisticsCollector2.add("Having");
     }
 
     try {
-      this.query.getTupleExpr().visitChildren(sparqlStatisticsCollector);
-      this.query.getTupleExpr().visit(sparqlStatisticsCollector);
+      this.query.getTupleExpr().visitChildren(sparqlStatisticsCollector2);
+      this.query.getTupleExpr().visit(sparqlStatisticsCollector2);
     } catch (Exception e) {
       logger.error("An unknown error occured while computing the sparql statistics: ", e);
     }
 
-    this.sparqlStatistics = sparqlStatisticsCollector.getStatistics();
+    this.sparqlStatistics = sparqlStatisticsCollector2.getStatistics();
 
   }
 
@@ -295,10 +308,12 @@ public class OpenRDFQueryHandler extends QueryHandler
     final Map<String, Integer> strings = new HashMap<>();
     final Map<String, Integer> pIDs = new HashMap<String, Integer>();
 
-    normalizedQuery.getTupleExpr().visit(new QueryModelVisitorBase<VisitorException>() {
+    normalizedQuery.getTupleExpr().visit(new QueryModelVisitorBase<VisitorException>()
+    {
 
       @Override
-      public void meet(StatementPattern statementPattern) {
+      public void meet(StatementPattern statementPattern)
+      {
         statementPattern.setSubjectVar(normalizeHelper(statementPattern.getSubjectVar(), strings));
         statementPattern.setObjectVar(normalizeHelper(statementPattern.getObjectVar(), strings));
 
@@ -306,10 +321,12 @@ public class OpenRDFQueryHandler extends QueryHandler
         checkForVariable(statementPattern.getPredicateVar());
       }
     });
-    normalizedQuery.getTupleExpr().visit(new QueryModelVisitorBase<VisitorException>() {
+    normalizedQuery.getTupleExpr().visit(new QueryModelVisitorBase<VisitorException>()
+    {
 
       @Override
-      public void meet(ArbitraryLengthPath arbitraryLengthPath) {
+      public void meet(ArbitraryLengthPath arbitraryLengthPath)
+      {
         arbitraryLengthPath.setSubjectVar(normalizeHelper(arbitraryLengthPath.getSubjectVar(), strings));
         arbitraryLengthPath.setObjectVar(normalizeHelper(arbitraryLengthPath.getObjectVar(), strings));
       }
@@ -321,6 +338,7 @@ public class OpenRDFQueryHandler extends QueryHandler
 
   /**
    * A helper function to check if a Var is an actual variable.
+   *
    * @param var The Var to check.
    */
   private void checkForVariable(Var var)
@@ -357,7 +375,7 @@ public class OpenRDFQueryHandler extends QueryHandler
             lastIndexOf = ":";
           } else {
             logger.error("Variable " + var.toString() + " could not be normalized because the urn formatting is not recognized.\n" +
-                         "Query was: " + this.getQueryStringWithoutPrefixes());
+                "Query was: " + this.getQueryStringWithoutPrefixes());
             return var;
           }
           String uri = subjectString.substring(0, subjectString.lastIndexOf(lastIndexOf)) + lastIndexOf + "QName" + foundNames.get(subjectString);
@@ -393,9 +411,11 @@ public class OpenRDFQueryHandler extends QueryHandler
 
     try {
       ASTQueryContainer qc = SyntaxTreeBuilder.parseQuery(getQueryString());
-      qc.jjtAccept(new ASTVisitorBase() {
+      qc.jjtAccept(new ASTVisitorBase()
+      {
         @Override
-        public Object visit(ASTString string, Object data) throws VisitorException {
+        public Object visit(ASTString string, Object data) throws VisitorException
+        {
           Pattern pattern = Pattern.compile("^Point\\(([-+]?[\\d]{1,2}\\.\\d+\\s*[-+]?[\\d]{1,3}\\.\\d+?)\\)$");
           Matcher matcher = pattern.matcher(string.getValue());
           if (matcher.find()) {

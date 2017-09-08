@@ -4,7 +4,7 @@ import org.openrdf.query.algebra.TupleExpr;
 
 /**
  * @author adrian
- *         A wrapper class as a workaround for the broken .hashCode()-function of the TupleExpr-class
+ * A wrapper class as a workaround for the broken .hashCode()-function of the TupleExpr-class
  */
 public class TupleExprWrapper
 {
