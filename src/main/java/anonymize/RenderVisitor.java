@@ -258,9 +258,8 @@ public class RenderVisitor implements SyntaxTreeBuilderVisitor
   @Override
   public final Object visit(ASTAskQuery node, Object data) throws VisitorException
   {
-    // TODO Auto-generated method stub
-    String result = data.toString() + node.toString() + "\n";
-    result += visitChildren(node, data.toString() + " ");
+    String result = data.toString() + " ASK\n";
+    result += visitChildren(node, data.toString());
     return result;
   }
 
@@ -1002,7 +1001,7 @@ public class RenderVisitor implements SyntaxTreeBuilderVisitor
   @Override
   public final Object visit(ASTLangMatches node, Object data) throws VisitorException
   {
-    return BuiltInCall(node, data, "LANGMATCHES");
+    return BuiltInCall(node, data, "LANGMATCHES", ", ");
   }
 
   @Override
