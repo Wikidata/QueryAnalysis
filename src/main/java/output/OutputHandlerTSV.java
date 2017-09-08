@@ -41,7 +41,7 @@ public class OutputHandlerTSV extends OutputHandler
   /**
    * The outputStream object we are writing too.
    */
-  private OutputStream outputStream = null;
+  private OutputStream outputStream;
 
   private Cache cache = Cache.getInstance();
 
