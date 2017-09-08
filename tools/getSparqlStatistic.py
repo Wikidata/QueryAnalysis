@@ -61,13 +61,15 @@ class SparqlStatisticHandler:
         self.statistic["Order By"] = self.statistic["OrderClause"]
         self.statistic["Union"] = self.statistic["UnionGraphPattern"]
         self.statistic["Optional"] = self.statistic["OptionalGraphPattern"]
-        self.statistic["Graph"] = self.statistic["GraphPatternGroup"]
         self.statistic["Not Exists"] = self.statistic["NotExistsFunc"]
         self.statistic["Minus"] = self.statistic["MinusGraphPattern"]
         self.statistic["Exists"] = self.statistic["ExistsFunc"]
         self.statistic["Group By"] = self.statistic["GroupClause"]
         self.statistic["Having"] = self.statistic["HavingClause"]
         self.statistic["Service"] = self.statistic["ServiceGraphPattern"]
+
+        self.statistic["And"] = self.statistic["Join"]
+        self.statistic["Value"] = self.statistic["ValueConstant"]
 
         # only print specified columns
         toPrintKeys = ["Select", "Ask", "Describe", "Construct", "Distinct",

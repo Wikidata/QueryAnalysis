@@ -123,52 +123,31 @@ public class OpenRDFQueryHandler extends QueryHandler
   {
 
     if (getValidityStatus() != QueryHandler.Validity.VALID) {
-      this.sparqlStatistics = SparqlStatisticsCollector2.getDefaultMap();
+      this.sparqlStatistics = new HashMap<>();
       return;
     }
     try {
       ASTQueryContainer astQueryContainer = SyntaxTreeBuilder.parseQuery(this.getQueryString());
 
-      SparqlStatisticsCollector sparqlStatisticsCollector = new SparqlStatisticsCollector();
-      astQueryContainer.jjtAccept(sparqlStatisticsCollector, null);
+      QueryContainerSparqlStatisticsCollector queryContainerSparqlStatisticsCollector = new QueryContainerSparqlStatisticsCollector();
+      astQueryContainer.jjtAccept(queryContainerSparqlStatisticsCollector, null);
 
-      this.sparqlStatistics = sparqlStatisticsCollector.getStatistics();
+      this.sparqlStatistics = queryContainerSparqlStatisticsCollector.getStatistics();
+
+      TupleExprSparqlStatisticsCollector tupleExprSparqlStatisticsCollector = new TupleExprSparqlStatisticsCollector();
+
+      this.query.getTupleExpr().visitChildren(tupleExprSparqlStatisticsCollector);
+      this.query.getTupleExpr().visit(tupleExprSparqlStatisticsCollector);
+
+      this.sparqlStatistics.putAll(tupleExprSparqlStatisticsCollector.getStatistics());
+
     } catch (TokenMgrError | ParseException e) {
       logger.error("Failed to parse the query although it was found valid - this is a serious bug.", e);
     } catch (VisitorException e) {
       logger.error("Failed to calculate the SPARQL Keyword Statistics. Error occured while visiting the query.", e);
-    }
-  }
-
-  protected void computeSparqlStatistics2()
-  {
-
-    if (getValidityStatus() != QueryHandler.Validity.VALID) {
-      this.sparqlStatistics = SparqlStatisticsCollector2.getDefaultMap();
-      return;
-    }
-    // System.out.println("\n\n\n");
-    System.out.println(this.getQueryStringWithoutPrefixes());
-    System.out.println(this.query.getTupleExpr());
-
-    SparqlStatisticsCollector2 sparqlStatisticsCollector2 = new SparqlStatisticsCollector2();
-
-    // grep for having or ask
-    if (this.getQueryStringWithoutPrefixes().toLowerCase().contains("ask")) {
-      sparqlStatisticsCollector2.add("Ask");
-    } else if (this.getQueryStringWithoutPrefixes().toLowerCase().contains("having")) {
-      sparqlStatisticsCollector2.add("Having");
-    }
-
-    try {
-      this.query.getTupleExpr().visitChildren(sparqlStatisticsCollector2);
-      this.query.getTupleExpr().visit(sparqlStatisticsCollector2);
     } catch (Exception e) {
       logger.error("An unknown error occured while computing the sparql statistics: ", e);
     }
-
-    this.sparqlStatistics = sparqlStatisticsCollector2.getStatistics();
-
   }
 
 

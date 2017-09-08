@@ -9,7 +9,7 @@ import java.util.HashMap;
 /**
  * @author Julius Gonsior
  */
-public class SparqlStatisticsCollector extends ASTVisitorBase
+public class QueryContainerSparqlStatisticsCollector extends ASTVisitorBase
 {
   private HashMap<String, Integer> statistics = new HashMap<>();
 
@@ -74,11 +74,6 @@ public class SparqlStatisticsCollector extends ASTVisitorBase
   }
 
   public Object visit(ASTOptionalGraphPattern node, Object data) throws VisitorException
-  {
-    return this.visitNode(node, data);
-  }
-
-  public Object visit(ASTGraphPatternGroup node, Object data) throws VisitorException
   {
     return this.visitNode(node, data);
   }
