@@ -1,4 +1,3 @@
-queryType	userAgent	tool	version	comment
 entityLabelInSpecificLanguage	-	toolSearchingForLabelInLanguage	-1	needs more data
 imageToSocialNetworksID	-	toolSearchingForImageToID	-1	needs more data
 taxonomyInformations	-	taxonomyInformations	?	propbably https://www.wikidata.org/wiki/User:Succu?
@@ -116,6 +115,11 @@ thisNCBITaxonomyIDSubclassOfOperon	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_
 geneAndInformationWithConstraints	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36	toolSearchingForGeneRelated	-1	needs more data
 thisNCBITaxonomyIDSubclassOfOperon	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36	toolSearchingForGeneRelated	-1	needs more data
 thisNCBILocusTagFoundInTaxonNCBITaxonomyIDWithEncodes	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36	toolSearchingForGeneRelated	-1	needs more data
+thisFreebaseIDWithLabelOptionalInstanceOf	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.143 Safari/537.36	toolSeatchingForFreebaseID	-1	needs more data
+thisFreebaseIDWithLabelOptionalInstanceOf2	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.143 Safari/537.36	toolSeatchingForFreebaseID	-1	needs more data
+entityLabelImageDescriptionAllOptional	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/603.2.5 (KHTML, like Gecko) Version/10.1.1 Safari/603.2.5	toolSeaerchingForOptionalInformationAboutEntites	-1	needs more data
+schemaAboutEntityLabelImageCoordinatesAllOptional	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/603.2.5 (KHTML, like Gecko) Version/10.1.1 Safari/603.2.5	toolSeaerchingForOptionalInformationAboutEntites	-1	needs more data
+thisNCBILocusTagFoundInTaxonNCBITaxonomyIDWithEncodes	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36	toolSearchingForGeneRelated	-1	needs more data
 thisTaxonRankParentTaxon	Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36	toolSearchingForTaxonsOfParentTaxon	-1	needs more data
 thisArticleAboutInLanguageIsPartOfWikiGroupWithLimit	Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36	toolSearchingForArticlesFromGroup	-1	needs more data
 thisHasLabel_cityOrRegion	Mozilla/5.0 (Windows NT 6.1; WOW64; rv:35.0) Gecko/20100101 Firefox/35.0	toolSearchingForHasLabelWithConstraints	-1	needs more data (possible Source: 1)
@@ -127,6 +131,7 @@ thisIMDbID	Mozilla/5.0 (Windows NT; Windows NT 10.0; es-ES) WindowsPowerShell/5.
 thisIMDbID	Mozilla/5.0 (Windows NT; Windows NT 10.0; es-ES) WindowsPowerShell/5.1.14393.693	toolUsingWindowsPowerShellForIMDb	-1	needs more data (possible Source: 0)
 thisIMDbID	Mozilla/5.0 (Windows NT; Windows NT 10.0; es-ES) WindowsPowerShell/5.1.15063.138	toolUsingWindowsPowerShellForIMDb	-1	needs more data (possible Source: 0)
 thisDerivedFromStatedInPaper	Mozilla/5.0 (Windows; U; WindowsNT 5.1; en-US; rv1.8.1.6) Gecko/20070725 Firefox/2.0.0.6	toolSearchingForRelationToPaperStatements	-1	needs more data
+thisLocatedInTheAdministrativeTerritorialEntityArbitraryLengthInstanceOfArbitraryLengthAdministrativeTerritoralEntity	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.2.1) Gecko/20021204	toolSearchingForParentAdministrativeEntities	-1	needs more data
 thisNRHPReferenceNumber	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.2.1) Gecko/20021204	toolSearchingForHistoryPlaces	-1	needs more data
 thisULANID	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.2.1) Gecko/20021204	toolSearchingForULANID	-1	needs more data
 generalInformationAboutPerson	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:11.0) Gecko/20100101 Firefox/11.0	toolSearchingForInformationAboutPeople2	-1	needs more data
@@ -235,5 +240,4 @@ thisUniProtID	sparqlwrapper 1.7.6 (rdflib.github.ioSLASHsparqlwrapper)	toolUsing
 entityAllPropertiesAllObjectsWithInstanceAndLabel	sparqlwrapper 1.8.0 (rdflib.github.io/sparqlwrapper)	toolSearchingForInformationAboutEntity	1.8.0	needs more data
 instanceOfThis	sparqlwrapper 1.8.0 (rdflib.github.io/sparqlwrapper)	toolUsingSparqlwrapperPython	1.8.0	needs more data
 thisWikiLovesMonumentsID	sparqlwrapper 1.8.0 (rdflib.github.io/sparqlwrapper)	toolUsingSparqlwrapperPythonForWikiLovesMonumentsID	1.8.0	needs more data
-schemaAboutEntityLabelImageCoordinatesAllOptional	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/603.2.5 (KHTML, like Gecko) Version/10.1.1 Safari/603.2.5	tollSeaerchingForOptionalInformationAboutEntites	-1	needs more data
-entityLabelImageDescriptionAllOptional	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/603.2.5 (KHTML, like Gecko) Version/10.1.1 Safari/603.2.5	tollSeaerchingForOptionalInformationAboutEntites	-1	needs more data
+queryType	userAgent	tool	version	comment
