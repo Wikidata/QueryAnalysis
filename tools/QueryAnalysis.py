@@ -57,6 +57,7 @@ parser.add_argument("--monthsFolder", "-m", default=config.monthsFolder,
                     + "residing.")
 parser.add_argument("--year", "-y", default=datetime.now().year, type=int,
                     help="The year to be processed (default current year).")
+parser.add_argument("--noUnifying", "-u", help="Disables the unifying of query types.", action="store_true")
 parser.add_argument("months", type=str, help="The months to be processed")
 
 # These are the field we extract from wmf.wdqs_extract that form the raw
@@ -152,14 +153,14 @@ for monthName in args.months.split(","):
 
     if args.logging:
         mavenArguments += " -l"
-        if args.noBotMetrics:
-            mavenArguments += " -b"
-            if args.noDynamicQueryTypes:
-                mavenArguments += " -d"
-                if args.noGzipOutput:
-                    mavenArguments += " -g"
-                    if args.noExampleQueriesOutput:
-                        mavenArguments += " -e"
+    if args.noBotMetrics:
+        mavenArguments += " -b"
+    if args.noDynamicQueryTypes:
+        mavenArguments += " -d"
+    if args.noGzipOutput:
+        mavenArguments += " -g"
+    if args.noExampleQueriesOutput:
+        mavenArguments += " -e"
 
     mavenCall.append(mavenArguments)
 
@@ -181,10 +182,10 @@ for monthName in args.months.split(","):
 
     # Finally we call the query type unification
     # (see python unifyQueryTypes.py for details)
+    
+    if not args.noUnifying:
+        print "Starting to unify the query types for " + monthName + "."
 
-    print "Starting to unify the query types for " + monthName + "."
-
-    unifyQueryTypes.unifyQueryTypes(monthName,
-                                    args.monthsFolder,
-                                    args.referenceDirectory,
-                                    args.fdupesExecutable)
+        unifyQueryTypes.unifyQueryTypes(monthName, args.monthsFolder, args.referenceDirectory, args.fdupesExecutable)
+    else:
+        print "WARNING: The query types in " + monthName + " are not unified."
