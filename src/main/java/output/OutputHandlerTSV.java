@@ -6,7 +6,6 @@ import general.Main;
 import org.apache.log4j.Logger;
 import query.Cache;
 import query.QueryHandler;
-import query.SparqlStatisticsCollector;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -160,7 +159,7 @@ public class OutputHandlerTSV extends OutputHandler
       line.add(sparqlStatisticsLine);
 
     } else {
-      for (int i = 0; i < 12 + SparqlStatisticsCollector.getDefaultMap().size(); i++) {
+      for (int i = 0; i < 13; i++) {
         line.add(-1);
       }
     }
