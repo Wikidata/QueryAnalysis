@@ -43,7 +43,7 @@ public class Cache
 
 
   private static DB db = DBMaker.memoryDB().make();
-  private static HTreeMap queryHandlerCache = Cache.db.hashMap("queryHandlerCache").createOrOpen();
+  private static HTreeMap queryHandlerLiteCache = Cache.db.hashMap("queryHandlerLiteCache").createOrOpen();
 
   /**
    * exists only to prevent this Class from being instantiated
@@ -98,7 +98,7 @@ public class Cache
    * @param queryToAnalyze The query that should be analyzed and written.
    * @return QueryHandler a QueryHandler object which was created for the same queryString before
    */
-  public QueryHandler getQueryHandlerFromCache(QueryHandler.Validity validityStatus, String queryToAnalyze, Class queryHandlerClass)
+  public QueryHandler getQueryHandler(QueryHandler.Validity validityStatus, String queryToAnalyze,, long line, int day, Class queryHandlerClass)
   {
     Tuple2<QueryHandler.Validity, String> tuple = new Tuple2<QueryHandler.Validity, String>(validityStatus, queryToAnalyze);
 
@@ -112,7 +112,12 @@ public class Cache
         logger.error("Failed to create query handler object" + e);
       }
       queryHandler.setValidityStatus(validityStatus);
+      queryHandler.setLine(line);
+      queryHandler.setDay(day);
       queryHandler.setQueryString(queryToAnalyze);
+
+      //
+
       queryHandlerLRUMap.put(tuple, queryHandler);
     }
 
@@ -120,12 +125,12 @@ public class Cache
     return queryHandlerLRUMap.get(tuple);
   }
 
-  public QueryHandler getQueryHandler(QueryHandler.Validity validityStatus, String queryToAnalyze, long line, int day, Class queryHandlerClass)
+  public QueryHandlerLite getQueryHandlerLite(QueryHandler.Validity validityStatus, String queryToAnalyze, long line, int day, Class queryHandlerClass)
   {
     //check if requested object already exists in cache
-    QueryHandler queryHandler = null;
+    QueryHandlerLite queryHandlerLite = null;
     String id = QueryHandler.generateId(day, line, queryToAnalyze);
-    if (!Cache.queryHandlerCache.containsKey(id)) {
+    if (!Cache.queryHandlerLiteCache.containsKey(id)) {
       //if not create a new one
         try {
           queryHandler = (QueryHandler) queryHandlerClass.getConstructor().newInstance();
@@ -133,12 +138,10 @@ public class Cache
           logger.error("Failed to create query handler object" + e);
         }
         queryHandler.setValidityStatus(validityStatus);
-        queryHandler.setLine(line);
-        queryHandler.setDay(day);
         queryHandler.setQueryString(queryToAnalyze);
-      Cache.queryHandlerCache.put(queryHandler.getUniqeId(), queryHandler);
+      Cache.queryHandlerLiteCache.put(queryHandler.getUniqeId(), queryHandler);
       } else {
-      queryHandler = (QueryHandler) Cache.queryHandlerCache.get(id);
+      queryHandler = (QueryHandler) Cache.queryHandlerLiteCache.get(id);
     }
           return queryHandler;
 
