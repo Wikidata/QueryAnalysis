@@ -117,6 +117,7 @@ public class Cache
       queryHandler.setQueryString(queryToAnalyze);
 
       //
+      
 
       queryHandlerLRUMap.put(tuple, queryHandler);
     }
