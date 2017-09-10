@@ -122,6 +122,28 @@ public class RenderVisitor implements SyntaxTreeBuilderVisitor
     result += " )";
     return result;
   }
+  /**
+   * @param node The node to be visited. Should be either ASTBindingsClause or ASTInlineData.
+   * @param data The data to be passed along.
+   * @return The VALUES-Clause constructed from this node. (VALUES (?var1, ?var2) {(<value1>, <value2>)})
+   * @throws VisitorException If an exception occurs while visiting the children.
+   */
+  private String values(Node node, Object data) throws VisitorException
+  {
+    String result = data.toString() + " VALUES ( ";
+    int i = 0;
+    while (node.jjtGetChild(i) instanceof ASTVar) {
+      result += node.jjtGetChild(i).jjtAccept(this, data).toString();
+      i++;
+      if (i >= node.jjtGetNumChildren()) {
+        break;
+      }
+    }
+    result += " ) {\n";
+    result += visitChildren(node, data.toString() + " ", i);
+    result += data.toString() + " }\n";
+    return result;
+  }
 
   @Override
   public final Object visit(SimpleNode node, Object data) throws VisitorException
@@ -266,45 +288,33 @@ public class RenderVisitor implements SyntaxTreeBuilderVisitor
   @Override
   public final Object visit(ASTDatasetClause node, Object data) throws VisitorException
   {
-    // TODO Auto-generated method stub
-    String result = data.toString() + node.toString() + "\n";
-    result += visitChildren(node, data.toString() + " ");
+    String result = data.toString() + "FROM ";
+    if (node.isNamed()) {
+      result += "NAMED ";
+    }
+    result += visitChildren(node, data.toString());
+    result += "\n";
     return result;
   }
 
   @Override
   public final Object visit(ASTWhereClause node, Object data) throws VisitorException
   {
-    String result = data.toString() + "WHERE";
-    result += visitChildren(node, data.toString() + " ");
+    String result = data.toString() + "WHERE ";
+    result += visitChildren(node, data.toString());
     return result;
   }
 
   @Override
   public final Object visit(ASTBindingsClause node, Object data) throws VisitorException
   {
-    // TODO Auto-generated method stub
-    String result = data.toString() + node.toString() + "\n";
-    result += visitChildren(node, data.toString() + " ");
-    return result;
+    return values(node, data);
   }
 
   @Override
   public final Object visit(ASTInlineData node, Object data) throws VisitorException
   {
-    String result = data.toString() + " VALUES ( ";
-    int i = 0;
-    while (node.jjtGetChild(i) instanceof ASTVar) {
-      result += node.jjtGetChild(i).jjtAccept(this, data).toString();
-      i++;
-      if (i >= node.jjtGetNumChildren()) {
-        break;
-      }
-    }
-    result += " ) {\n";
-    result += visitChildren(node, data.toString() + " ", i);
-    result += data.toString() + " }\n";
-    return result;
+    return values(node, data);
   }
 
   @Override
@@ -441,8 +451,7 @@ public class RenderVisitor implements SyntaxTreeBuilderVisitor
   @Override
   public final Object visit(ASTGraphGraphPattern node, Object data) throws VisitorException
   {
-    // TODO Auto-generated method stub
-    String result = data.toString() + node.toString() + "\n";
+    String result = data.toString() + "GRAPH ";
     result += visitChildren(node, data.toString() + " ");
     return result;
   }
@@ -553,22 +562,47 @@ public class RenderVisitor implements SyntaxTreeBuilderVisitor
   @Override
   public final Object visit(ASTPathAlternative node, Object data) throws VisitorException
   {
-    String result = visitChildren(node, data.toString() + " ", "|");
+    String result = "";
+    if (node.jjtGetNumChildren() > 1) {
+      result += "(" + visitChildren(node, data.toString() + " ", "|") + ")";
+    } else {
+      result += visitChildren(node, data.toString() + " ", "|");
+    }
     return result;
   }
 
   @Override
   public final Object visit(ASTPathSequence node, Object data) throws VisitorException
   {
-    String result = visitChildren(node, data.toString() + " ", "/");
+    String result = "";
+    if (node.jjtGetNumChildren() > 1) {
+      result += "(" + visitChildren(node, data.toString() + " ", "/") + ")";
+    } else {
+      result += visitChildren(node, data.toString() + " ", "/");
+    }
     return result;
   }
 
   @Override
   public final Object visit(ASTPathElt node, Object data) throws VisitorException
   {
-    // TODO Find query using node.inverse
-    String result = visitChildren(node, data.toString());
+    // TODO Am I interpreting the ASTPathOneInPropertySet correctly?
+    String result  = "";
+    if (node.isInverse()) {
+      result += "^";
+    }
+    boolean allPathOneInPropertySet = true;
+    for (int i = 0; i < node.jjtGetNumChildren(); i++) {
+      if (!(node.jjtGetChild(i) instanceof ASTPathOneInPropertySet)) {
+        allPathOneInPropertySet = false;
+        break;
+      }
+    }
+    if (allPathOneInPropertySet) {
+      result += "(!(" + visitChildren(node, data.toString(), "|") + "))";
+    } else {
+      result += visitChildren(node, data.toString());
+    }
     return result;
   }
 
@@ -584,9 +618,11 @@ public class RenderVisitor implements SyntaxTreeBuilderVisitor
   @Override
   public final Object visit(ASTPathOneInPropertySet node, Object data) throws VisitorException
   {
-    // TODO Auto-generated method stub
-    String result = data.toString() + node.toString() + "\n";
-    result += visitChildren(node, data.toString() + " ");
+    String result = "";
+    if (node.isInverse()) {
+      result += "^";
+    }
+    result += visitChildren(node, data.toString());
     return result;
   }
 
@@ -619,9 +655,16 @@ public class RenderVisitor implements SyntaxTreeBuilderVisitor
   @Override
   public final Object visit(ASTCollection node, Object data) throws VisitorException
   {
-    // TODO Auto-generated method stub
-    String result = data.toString() + node.toString() + "\n";
-    result += visitChildren(node, data.toString() + " ");
+    // TODO What happens if node's varname is set?
+    String result;
+    if (node.getVarName() == null) {
+      result = data.toString() + " (";
+      result += visitChildren(node, data.toString());
+      result += ")";
+    } else {
+      result = data.toString() + node.toString() + "\n";
+      result += visitChildren(node, data.toString() + " ");
+    }
     return result;
   }
 
@@ -686,8 +729,9 @@ public class RenderVisitor implements SyntaxTreeBuilderVisitor
   @Override
   public final Object visit(ASTNot node, Object data) throws VisitorException
   {
-    String result = "!";
+    String result = "!(";
     result += visitChildren(node, data.toString());
+    result += ")";
     return result;
   }
 
