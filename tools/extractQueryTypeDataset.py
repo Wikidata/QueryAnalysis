@@ -5,7 +5,6 @@ import gzip
 import os
 import sys
 from itertools import izip
-from pprint import pprint
 
 from utility import utility
 
