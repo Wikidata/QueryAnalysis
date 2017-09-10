@@ -5,6 +5,7 @@ import gzip
 import os
 import sys
 from itertools import izip
+from pprint import pprint
 
 from utility import utility
 
@@ -53,6 +54,8 @@ if not os.path.exists(subfolder):
     os.makedirs(subfolder + "processedLogData")
     os.makedirs(subfolder + "rawLogData")
 
+usedQueryTypes = set()
+
 for i in xrange(1, 32):
     if not (os.path.exists(processedPrefix + "%02d" % i + ".tsv.gz")
             and gzip.os.path.exists(sourcePrefix + "%02d" % i + ".tsv.gz")):
@@ -63,7 +66,7 @@ for i in xrange(1, 32):
             gzip.open(subfolder + processedPrefix + "%02d" % i
                       + ".tsv.gz", "w") as user_p, \
             gzip.open(subfolder + sourcePrefix + "%02d" % i
-                 + ".tsv.gz", "w") as user_s:
+                      + ".tsv.gz", "w") as user_s:
         pReader = csv.DictReader(p, delimiter="\t")
         sReader = csv.DictReader(s, delimiter="\t")
 
@@ -81,6 +84,8 @@ for i in xrange(1, 32):
                 sWriter.fieldnames = sReader.fieldnames
                 sWriter.writerow(sh)
 
-            if (processed["#ToolName"] == "USER"):
+            if (processed['#QueryType'] not in usedQueryTypes):
                 pWriter.writerow(processed)
                 sWriter.writerow(source)
+
+            usedQueryTypes.add(processed['#QueryType'])
