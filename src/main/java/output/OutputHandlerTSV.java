@@ -30,7 +30,7 @@ public class OutputHandlerTSV extends OutputHandler
   /**
    * The class of which a queryHandlerObject should be created.
    */
-  private final Class queryHandlerClass;
+  private Class queryHandlerClass;
 
   /**
    * A writer created at object creation to be used in line-by-line writing.
@@ -40,12 +40,24 @@ public class OutputHandlerTSV extends OutputHandler
   /**
    * The outputStream object we are writing too.
    */
-  private OutputStream outputStream = null;
+  private OutputStream outputStream;
 
   /**
    * The Caching module object.
    */
   private Cache cache = Cache.getInstance();
+
+  /**
+   * @param fileToWrite       location of the file to write the received values to
+   * @param queryHandlerClassToSet handler class used to analyze the query string that will be written
+   * @throws FileNotFoundException if the file exists but is a directory
+   *                               rather than a regular file, does not exist but cannot be created,
+   *                               or cannot be opened for any other reason
+   */
+  public OutputHandlerTSV(String fileToWrite, Class queryHandlerClassToSet) throws FileNotFoundException
+  {
+    super(fileToWrite, queryHandlerClassToSet);
+  }
 
   /**
    * Creates the file specified in the constructor and writes the header.
@@ -56,7 +68,7 @@ public class OutputHandlerTSV extends OutputHandler
    *                               rather than a regular file, does not exist but cannot be created,
    *                               or cannot be opened for any other reason
    */
-  public OutputHandlerTSV(String fileToWrite, Class queryHandlerClass) throws FileNotFoundException
+  public void initialize(String fileToWrite, Class queryHandlerClass) throws FileNotFoundException
   {
     if (!Main.gzipOutput) {
       outputStream = new FileOutputStream(fileToWrite + ".tsv");
