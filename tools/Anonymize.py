@@ -9,7 +9,7 @@ from utility import utility
 parser = argparse.ArgumentParser("This script creates an anonymous dataset from the rawLogData.")
 parser.add_argument("--ignoreLock", "-i", help="Ignore locked file and "
                     + "execute anyways", action="store_true")
-parser.add_argument("--threads", "-t", default=7, type=int, help="The number "
+parser.add_argument("--threads", "-t", default=10, type=int, help="The number "
                     + "of threads to run the java program with (default 7).")
 parser.add_argument("--monthsFolder", "-m", default=config.monthsFolder,
                     type=str,
