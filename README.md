@@ -7,8 +7,7 @@ You need to have `Maven`, `OpenJDK 8` and `Python 2` installed.
 
 ### Installing
 ```shell
-$ mvn -T 1.5C install
-
+$ mvn clean package
 ```
 
 **Important** To find duplicate query types we use [fdupes](https://github.com/adrianlopezroche/fdupes). If you wish to synchronize the query types please clone the given repository and create an executable using:
@@ -19,10 +18,10 @@ $ make fdupes
 ### Running the main Java log analyser
 ```shell
 # Processes the example SPARQL log files into exampleMonthsFolder/exampleMonth/processedLogData
-$ mvn -T 1.5C compile exec:java -Dexec.mainClass=general.Main -Dexec.args="-w exampleMonthsFolder/exampleMonth -logging"
+$ mvn exec:java@QueryAnalysis -Dexec.args="-w exampleMonthsFolder/exampleMonth -logging"
 
 # There are more (useful) CLI parameter available, you can list them with:
-$ mvn -T 1.5C compile exec:java -Dexec.mainClass=general.Main -Dexec.args="--help"
+$ mvn exec:java@QueryAnalysis -Dexec.args="--help"
 
 ```
 
