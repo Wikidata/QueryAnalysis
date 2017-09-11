@@ -316,7 +316,7 @@ public class OpenRDFQueryHandler extends QueryHandler
           String uri = getURI(statementPattern.getPredicateVar());
           predicates.add(uri);
         } catch (NoURIException e) {
-          logger.error("Variable with uri " + statementPattern.getPredicateVar() + " could not be normalized because the urn formatting is not recognized.\n");
+          // NoURIException is used to notify us that there is no URI in this predicate, so we just don't add it.
         }
 
         checkForVariable(statementPattern.getPredicateVar());
