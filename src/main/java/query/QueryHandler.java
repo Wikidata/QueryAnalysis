@@ -14,6 +14,26 @@ import java.util.Map.Entry;
  */
 public abstract class QueryHandler implements Serializable
 {
+
+  public QueryHandler(Validity validity, Long line, Integer day, String queryString)
+  {
+    this.day = day;
+    this.line = line;
+    this.validityStatus = validity;
+
+    this.setUniqeId(this.day, this.line, queryString);
+    this.setOriginalId(this.getUniqeId());
+
+    if (queryString.equals("")) {
+      this.validityStatus = Validity.EMPTY;
+    } else if (validityStatus == null || validityStatus.getValue() > -1) {
+      this.queryStringWithoutPrefixes = queryString;
+      this.lengthNoAddedPrefixes = queryString.length();
+      this.queryString = queryString;
+      update();
+    }
+  }
+
   /**
    * Define a static logger variable.
    */
@@ -232,23 +252,6 @@ public abstract class QueryHandler implements Serializable
   }
 
   /**
-   * @param queryStringToSet query to set the variable queryString to
-   */
-  public final void setQueryString(String queryStringToSet)
-  {
-    this.setUniqeId(this.day, this.line, queryStringToSet);
-    this.setOriginalId(this.getUniqeId());
-    if (queryStringToSet.equals("")) {
-      this.validityStatus = Validity.EMPTY;
-    } else if (validityStatus.getValue() > -1) {
-      this.queryStringWithoutPrefixes = queryStringToSet;
-      this.lengthNoAddedPrefixes = queryStringToSet.length();
-      this.queryString = queryStringToSet;
-      update();
-    }
-  }
-
-  /**
    * @return Returns the original query-string represented by this handler.
    */
   public final String getQueryStringWithoutPrefixes()
@@ -384,14 +387,6 @@ public abstract class QueryHandler implements Serializable
   public final long getLine()
   {
     return line;
-  }
-
-  /**
-   * @param line the current line the query was from
-   */
-  public final void setLine(long line)
-  {
-    this.line = line;
   }
 
   /**
@@ -775,11 +770,6 @@ public abstract class QueryHandler implements Serializable
       this.computeCoordinatesString();
     }
     return coordinatesString;
-  }
-
-  public void setDay(int day)
-  {
-    this.day = day;
   }
 
   public abstract void updateOriginalId();

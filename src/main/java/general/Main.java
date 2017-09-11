@@ -322,9 +322,7 @@ public final class Main
         if (Files.isRegularFile(filePath)) {
           if (filePath.toString().endsWith(".preBuildQueryType")) {
             String queryString = new String(readAllBytes(filePath));
-            OpenRDFQueryHandler queryHandler = new OpenRDFQueryHandler();
-            //queryHandler.setValidityStatus(1);
-            queryHandler.setQueryString(queryString);
+            OpenRDFQueryHandler queryHandler = new OpenRDFQueryHandler(QueryHandler.Validity.DEFAULT, -1L, -1, queryString);
             if (queryHandler.getValidityStatus() != QueryHandler.Validity.VALID) {
               logger.info("The Pre-build query " + filePath + " is no valid SPARQL");
               continue;
@@ -475,8 +473,7 @@ public final class Main
       if (name != null) {
         String query = link.text();
         exampleQueriesString.put(query, name);
-        OpenRDFQueryHandler queryHandler = new OpenRDFQueryHandler();
-        queryHandler.setQueryString(query);
+        OpenRDFQueryHandler queryHandler = new OpenRDFQueryHandler(QueryHandler.Validity.DEFAULT, -1L, -1, query);
         if (queryHandler.getValidityStatus() != QueryHandler.Validity.VALID) {
           logger.warn("The example query " + name + " is no valid SPARQL.");
         } else {

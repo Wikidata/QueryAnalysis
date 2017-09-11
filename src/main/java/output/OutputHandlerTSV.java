@@ -121,7 +121,7 @@ public class OutputHandlerTSV extends OutputHandler
   @Override
   public final void writeLine(String queryToAnalyze, QueryHandler.Validity validityStatus, String userAgent, long currentLine, int day, String currentFile)
   {
-    QueryHandler queryHandler = cache.getQueryHandler(validityStatus, queryToAnalyze, queryHandlerClass);
+    QueryHandler queryHandler = cache.getQueryHandler(validityStatus, queryToAnalyze, currentLine, day, queryHandlerClass);
 
     queryHandler.setUserAgent(userAgent);
     queryHandler.setCurrentFile(currentFile);

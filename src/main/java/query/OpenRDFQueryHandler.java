@@ -26,6 +26,11 @@ import java.util.regex.Pattern;
  */
 public class OpenRDFQueryHandler extends QueryHandler
 {
+  public OpenRDFQueryHandler(Validity validity, Long line, Integer day, String queryString)
+  {
+    super(validity, line, day, queryString);
+  }
+
   /**
    * The base URI to resolve any possible relative URIs against.
    */
