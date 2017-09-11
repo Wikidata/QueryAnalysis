@@ -32,7 +32,7 @@ parser = argparse.ArgumentParser("This script extracts the raw log data (if "
                                  + "the query types.")
 parser.add_argument("--ignoreLock", "-i", help="Ignore locked file and "
                     + "execute anyways", action="store_true")
-parser.add_argument("--threads", "-t", default=7, type=int, help="The number "
+parser.add_argument("--threads", "-t", default=6, type=int, help="The number "
                     + "of threads to run the java program with (default 7).")
 parser.add_argument("--logging", "-l", help="Enables file logging.",
                     action="store_true")
