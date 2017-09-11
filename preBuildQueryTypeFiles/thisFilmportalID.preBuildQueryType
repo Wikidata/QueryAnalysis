@@ -1,4 +1,0 @@
-SELECT ?item
-WHERE {
-  ?item wdt:P2639 "78ee8f10f7cf4ceea37794332334e817"
-}
