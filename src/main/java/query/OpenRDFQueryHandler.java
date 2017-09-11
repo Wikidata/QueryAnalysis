@@ -1,34 +1,39 @@
 package query;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import general.Main;
 import openrdffork.StandardizingSPARQLParser;
 import openrdffork.TupleExprWrapper;
+import utility.NoURIException;
+
 import org.apache.log4j.Logger;
 import org.openrdf.model.Value;
 import org.openrdf.model.impl.URIImpl;
 import org.openrdf.query.MalformedQueryException;
 import org.openrdf.query.algebra.ArbitraryLengthPath;
+import org.openrdf.query.algebra.Compare;
 import org.openrdf.query.algebra.StatementPattern;
 import org.openrdf.query.algebra.TupleExpr;
+import org.openrdf.query.algebra.ValueConstant;
+import org.openrdf.query.algebra.ValueExpr;
 import org.openrdf.query.algebra.Var;
 import org.openrdf.query.algebra.helpers.QueryModelVisitorBase;
 import org.openrdf.query.algebra.helpers.StatementPatternCollector;
 import org.openrdf.query.parser.ParsedQuery;
 import org.openrdf.query.parser.sparql.ASTVisitorBase;
-import org.openrdf.query.parser.sparql.ast.ASTLimit;
-import org.openrdf.query.parser.sparql.ast.ASTNumericLiteral;
 import org.openrdf.query.parser.sparql.ast.ASTQueryContainer;
-import org.openrdf.query.parser.sparql.ast.ASTRDFLiteral;
 import org.openrdf.query.parser.sparql.ast.ASTString;
-import org.openrdf.query.parser.sparql.ast.ASTVar;
 import org.openrdf.query.parser.sparql.ast.ParseException;
 import org.openrdf.query.parser.sparql.ast.SyntaxTreeBuilder;
 import org.openrdf.query.parser.sparql.ast.TokenMgrError;
 import org.openrdf.query.parser.sparql.ast.VisitorException;
-
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * @author jgonsior
@@ -279,8 +284,10 @@ public class OpenRDFQueryHandler extends QueryHandler
   {
     ParsedQuery normalizedQuery = new StandardizingSPARQLParser().parseNormalizeQuery(queryToNormalize.getSourceString(), BASE_URI);
 
-    final Map<String, Integer> strings = new HashMap<>();
-    final Map<String, Integer> pIDs = new HashMap<String, Integer>();
+    final Map<String, Integer> valueConstants = new HashMap<>();
+
+    final Set<String> subjectsAndObjects = new HashSet<String>();
+    final Set<String> predicates = new HashSet<String>();
 
     normalizedQuery.getTupleExpr().visit(new QueryModelVisitorBase<VisitorException>()
     {
@@ -288,10 +295,15 @@ public class OpenRDFQueryHandler extends QueryHandler
       @Override
       public void meet(StatementPattern statementPattern)
       {
-        statementPattern.setSubjectVar(normalizeHelper(statementPattern.getSubjectVar(), strings));
-        statementPattern.setObjectVar(normalizeHelper(statementPattern.getObjectVar(), strings));
+        statementPattern.setSubjectVar(normalizeSubjectsAndObjectsHelper(statementPattern.getSubjectVar(), valueConstants, subjectsAndObjects));
+        statementPattern.setObjectVar(normalizeSubjectsAndObjectsHelper(statementPattern.getObjectVar(), valueConstants, subjectsAndObjects));
 
-        normalizeHelper(statementPattern.getPredicateVar(), pIDs);
+        try {
+          String uri = getURI(statementPattern.getPredicateVar());
+          predicates.add(uri);
+        } catch (NoURIException e) {
+          logger.error("Variable with uri " + statementPattern.getPredicateVar() + " could not be normalized because the urn formatting is not recognized.\n");
+        }
       }
     });
     normalizedQuery.getTupleExpr().visit(new QueryModelVisitorBase<VisitorException>()
@@ -300,13 +312,54 @@ public class OpenRDFQueryHandler extends QueryHandler
       @Override
       public void meet(ArbitraryLengthPath arbitraryLengthPath)
       {
-        arbitraryLengthPath.setSubjectVar(normalizeHelper(arbitraryLengthPath.getSubjectVar(), strings));
-        arbitraryLengthPath.setObjectVar(normalizeHelper(arbitraryLengthPath.getObjectVar(), strings));
+        arbitraryLengthPath.setSubjectVar(normalizeSubjectsAndObjectsHelper(arbitraryLengthPath.getSubjectVar(), valueConstants, subjectsAndObjects));
+        arbitraryLengthPath.setObjectVar(normalizeSubjectsAndObjectsHelper(arbitraryLengthPath.getObjectVar(), valueConstants, subjectsAndObjects));
       }
     });
-    this.setqIDs(strings.keySet());
-    this.setpIDs(pIDs.keySet());
+    normalizedQuery.getTupleExpr().visit(new QueryModelVisitorBase<VisitorException>()
+    {
+
+      @Override
+      public void meet(Compare compare)
+      {
+        compare.setLeftArg(normalizeValueExprHelper(compare.getLeftArg(), valueConstants));
+        compare.setRightArg(normalizeValueExprHelper(compare.getRightArg(), valueConstants));
+      }
+    });
+    this.setqIDs(subjectsAndObjects);
+    this.setpIDs(predicates);
     return normalizedQuery;
+  }
+
+  /**
+   * A helper function to find the fitting replacement value for wikidata uri normalization.
+   * @param valueExpr The ValueExpr to be normalized.
+   * @param valueConstants The list of already found names.
+   * @return The normalized name (if applicable)
+   */
+  private ValueExpr normalizeValueExprHelper(ValueExpr valueExpr, Map<String, Integer> valueConstants)
+  {
+    String uri;
+    try {
+      uri = getURI(valueExpr);
+    }
+    catch (NoURIException e) {
+      return valueExpr;
+    }
+
+    if (!valueConstants.containsKey(uri)) {
+      valueConstants.put(uri, valueConstants.size());
+    }
+
+    try {
+      uri = normalizedURI(uri, valueConstants);
+    }
+    catch (NoURIException e) {
+      return valueExpr;
+    }
+
+    ((ValueConstant) valueExpr).setValue(new URIImpl(uri));
+    return valueExpr;
   }
 
   /**
@@ -314,35 +367,95 @@ public class OpenRDFQueryHandler extends QueryHandler
    *
    * @param var        The variable to be normalized
    * @param foundNames The list of already found names
+   * @param subjectsAndObjects The set to save all found subjects and objects.
    * @return the normalized name (if applicable)
    */
-  private Var normalizeHelper(Var var, Map<String, Integer> foundNames)
+  private Var normalizeSubjectsAndObjectsHelper(Var var, Map<String, Integer> foundNames, Set<String> subjectsAndObjects)
   {
-    if (var != null) {
-      Value value = var.getValue();
-      if (value != null) {
-        if (value.getClass().equals(URIImpl.class)) {
-          String subjectString = value.stringValue();
-          if (!foundNames.containsKey(subjectString)) {
-            foundNames.put(subjectString, foundNames.size() + 1);
-          }
-          String lastIndexOf;
-          if (subjectString.contains("/")) {
-            lastIndexOf = "/";
-          } else if (subjectString.contains(":")) {
-            lastIndexOf = ":";
-          } else {
-            logger.error("Variable " + var.toString() + " could not be normalized because the urn formatting is not recognized.\n" +
-                "Query was: " + this.getQueryStringWithoutPrefixes());
-            return var;
-          }
-          String uri = subjectString.substring(0, subjectString.lastIndexOf(lastIndexOf)) + lastIndexOf + "QName" + foundNames.get(subjectString);
-          String name = "-const-" + uri + "-uri";
-          return new Var(name, new URIImpl(uri));
-        }
-      }
+    String uri;
+    try {
+      uri = getURI(var);
     }
-    return var;
+    catch (NoURIException e) {
+      return var;
+    }
+
+    if (!foundNames.containsKey(uri)) {
+      foundNames.put(uri, foundNames.size() + 1);
+      subjectsAndObjects.add(uri);
+    }
+
+    try {
+      uri = normalizedURI(uri, foundNames);
+    }
+    catch (NoURIException e) {
+      return var;
+    }
+
+    String name = "-const-" + uri + "-uri";
+    return new Var(name, new URIImpl(uri));
+  }
+
+  /**
+   * @param var The variable containing the URI:
+   * @return The URI contained in the variable.
+   * @throws NoURIException If no URI could be found.
+   */
+  private String getURI(Var var) throws NoURIException
+  {
+    if (var == null) {
+      throw new NoURIException();
+    }
+    Value value = var.getValue();
+    if (value == null) {
+      throw new NoURIException();
+    }
+    if (!(value instanceof URIImpl)) {
+      throw new NoURIException();
+    }
+    return value.stringValue();
+  }
+
+  /**
+   * @param valueExpr The value expr containing the URI:
+   * @return The URI contained in the variable.
+   * @throws NoURIException If no URI could be found.
+   */
+  private String getURI(ValueExpr valueExpr) throws NoURIException
+  {
+    if (!(valueExpr instanceof ValueConstant)) {
+      throw new NoURIException();
+    }
+    Value value = ((ValueConstant) valueExpr).getValue();
+    if (value == null) {
+      throw new NoURIException();
+    }
+    if (!(value instanceof URIImpl)) {
+      throw new NoURIException();
+    }
+    return value.stringValue();
+  }
+
+  /**
+   * @param uri The URI to be normalized
+   * @param foundNames The list of already found entities.
+   * @return The normalized string based on the already found entities.
+   * @throws NoURIException If the supplied string was not a URI.
+   */
+  private String normalizedURI(String uri, Map<String, Integer> foundNames) throws NoURIException
+  {
+    String lastIndexOf;
+    if (uri.contains("/")) {
+      lastIndexOf = "/";
+    } else if (uri.contains(":")) {
+      lastIndexOf = ":";
+    } else {
+      logger.error("Variable with uri " + uri + " could not be normalized because the urn formatting is not recognized.\n" +
+          "Query was: " + this.getQueryStringWithoutPrefixes());
+      throw new NoURIException();
+    }
+    String normalizedURI = uri.substring(0, uri.lastIndexOf(lastIndexOf)) + lastIndexOf + "QName" + foundNames.get(uri);
+    return normalizedURI;
   }
 
   @Override
