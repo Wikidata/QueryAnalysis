@@ -171,7 +171,7 @@ public abstract class QueryHandler implements Serializable
     return originalId;
   }
 
-  protected void setUniqeId(int day, long line, String queryString)
+  public void setUniqeId(int day, long line, String queryString)
   {
     this.uniqeId = QueryHandler.generateId(day, line, queryString);
   }
@@ -771,8 +771,6 @@ public abstract class QueryHandler implements Serializable
     }
     return coordinatesString;
   }
-
-  public abstract void updateOriginalId();
 
   /**
    * @author adrian

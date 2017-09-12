@@ -5,6 +5,8 @@ import org.apache.log4j.Logger;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
 import org.mapdb.HTreeMap;
+import org.mapdb.Serializer;
+import org.mapdb.serializer.SerializerCompressionWrapper;
 import org.openrdf.query.MalformedQueryException;
 import org.openrdf.query.parser.sparql.ast.ASTQueryContainer;
 import org.openrdf.query.parser.sparql.ast.ParseException;
@@ -34,7 +36,7 @@ public class Cache
   /**
    * The memory cached ASTQueryContainer objects.
    */
-  private Map<String, ASTQueryContainer> astQueryContainerLRUMap = (Map<String, ASTQueryContainer>) Collections.synchronizedMap(new LRUMap(10000));
+  private Map<String, ASTQueryContainer> astQueryContainerLRUMap = (Map<String, ASTQueryContainer>) Collections.synchronizedMap(new LRUMap(10));
 
   /**
    * The memory cached query handler objects.
@@ -43,7 +45,7 @@ public class Cache
 
 
   private static DB db = DBMaker.memoryDB().make();
-  private static HTreeMap queryHandlerLiteCache = Cache.db.hashMap("queryHandlerLiteCache").createOrOpen();
+  private static HTreeMap queryStringToQueryIdDiskMap = Cache.db.hashMap("queryStringToQueryIdDiskMap").keySerializer(new SerializerCompressionWrapper(Serializer.STRING)).valueSerializer(Serializer.STRING).createOrOpen();
 
   /**
    * exists only to prevent this Class from being instantiated
@@ -102,49 +104,35 @@ public class Cache
   {
     Tuple2<QueryHandler.Validity, String> tuple = new Tuple2<QueryHandler.Validity, String>(validityStatus, queryToAnalyze);
 
-    // for each QueryHandler object generate uniqueId on creation
-    // copy it per default to originalId
-    // then check for each QueryHandler (that isn't in Cache) if the
-
+    QueryHandler queryHandler = null;
 
     //check if requested object already exists in cache
     if (!queryHandlerLRUMap.containsKey(tuple)) {
       //if not create a new one
-      QueryHandler queryHandler = null;
       try {
         queryHandler = (QueryHandler) queryHandlerClass.getConstructor(QueryHandler.Validity.class, Long.class, Integer.class, String.class).newInstance(validityStatus, line, day, queryToAnalyze);
       } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
         logger.error("Failed to create query handler object" + e);
       }
 
+      // check if queryString exists already in queryStringToQueryIdDiskMap and if so exchange originalId
+      if (queryStringToQueryIdDiskMap.containsKey(queryHandler.getQueryStringWithoutPrefixes())) {
+        queryHandler.setOriginalId((String) queryStringToQueryIdDiskMap.get(queryHandler.getQueryStringWithoutPrefixes()));
+      } else {
+        queryStringToQueryIdDiskMap.put(queryHandler.getQueryStringWithoutPrefixes(), queryHandler.getUniqeId());
+      }
+
       queryHandlerLRUMap.put(tuple, queryHandler);
+    } else {
+      queryHandler = queryHandlerLRUMap.get(tuple);
+
+      //if found in cache we need to update the uniqueId to the "real" value!
+      queryHandler.setUniqeId(day, line, queryToAnalyze);
     }
 
     //and return it
-    return queryHandlerLRUMap.get(tuple);
-  }
-/*
-  public QueryHandlerLite getQueryHandlerLite(QueryHandler.Validity validityStatus, String queryToAnalyze, long line, int day, Class queryHandlerClass)
-  {
-    //check if requested object already exists in cache
-    QueryHandlerLite queryHandlerLite = null;
-    String id = QueryHandler.generateId(day, line, queryToAnalyze);
-    if (!Cache.queryHandlerLiteCache.containsKey(id)) {
-      //if not create a new one
-      try {
-        queryHandler = (QueryHandler) queryHandlerClass.getConstructor().newInstance();
-      } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
-        logger.error("Failed to create query handler object" + e);
-      }
-      queryHandler.setValidityStatus(validityStatus);
-      queryHandler.setQueryString(queryToAnalyze);
-      Cache.queryHandlerLiteCache.put(queryHandler.getUniqeId(), queryHandler);
-    } else {
-      queryHandler = (QueryHandler) Cache.queryHandlerLiteCache.get(id);
-    }
     return queryHandler;
-
-  }*/
+  }
 
 
 }
