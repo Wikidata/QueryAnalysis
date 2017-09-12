@@ -1,12 +1,11 @@
 package query;
 
+import com.googlecode.cqengine.ConcurrentIndexedCollection;
+import com.googlecode.cqengine.IndexedCollection;
+import com.googlecode.cqengine.index.hash.HashIndex;
+import com.googlecode.cqengine.query.Query;
 import org.apache.commons.collections.map.LRUMap;
 import org.apache.log4j.Logger;
-import org.mapdb.DB;
-import org.mapdb.DBMaker;
-import org.mapdb.HTreeMap;
-import org.mapdb.Serializer;
-import org.mapdb.serializer.SerializerCompressionWrapper;
 import org.openrdf.query.MalformedQueryException;
 import org.openrdf.query.parser.sparql.ast.ASTQueryContainer;
 import org.openrdf.query.parser.sparql.ast.ParseException;
@@ -17,6 +16,8 @@ import scala.Tuple2;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 import java.util.Map;
+
+import static com.googlecode.cqengine.query.QueryFactory.equal;
 
 /**
  * @author Julius Gonsior
@@ -44,8 +45,7 @@ public class Cache
   private Map<Tuple2<QueryHandler.Validity, String>, QueryHandler> queryHandlerLRUMap = (Map<Tuple2<QueryHandler.Validity, String>, QueryHandler>) Collections.synchronizedMap(new LRUMap(100000));
 
 
-  private static DB db = DBMaker.memoryDB().make();
-  private static HTreeMap queryStringToQueryIdDiskMap = Cache.db.hashMap("queryStringToQueryIdDiskMap").keySerializer(new SerializerCompressionWrapper(Serializer.STRING)).valueSerializer(Serializer.STRING).createOrOpen();
+  private static IndexedCollection<QueryHandlerLite> queryStringToQueryIdDiskMap = new ConcurrentIndexedCollection<>();
 
   /**
    * exists only to prevent this Class from being instantiated
@@ -57,7 +57,6 @@ public class Cache
 
   protected void finalize() throws Throwable
   {
-    Cache.db.close();
     super.finalize();
   }
 
@@ -65,6 +64,7 @@ public class Cache
   {
     if (instance == null) {
       instance = new Cache();
+      queryStringToQueryIdDiskMap.addIndex(HashIndex.onAttribute(QueryHandlerLite.QUERY_STRING));
     }
     return instance;
   }
@@ -115,11 +115,18 @@ public class Cache
         logger.error("Failed to create query handler object" + e);
       }
 
+
       // check if queryString exists already in queryStringToQueryIdDiskMap and if so exchange originalId
-      if (queryStringToQueryIdDiskMap.containsKey(queryHandler.getQueryStringWithoutPrefixes())) {
-        queryHandler.setOriginalId((String) queryStringToQueryIdDiskMap.get(queryHandler.getQueryStringWithoutPrefixes()));
+      QueryHandlerLite queryHandlerLite = null;
+      Query<QueryHandlerLite> cqEngineQuery = equal(QueryHandlerLite.QUERY_STRING, queryHandler.getQueryStringWithoutPrefixes());
+      for (QueryHandlerLite result : queryStringToQueryIdDiskMap.retrieve(cqEngineQuery)) {
+        queryHandlerLite = result;
+      }
+
+      if (queryHandlerLite != null) {
+        queryHandler.setOriginalId(queryHandlerLite.getUniqueId());
       } else {
-        queryStringToQueryIdDiskMap.put(queryHandler.getQueryStringWithoutPrefixes(), queryHandler.getUniqeId());
+        queryStringToQueryIdDiskMap.add(new QueryHandlerLite(queryHandler.getUniqeId(), queryHandler.getQueryStringWithoutPrefixes()));
       }
 
       queryHandlerLRUMap.put(tuple, queryHandler);

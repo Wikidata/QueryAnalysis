@@ -196,10 +196,13 @@
       <artifactId>sesame-queryrender</artifactId>
       <version>2.7.12</version>
     </dependency>
+
     <dependency>
-        <groupId>org.mapdb</groupId>
-        <artifactId>mapdb</artifactId>
-        <version>3.0.5</version>
+        <groupId>com.googlecode.cqengine</groupId>
+        <artifactId>cqengine</artifactId>
+        <version>2.12.1</version>
     </dependency>
+
+
   </dependencies>
 </project>
