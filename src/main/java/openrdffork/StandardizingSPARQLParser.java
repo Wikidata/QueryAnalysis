@@ -154,7 +154,7 @@ public class StandardizingSPARQLParser extends SPARQLParser
         public Object visit(ASTLimit limit, Object data) throws VisitorException
         {
           if (!limits.containsKey(limit.getValue())) {
-            limits.put(limit.getValue(), (long) (strings.keySet().size() + 1));
+            limits.put(limit.getValue(), (long) (limits.keySet().size() + 1));
           }
           limit.setValue(limits.get(limit.getValue()));
           return super.visit(limit, data);
@@ -164,7 +164,7 @@ public class StandardizingSPARQLParser extends SPARQLParser
         public Object visit(ASTNumericLiteral numericLiteral, Object data) throws VisitorException
         {
           if (!numericLiterals.containsKey(numericLiteral.getValue())) {
-            numericLiterals.put(numericLiteral.getValue(), strings.keySet().size() + 1);
+            numericLiterals.put(numericLiteral.getValue(), numericLiterals.keySet().size() + 1);
           }
           numericLiteral.setValue(numericLiterals.get(numericLiteral.getValue()).toString());
           return super.visit(numericLiteral, data);
@@ -174,7 +174,7 @@ public class StandardizingSPARQLParser extends SPARQLParser
         public Object visit(ASTRDFLiteral rdfLiteral, Object data) throws VisitorException
         {
           if (!rdfLiterals.containsKey(rdfLiteral.getLang())) {
-            rdfLiterals.put(rdfLiteral.getLang(), strings.keySet().size() + 1);
+            rdfLiterals.put(rdfLiteral.getLang(), rdfLiterals.keySet().size() + 1);
           }
           rdfLiteral.setLang("language-" + rdfLiterals.get(rdfLiteral.getLang()).toString());
           return super.visit(rdfLiteral, data);
