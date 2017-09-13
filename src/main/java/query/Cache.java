@@ -9,6 +9,8 @@ import org.openrdf.query.parser.sparql.ast.SyntaxTreeBuilder;
 import org.openrdf.query.parser.sparql.ast.TokenMgrError;
 import org.tmatesoft.sqljet.core.SqlJetException;
 import org.tmatesoft.sqljet.core.SqlJetTransactionMode;
+import org.tmatesoft.sqljet.core.table.ISqlJetCursor;
+import org.tmatesoft.sqljet.core.table.ISqlJetTable;
 import org.tmatesoft.sqljet.core.table.SqlJetDb;
 import scala.Tuple2;
 
@@ -69,7 +71,7 @@ public class Cache
         onDiskDatabase.beginTransaction(SqlJetTransactionMode.WRITE);
 
         try {
-          onDiskDatabase.createTable("CREATE TABLE uniqeQueryIds (queryString TEXT NOT NULL PRIMARY KEY, uniqueId TEXT NOT NULL)");
+          onDiskDatabase.createTable("CREATE TABLE uniqueQueryIds (queryString TEXT NOT NULL, uniqueId TEXT NOT NULL)");
           onDiskDatabase.createIndex("CREATE INDEX queryStringIndex ON uniqueQueryIds(queryString)");
         } finally {
           onDiskDatabase.commit();
@@ -127,18 +129,22 @@ public class Cache
         logger.error("Failed to create query handler object" + e);
       }
 
-      // check if queryString exists already in onDiskDatabase and if so exchange originalId
-     /* QueryHandlerLite queryHandlerLite = null;
-      Query<QueryHandlerLite> cqEngineQuery = equal(QueryHandlerLite.QUERY_STRING, queryHandler.getQueryStringWithoutPrefixes());
-      for (QueryHandlerLite result : onDiskDatabase.retrieve(cqEngineQuery)) {
-        queryHandlerLite = result;
+      // check if queryString exists already in the on disk database and if so exchange originalId
+      try {
+        onDiskDatabase.beginTransaction(SqlJetTransactionMode.WRITE);
+        ISqlJetTable table = onDiskDatabase.getTable("uniqueQueryIds");
+        ISqlJetCursor result = table.lookup("queryStringIndex", queryHandler.getQueryStringWithoutPrefixes());
+        if (!result.eof()) {
+          String uniqueId = result.getString("uniqueId");
+          queryHandler.setOriginalId(uniqueId);
+          System.out.println(uniqueId);
+        } else {
+          table.insert(queryHandler.getQueryStringWithoutPrefixes(), queryHandler.getUniqeId());
+          System.out.println("schreib");
+        }
+      } catch (SqlJetException e) {
+        e.printStackTrace();
       }
-
-      if (queryHandlerLite != null) {
-        queryHandler.setOriginalId(queryHandlerLite.getUniqueId());
-      } else {
-        onDiskDatabase.add(new QueryHandlerLite(queryHandler.getUniqeId(), queryHandler.getQueryStringWithoutPrefixes()));
-      }*/
 
       queryHandlerLRUMap.put(tuple, queryHandler);
     } else {
