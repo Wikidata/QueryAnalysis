@@ -153,6 +153,7 @@ public final class Main
     options.addOption("d", "noDynamicQueryTypes", false, "Disables dynamic generation of query types.");
     options.addOption("g", "noGzipOutput", false, "Disables gzipping of the output files.");
     options.addOption("e", "noExampleQueriesOutput", false, "Disables the matching of example queries.");
+    options.addOption("i", "ignoreLock", false, "Ignores the lock file.");
 
 
     //some parameters which can be changed through parameters
@@ -225,18 +226,19 @@ public final class Main
     }
     loadPropertyGroupMapping();
 
-    File lockFile;
+    File lockFile = null;
+    if (!cmd.hasOption("ignoreLock")) {
+      try {
+        lockFile = new File(workingDirectory + "locked");
 
-    try {
-      lockFile = new File(workingDirectory + "locked");
-
-      if (!lockFile.createNewFile()) {
-        logger.info("Cannot work on " + workingDirectory + " because another instance is already working on it.");
+        if (!lockFile.createNewFile()) {
+          logger.info("Cannot work on " + workingDirectory + " because another instance is already working on it.");
+          return;
+        }
+      } catch (IOException e) {
+        logger.error("Unexpected error while trying to create the lock file.", e);
         return;
       }
-    } catch (IOException e) {
-      logger.error("Unexpected error while trying to create the lock file.", e);
-      return;
     }
 
     long startTime = System.nanoTime();
@@ -246,8 +248,7 @@ public final class Main
     prepareWritingQueryTypes(outputFolder);
 
     String testQuery = "SELECT * WHERE { ?var wdt:P31/wdt:P279* wd:Q123 }";
-    QueryHandler testHandler = new OpenRDFQueryHandler();
-    testHandler.setQueryString(testQuery);
+    QueryHandler testHandler = new OpenRDFQueryHandler(QueryHandler.Validity.DEFAULT, -1L, -1, testQuery);
 
     for (int day = 1; day <= 31; day++) {
       String inputFile = inputFilePrefix + String.format("%02d", day) + inputFileSuffix;
@@ -286,7 +287,9 @@ public final class Main
       writeExampleQueries(outputFolder);
     }
 
-    lockFile.delete();
+    if (!cmd.hasOption("ignoreLock")) {
+      lockFile.delete();
+    }
 
     long stopTime = System.nanoTime();
     long millis = TimeUnit.MILLISECONDS.convert(stopTime - startTime, TimeUnit.NANOSECONDS);
@@ -353,9 +356,7 @@ public final class Main
         if (Files.isRegularFile(filePath)) {
           if (filePath.toString().endsWith(".preBuildQueryType")) {
             String queryString = new String(readAllBytes(filePath));
-            OpenRDFQueryHandler queryHandler = new OpenRDFQueryHandler();
-            //queryHandler.setValidityStatus(1);
-            queryHandler.setQueryString(queryString);
+            OpenRDFQueryHandler queryHandler = new OpenRDFQueryHandler(QueryHandler.Validity.DEFAULT, -1L, -1, queryString);
             if (queryHandler.getValidityStatus() != QueryHandler.Validity.VALID) {
               logger.info("The Pre-build query " + filePath + " is no valid SPARQL");
               continue;
@@ -506,8 +507,7 @@ public final class Main
       if (name != null) {
         String query = link.text();
         exampleQueriesString.put(query, name);
-        OpenRDFQueryHandler queryHandler = new OpenRDFQueryHandler();
-        queryHandler.setQueryString(query);
+        OpenRDFQueryHandler queryHandler = new OpenRDFQueryHandler(QueryHandler.Validity.DEFAULT, -1L, -1, query);
         if (queryHandler.getValidityStatus() != QueryHandler.Validity.VALID) {
           logger.warn("The example query " + name + " is no valid SPARQL.");
         } else {

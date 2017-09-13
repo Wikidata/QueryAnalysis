@@ -5,14 +5,35 @@ import openrdffork.TupleExprWrapper;
 import org.apache.log4j.Logger;
 import scala.Tuple2;
 
+import java.io.Serializable;
 import java.util.*;
 import java.util.Map.Entry;
 
 /**
  * @author adrian
  */
-public abstract class QueryHandler
+public abstract class QueryHandler implements Serializable
 {
+
+  public QueryHandler(Validity validity, Long line, Integer day, String queryString)
+  {
+    this.day = day;
+    this.line = line;
+    this.validityStatus = validity;
+
+    this.setUniqeId(this.day, this.line, queryString);
+    this.setOriginalId(this.getUniqeId());
+
+    if (queryString.equals("")) {
+      this.validityStatus = Validity.EMPTY;
+    } else if (validityStatus == null || validityStatus.getValue() > -1) {
+      this.queryStringWithoutPrefixes = queryString;
+      this.lengthNoAddedPrefixes = queryString.length();
+      this.queryString = queryString;
+      update();
+    }
+  }
+
   /**
    * Define a static logger variable.
    */
@@ -93,7 +114,7 @@ public abstract class QueryHandler
   /**
    * Saves the current line the query was from.
    */
-  private long currentLine;
+  protected long line;
   /**
    * Saves the current file the query was from.
    */
@@ -140,6 +161,56 @@ public abstract class QueryHandler
   private String categories = null;
 
   /**
+   * The day at which the Query was being created;
+   * Used for the calculation of the uniqueId.
+   */
+  protected int day;
+
+  public String getUniqeId()
+  {
+    return uniqeId;
+  }
+
+  public String getOriginalId()
+  {
+    return originalId;
+  }
+
+  public void setUniqeId(int day, long line, String queryString)
+  {
+    this.uniqeId = QueryHandler.generateId(day, line, queryString);
+  }
+
+  /**
+   * Generates an id based on the parameters.
+   *
+   * @param day
+   * @param line
+   * @param queryString
+   * @return
+   */
+  public static String generateId(int day, long line, String queryString)
+  {
+    return day + "_" + line + "_" + queryString.hashCode();
+  }
+
+  /**
+   * The unique id consists of the hash of the QueryString combined with the line it was being executed.
+   */
+  private String uniqeId;
+
+  protected void setOriginalId(String originalId)
+  {
+    this.originalId = originalId;
+  }
+
+  /**
+   * The id of the first queryHandler with this queryString.
+   */
+  private String originalId;
+
+
+  /**
    *
    */
   public QueryHandler()
@@ -183,21 +254,6 @@ public abstract class QueryHandler
   public final String getQueryString()
   {
     return queryString;
-  }
-
-  /**
-   * @param queryStringToSet query to set the variable queryString to
-   */
-  public final void setQueryString(String queryStringToSet)
-  {
-    if (queryStringToSet.equals("")) {
-      this.validityStatus = Validity.EMPTY;
-    } else if (validityStatus.getValue() > -1) {
-      this.queryStringWithoutPrefixes = queryStringToSet;
-      this.lengthNoAddedPrefixes = queryStringToSet.length();
-      this.queryString = queryStringToSet;
-      update();
-    }
   }
 
   /**
@@ -333,17 +389,9 @@ public abstract class QueryHandler
   /**
    * @return the line the query originated from
    */
-  public final long getCurrentLine()
+  public final long getLine()
   {
-    return currentLine;
-  }
-
-  /**
-   * @param currentLine the current line the query was from
-   */
-  public final void setCurrentLine(long currentLine)
-  {
-    this.currentLine = currentLine;
+    return line;
   }
 
   /**
@@ -392,19 +440,20 @@ public abstract class QueryHandler
    */
   private void computeTool()
   {
-    this.toolComputed = true;
 
     //default values in case we don't find anything for computation
     this.toolName = "UNKNOWN";
     this.toolVersion = "UNKNOWN";
 
     if (validityStatus != Validity.VALID) {
+      this.toolComputed = true;
       return;
     }
 
     if (queryStringWithoutPrefixes.equals("prefix schema: <http://schema.org/> SELECT * WHERE {<http://www.wikidata.org> schema:dateModified ?y}")) {
       toolName = "wikidataLastModified";
       toolVersion = "1.0";
+      this.toolComputed = true;
       return;
     }
 

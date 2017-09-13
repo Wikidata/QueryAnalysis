@@ -40,7 +40,7 @@ public abstract class InputHandler
    *
    * @param outputHandler Handles the data that should be written.
    */
-  public abstract void parseTo(OutputHandler outputHandler);
+  public abstract void parseTo(OutputHandler outputHandler, int day);
 
   /**
    * @return The current input file this handler writes to.
@@ -54,7 +54,7 @@ public abstract class InputHandler
    * @throws FileNotFoundException If the file does not exist.
    * @throws IOException If another error occured.
    */
-  public abstract void setInputFile(String fileToRead) throws FileNotFoundException, IOException;
+  public abstract void setInputFile(String fileToRead) throws IOException;
 
   /**
    * @param uriQuery  The uri_query entry from the logs.

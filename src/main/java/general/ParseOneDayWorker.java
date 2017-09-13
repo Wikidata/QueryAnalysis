@@ -48,7 +48,7 @@ public class ParseOneDayWorker implements Runnable
     logger.info("Start processing " + inputHandler.getInputFile());
     outputHandler.setThreadNumber(day);
     outputHandler.setQueryTypes(queryTypes);
-    inputHandler.parseTo(outputHandler);
+    inputHandler.parseTo(outputHandler, day);
     logger.info("Done processing " + inputHandler.getInputFile() + " to " + outputHandler.getOutputFile() + ".");
 
     if (writeQueryTypes) {

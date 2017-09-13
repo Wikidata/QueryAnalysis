@@ -40,6 +40,11 @@ import org.openrdf.query.parser.sparql.ast.VisitorException;
  */
 public class OpenRDFQueryHandler extends QueryHandler
 {
+  public OpenRDFQueryHandler(Validity validity, Long line, Integer day, String queryString)
+  {
+    super(validity, line, day, queryString);
+  }
+
   /**
    * The base URI to resolve any possible relative URIs against.
    */
@@ -149,7 +154,6 @@ public class OpenRDFQueryHandler extends QueryHandler
       this.sparqlStatistics = queryContainerSparqlStatisticsCollector.getStatistics();
 
       TupleExprSparqlStatisticsCollector tupleExprSparqlStatisticsCollector = new TupleExprSparqlStatisticsCollector();
-
       this.query.getTupleExpr().visitChildren(tupleExprSparqlStatisticsCollector);
       this.query.getTupleExpr().visit(tupleExprSparqlStatisticsCollector);
 

@@ -62,7 +62,7 @@ public class InputHandlerTSV extends InputHandler
    *
    * @param outputHandler Handles the data that should be written.
    */
-  public final void parseTo(final OutputHandler outputHandler)
+  public final void parseTo(final OutputHandler outputHandler, int day)
   {
     //read in queries from .tsv
     TsvParserSettings parserSettings = new TsvParserSettings();
@@ -82,15 +82,15 @@ public class InputHandlerTSV extends InputHandler
         }
         Tuple2<String, QueryHandler.Validity> queryTuple = decode(row[0].toString(), inputFile, parsingContext.currentLine());
 
-        String query = queryTuple._1;
+        String queryString = queryTuple._1;
         QueryHandler.Validity validity = queryTuple._2;
-        String user_agent = row[2].toString();
-        Long current_line = parsingContext.currentLine();
+        String userAgent = row[2].toString();
+        Long line = parsingContext.currentLine();
 
         try {
-          outputHandler.writeLine(query, validity, user_agent, current_line, inputFile);
+          outputHandler.writeLine(queryString, validity, userAgent, line, day, inputFile);
         } catch (NullPointerException e) {
-          outputHandler.writeLine("", QueryHandler.Validity.INTERNAL_ERROR, user_agent, current_line, inputFile);
+          outputHandler.writeLine("", QueryHandler.Validity.INTERNAL_ERROR, userAgent, line, day, inputFile);
           logger.error("Unexpected Null Pointer Exception in writeLine.", e);
         }
       }
