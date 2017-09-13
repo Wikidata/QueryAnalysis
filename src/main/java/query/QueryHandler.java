@@ -440,19 +440,20 @@ public abstract class QueryHandler implements Serializable
    */
   private void computeTool()
   {
-    this.toolComputed = true;
 
     //default values in case we don't find anything for computation
     this.toolName = "UNKNOWN";
     this.toolVersion = "UNKNOWN";
 
     if (validityStatus != Validity.VALID) {
+      this.toolComputed = true;
       return;
     }
 
     if (queryStringWithoutPrefixes.equals("prefix schema: <http://schema.org/> SELECT * WHERE {<http://www.wikidata.org> schema:dateModified ?y}")) {
       toolName = "wikidataLastModified";
       toolVersion = "1.0";
+      this.toolComputed = true;
       return;
     }
 

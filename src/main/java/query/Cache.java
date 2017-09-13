@@ -115,7 +115,6 @@ public class Cache
         logger.error("Failed to create query handler object" + e);
       }
 
-
       // check if queryString exists already in queryStringToQueryIdDiskMap and if so exchange originalId
       QueryHandlerLite queryHandlerLite = null;
       Query<QueryHandlerLite> cqEngineQuery = equal(QueryHandlerLite.QUERY_STRING, queryHandler.getQueryStringWithoutPrefixes());
