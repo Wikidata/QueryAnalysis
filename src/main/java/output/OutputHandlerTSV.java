@@ -6,7 +6,6 @@ import general.Main;
 import org.apache.log4j.Logger;
 import query.Cache;
 import query.QueryHandler;
-import query.SparqlStatisticsCollector;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -85,6 +84,7 @@ public class OutputHandlerTSV extends OutputHandler
     header.add("#VariableCountPattern");
     header.add("#TripleCountWithService");
     header.add("#QueryType");
+    header.add("#QueryComplexity");
     header.add("#SubjectsAndObjects");
     header.add("#Predicates");
     header.add("#Categories");
@@ -144,6 +144,7 @@ public class OutputHandlerTSV extends OutputHandler
       line.add(queryHandler.getVariableCountPattern());
       line.add(queryHandler.getTripleCountWithService());
       line.add(queryHandler.getQueryType());
+      line.add(queryHandler.getSimpleOrComplex());
       line.add(queryHandler.getqIDString());
       line.add(queryHandler.getpIDString());
       line.add(queryHandler.getCategoriesString());
@@ -161,7 +162,7 @@ public class OutputHandlerTSV extends OutputHandler
       line.add(sparqlStatisticsLine);
 
     } else {
-      for (int i = 0; i < 12 + SparqlStatisticsCollector.getDefaultMap().size(); i++) {
+      for (int i = 0; i < 13; i++) {
         line.add(-1);
       }
     }

@@ -11,6 +11,8 @@ import unifyQueryTypes
 from utility import utility
 import config
 
+os.nice(19)
+
 months = {'january': [1, 31],
           'february': [2, 28],
           'march': [3, 31],
@@ -102,12 +104,12 @@ for monthName in args.months.split(","):
         os.makedirs(processedLogDataDirectory)
         os.makedirs(rawLogDataDirectory)
 
-        arguments = ['hive', '-e']
-
         # For each day we send a command to hive that extracts all entries for
         # this day (in the given month and year) and writes them to temporary
         # files.
         for day in xrange(1, months[monthName][1] + 1):
+            arguments = ['hive', '-e']
+            
             os.makedirs(tempDirectory)
             hive_call = 'insert overwrite local directory \'' + tempDirectory \
                     + '\' row format delimited fields terminated ' \

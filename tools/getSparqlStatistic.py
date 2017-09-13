@@ -25,8 +25,8 @@ args = parser.parse_args()
 if os.path.isfile(utility.addMissingSlash(args.monthsFolder)
                   + utility.addMissingSlash(args.month) + "locked") \
    and not args.ignoreLock:
-    print "ERROR: The month " + args.month + " is being edited at the moment."
-    + " Use -i if you want to force the execution of this script."
+    print("ERROR: The month " + str(args.month) + " is being edited at the moment." +
+          " Use -i if you want to force the execution of this script.")
     sys.exit()
 
 
@@ -42,27 +42,45 @@ class SparqlStatisticHandler:
             for usedSparqlFeature in usedSparqlFeatures.split(","):
                 self.statistic[usedSparqlFeature.lstrip()] += 1
 
-    def printWithAstNames(self):
+    def printKeys(self, keys):
         result = ""
-        for featureName, featureCount in sorted(self.statistic.iteritems(),
-                                                key=lambda x: x[0],
-                                                reverse=True):
-            result += '{:<28} {:>8}/{:<8} {:>5}%'.format(
-                featureName, featureCount, self.totalCount,
+        for featureName in keys:
+            featureCount = self.statistic[featureName]
+            result += '{:<28} {:>8}\t{:>5}%'.format(
+                featureName, featureCount,
                 round(float(featureCount) / self.totalCount * 100, 2)) + "\n"
 
         print(result)
 
     def printSparqlTranslation(self):
-        self.statistic["Select"] = self.statistic["ProjectionElemList"]
-        self.statistic["Order By"] = self.statistic["Order"]
-        self.statistic["Group By"] = self.statistic["Group"]
-        self.statistic["LimitAndOffset"] = self.statistic["Slice"]
-        self.statistic["Minus"] = self.statistic["Difference"]
-        self.statistic["Optional"] = self.statistic["LeftJoin"]
-        self.statistic["Having*"] = self.statistic["Having"]
+        pprint(self.statistic)
+        self.statistic["Select"] = self.statistic["SelectQuery"]
+        self.statistic["Ask"] = self.statistic["AskQuery"]
+        self.statistic["Describe"] = self.statistic["DescribeQuery"]
+        self.statistic["Construct"] = self.statistic["ConstructQuery"]
+        self.statistic["Order By"] = self.statistic["OrderClause"]
+        self.statistic["Union"] = self.statistic["UnionGraphPattern"]
+        self.statistic["Optional"] = self.statistic["OptionalGraphPattern"]
+        self.statistic["Not Exists"] = self.statistic["NotExistsFunc"]
+        self.statistic["Minus"] = self.statistic["MinusGraphPattern"]
+        self.statistic["Exists"] = self.statistic["ExistsFunc"]
+        self.statistic["Group By"] = self.statistic["GroupClause"]
+        self.statistic["Having"] = self.statistic["HavingClause"]
+        self.statistic["Service"] = self.statistic["ServiceGraphPattern"]
 
-        self.printWithAstNames()
+        self.statistic["And"] = self.statistic["Join"]
+        self.statistic["Value"] = self.statistic["ValueConstant"]
+
+        # only print specified columns
+        toPrintKeys = ["Select", "Ask", "Describe", "Construct", "Distinct",
+                       "Limit", "Offset", "Order By", "Filter", "And", "Union",
+                       "Optional", "Graph", "Not Exists", "Minus", "Exists", "Count",
+                       "Max", "Min", "Avg", "Sum", "Group By", "Having", "Service",
+                       "LangService", "Join", "Sample", "Bind", "GroupConcat",
+                       "Reduced", "Value", "+", "*"]
+
+
+        self.printKeys(toPrintKeys)
 
 
 handler = SparqlStatisticHandler()

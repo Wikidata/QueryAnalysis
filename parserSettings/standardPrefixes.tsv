@@ -1,4 +1,4 @@
-prefix	uri	complex
+prefix	uri	complexity
 hint	http://www.bigdata.com/queryHints#	simple
 hint	http://www.bigdata.com/queryHints#	simple
 gas	http://www.bigdata.com/rdf/gas#	simple

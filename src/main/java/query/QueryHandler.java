@@ -60,6 +60,13 @@ public abstract class QueryHandler implements Serializable
   protected String queryType = null;
 
   /**
+   * Saves if this the query represented by this handler falls into the complex or simple category.
+   * A query is simple if it uses no variable and only simple prefixes in property positions.
+   */
+  protected Complexity simpleOrComplex = null;
+
+
+  /**
    * The Q-IDs used in this query.
    */
   protected Set<String> qIDs;
@@ -89,11 +96,9 @@ public abstract class QueryHandler implements Serializable
    */
   protected Integer tripleCountWithService = null;
   /**
-   * Contains the sparql statistics. Needs to be a linked map in order to
-   * ensure consistency in the order of the keys (the OutputHandler first iterates
-   * over the keys for the output TSV headers, and LATER over the values)
+   * Contains the sparql statistics.
    */
-  protected LinkedHashMap<String, Integer> sparqlStatistics;
+  protected HashMap<String, Integer> sparqlStatistics;
   /**
    * Saves the query-string with added prefixes.
    */
@@ -314,7 +319,7 @@ public abstract class QueryHandler implements Serializable
    * @return a map containing the number of occurrences of each sparql features
    * existing in the AST tupleExpr tree
    */
-  public LinkedHashMap<String, Integer> getSparqlStatistics()
+  public HashMap<String, Integer> getSparqlStatistics()
   {
     if (this.sparqlStatistics == null) {
       this.computeSparqlStatistics();
@@ -770,6 +775,46 @@ public abstract class QueryHandler implements Serializable
       this.computeCoordinatesString();
     }
     return coordinatesString;
+  }
+
+  /**
+   * @return {@link #simpleOrComplex}
+   */
+  public Complexity getSimpleOrComplex()
+  {
+    if (this.simpleOrComplex == null) {
+      this.computeSimpleOrComplex();
+    }
+    return this.simpleOrComplex;
+  }
+
+  /**
+   * Computes if this query is simple or complex.
+   */
+  public abstract void computeSimpleOrComplex();
+
+  /**
+   * @author adrian
+   * An enumeration specifying the complexity of the query.
+   */
+  public enum Complexity
+  {
+    /**
+     * The complexity has not been set.
+     */
+    NONE,
+    /**
+     * There was an error while determining the complexity.
+     */
+    ERROR,
+    /**
+     * The query is of simple complexity.
+     */
+    SIMPLE,
+    /**
+     * The query is of complex complexity.
+     */
+    COMPLEX
   }
 
   /**
