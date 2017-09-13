@@ -132,14 +132,15 @@ public class OpenRDFQueryHandler extends QueryHandler
       return;
     }
     try {
-ASTQueryContainer astQueryContainer = SyntaxTreeBuilder.parseQuery(this.getQueryString());
+      ASTQueryContainer astQueryContainer = SyntaxTreeBuilder.parseQuery(this.getQueryString());
 
       QueryContainerSparqlStatisticsCollector queryContainerSparqlStatisticsCollector = new QueryContainerSparqlStatisticsCollector();
       astQueryContainer.jjtAccept(queryContainerSparqlStatisticsCollector, null);
 
       this.sparqlStatistics = queryContainerSparqlStatisticsCollector.getStatistics();
 
-      TupleExprSparqlStatisticsCollector tupleExprSparqlStatisticsCollector = new TupleExprSparqlStatisticsCollector();      this.query.getTupleExpr().visitChildren(tupleExprSparqlStatisticsCollector);
+      TupleExprSparqlStatisticsCollector tupleExprSparqlStatisticsCollector = new TupleExprSparqlStatisticsCollector();
+      this.query.getTupleExpr().visitChildren(tupleExprSparqlStatisticsCollector);
       this.query.getTupleExpr().visit(tupleExprSparqlStatisticsCollector);
 
       this.sparqlStatistics.putAll(tupleExprSparqlStatisticsCollector.getStatistics());

@@ -245,8 +245,7 @@ public final class Main
     prepareWritingQueryTypes(outputFolder);
 
     String testQuery = "SELECT * WHERE { ?var wdt:P31/wdt:P279* wd:Q123 }";
-    QueryHandler testHandler = new OpenRDFQueryHandler();
-    testHandler.setQueryString(testQuery);
+    QueryHandler testHandler = new OpenRDFQueryHandler(QueryHandler.Validity.DEFAULT, -1L, -1, testQuery);
 
     for (int day = 1; day <= 31; day++) {
       String inputFile = inputFilePrefix + String.format("%02d", day) + inputFileSuffix;
