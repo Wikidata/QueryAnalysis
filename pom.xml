@@ -206,10 +206,10 @@
 			<artifactId>sesame-queryrender</artifactId>
 			<version>2.7.12</version>
 		</dependency>
-        <dependency>
-			<groupId>com.googlecode.cqengine</groupId>
-			<artifactId>cqengine</artifactId>
-			<version>2.12.1</version>
-        </dependency>
+		<dependency>
+			<groupId>org.tmatesoft.sqljet</groupId>
+			<artifactId>sqljet</artifactId>
+			<version>1.1.10</version>
+		</dependency>
     </dependencies>
 </project>

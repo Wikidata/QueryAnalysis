@@ -1,9 +1,5 @@
 package query;
 
-import com.googlecode.cqengine.ConcurrentIndexedCollection;
-import com.googlecode.cqengine.IndexedCollection;
-import com.googlecode.cqengine.index.hash.HashIndex;
-import com.googlecode.cqengine.query.Query;
 import org.apache.commons.collections.map.LRUMap;
 import org.apache.log4j.Logger;
 import org.openrdf.query.MalformedQueryException;
@@ -11,13 +7,15 @@ import org.openrdf.query.parser.sparql.ast.ASTQueryContainer;
 import org.openrdf.query.parser.sparql.ast.ParseException;
 import org.openrdf.query.parser.sparql.ast.SyntaxTreeBuilder;
 import org.openrdf.query.parser.sparql.ast.TokenMgrError;
+import org.tmatesoft.sqljet.core.SqlJetException;
+import org.tmatesoft.sqljet.core.SqlJetTransactionMode;
+import org.tmatesoft.sqljet.core.table.SqlJetDb;
 import scala.Tuple2;
 
+import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 import java.util.Map;
-
-import static com.googlecode.cqengine.query.QueryFactory.equal;
 
 /**
  * @author Julius Gonsior
@@ -45,7 +43,7 @@ public class Cache
   private Map<Tuple2<QueryHandler.Validity, String>, QueryHandler> queryHandlerLRUMap = (Map<Tuple2<QueryHandler.Validity, String>, QueryHandler>) Collections.synchronizedMap(new LRUMap(100000));
 
 
-  private static IndexedCollection<QueryHandlerLite> queryStringToQueryIdDiskMap = new ConcurrentIndexedCollection<>();
+  private static SqlJetDb onDiskDatabase;
 
   /**
    * exists only to prevent this Class from being instantiated
@@ -64,7 +62,21 @@ public class Cache
   {
     if (instance == null) {
       instance = new Cache();
-      queryStringToQueryIdDiskMap.addIndex(HashIndex.onAttribute(QueryHandlerLite.QUERY_STRING));
+      try {
+        onDiskDatabase = SqlJetDb.open(new File("/tmp/java.db"), true);
+        onDiskDatabase.getOptions().setAutovacuum(true);
+
+        onDiskDatabase.beginTransaction(SqlJetTransactionMode.WRITE);
+
+        try {
+          onDiskDatabase.createTable("CREATE TABLE uniqeQueryIds (queryString TEXT NOT NULL PRIMARY KEY, uniqueId TEXT NOT NULL)");
+          onDiskDatabase.createIndex("CREATE INDEX queryStringIndex ON uniqueQueryIds(queryString)");
+        } finally {
+          onDiskDatabase.commit();
+        }
+      } catch (SqlJetException e) {
+        logger.error("Could not open the on disk database" + e);
+      }
     }
     return instance;
   }
@@ -115,18 +127,18 @@ public class Cache
         logger.error("Failed to create query handler object" + e);
       }
 
-      // check if queryString exists already in queryStringToQueryIdDiskMap and if so exchange originalId
-      QueryHandlerLite queryHandlerLite = null;
+      // check if queryString exists already in onDiskDatabase and if so exchange originalId
+     /* QueryHandlerLite queryHandlerLite = null;
       Query<QueryHandlerLite> cqEngineQuery = equal(QueryHandlerLite.QUERY_STRING, queryHandler.getQueryStringWithoutPrefixes());
-      for (QueryHandlerLite result : queryStringToQueryIdDiskMap.retrieve(cqEngineQuery)) {
+      for (QueryHandlerLite result : onDiskDatabase.retrieve(cqEngineQuery)) {
         queryHandlerLite = result;
       }
 
       if (queryHandlerLite != null) {
         queryHandler.setOriginalId(queryHandlerLite.getUniqueId());
       } else {
-        queryStringToQueryIdDiskMap.add(new QueryHandlerLite(queryHandler.getUniqeId(), queryHandler.getQueryStringWithoutPrefixes()));
-      }
+        onDiskDatabase.add(new QueryHandlerLite(queryHandler.getUniqeId(), queryHandler.getQueryStringWithoutPrefixes()));
+      }*/
 
       queryHandlerLRUMap.put(tuple, queryHandler);
     } else {

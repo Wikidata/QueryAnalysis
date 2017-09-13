@@ -1,9 +1,5 @@
 package query;
 
-import com.googlecode.cqengine.attribute.Attribute;
-
-import static com.googlecode.cqengine.query.QueryFactory.attribute;
-
 /**
  * @author: Julius Gonsior
  */
@@ -29,5 +25,4 @@ public class QueryHandlerLite
     this.queryStringWithoutPrefixes = queryStringWithoutPrefixes;
   }
 
-  public static final Attribute<QueryHandlerLite, String> QUERY_STRING = attribute("queryString", QueryHandlerLite::getQueryStringWithoutPrefixes);
 }
