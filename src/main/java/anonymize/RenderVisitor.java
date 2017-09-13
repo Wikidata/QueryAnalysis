@@ -1,11 +1,9 @@
 package anonymize;
 
-import org.openrdf.query.algebra.Compare.CompareOp;
 import org.openrdf.query.parser.sparql.ast.*;
 
 /**
  * @author adrian
- *
  */
 public class RenderVisitor implements SyntaxTreeBuilderVisitor
 {
@@ -31,8 +29,8 @@ public class RenderVisitor implements SyntaxTreeBuilderVisitor
   }
 
   /**
-   * @param node The node to be visited.
-   * @param data The data to be passed along.
+   * @param node         The node to be visited.
+   * @param data         The data to be passed along.
    * @param childrenLink The String connecting the results of two nodes visited.
    * @return The results of the individual children, concatenated by childrenLink
    * @throws VisitorException If an exception occurs while visiting the children.
@@ -43,8 +41,8 @@ public class RenderVisitor implements SyntaxTreeBuilderVisitor
   }
 
   /**
-   * @param node The node to be visited.
-   * @param data The data to be passed along.
+   * @param node       The node to be visited.
+   * @param data       The data to be passed along.
    * @param startIndex The start index for the children to be visited.
    * @return The results of the individual children, concatenated by childrenLink
    * @throws VisitorException If an exception occurs while visiting the children.
@@ -55,10 +53,10 @@ public class RenderVisitor implements SyntaxTreeBuilderVisitor
   }
 
   /**
-   * @param node The node to be visited.
-   * @param data The data to be passed along.
+   * @param node         The node to be visited.
+   * @param data         The data to be passed along.
    * @param childrenLink The String connecting the results of two nodes visited.
-   * @param startIndex The start index for the children to be visited.
+   * @param startIndex   The start index for the children to be visited.
    * @return The results of the individual children, concatenated by childrenLink
    * @throws VisitorException If an exception occurs while visiting the children.
    */
@@ -73,6 +71,7 @@ public class RenderVisitor implements SyntaxTreeBuilderVisitor
     }
     return result;
   }
+
   /**
    * @param node The node to be visited.
    * @param data The data to be passed along.
@@ -84,10 +83,11 @@ public class RenderVisitor implements SyntaxTreeBuilderVisitor
   {
     return BuiltInCall(node, data, call, "");
   }
+
   /**
-   * @param node The node to be visited.
-   * @param data The data to be passed along.
-   * @param call The call to be constructed.
+   * @param node         The node to be visited.
+   * @param data         The data to be passed along.
+   * @param call         The call to be constructed.
    * @param childrenLink The string used to concatenate the child nodes.
    * @return The content of the child nodes wrapped in <call> ( <child nodes> ).
    * @throws VisitorException If an exception occurs while visiting the children.
@@ -122,6 +122,7 @@ public class RenderVisitor implements SyntaxTreeBuilderVisitor
     result += " )";
     return result;
   }
+
   /**
    * @param node The node to be visited. Should be either ASTBindingsClause or ASTInlineData.
    * @param data The data to be passed along.
@@ -587,7 +588,7 @@ public class RenderVisitor implements SyntaxTreeBuilderVisitor
   public final Object visit(ASTPathElt node, Object data) throws VisitorException
   {
     // TODO Am I interpreting the ASTPathOneInPropertySet correctly?
-    String result  = "";
+    String result = "";
     if (node.isInverse()) {
       result += "^";
     }

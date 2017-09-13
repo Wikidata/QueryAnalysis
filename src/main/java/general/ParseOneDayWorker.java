@@ -4,13 +4,8 @@ package general;
 import input.InputHandler;
 import openrdffork.TupleExprWrapper;
 import org.apache.log4j.Logger;
-
 import output.OutputHandler;
-import output.OutputHandlerTSV;
-import query.QueryHandler;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;

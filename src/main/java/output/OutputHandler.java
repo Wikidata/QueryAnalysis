@@ -55,17 +55,20 @@ public abstract class OutputHandler implements Serializable
   }
 
   /**
-   * @param fileToWrite The file to write the output to.
+   * @param fileToWrite            The file to write the output to.
    * @param queryHandlerClassToSet The query Handler class to use for generating the output.
    * @throws FileNotFoundException If there was some error concerning the file to write to.
    */
-  public OutputHandler (String fileToWrite, Class queryHandlerClassToSet) throws FileNotFoundException {
+  public OutputHandler(String fileToWrite, Class queryHandlerClassToSet) throws FileNotFoundException
+  {
     this.outputFile = fileToWrite;
     this.initialize(fileToWrite, queryHandlerClassToSet);
   }
+
   /**
    * Method to be called before using writeLine().
-   * @param fileToWrite The file to write the output to.
+   *
+   * @param fileToWrite            The file to write the output to.
    * @param queryHandlerClassToSet The query Handler class to use for generating the output.
    * @throws FileNotFoundException If there was some error concerning the file to write to.
    */
