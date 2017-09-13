@@ -35,6 +35,16 @@ public class InputHandlerTSV extends InputHandler
   private TsvWriter preprocessedWriter;
 
   /**
+   * @param fileToRead The file to read.
+   * @throws FileNotFoundException If the file does not exist.
+   * @throws IOException If another error occured.
+   */
+  public InputHandlerTSV(String fileToRead) throws FileNotFoundException, IOException
+  {
+    super(fileToRead);
+  }
+
+  /**
    * @param fileToRead The file the parse()-method should read from.
    * @throws IOException           if an I/O error has occurred
    * @throws FileNotFoundException If the file does not exist,

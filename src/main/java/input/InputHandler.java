@@ -5,6 +5,7 @@ import output.OutputHandler;
 import query.QueryHandler;
 import scala.Tuple2;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
@@ -26,12 +27,33 @@ public abstract class InputHandler
   protected String inputFile;
 
   /**
+   * @param fileToRead The file to read.
+   * @throws FileNotFoundException If the file does not exist.
+   * @throws IOException If another error occured.
+   */
+  public InputHandler(String fileToRead) throws FileNotFoundException, IOException {
+    this.setInputFile(fileToRead);
+  }
+
+  /**
    * Read the file given by reader and hands the data to the outputHandler.
    *
    * @param outputHandler Handles the data that should be written.
    */
   public abstract void parseTo(OutputHandler outputHandler, int day);
 
+  /**
+   * @return The current input file this handler writes to.
+   */
+  public String getInputFile()
+  {
+    return inputFile;
+  }
+  /**
+   * @param fileToRead The file to read.
+   * @throws FileNotFoundException If the file does not exist.
+   * @throws IOException If another error occured.
+   */
   public abstract void setInputFile(String fileToRead) throws IOException;
 
   /**

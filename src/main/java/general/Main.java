@@ -26,9 +26,14 @@ import com.univocity.parsers.common.ParsingContext;
 import com.univocity.parsers.common.processor.ObjectRowProcessor;
 import com.univocity.parsers.tsv.TsvParser;
 import com.univocity.parsers.tsv.TsvParserSettings;
+
+import input.InputHandler;
 import input.InputHandlerTSV;
 import logging.LoggingHandler;
 import openrdffork.TupleExprWrapper;
+import output.OutputHandler;
+import output.OutputHandlerTSV;
+
 import org.apache.commons.cli.*;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
@@ -158,8 +163,6 @@ public final class Main
     String inputFileSuffix = ".tsv.gz";
     String outputFolder;
     String queryParserName = "OpenRDF";
-    Class inputHandlerClass = InputHandlerTSV.class;
-    Class queryHandlerClass = OpenRDFQueryHandler.class;
     int numberOfThreads = 1;
 
     CommandLineParser parser = new DefaultParser();
@@ -249,7 +252,28 @@ public final class Main
 
     for (int day = 1; day <= 31; day++) {
       String inputFile = inputFilePrefix + String.format("%02d", day) + inputFileSuffix;
-      Runnable parseOneMonthWorker = new ParseOneDayWorker(inputFile, inputFilePrefix, outputFolder, inputHandlerClass, queryParserName, queryHandlerClass, day);
+      InputHandler inputHandler;
+      try {
+        inputHandler = new InputHandlerTSV(inputFile);
+      }
+      catch (IOException e) {
+        logger.warn("File " + inputFile + " could not be found.");
+        continue;
+      }
+
+      QueryHandler queryHandler = new OpenRDFQueryHandler();
+
+      String outputFile = outputFolder + "/QueryProcessed" + queryParserName + String.format("%02d", day);
+      OutputHandler outputHandler;
+      try {
+        outputHandler = new OutputHandlerTSV(outputFile, queryHandler.getClass());
+      }
+      catch (FileNotFoundException e) {
+        logger.error("File " + outputFile + "could not be created or written to.", e);
+        continue;
+      }
+
+      Runnable parseOneMonthWorker = new ParseOneDayWorker(inputHandler, outputHandler, day, true);
       executor.execute(parseOneMonthWorker);
     }
     executor.shutdown();
@@ -276,7 +300,7 @@ public final class Main
   /**
    * Loads all standard prefixes.
    */
-  private static void loadStandardPrefixes()
+  public static void loadStandardPrefixes()
   {
     TsvParserSettings parserSettings = new TsvParserSettings();
     parserSettings.setLineSeparatorDetectionEnabled(true);

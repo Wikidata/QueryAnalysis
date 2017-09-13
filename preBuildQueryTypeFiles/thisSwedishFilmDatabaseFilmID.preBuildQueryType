@@ -1,4 +1,0 @@
-SELECT ?item
-WHERE {
-  ?item wdt:P2334 "37087"
-}

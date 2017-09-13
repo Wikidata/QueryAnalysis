@@ -1,0 +1,4 @@
+SELECT ?p ?o
+WHERE {
+  <http://www.wikidata.org/entity/statement/Q18556568-EA7611CE-C98B-4E16-AA3E-703A76A19D66> ?p ?o
+}

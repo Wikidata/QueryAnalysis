@@ -1,5 +1,0 @@
-SELECT ?actor
-WHERE
-{
-    ?actor  wdt:P345 "nm2050780"
-}

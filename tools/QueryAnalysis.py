@@ -19,7 +19,7 @@ months = {'january': [1, 31],
           'april': [4, 30],
           'may': [5, 31],
           'june': [6, 30],
-          'july': [7, 30],
+          'july': [7, 31],
           'august': [8, 31],
           'september': [9, 30],
           'october': [10, 31],
@@ -32,7 +32,7 @@ parser = argparse.ArgumentParser("This script extracts the raw log data (if "
                                  + "the query types.")
 parser.add_argument("--ignoreLock", "-i", help="Ignore locked file and "
                     + "execute anyways", action="store_true")
-parser.add_argument("--threads", "-t", default=7, type=int, help="The number "
+parser.add_argument("--threads", "-t", default=6, type=int, help="The number "
                     + "of threads to run the java program with (default 7).")
 parser.add_argument("--logging", "-l", help="Enables file logging.",
                     action="store_true")
@@ -48,15 +48,16 @@ parser.add_argument("--referenceDirectory", "-r",
                     default=config.queryReferenceDirectory,
                     type=str,
                     help="The directory with the reference query types.")
-parser.add_argument("--fdupesExecutable", "-f",
-                    default=config.fdupesExecutable, type=str,
-                    help="The location of the fdupes executable.")
+parser.add_argument("--jdupesExecutable", "-j",
+                    default=config.jdupesExecutable, type=str,
+                    help="The location of the jdupes executable.")
 parser.add_argument("--monthsFolder", "-m", default=config.monthsFolder,
                     type=str,
                     help="The folder in which the months directory are "
                     + "residing.")
 parser.add_argument("--year", "-y", default=datetime.now().year, type=int,
                     help="The year to be processed (default current year).")
+parser.add_argument("--noUnifying", "-u", help="Disables the unifying of query types.", action="store_true")
 parser.add_argument("months", type=str, help="The months to be processed")
 
 # These are the field we extract from wmf.wdqs_extract that form the raw
@@ -146,20 +147,20 @@ for monthName in args.months.split(","):
     # We build the call to execute the java application with the location of
     # the files, the number of threads to use and any optional arguments needed
 
-    mavenCall = ['mvn', 'exec:java']
+    mavenCall = ['mvn', 'exec:java@QueryAnalysis']
 
     mavenArguments = '-Dexec.args=-w ' + month + ' -n ' + str(args.threads)
 
     if args.logging:
         mavenArguments += " -l"
-        if args.noBotMetrics:
-            mavenArguments += " -b"
-            if args.noDynamicQueryTypes:
-                mavenArguments += " -d"
-                if args.noGzipOutput:
-                    mavenArguments += " -g"
-                    if args.noExampleQueriesOutput:
-                        mavenArguments += " -e"
+    if args.noBotMetrics:
+        mavenArguments += " -b"
+    if args.noDynamicQueryTypes:
+        mavenArguments += " -d"
+    if args.noGzipOutput:
+        mavenArguments += " -g"
+    if args.noExampleQueriesOutput:
+        mavenArguments += " -e"
 
     mavenCall.append(mavenArguments)
 
@@ -181,10 +182,10 @@ for monthName in args.months.split(","):
 
     # Finally we call the query type unification
     # (see python unifyQueryTypes.py for details)
+    
+    if not args.noUnifying:
+        print "Starting to unify the query types for " + monthName + "."
 
-    print "Starting to unify the query types for " + monthName + "."
-
-    unifyQueryTypes.unifyQueryTypes(monthName,
-                                    args.monthsFolder,
-                                    args.referenceDirectory,
-                                    args.fdupesExecutable)
+        unifyQueryTypes.unifyQueryTypes(monthName, args.monthsFolder, args.referenceDirectory, args.jdupesExecutable)
+    else:
+        print "WARNING: The query types in " + monthName + " are not unified."

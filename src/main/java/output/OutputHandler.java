@@ -3,6 +3,7 @@ package output;
 import openrdffork.TupleExprWrapper;
 import query.QueryHandler;
 
+import java.io.FileNotFoundException;
 import java.io.Serializable;
 import java.util.Map;
 
@@ -24,6 +25,18 @@ public abstract class OutputHandler implements Serializable
    * The map holding the query types.
    */
   protected Map<TupleExprWrapper, String> queryTypes;
+  /**
+   * The output file this handler writes to.
+   */
+  protected String outputFile;
+
+  /**
+   * @return The output file this handler writes to.
+   */
+  public String getOutputFile()
+  {
+    return outputFile;
+  }
 
   /**
    * @param threadNumberToSet {@link #threadNumber}
@@ -40,6 +53,23 @@ public abstract class OutputHandler implements Serializable
   {
     this.queryTypes = queryTypesToSet;
   }
+
+  /**
+   * @param fileToWrite The file to write the output to.
+   * @param queryHandlerClassToSet The query Handler class to use for generating the output.
+   * @throws FileNotFoundException If there was some error concerning the file to write to.
+   */
+  public OutputHandler (String fileToWrite, Class queryHandlerClassToSet) throws FileNotFoundException {
+    this.outputFile = fileToWrite;
+    this.initialize(fileToWrite, queryHandlerClassToSet);
+  }
+  /**
+   * Method to be called before using writeLine().
+   * @param fileToWrite The file to write the output to.
+   * @param queryHandlerClassToSet The query Handler class to use for generating the output.
+   * @throws FileNotFoundException If there was some error concerning the file to write to.
+   */
+  public abstract void initialize(String fileToWrite, Class queryHandlerClassToSet) throws FileNotFoundException;
 
   /**
    * Takes a query and the additional information from input and writes

@@ -1,0 +1,4 @@
+SELECT ?p ?o
+WHERE {
+  <http://www.wikidata.org/reference/6b917aa01a91a48ee41d64d2dbdb448947c8ae7d> ?p ?o
+}

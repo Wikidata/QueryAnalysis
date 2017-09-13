@@ -1,0 +1,4 @@
+SELECT ?pKa2
+WHERE {
+  wd:Q349391 wdt:P1117 ?pKa2 .
+}
