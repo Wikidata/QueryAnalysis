@@ -1,5 +1,6 @@
 package query;
 
+import general.Main;
 import org.apache.commons.collections.map.LRUMap;
 import org.apache.log4j.Logger;
 import org.openrdf.query.MalformedQueryException;
@@ -62,7 +63,7 @@ public class Cache
 
       // first open connection
       try {
-        onDiskDatabaseConnection = DriverManager.getConnection("jdbc:sqlite:/tmp/java.db");
+        onDiskDatabaseConnection = DriverManager.getConnection("jdbc:sqlite:" + Main.getWorkingDirectory() + "onDiskDatabase.db");
       } catch (SQLException e) {
         logger.error("Could not open the on disk database " + e);
       }

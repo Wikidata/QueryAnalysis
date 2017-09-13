@@ -122,10 +122,13 @@ public final class Main
    * Saves the output folder name for query types.
    */
   private static String outputFolderNameQueryTypes;
-  /**
-   * Saves the output folder name for query types.
-   */
-  private static String outputFolderName;
+
+  private static String workingDirectory;
+
+  public static String getWorkingDirectory()
+  {
+    return workingDirectory;
+  }
 
   /**
    * Since this is a utility class, it should not be instantiated.
@@ -155,8 +158,6 @@ public final class Main
 
 
     //some parameters which can be changed through parameters
-    //QueryHandler queryHandler = new OpenRDFQueryHandler();
-    String workingDirectory;
     String inputFilePrefix;
     String inputFileSuffix = ".tsv.gz";
     String outputFolder;
