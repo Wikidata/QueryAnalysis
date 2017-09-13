@@ -1,1 +1,4 @@
-/home/adrian/workspace/java/QueryAnalysis/preBuildQueryTypeFiles/entityStatementAllPredicatesAndObjects.preBuildQueryType
+SELECT ?s ?p 
+WHERE {
+  ?s ?p <http://www.wikidata.org/entity/statement/Q416426-9FD62CD3-8985-4E17-A8C8-DCF5A17F2C80>
+}
