@@ -7,15 +7,10 @@ import org.openrdf.query.parser.sparql.ast.ASTQueryContainer;
 import org.openrdf.query.parser.sparql.ast.ParseException;
 import org.openrdf.query.parser.sparql.ast.SyntaxTreeBuilder;
 import org.openrdf.query.parser.sparql.ast.TokenMgrError;
-import org.tmatesoft.sqljet.core.SqlJetException;
-import org.tmatesoft.sqljet.core.SqlJetTransactionMode;
-import org.tmatesoft.sqljet.core.table.ISqlJetCursor;
-import org.tmatesoft.sqljet.core.table.ISqlJetTable;
-import org.tmatesoft.sqljet.core.table.SqlJetDb;
 import scala.Tuple2;
 
-import java.io.File;
 import java.lang.reflect.InvocationTargetException;
+import java.sql.*;
 import java.util.Collections;
 import java.util.Map;
 
@@ -45,7 +40,7 @@ public class Cache
   private Map<Tuple2<QueryHandler.Validity, String>, QueryHandler> queryHandlerLRUMap = (Map<Tuple2<QueryHandler.Validity, String>, QueryHandler>) Collections.synchronizedMap(new LRUMap(100000));
 
 
-  private static SqlJetDb onDiskDatabase;
+  private static Connection onDiskDatabaseConnection;
 
   /**
    * exists only to prevent this Class from being instantiated
@@ -64,21 +59,31 @@ public class Cache
   {
     if (instance == null) {
       instance = new Cache();
+
+      // first open connection
       try {
-        onDiskDatabase = SqlJetDb.open(new File("/tmp/java.db"), true);
-        onDiskDatabase.getOptions().setAutovacuum(true);
-
-        onDiskDatabase.beginTransaction(SqlJetTransactionMode.WRITE);
-
-        try {
-          onDiskDatabase.createTable("CREATE TABLE uniqueQueryIds (queryString TEXT NOT NULL, uniqueId TEXT NOT NULL)");
-          onDiskDatabase.createIndex("CREATE INDEX queryStringIndex ON uniqueQueryIds(queryString)");
-        } finally {
-          onDiskDatabase.commit();
-        }
-      } catch (SqlJetException e) {
-        logger.error("Could not open the on disk database" + e);
+        onDiskDatabaseConnection = DriverManager.getConnection("jdbc:sqlite:/tmp/java.db");
+      } catch (SQLException e) {
+        logger.error("Could not open the on disk database " + e);
       }
+
+      // then create the databases
+
+      try {
+        Statement statement = onDiskDatabaseConnection.createStatement();
+        statement.executeUpdate("CREATE TABLE IF NOT EXISTS uniqueQueryIds (queryString TEXT NOT NULL, uniqueId TEXT NOT NULL); CREATE INDEX queryStringIndex ON uniqueQueryIds(queryString);");
+      } catch (SQLException e) {
+        logger.error("Could not create the uniqueQueryIds table in the disk database " + e);
+      }
+/*
+      //turn auto commit off - only transactions are allowed from now on
+      try {
+        onDiskDatabaseConnection.setAutoCommit(false);
+      } catch (SQLException e) {
+        logger.error("Could not turn of auto commits for the disk database - is the file corrputed somehow?" + e);
+      }*/
+
+
     }
     return instance;
   }
@@ -131,18 +136,25 @@ public class Cache
 
       // check if queryString exists already in the on disk database and if so exchange originalId
       try {
-        onDiskDatabase.beginTransaction(SqlJetTransactionMode.WRITE);
-        ISqlJetTable table = onDiskDatabase.getTable("uniqueQueryIds");
-        ISqlJetCursor result = table.lookup("queryStringIndex", queryHandler.getQueryStringWithoutPrefixes());
-        if (!result.eof()) {
-          String uniqueId = result.getString("uniqueId");
-          queryHandler.setOriginalId(uniqueId);
-          System.out.println(uniqueId);
-        } else {
-          table.insert(queryHandler.getQueryStringWithoutPrefixes(), queryHandler.getUniqeId());
-          System.out.println("schreib");
+        PreparedStatement preparedStatement = onDiskDatabaseConnection.prepareStatement("SELECT uniqueId FROM uniqueQueryIds WHERE queryString = ?");
+        preparedStatement.setString(1, queryHandler.getQueryStringWithoutPrefixes());
+        ResultSet resultSet = preparedStatement.executeQuery();
+
+        String uniqueId = null;
+
+        while (resultSet.next()) {
+          uniqueId = resultSet.getString("uniqueId");
         }
-      } catch (SqlJetException e) {
+
+        if (uniqueId != null) {
+          queryHandler.setOriginalId(uniqueId);
+        } else {
+          preparedStatement = onDiskDatabaseConnection.prepareStatement("INSERT INTO uniqueQueryIds(queryString, uniqueId) VALUES(?,?) ");
+          preparedStatement.setString(1, queryHandler.getQueryStringWithoutPrefixes());
+          preparedStatement.setString(2, queryHandler.getUniqeId());
+          preparedStatement.executeUpdate();
+        }
+      } catch (SQLException e) {
         e.printStackTrace();
       }
 
@@ -157,6 +169,4 @@ public class Cache
     //and return it
     return queryHandler;
   }
-
-
 }
