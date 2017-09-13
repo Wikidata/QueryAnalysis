@@ -29,7 +29,7 @@ public class StandardizingSPARQLParser extends SPARQLParser
 
   public StandardizingSPARQLParser()
   {
-    this.cache = Cache.getInstance();
+    this.cache = new Cache();
   }
 
   /**

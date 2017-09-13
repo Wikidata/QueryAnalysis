@@ -45,7 +45,7 @@ public class OutputHandlerTSV extends OutputHandler
   /**
    * The Caching module object.
    */
-  private Cache cache = Cache.getInstance();
+  private Cache cache = new Cache();
 
   /**
    * @param fileToWrite            location of the file to write the received values to

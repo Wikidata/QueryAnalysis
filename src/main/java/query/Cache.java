@@ -26,14 +26,9 @@ public class Cache
   private static final Logger logger = Logger.getLogger(Cache.class);
 
   /**
-   * Singleton instance
-   */
-  private static Cache instance;
-
-  /**
    * The memory cached ASTQueryContainer objects.
    */
-  private Map<String, ASTQueryContainer> astQueryContainerLRUMap = (Map<String, ASTQueryContainer>) Collections.synchronizedMap(new LRUMap(10));
+  private Map<String, ASTQueryContainer> astQueryContainerLRUMap = (Map<String, ASTQueryContainer>) Collections.synchronizedMap(new LRUMap(100000));
 
   /**
    * The memory cached query handler objects.
@@ -41,45 +36,40 @@ public class Cache
   private Map<Tuple2<QueryHandler.Validity, String>, QueryHandler> queryHandlerLRUMap = (Map<Tuple2<QueryHandler.Validity, String>, QueryHandler>) Collections.synchronizedMap(new LRUMap(100000));
 
 
-  private static Connection onDiskDatabaseConnection;
+  private static Connection onDiskDatabaseConnection = null;
 
   /**
    * exists only to prevent this Class from being instantiated
    */
-  protected Cache()
+  public Cache()
   {
-    //nothing to see here
+    synchronized (this) {
+      if (onDiskDatabaseConnection == null) {
+        if (Main.isWithUniqueQueryDetection()) {
+          // first open connection
+          try {
+            onDiskDatabaseConnection = DriverManager.getConnection("jdbc:sqlite:" + Main.getWorkingDirectory() + "onDiskDatabase.db");
+          } catch (SQLException e) {
+            logger.error("Could not open the on disk database " + e);
+          }
+
+          // then create the databases
+
+          try {
+            Statement statement = onDiskDatabaseConnection.createStatement();
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS uniqueQueryIds (queryString TEXT NOT NULL, uniqueId TEXT NOT NULL); CREATE INDEX queryStringIndex ON uniqueQueryIds(queryString);");
+          } catch (SQLException e) {
+            logger.error("Could not create the uniqueQueryIds table in the disk database " + e);
+          }
+        }
+      }
+    }
   }
 
   protected void finalize() throws Throwable
   {
+    onDiskDatabaseConnection.close();
     super.finalize();
-  }
-
-  public static synchronized Cache getInstance()
-  {
-    if (instance == null) {
-      instance = new Cache();
-
-      if (Main.isWithUniqueQueryDetection()) {
-        // first open connection
-        try {
-          onDiskDatabaseConnection = DriverManager.getConnection("jdbc:sqlite:" + Main.getWorkingDirectory() + "onDiskDatabase.db");
-        } catch (SQLException e) {
-          logger.error("Could not open the on disk database " + e);
-        }
-
-        // then create the databases
-
-        try {
-          Statement statement = onDiskDatabaseConnection.createStatement();
-          statement.executeUpdate("CREATE TABLE IF NOT EXISTS uniqueQueryIds (queryString TEXT NOT NULL, uniqueId TEXT NOT NULL); CREATE INDEX queryStringIndex ON uniqueQueryIds(queryString);");
-        } catch (SQLException e) {
-          logger.error("Could not create the uniqueQueryIds table in the disk database " + e);
-        }
-      }
-    }
-    return instance;
   }
 
   /**
