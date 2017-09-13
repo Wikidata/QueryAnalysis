@@ -7,11 +7,8 @@ import input.InputHandlerTSV;
 import logging.LoggingHandler;
 import org.apache.commons.cli.*;
 import org.apache.log4j.Logger;
-import output.OutputHandler;
-import query.OpenRDFQueryHandler;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.text.SimpleDateFormat;
@@ -119,15 +116,8 @@ public class Anonymizer
       }
 
       String outputFile = outputFolder + "/AnonymousQueryCnt" + String.format("%02d", day);
-      OutputHandler outputHandler;
-      try {
-        outputHandler = new OutputHandlerAnonymizer(outputFile, OpenRDFQueryHandler.class);
-      } catch (FileNotFoundException e) {
-        logger.error("File " + outputFile + "could not be created or written to.", e);
-        continue;
-      }
 
-      Runnable parseOneMonthWorker = new ParseOneDayWorker(inputHandler, outputHandler, day, false);
+      Runnable parseOneMonthWorker = new ParseOneDayWorker(inputHandler, day, outputFile, false);
       executor.execute(parseOneMonthWorker);
     }
     executor.shutdown();

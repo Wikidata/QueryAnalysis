@@ -39,8 +39,6 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.openrdf.query.parser.ParsedQuery;
-import output.OutputHandler;
-import output.OutputHandlerTSV;
 import query.OpenRDFQueryHandler;
 import query.QueryHandler;
 import scala.Tuple2;
@@ -274,15 +272,8 @@ public final class Main
       }
 
       String outputFile = outputFolder + "/QueryProcessed" + queryParserName + String.format("%02d", day);
-      OutputHandler outputHandler;
-      try {
-        outputHandler = new OutputHandlerTSV(outputFile, OpenRDFQueryHandler.class);
-      } catch (FileNotFoundException e) {
-        logger.error("File " + outputFile + "could not be created or written to.", e);
-        continue;
-      }
 
-      Runnable parseOneMonthWorker = new ParseOneDayWorker(inputHandler, outputHandler, day, true);
+      Runnable parseOneMonthWorker = new ParseOneDayWorker(inputHandler, day, outputFile, true);
       executor.execute(parseOneMonthWorker);
     }
     executor.shutdown();

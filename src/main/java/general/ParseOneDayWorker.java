@@ -5,7 +5,10 @@ import input.InputHandler;
 import openrdffork.TupleExprWrapper;
 import org.apache.log4j.Logger;
 import output.OutputHandler;
+import output.OutputHandlerTSV;
+import query.OpenRDFQueryHandler;
 
+import java.io.FileNotFoundException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
@@ -25,10 +28,16 @@ public class ParseOneDayWorker implements Runnable
   private Boolean writeQueryTypes;
   private HashMap<TupleExprWrapper, String> queryTypes = new HashMap<TupleExprWrapper, String>();
 
-  public ParseOneDayWorker(InputHandler inputHandlerToSet, OutputHandler outputHandlerToSet, int day, Boolean writeQueryTypes) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException
+  public ParseOneDayWorker(InputHandler inputHandlerToSet, int day, String outputFile, Boolean writeQueryTypes) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException
   {
+
+    try {
+      outputHandler = new OutputHandlerTSV(outputFile, OpenRDFQueryHandler.class);
+    } catch (FileNotFoundException e) {
+      logger.error("File " + outputFile + "could not be created or written to.", e);
+    }
+
     this.inputHandler = inputHandlerToSet;
-    this.outputHandler = outputHandlerToSet;
     this.day = day;
     this.writeQueryTypes = writeQueryTypes;
     for (Map.Entry<TupleExprWrapper, String> entry : Main.queryTypes.entrySet()) {
