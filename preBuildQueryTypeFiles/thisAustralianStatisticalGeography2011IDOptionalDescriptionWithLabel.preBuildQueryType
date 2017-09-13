@@ -1,0 +1,9 @@
+SELECT ?q ?qLabel ?description
+WHERE {
+  ?q wdt:P4014 "SSC40203"
+     OPTIONAL {
+       ?q schema:description ?description
+          filter(lang(?description)="en")
+     }
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "en" }
+}

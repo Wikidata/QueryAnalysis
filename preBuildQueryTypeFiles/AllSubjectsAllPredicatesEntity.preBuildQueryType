@@ -1,0 +1,4 @@
+SELECT ?s ?p
+WHERE {
+  ?s ?p <http://www.wikidata.org/entity/Q18556142>
+}
