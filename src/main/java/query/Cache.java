@@ -61,30 +61,23 @@ public class Cache
     if (instance == null) {
       instance = new Cache();
 
-      // first open connection
-      try {
-        onDiskDatabaseConnection = DriverManager.getConnection("jdbc:sqlite:" + Main.getWorkingDirectory() + "onDiskDatabase.db");
-      } catch (SQLException e) {
-        logger.error("Could not open the on disk database " + e);
+      if (Main.isWithUniqueQueryDetection()) {
+        // first open connection
+        try {
+          onDiskDatabaseConnection = DriverManager.getConnection("jdbc:sqlite:" + Main.getWorkingDirectory() + "onDiskDatabase.db");
+        } catch (SQLException e) {
+          logger.error("Could not open the on disk database " + e);
+        }
+
+        // then create the databases
+
+        try {
+          Statement statement = onDiskDatabaseConnection.createStatement();
+          statement.executeUpdate("CREATE TABLE IF NOT EXISTS uniqueQueryIds (queryString TEXT NOT NULL, uniqueId TEXT NOT NULL); CREATE INDEX queryStringIndex ON uniqueQueryIds(queryString);");
+        } catch (SQLException e) {
+          logger.error("Could not create the uniqueQueryIds table in the disk database " + e);
+        }
       }
-
-      // then create the databases
-
-      try {
-        Statement statement = onDiskDatabaseConnection.createStatement();
-        statement.executeUpdate("CREATE TABLE IF NOT EXISTS uniqueQueryIds (queryString TEXT NOT NULL, uniqueId TEXT NOT NULL); CREATE INDEX queryStringIndex ON uniqueQueryIds(queryString);");
-      } catch (SQLException e) {
-        logger.error("Could not create the uniqueQueryIds table in the disk database " + e);
-      }
-/*
-      //turn auto commit off - only transactions are allowed from now on
-      try {
-        onDiskDatabaseConnection.setAutoCommit(false);
-      } catch (SQLException e) {
-        logger.error("Could not turn of auto commits for the disk database - is the file corrputed somehow?" + e);
-      }*/
-
-
     }
     return instance;
   }
@@ -135,28 +128,32 @@ public class Cache
         logger.error("Failed to create query handler object" + e);
       }
 
-      // check if queryString exists already in the on disk database and if so exchange originalId
-      try {
-        PreparedStatement preparedStatement = onDiskDatabaseConnection.prepareStatement("SELECT uniqueId FROM uniqueQueryIds WHERE queryString = ?");
-        preparedStatement.setString(1, queryHandler.getQueryStringWithoutPrefixes());
-        ResultSet resultSet = preparedStatement.executeQuery();
 
-        String uniqueId = null;
+      if (Main.isWithUniqueQueryDetection()) {
 
-        while (resultSet.next()) {
-          uniqueId = resultSet.getString("uniqueId");
-        }
-
-        if (uniqueId != null) {
-          queryHandler.setOriginalId(uniqueId);
-        } else {
-          preparedStatement = onDiskDatabaseConnection.prepareStatement("INSERT INTO uniqueQueryIds(queryString, uniqueId) VALUES(?,?) ");
+        // check if queryString exists already in the on disk database and if so exchange originalId
+        try {
+          PreparedStatement preparedStatement = onDiskDatabaseConnection.prepareStatement("SELECT uniqueId FROM uniqueQueryIds WHERE queryString = ?");
           preparedStatement.setString(1, queryHandler.getQueryStringWithoutPrefixes());
-          preparedStatement.setString(2, queryHandler.getUniqeId());
-          preparedStatement.executeUpdate();
+          ResultSet resultSet = preparedStatement.executeQuery();
+
+          String uniqueId = null;
+
+          while (resultSet.next()) {
+            uniqueId = resultSet.getString("uniqueId");
+          }
+
+          if (uniqueId != null) {
+            queryHandler.setOriginalId(uniqueId);
+          } else {
+            preparedStatement = onDiskDatabaseConnection.prepareStatement("INSERT INTO uniqueQueryIds(queryString, uniqueId) VALUES(?,?) ");
+            preparedStatement.setString(1, queryHandler.getQueryStringWithoutPrefixes());
+            preparedStatement.setString(2, queryHandler.getUniqeId());
+            preparedStatement.executeUpdate();
+          }
+        } catch (SQLException e) {
+          e.printStackTrace();
         }
-      } catch (SQLException e) {
-        e.printStackTrace();
       }
 
       queryHandlerLRUMap.put(tuple, queryHandler);

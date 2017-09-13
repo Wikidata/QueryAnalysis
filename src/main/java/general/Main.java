@@ -125,6 +125,16 @@ public final class Main
 
   private static String workingDirectory;
 
+  /**
+   * If set to true we calculate the OriginalIDs
+   */
+  private static boolean withUniqueQueryDetection = false;
+
+  public static boolean isWithUniqueQueryDetection()
+  {
+    return withUniqueQueryDetection;
+  }
+
   public static String getWorkingDirectory()
   {
     return workingDirectory;
@@ -155,6 +165,7 @@ public final class Main
     options.addOption("g", "noGzipOutput", false, "Disables gzipping of the output files.");
     options.addOption("e", "noExampleQueriesOutput", false, "Disables the matching of example queries.");
     options.addOption("i", "ignoreLock", false, "Ignores the lock file.");
+    options.addOption("u", "withUniqueQueryDetection", false, "Deunify queries.");
 
 
     //some parameters which can be changed through parameters
@@ -202,6 +213,9 @@ public final class Main
       }
       if (cmd.hasOption("noExampleQueriesOutput")) {
         exampleQueries = false;
+      }
+      if (cmd.hasOption("withUniqueQueryDetection")) {
+        withUniqueQueryDetection = true;
       }
     } catch (UnrecognizedOptionException e) {
       System.out.println("Unrecognized commandline option: " + e.getOption());
