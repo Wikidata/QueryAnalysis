@@ -48,7 +48,7 @@ public class OutputHandlerTSV extends OutputHandler
   private Cache cache = Cache.getInstance();
 
   /**
-   * @param fileToWrite       location of the file to write the received values to
+   * @param fileToWrite            location of the file to write the received values to
    * @param queryHandlerClassToSet handler class used to analyze the query string that will be written
    * @throws FileNotFoundException if the file exists but is a directory
    *                               rather than a regular file, does not exist but cannot be created,

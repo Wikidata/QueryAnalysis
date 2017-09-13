@@ -1,9 +1,6 @@
 package query;
 
-import com.googlecode.cqengine.ConcurrentIndexedCollection;
-import com.googlecode.cqengine.IndexedCollection;
-import com.googlecode.cqengine.index.hash.HashIndex;
-import com.googlecode.cqengine.query.Query;
+import general.Main;
 import org.apache.commons.collections.map.LRUMap;
 import org.apache.log4j.Logger;
 import org.openrdf.query.MalformedQueryException;
@@ -14,10 +11,9 @@ import org.openrdf.query.parser.sparql.ast.TokenMgrError;
 import scala.Tuple2;
 
 import java.lang.reflect.InvocationTargetException;
+import java.sql.*;
 import java.util.Collections;
 import java.util.Map;
-
-import static com.googlecode.cqengine.query.QueryFactory.equal;
 
 /**
  * @author Julius Gonsior
@@ -45,7 +41,7 @@ public class Cache
   private Map<Tuple2<QueryHandler.Validity, String>, QueryHandler> queryHandlerLRUMap = (Map<Tuple2<QueryHandler.Validity, String>, QueryHandler>) Collections.synchronizedMap(new LRUMap(100000));
 
 
-  private static IndexedCollection<QueryHandlerLite> queryStringToQueryIdDiskMap = new ConcurrentIndexedCollection<>();
+  private static Connection onDiskDatabaseConnection;
 
   /**
    * exists only to prevent this Class from being instantiated
@@ -64,7 +60,31 @@ public class Cache
   {
     if (instance == null) {
       instance = new Cache();
-      queryStringToQueryIdDiskMap.addIndex(HashIndex.onAttribute(QueryHandlerLite.QUERY_STRING));
+
+      // first open connection
+      try {
+        onDiskDatabaseConnection = DriverManager.getConnection("jdbc:sqlite:" + Main.getWorkingDirectory() + "onDiskDatabase.db");
+      } catch (SQLException e) {
+        logger.error("Could not open the on disk database " + e);
+      }
+
+      // then create the databases
+
+      try {
+        Statement statement = onDiskDatabaseConnection.createStatement();
+        statement.executeUpdate("CREATE TABLE IF NOT EXISTS uniqueQueryIds (queryString TEXT NOT NULL, uniqueId TEXT NOT NULL); CREATE INDEX queryStringIndex ON uniqueQueryIds(queryString);");
+      } catch (SQLException e) {
+        logger.error("Could not create the uniqueQueryIds table in the disk database " + e);
+      }
+/*
+      //turn auto commit off - only transactions are allowed from now on
+      try {
+        onDiskDatabaseConnection.setAutoCommit(false);
+      } catch (SQLException e) {
+        logger.error("Could not turn of auto commits for the disk database - is the file corrputed somehow?" + e);
+      }*/
+
+
     }
     return instance;
   }
@@ -115,17 +135,28 @@ public class Cache
         logger.error("Failed to create query handler object" + e);
       }
 
-      // check if queryString exists already in queryStringToQueryIdDiskMap and if so exchange originalId
-      QueryHandlerLite queryHandlerLite = null;
-      Query<QueryHandlerLite> cqEngineQuery = equal(QueryHandlerLite.QUERY_STRING, queryHandler.getQueryStringWithoutPrefixes());
-      for (QueryHandlerLite result : queryStringToQueryIdDiskMap.retrieve(cqEngineQuery)) {
-        queryHandlerLite = result;
-      }
+      // check if queryString exists already in the on disk database and if so exchange originalId
+      try {
+        PreparedStatement preparedStatement = onDiskDatabaseConnection.prepareStatement("SELECT uniqueId FROM uniqueQueryIds WHERE queryString = ?");
+        preparedStatement.setString(1, queryHandler.getQueryStringWithoutPrefixes());
+        ResultSet resultSet = preparedStatement.executeQuery();
 
-      if (queryHandlerLite != null) {
-        queryHandler.setOriginalId(queryHandlerLite.getUniqueId());
-      } else {
-        queryStringToQueryIdDiskMap.add(new QueryHandlerLite(queryHandler.getUniqeId(), queryHandler.getQueryStringWithoutPrefixes()));
+        String uniqueId = null;
+
+        while (resultSet.next()) {
+          uniqueId = resultSet.getString("uniqueId");
+        }
+
+        if (uniqueId != null) {
+          queryHandler.setOriginalId(uniqueId);
+        } else {
+          preparedStatement = onDiskDatabaseConnection.prepareStatement("INSERT INTO uniqueQueryIds(queryString, uniqueId) VALUES(?,?) ");
+          preparedStatement.setString(1, queryHandler.getQueryStringWithoutPrefixes());
+          preparedStatement.setString(2, queryHandler.getUniqeId());
+          preparedStatement.executeUpdate();
+        }
+      } catch (SQLException e) {
+        e.printStackTrace();
       }
 
       queryHandlerLRUMap.put(tuple, queryHandler);
@@ -139,6 +170,4 @@ public class Cache
     //and return it
     return queryHandler;
   }
-
-
 }

@@ -37,9 +37,9 @@ public class InputHandlerTSV extends InputHandler
   /**
    * @param fileToRead The file to read.
    * @throws FileNotFoundException If the file does not exist.
-   * @throws IOException If another error occured.
+   * @throws IOException           If another error occured.
    */
-  public InputHandlerTSV(String fileToRead) throws FileNotFoundException, IOException
+  public InputHandlerTSV(String fileToRead) throws IOException
   {
     super(fileToRead);
   }

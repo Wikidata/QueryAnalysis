@@ -29,9 +29,10 @@ public abstract class InputHandler
   /**
    * @param fileToRead The file to read.
    * @throws FileNotFoundException If the file does not exist.
-   * @throws IOException If another error occured.
+   * @throws IOException           If another error occured.
    */
-  public InputHandler(String fileToRead) throws FileNotFoundException, IOException {
+  public InputHandler(String fileToRead) throws IOException
+  {
     this.setInputFile(fileToRead);
   }
 
@@ -49,10 +50,11 @@ public abstract class InputHandler
   {
     return inputFile;
   }
+
   /**
    * @param fileToRead The file to read.
    * @throws FileNotFoundException If the file does not exist.
-   * @throws IOException If another error occured.
+   * @throws IOException           If another error occured.
    */
   public abstract void setInputFile(String fileToRead) throws IOException;
 

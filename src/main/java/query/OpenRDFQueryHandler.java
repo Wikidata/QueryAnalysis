@@ -1,39 +1,23 @@
 package query;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import general.Main;
 import openrdffork.StandardizingSPARQLParser;
 import openrdffork.TupleExprWrapper;
-import utility.NoURIException;
-
 import org.apache.log4j.Logger;
 import org.openrdf.model.Value;
 import org.openrdf.model.impl.URIImpl;
 import org.openrdf.query.MalformedQueryException;
-import org.openrdf.query.algebra.ArbitraryLengthPath;
-import org.openrdf.query.algebra.Compare;
-import org.openrdf.query.algebra.StatementPattern;
-import org.openrdf.query.algebra.TupleExpr;
-import org.openrdf.query.algebra.ValueConstant;
-import org.openrdf.query.algebra.ValueExpr;
-import org.openrdf.query.algebra.Var;
+import org.openrdf.query.algebra.*;
 import org.openrdf.query.algebra.helpers.QueryModelVisitorBase;
 import org.openrdf.query.algebra.helpers.StatementPatternCollector;
 import org.openrdf.query.parser.ParsedQuery;
 import org.openrdf.query.parser.sparql.ASTVisitorBase;
-import org.openrdf.query.parser.sparql.ast.ASTQueryContainer;
-import org.openrdf.query.parser.sparql.ast.ASTString;
-import org.openrdf.query.parser.sparql.ast.ParseException;
-import org.openrdf.query.parser.sparql.ast.SyntaxTreeBuilder;
-import org.openrdf.query.parser.sparql.ast.TokenMgrError;
-import org.openrdf.query.parser.sparql.ast.VisitorException;
+import org.openrdf.query.parser.sparql.ast.*;
+import utility.NoURIException;
+
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author jgonsior
@@ -367,7 +351,8 @@ public class OpenRDFQueryHandler extends QueryHandler
 
   /**
    * A helper function to find the fitting replacement value for wikidata uri normalization.
-   * @param valueExpr The ValueExpr to be normalized.
+   *
+   * @param valueExpr      The ValueExpr to be normalized.
    * @param valueConstants The list of already found names.
    * @return The normalized name (if applicable)
    */
@@ -376,8 +361,7 @@ public class OpenRDFQueryHandler extends QueryHandler
     String uri;
     try {
       uri = getURI(valueExpr);
-    }
-    catch (NoURIException e) {
+    } catch (NoURIException e) {
       return valueExpr;
     }
 
@@ -387,8 +371,7 @@ public class OpenRDFQueryHandler extends QueryHandler
 
     try {
       uri = normalizedURI(uri, valueConstants);
-    }
-    catch (NoURIException e) {
+    } catch (NoURIException e) {
       return valueExpr;
     }
 
@@ -399,8 +382,8 @@ public class OpenRDFQueryHandler extends QueryHandler
   /**
    * A helper function to find the fitting replacement value for wikidata uri normalization.
    *
-   * @param var        The variable to be normalized
-   * @param foundNames The list of already found names
+   * @param var                The variable to be normalized
+   * @param foundNames         The list of already found names
    * @param subjectsAndObjects The set to save all found subjects and objects.
    * @return the normalized name (if applicable)
    */
@@ -409,8 +392,7 @@ public class OpenRDFQueryHandler extends QueryHandler
     String uri;
     try {
       uri = getURI(var);
-    }
-    catch (NoURIException e) {
+    } catch (NoURIException e) {
       return var;
     }
 
@@ -421,8 +403,7 @@ public class OpenRDFQueryHandler extends QueryHandler
 
     try {
       uri = normalizedURI(uri, foundNames);
-    }
-    catch (NoURIException e) {
+    } catch (NoURIException e) {
       return var;
     }
 
@@ -471,7 +452,7 @@ public class OpenRDFQueryHandler extends QueryHandler
   }
 
   /**
-   * @param uri The URI to be normalized
+   * @param uri        The URI to be normalized
    * @param foundNames The list of already found entities.
    * @return The normalized string based on the already found entities.
    * @throws NoURIException If the supplied string was not a URI.

@@ -5,10 +5,10 @@ import general.ParseOneDayWorker;
 import input.InputHandler;
 import input.InputHandlerTSV;
 import logging.LoggingHandler;
+import org.apache.commons.cli.*;
+import org.apache.log4j.Logger;
 import output.OutputHandler;
-import output.OutputHandlerTSV;
 import query.OpenRDFQueryHandler;
-import query.QueryHandler;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -20,18 +20,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
-import org.apache.commons.cli.UnrecognizedOptionException;
-import org.apache.log4j.Logger;
-
 /**
  * @author adrian
- *
  */
 public class Anonymizer
 {
@@ -83,14 +73,12 @@ public class Anonymizer
         System.out.println("Please specify the directory which we should work on using the option '--workingDirectory DIRECTORY' or '-w DIRECTORY'");
         return;
       }
-    }
-    catch (UnrecognizedOptionException e) {
+    } catch (UnrecognizedOptionException e) {
       System.out.println("Unrecognized commandline option: " + e.getOption());
       HelpFormatter formatter = new HelpFormatter();
       formatter.printHelp("help", options);
       return;
-    }
-    catch (ParseException e) {
+    } catch (ParseException e) {
       System.out.println("There was an error while parsing your command line input. Did you rechecked your syntax before running?");
       HelpFormatter formatter = new HelpFormatter();
       formatter.printHelp("help", options);
@@ -125,20 +113,16 @@ public class Anonymizer
       InputHandler inputHandler;
       try {
         inputHandler = new InputHandlerTSV(inputFile);
-      }
-      catch (IOException e) {
+      } catch (IOException e) {
         logger.warn("File " + inputFile + " could not be found.");
         continue;
       }
 
-      QueryHandler queryHandler = new OpenRDFQueryHandler();
-
       String outputFile = outputFolder + "/AnonymousQueryCnt" + String.format("%02d", day);
       OutputHandler outputHandler;
       try {
-        outputHandler = new OutputHandlerAnonymizer(outputFile, queryHandler.getClass());
-      }
-      catch (FileNotFoundException e) {
+        outputHandler = new OutputHandlerAnonymizer(outputFile, OpenRDFQueryHandler.class);
+      } catch (FileNotFoundException e) {
         logger.error("File " + outputFile + "could not be created or written to.", e);
         continue;
       }

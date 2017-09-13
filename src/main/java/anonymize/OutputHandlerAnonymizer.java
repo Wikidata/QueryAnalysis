@@ -1,45 +1,31 @@
 /**
- * 
+ *
  */
 package anonymize;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
-import java.lang.reflect.InvocationTargetException;
-import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.zip.GZIPOutputStream;
-
+import com.univocity.parsers.tsv.TsvWriter;
+import com.univocity.parsers.tsv.TsvWriterSettings;
+import general.Main;
+import openrdffork.StandardizingSPARQLParser;
 import org.apache.log4j.Logger;
 import org.openrdf.query.MalformedQueryException;
 import org.openrdf.query.parser.ParsedQuery;
-import org.openrdf.query.parser.sparql.ast.ASTQueryContainer;
-import org.openrdf.query.parser.sparql.ast.ParseException;
-import org.openrdf.query.parser.sparql.ast.SyntaxTreeBuilder;
-import org.openrdf.query.parser.sparql.ast.TokenMgrError;
-import org.openrdf.query.parser.sparql.ast.VisitorException;
-
-import com.univocity.parsers.tsv.TsvWriter;
-import com.univocity.parsers.tsv.TsvWriterSettings;
-
-import general.Main;
-import openrdffork.StandardizingSPARQLParser;
+import org.openrdf.query.parser.sparql.ast.*;
 import output.OutputHandler;
 import output.OutputHandlerTSV;
 import query.OpenRDFQueryHandler;
 import query.QueryHandler;
 import query.QueryHandler.Validity;
 
+import java.io.*;
+import java.lang.reflect.InvocationTargetException;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.zip.GZIPOutputStream;
+
 /**
  * @author adrian
- *
  */
 public class OutputHandlerAnonymizer extends OutputHandler
 {
@@ -65,7 +51,7 @@ public class OutputHandlerAnonymizer extends OutputHandler
   private int failedQueriesNumber = 0;
 
   /**
-   * @param fileToWrite The file to write the anonymized queries to.
+   * @param fileToWrite            The file to write the anonymized queries to.
    * @param queryHandlerClassToSet The query handler class to use for checking query validity.
    * @throws FileNotFoundException If the file exists but is a directory rather than a regular file,
    *                               does not exist but cannot be created,
@@ -77,7 +63,7 @@ public class OutputHandlerAnonymizer extends OutputHandler
   }
 
   /**
-   * @param fileToWrite The file to write the anonymized queries to.
+   * @param fileToWrite            The file to write the anonymized queries to.
    * @param queryHandlerClassToSet The query handler class to use for checking query validity.
    * @throws FileNotFoundException If the file exists but is a directory rather than a regular file,
    *                               does not exist but cannot be created,
@@ -102,28 +88,26 @@ public class OutputHandlerAnonymizer extends OutputHandler
     writer.writeHeaders(header);
   }
 
+
   @Override
-  public void writeLine(String queryToAnalyze, Validity validityStatus, String userAgent, long currentLine,
-      String currentFile)
+  public void writeLine(String queryToAnalyze, Validity validityStatus, String userAgent, long currentLine, int currentDay,
+                        String currentFile)
   {
     List<Object> line = new ArrayList<>();
 
     QueryHandler queryHandler = null;
     try {
-      queryHandler = (QueryHandler) queryHandlerClass.getConstructor().newInstance();
+      queryHandler = (QueryHandler) queryHandlerClass.getConstructor(QueryHandler.Validity.class, Long.class, Integer.class, String.class).newInstance(validityStatus, line, currentDay, queryToAnalyze);
     } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
       logger.error("Failed to create query handler object" + e);
       return;
     }
-    queryHandler.setValidityStatus(validityStatus);
-    queryHandler.setQueryString(queryToAnalyze);
 
     if (queryHandler.getValidityStatus().getValue() > 0) {
       ASTQueryContainer qc;
       try {
         qc = SyntaxTreeBuilder.parseQuery(queryToAnalyze);
-      }
-      catch (TokenMgrError | ParseException e) {
+      } catch (TokenMgrError | ParseException e) {
         logger.error("Failed to parse the query although it was found valid - this is a serious bug.", e);
         return;
       }
@@ -136,15 +120,13 @@ public class OutputHandlerAnonymizer extends OutputHandler
       String renderedQueryString;
       try {
         renderedQueryString = qc.jjtAccept(new RenderVisitor(), "").toString();
-      }
-      catch (VisitorException e) {
+      } catch (VisitorException e) {
         logger.error("Failed to render the query.", e);
         return;
       }
       try {
         ParsedQuery parsedQuery = new StandardizingSPARQLParser().parseQuery(renderedQueryString, OpenRDFQueryHandler.BASE_URI);
-      }
-      catch (MalformedQueryException e) {
+      } catch (MalformedQueryException e) {
         String queryName = this.threadNumber + "_" + this.failedQueriesNumber + ".query";
         logger.error("Anonymized query was not valid anymore. " + queryName, e);
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(this.outputFile.substring(0, this.outputFile.lastIndexOf("/")) + "failedQueriesFolder/" + queryName))) {
@@ -159,8 +141,7 @@ public class OutputHandlerAnonymizer extends OutputHandler
       String encodedRenderedQueryString;
       try {
         encodedRenderedQueryString = URLEncoder.encode(renderedQueryString, "UTF-8");
-      }
-      catch (UnsupportedEncodingException e) {
+      } catch (UnsupportedEncodingException e) {
         logger.error("Apparently this system does not support UTF-8. Please fix this before running the program again.");
         return;
       }
