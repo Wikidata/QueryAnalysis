@@ -57,7 +57,7 @@ public class Cache
 
           try {
             Statement statement = onDiskDatabaseConnection.createStatement();
-            statement.executeUpdate("CREATE TABLE IF NOT EXISTS uniqueQueryIds (queryString TEXT NOT NULL, uniqueId TEXT NOT NULL); CREATE INDEX queryStringIndex ON uniqueQueryIds(queryString);");
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS uniqueQueryIds (queryString TEXT, uniqueId TEXT NOT NULL); CREATE INDEX queryStringIndex ON uniqueQueryIds(queryString);");
           } catch (SQLException e) {
             logger.error("Could not create the uniqueQueryIds table in the disk database " + e);
           }
@@ -68,7 +68,6 @@ public class Cache
 
   protected void finalize() throws Throwable
   {
-    onDiskDatabaseConnection.close();
     super.finalize();
   }
 
