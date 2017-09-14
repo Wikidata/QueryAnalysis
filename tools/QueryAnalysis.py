@@ -186,7 +186,7 @@ for monthName in args.months.split(","):
     # Finally we call the query type unification
     # (see python unifyQueryTypes.py for details)
     
-    if not args.noUnifying:
+    if not args.noQueryTypeUnification:
         print "Starting to unify the query types for " + monthName + "."
 
         unifyQueryTypes.unifyQueryTypes(monthName, args.monthsFolder, args.referenceDirectory, args.jdupesExecutable)
