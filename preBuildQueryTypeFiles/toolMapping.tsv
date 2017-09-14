@@ -659,7 +659,6 @@ thisTurner_Classic_Movies_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:54.
 thisTV_Guide_Show_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:54.0) Gecko/20100101 Firefox/54.0	toolSearchingForMovieDatabseID	-1	needs more data
 thisTV.Com_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:54.0) Gecko/20100101 Firefox/54.0	toolSearchingForMovieDatabseID	-1	needs more data
 thisUnifrance_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:54.0) Gecko/20100101 Firefox/54.0	toolSearchingForMovieDatabseID	-1	needs more data
-	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:54.0) Gecko/20100101 Firefox/54.0	toolSearchingForMovieDatabseID	-1	needs more data
 thisNKCRAUTIDAboutAndLanguage	NK2WP/2.0 (nkp.cz linker service, run by <petr.kadlec@gmail.com>)	linkerForCzechNationalLibrary	2	linker for http://www.nkp.cz/
 toolLookingForWikidataIdBasedOnTwitterUsername	python-requests/2.11.1	toolLookingForWikidataIdBasedOnTwitterUsername	2.11.1	it is probably NOT this one, even though it looks similar: https://github.com/fnielsen/scholia/blob/5094353127cd929585fab6b2cf1b0047353d9162/scholia/query.py#L223-L224
 toolLookingForWikidataIdBasedOnTwitterUsername	python-requests/2.12.3	toolLookingForWikidataIdBasedOnTwitterUsername	2.12.3	it is probably NOT this one, even though it looks similar: https://github.com/fnielsen/scholia/blob/5094353127cd929585fab6b2cf1b0047353d9162/scholia/query.py#L223-L224
