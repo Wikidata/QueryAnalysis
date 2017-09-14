@@ -1,0 +1,6 @@
+SELECT ?class ?imdb
+WHERE {
+  OPTIONAL {wd:Q349391 wdt:P31 ?class.}
+  OPTIONAL {wd:Q349391 wdt:P345 ?imdb.}
+}
+

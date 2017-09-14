@@ -102,6 +102,7 @@ thisCBSMunicipalityCodeThisWithLabel	Mozilla/4.0 (compatible; Virtuoso)	toolSear
 thisCBSMunicipalityCodeWithLabel	Mozilla/4.0 (compatible; Virtuoso)	toolSearchingForCBSMunicipality	-1	needs more data
 thisCBSMunicipalityCodeWithLabelWithPopulation	Mozilla/4.0 (compatible; Virtuoso)	toolSearchingForCBSMunicipality	-1	needs more data
 thisCollectionDepictsPositionHeld	Mozilla/4.0 (compatible; Virtuoso)	toolSearchingForDepictionsFromCollection	-1	needs more data
+thisHasLabelLocatedInCoordinatesThat	Mozilla/4.0 (compatible; Virtuoso)	toolSearchingForLocationByLabel	-1	needs more data
 thisMultipleCatalogProperties	Mozilla/4.0 (compatible; Virtuoso)	toolSearchingForItemsFromCatalogue	-1	needs more data
 thisUniProtIDWithFilterIsLiteral	Mozilla/4.0 (compatible; Virtuoso)	toolSearchingForUniProtID	-1	needs more data
 thisInstanceOfGenderDescription	Mozilla/5.0	toolSearchingForHumans	5	needs more data
@@ -112,6 +113,7 @@ thisNamedAfter	Mozilla/5.0 (compatible; monitis - premium monitoring service; ht
 instanceOfThisAnySubclassOfWithLabelAndFilter	Mozilla/5.0 (Linux; Android 4.2.1; HUAWEI G610-U20 Build/HuaweiG610-U20) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.83 Mobile Safari/537.36	toolSearchingForCategoriesOfItems	-1	needs more data
 thisArticleAboutInLanguageIsPartOfWikiGroupWithLimit	Mozilla/5.0 (Linux; Android 5.1.1; SAMSUNG SM-G531F Build/LMY48B) AppleWebKit/537.36 (KHTML, like Gecko) SamsungBrowser/3.3 Chrome/38.0.2125.102 Mobile Safari/537.36	toolSearchingForArticlesFromGroup	-1	needs more data
 entityMultipleOptionalProperties	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_2) AppleWebKit/601.3.9 (KHTML, like Gecko) Version/9.0.2 Safari/601.3.9	toolSearchingForInformationAboutPeople	-1	needs more data
+entityOptionalInstanceOfOptionalIMDb_ID	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_2) AppleWebKit/601.3.9 (KHTML, like Gecko) Version/9.0.2 Safari/601.3.9	toolSearchingForIMDb_IdandInstanceOf	-1	needs more data
 geneAndInformationWithConstraints	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.98 Safari/537.36	toolSearchingForGeneRelated	-1	needs more data
 geneAndInformationWithConstraints	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.95 Safari/537.36	toolSearchingForGeneRelated	-1	needs more data
 thisNCBITaxonomyIDSubclassOfOperon	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.95 Safari/537.36	toolSearchingForGeneRelated	-1	needs more data
@@ -120,6 +122,7 @@ thisNCBITaxonomyIDSubclassOfOperon	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_
 thisNCBILocusTagFoundInTaxonNCBITaxonomyIDWithEncodes	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36	toolSearchingForGeneRelated	-1	needs more data
 thisFreebaseIDWithLabelOptionalInstanceOf	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.143 Safari/537.36	toolSeatchingForFreebaseID	-1	needs more data
 thisFreebaseIDWithLabelOptionalInstanceOf2	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.143 Safari/537.36	toolSeatchingForFreebaseID	-1	needs more data
+entityLabelImageAbstractLocationEnglishWikipediaArticle	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/603.2.5 (KHTML, like Gecko) Version/10.1.1 Safari/603.2.5	toolSearchingForMultipleInformationAboutEntity	-1	needs more data
 entityLabelImageDescriptionAllOptional	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/603.2.5 (KHTML, like Gecko) Version/10.1.1 Safari/603.2.5	toolSeaerchingForOptionalInformationAboutEntites	-1	needs more data
 schemaAboutEntityLabelImageCoordinatesAllOptional	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/603.2.5 (KHTML, like Gecko) Version/10.1.1 Safari/603.2.5	toolSeaerchingForOptionalInformationAboutEntites	-1	needs more data
 AllSubjectsAllPredicatesEntity	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36	toolSearchingEverythingForEntities	-1	needs more data
@@ -135,6 +138,7 @@ entityAllPropertiesAndObjects	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_0) Ap
 entityStatementAllPredicatesAndObjects	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36	toolSearchingEverythingForEntities	-1	needs more data
 referenceAllPredicatesAndObjects	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36	toolSearchingEverythingForEntities	-1	needs more data
 thisNCBILocusTagFoundInTaxonNCBITaxonomyIDWithEncodes	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36	toolSearchingForGeneRelated	-1	needs more data
+entityLabelImageAbstractLocationEnglishWikipediaArticle	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_5) AppleWebKit/603.2.4 (KHTML, like Gecko) Version/10.1.1 Safari/603.2.4	toolSearchingForMultipleInformationAboutEntity	-1	needs more data
 thisAustralianStatisticalGeography2011IDOptionalDescriptionWithLabel	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_5) AppleWebKit/603.2.4 (KHTML, like Gecko) Version/10.1.1 Safari/603.2.4	toolSearchingForAustralianGeography	-1	needs more data
 thisTaxonRankParentTaxon	Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36	toolSearchingForTaxonsOfParentTaxon	-1	needs more data
 thisArticleAboutInLanguageIsPartOfWikiGroupWithLimit	Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36	toolSearchingForArticlesFromGroup	-1	needs more data
@@ -162,6 +166,7 @@ AllSubjectsAllPredicatesReference	Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/53
 entityAllPropertiesAndObjects	Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/58.0.3029.110 Chrome/58.0.3029.110 Safari/537.36	toolSearchingEverythingForEntities	-1	needs more data
 entityStatementAllPredicatesAndObjects	Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/58.0.3029.110 Chrome/58.0.3029.110 Safari/537.36	toolSearchingEverythingForEntities	-1	needs more data
 referenceAllPredicatesAndObjects	Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/58.0.3029.110 Chrome/58.0.3029.110 Safari/537.36	toolSearchingEverythingForEntities	-1	needs more data
+thisGND_ID	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.2.1) Gecko/20021204	toolSearchingForGND_ID	-1	needs more data
 thisLocatedInTheAdministrativeTerritorialEntityArbitraryLengthInstanceOfArbitraryLengthAdministrativeTerritoralEntity	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.2.1) Gecko/20021204	toolSearchingForParentAdministrativeEntities	-1	needs more data
 thisNRHPReferenceNumber	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.2.1) Gecko/20021204	toolSearchingForHistoryPlaces	-1	needs more data
 thisULANID	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.2.1) Gecko/20021204	toolSearchingForULANID	-1	needs more data
@@ -512,8 +517,149 @@ thisTurner_Classic_Movies_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:50.
 thisTV_Guide_Show_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:50.0) Gecko/20100101 Firefox/54.0	toolSearchingForMovieDatabseID	-1	needs more data
 thisTV.Com_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:50.0) Gecko/20100101 Firefox/54.0	toolSearchingForMovieDatabseID	-1	needs more data
 thisUnifrance_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:50.0) Gecko/20100101 Firefox/54.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisAFI_Catalog_of_Feature_Films_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisAllcinema_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisAllMovie_movie_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisAlloCiné_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisAnimator.ru_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisAnime_News_Network_anime_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisČSFD_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisBangla_Movie_Database_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisBFI_work_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisBox_Office_Mojo_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisCiné-Ressources_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0	toolSearchingForMovieDatabseID	-1	needs more data
+thiscine.gr_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisCinema_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisCinema_of_Israel_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0	toolSearchingForMovieDatabseID	-1	needs more data
+thiscinenacional.com_movie_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisCineplex_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisCiNetMag_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisdanskefilm_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisdanskefilm_silent_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisDeutsche_Synchronkartei_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisDNF_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisEDb_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisEIDR_identifier	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0	toolSearchingForMovieDatabseID	-1	needs more data
+thiselCinema_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisEldoblaje_Movie_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0	toolSearchingForMovieDatabseID	-1	needs more data
+thiselFilm_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisElonet_movie_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisfilm-documentaire.fr_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisFilmAffinity_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisFilmPolski.pl_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisFilmportal_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisFilmweb.pl_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisGECD_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisHKMDb_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisIMDb_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisISAN	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisIshim_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisISzDb_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisJMDb_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisKINENOTE_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisKinopoisk_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisKinopolis_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisKMDb_documentary_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisKMDb_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisKvikmyndir_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisLdiF_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisMegogo_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisMetacritic_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisMinkultury_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisMovie_Walker_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisMovieMeter_Movie_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisMyAnimeList_anime_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisMyDramaList_title_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisNetflix_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisNorsk_filmografi_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisOFDb_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisOpen_Media_Database_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisPORT_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisRotten_Tomatoes_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisRussiancinema.ru_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisScope.dk_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisSourehCinema_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisSratim_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisSwedish_Film_Database_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisThe_Numbers_movie_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisTurner_Classic_Movies_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisTV_Guide_Show_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisTV.Com_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisUnifrance_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0	toolSearchingForMovieDatabseID	-1	needs more data
 distinctInstanceOfThis	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:54.0) Gecko/20100101 Firefox/54.0	toolSearchingForInstances	-1	needs more data
 entityMultipleOptionalProperties2	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:54.0) Gecko/20100101 Firefox/54.0	toolSearchingForInformationAboutPeople2	-1	needs more data
+entityMultipleOptionalProperties3	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:54.0) Gecko/20100101 Firefox/54.0	toolSearchingForInformationAboutPeople2	-1	needs more data
+entityMultipleOptionalProperties4	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:54.0) Gecko/20100101 Firefox/54.0	toolSearchingForInformationAboutPeople2	-1	needs more data
+thisAFI_Catalog_of_Feature_Films_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:54.0) Gecko/20100101 Firefox/54.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisAllcinema_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:54.0) Gecko/20100101 Firefox/54.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisAllMovie_movie_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:54.0) Gecko/20100101 Firefox/54.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisAlloCiné_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:54.0) Gecko/20100101 Firefox/54.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisAnimator.ru_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:54.0) Gecko/20100101 Firefox/54.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisAnime_News_Network_anime_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:54.0) Gecko/20100101 Firefox/54.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisČSFD_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:54.0) Gecko/20100101 Firefox/54.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisBangla_Movie_Database_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:54.0) Gecko/20100101 Firefox/54.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisBFI_work_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:54.0) Gecko/20100101 Firefox/54.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisBox_Office_Mojo_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:54.0) Gecko/20100101 Firefox/54.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisCiné-Ressources_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:54.0) Gecko/20100101 Firefox/54.0	toolSearchingForMovieDatabseID	-1	needs more data
+thiscine.gr_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:54.0) Gecko/20100101 Firefox/54.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisCinema_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:54.0) Gecko/20100101 Firefox/54.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisCinema_of_Israel_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:54.0) Gecko/20100101 Firefox/54.0	toolSearchingForMovieDatabseID	-1	needs more data
+thiscinenacional.com_movie_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:54.0) Gecko/20100101 Firefox/54.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisCineplex_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:54.0) Gecko/20100101 Firefox/54.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisCiNetMag_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:54.0) Gecko/20100101 Firefox/54.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisdanskefilm_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:54.0) Gecko/20100101 Firefox/54.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisdanskefilm_silent_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:54.0) Gecko/20100101 Firefox/54.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisDeutsche_Synchronkartei_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:54.0) Gecko/20100101 Firefox/54.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisDNF_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:54.0) Gecko/20100101 Firefox/54.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisEDb_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:54.0) Gecko/20100101 Firefox/54.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisEIDR_identifier	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:54.0) Gecko/20100101 Firefox/54.0	toolSearchingForMovieDatabseID	-1	needs more data
+thiselCinema_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:54.0) Gecko/20100101 Firefox/54.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisEldoblaje_Movie_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:54.0) Gecko/20100101 Firefox/54.0	toolSearchingForMovieDatabseID	-1	needs more data
+thiselFilm_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:54.0) Gecko/20100101 Firefox/54.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisElonet_movie_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:54.0) Gecko/20100101 Firefox/54.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisfilm-documentaire.fr_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:54.0) Gecko/20100101 Firefox/54.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisFilmAffinity_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:54.0) Gecko/20100101 Firefox/54.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisFilmPolski.pl_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:54.0) Gecko/20100101 Firefox/54.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisFilmportal_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:54.0) Gecko/20100101 Firefox/54.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisFilmweb.pl_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:54.0) Gecko/20100101 Firefox/54.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisGECD_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:54.0) Gecko/20100101 Firefox/54.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisHKMDb_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:54.0) Gecko/20100101 Firefox/54.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisIMDb_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:54.0) Gecko/20100101 Firefox/54.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisISAN	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:54.0) Gecko/20100101 Firefox/54.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisIshim_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:54.0) Gecko/20100101 Firefox/54.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisISzDb_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:54.0) Gecko/20100101 Firefox/54.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisJMDb_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:54.0) Gecko/20100101 Firefox/54.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisKINENOTE_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:54.0) Gecko/20100101 Firefox/54.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisKinopoisk_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:54.0) Gecko/20100101 Firefox/54.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisKinopolis_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:54.0) Gecko/20100101 Firefox/54.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisKMDb_documentary_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:54.0) Gecko/20100101 Firefox/54.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisKMDb_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:54.0) Gecko/20100101 Firefox/54.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisKvikmyndir_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:54.0) Gecko/20100101 Firefox/54.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisLdiF_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:54.0) Gecko/20100101 Firefox/54.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisMegogo_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:54.0) Gecko/20100101 Firefox/54.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisMetacritic_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:54.0) Gecko/20100101 Firefox/54.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisMinkultury_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:54.0) Gecko/20100101 Firefox/54.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisMovie_Walker_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:54.0) Gecko/20100101 Firefox/54.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisMovieMeter_Movie_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:54.0) Gecko/20100101 Firefox/54.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisMyAnimeList_anime_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:54.0) Gecko/20100101 Firefox/54.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisMyDramaList_title_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:54.0) Gecko/20100101 Firefox/54.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisNetflix_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:54.0) Gecko/20100101 Firefox/54.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisNorsk_filmografi_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:54.0) Gecko/20100101 Firefox/54.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisOFDb_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:54.0) Gecko/20100101 Firefox/54.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisOpen_Media_Database_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:54.0) Gecko/20100101 Firefox/54.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisPORT_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:54.0) Gecko/20100101 Firefox/54.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisRotten_Tomatoes_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:54.0) Gecko/20100101 Firefox/54.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisRussiancinema.ru_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:54.0) Gecko/20100101 Firefox/54.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisScope.dk_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:54.0) Gecko/20100101 Firefox/54.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisSourehCinema_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:54.0) Gecko/20100101 Firefox/54.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisSratim_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:54.0) Gecko/20100101 Firefox/54.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisSwedish_Film_Database_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:54.0) Gecko/20100101 Firefox/54.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisThe_Numbers_movie_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:54.0) Gecko/20100101 Firefox/54.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisTurner_Classic_Movies_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:54.0) Gecko/20100101 Firefox/54.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisTV_Guide_Show_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:54.0) Gecko/20100101 Firefox/54.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisTV.Com_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:54.0) Gecko/20100101 Firefox/54.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisUnifrance_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:54.0) Gecko/20100101 Firefox/54.0	toolSearchingForMovieDatabseID	-1	needs more data
+	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:54.0) Gecko/20100101 Firefox/54.0	toolSearchingForMovieDatabseID	-1	needs more data
 thisNKCRAUTIDAboutAndLanguage	NK2WP/2.0 (nkp.cz linker service, run by <petr.kadlec@gmail.com>)	linkerForCzechNationalLibrary	2	linker for http://www.nkp.cz/
 toolLookingForWikidataIdBasedOnTwitterUsername	python-requests/2.11.1	toolLookingForWikidataIdBasedOnTwitterUsername	2.11.1	it is probably NOT this one, even though it looks similar: https://github.com/fnielsen/scholia/blob/5094353127cd929585fab6b2cf1b0047353d9162/scholia/query.py#L223-L224
 toolLookingForWikidataIdBasedOnTwitterUsername	python-requests/2.12.3	toolLookingForWikidataIdBasedOnTwitterUsername	2.12.3	it is probably NOT this one, even though it looks similar: https://github.com/fnielsen/scholia/blob/5094353127cd929585fab6b2cf1b0047353d9162/scholia/query.py#L223-L224

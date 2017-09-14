@@ -1,0 +1,6 @@
+SELECT ?loc
+WHERE {
+  ?p <http://www.w3.org/2000/01/rdf-schema#label> "Trafalgar Square"@en;
+     <http://www.wikidata.org/prop/direct/P131> <http://www.wikidata.org/entity/Q179351>;
+     <http://www.wikidata.org/prop/direct/P625> ?loc .
+}

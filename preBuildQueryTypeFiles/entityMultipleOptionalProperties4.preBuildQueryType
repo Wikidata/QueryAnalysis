@@ -1,0 +1,10 @@
+SELECT DISTINCT ?type ?typeLabel ?lieu ?location ?time ?starttime ?inception WHERE {
+ OPTIONAL{wd:Q349391 wdt:P31 ?type}.
+ OPTIONAL{wd:Q349391 wdt:P131 ?lieu}.
+ OPTIONAL{wd:Q349391 wdt:P625 ?location}.
+ OPTIONAL{wd:Q349391 wdt:P585 ?time}.
+ OPTIONAL{wd:Q349391 wdt:P580 ?starttime}.
+ OPTIONAL{wd:Q349391 wdt:P571 ?inception}.
+ SERVICE wikibase:label { bd:serviceParam wikibase:language 'en'. }
+
+}

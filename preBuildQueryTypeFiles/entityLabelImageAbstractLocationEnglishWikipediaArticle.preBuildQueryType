@@ -1,0 +1,27 @@
+PREFIX dbo: <urn:dbo>
+select ?label ?abstract ?image ?lat ?long ?wikilink
+where {
+  OPTIONAL{
+    <http://www.wikidata.org/entity/Q349391> rdfs:label ?label .
+    FILTER (lang(?label)=?lang) .
+    values (?lang ?lang_) { ("en" 1) ("en" 2) ("de" 3) ("fr" 4) ("it" 5)}
+  }
+  OPTIONAL{
+    <http://www.wikidata.org/entity/Q349391> wdt:P18 ?image .
+  }
+  OPTIONAL{
+    <http://www.wikidata.org/entity/Q349391> dbo:abstract ?abstract .
+    FILTER (lang(?abstract)="en" )
+  }
+  OPTIONAL{
+    <http://www.wikidata.org/entity/Q349391> wdt:P625 ?lat .
+  }
+  OPTIONAL{
+    ?wikilink a schema:Article;
+                schema:about <http://www.wikidata.org/entity/Q349391>;
+                schema:inLanguage "en";
+                schema:isPartOf <https://en.wikipedia.org/> .
+  }
+}
+order by ?lang_
+
