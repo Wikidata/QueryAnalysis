@@ -44,6 +44,7 @@ parser.add_argument("--noGzipOutput", "-g", help="Disables gzipping of the "
                     + "output files.", action="store_true")
 parser.add_argument("--noExampleQueriesOutput", "-e", help="Disables the "
                     + "matching of example queries.", action="store_true")
+parser-add_argument("--withUniqueQueryDetection", "-u", help="Enable unique query detection", action="store_true")
 parser.add_argument("--referenceDirectory", "-r",
                     default=config.queryReferenceDirectory,
                     type=str,
@@ -57,7 +58,7 @@ parser.add_argument("--monthsFolder", "-m", default=config.monthsFolder,
                     + "residing.")
 parser.add_argument("--year", "-y", default=datetime.now().year, type=int,
                     help="The year to be processed (default current year).")
-parser.add_argument("--noUnifying", "-u", help="Disables the unifying of query types.", action="store_true")
+parser.add_argument("--noQueryTypeUnification", "-q", help="Disables the unifying of query types.", action="store_true")
 parser.add_argument("months", type=str, help="The months to be processed")
 
 # These are the field we extract from wmf.wdqs_extract that form the raw
@@ -161,6 +162,8 @@ for monthName in args.months.split(","):
         mavenArguments += " -g"
     if args.noExampleQueriesOutput:
         mavenArguments += " -e"
+    if args.withUniqueQueryDetection:
+        mavenArguments += " -u"
 
     mavenCall.append(mavenArguments)
 
