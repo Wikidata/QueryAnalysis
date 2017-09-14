@@ -44,7 +44,7 @@ parser.add_argument("--noGzipOutput", "-g", help="Disables gzipping of the "
                     + "output files.", action="store_true")
 parser.add_argument("--noExampleQueriesOutput", "-e", help="Disables the "
                     + "matching of example queries.", action="store_true")
-parser-add_argument("--withUniqueQueryDetection", "-u", help="Enable unique query detection", action="store_true")
+parser.add_argument("--withUniqueQueryDetection", "-u", help="Enable unique query detection", action="store_true")
 parser.add_argument("--referenceDirectory", "-r",
                     default=config.queryReferenceDirectory,
                     type=str,
