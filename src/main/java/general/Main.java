@@ -28,8 +28,11 @@ import com.univocity.parsers.tsv.TsvParser;
 import com.univocity.parsers.tsv.TsvParserSettings;
 import input.InputHandler;
 import input.InputHandlerTSV;
+import input.factories.InputHandlerTSVFactory;
 import logging.LoggingHandler;
 import openrdffork.TupleExprWrapper;
+import output.factories.OutputHandlerTSVFactory;
+
 import org.apache.commons.cli.*;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
@@ -41,6 +44,7 @@ import org.jsoup.select.Elements;
 import org.openrdf.query.parser.ParsedQuery;
 import query.OpenRDFQueryHandler;
 import query.QueryHandler;
+import query.factories.OpenRDFQueryHandlerFactory;
 import scala.Tuple2;
 
 import java.io.*;
@@ -263,18 +267,15 @@ public final class Main
 
     for (int day = 1; day <= 31; day++) {
       String inputFile = inputFilePrefix + String.format("%02d", day) + inputFileSuffix;
-      InputHandler inputHandler;
-      try {
-        inputHandler = new InputHandlerTSV(inputFile);
-      } catch (IOException e) {
-        logger.warn("File " + inputFile + " could not be found.");
-        continue;
-      }
 
       String outputFile = outputFolder + "/QueryProcessed" + queryParserName + String.format("%02d", day);
 
-      Runnable parseOneMonthWorker = new ParseOneDayWorker(inputHandler, day, outputFile, true);
-      executor.execute(parseOneMonthWorker);
+      try {
+        Runnable parseOneMonthWorker = new ParseOneDayWorker(new InputHandlerTSVFactory(), inputFile, new OutputHandlerTSVFactory(), outputFile, new OpenRDFQueryHandlerFactory(), day, true);
+        executor.execute(parseOneMonthWorker);
+      }
+      catch (IOException e) {
+      }
     }
     executor.shutdown();
 

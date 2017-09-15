@@ -2,6 +2,7 @@ package output;
 
 import openrdffork.TupleExprWrapper;
 import query.QueryHandler;
+import query.factories.QueryHandlerFactory;
 
 import java.io.FileNotFoundException;
 import java.io.Serializable;
@@ -31,6 +32,17 @@ public abstract class OutputHandler implements Serializable
   protected String outputFile;
 
   /**
+   * @param fileToWrite            The file to write the output to.
+   * @param queryHandlerClassToSet The query Handler class to use for generating the output.
+   * @throws FileNotFoundException If there was some error concerning the file to write to.
+   */
+  public OutputHandler(String fileToWrite, QueryHandlerFactory queryHandlerFactoryToSet) throws FileNotFoundException
+  {
+    this.outputFile = fileToWrite;
+    this.initialize(fileToWrite, queryHandlerFactoryToSet);
+  }
+
+  /**
    * @return The output file this handler writes to.
    */
   public String getOutputFile()
@@ -55,24 +67,13 @@ public abstract class OutputHandler implements Serializable
   }
 
   /**
-   * @param fileToWrite            The file to write the output to.
-   * @param queryHandlerClassToSet The query Handler class to use for generating the output.
-   * @throws FileNotFoundException If there was some error concerning the file to write to.
-   */
-  public OutputHandler(String fileToWrite, Class queryHandlerClassToSet) throws FileNotFoundException
-  {
-    this.outputFile = fileToWrite;
-    this.initialize(fileToWrite, queryHandlerClassToSet);
-  }
-
-  /**
    * Method to be called before using writeLine().
    *
    * @param fileToWrite            The file to write the output to.
-   * @param queryHandlerClassToSet The query Handler class to use for generating the output.
+   * @param queryHandlerFactoryToSet The query handler factory to supply the query handler for generating the output.
    * @throws FileNotFoundException If there was some error concerning the file to write to.
    */
-  public abstract void initialize(String fileToWrite, Class queryHandlerClassToSet) throws FileNotFoundException;
+  public abstract void initialize(String fileToWrite, QueryHandlerFactory queryHandlerFactoryToSet) throws FileNotFoundException;
 
   /**
    * Takes a query and the additional information from input and writes

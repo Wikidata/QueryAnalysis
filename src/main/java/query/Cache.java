@@ -1,6 +1,8 @@
 package query;
 
 import general.Main;
+import query.factories.QueryHandlerFactory;
+
 import org.apache.commons.collections.map.LRUMap;
 import org.apache.log4j.Logger;
 import org.openrdf.query.MalformedQueryException;
@@ -100,9 +102,12 @@ public class Cache
    *
    * @param validityStatus The validity status which was the result of the decoding process of the URI
    * @param queryToAnalyze The query that should be analyzed and written.
+   * @param line The line this query came from.
+   * @param day The day this query came from.
+   * @param queryHandlerFactory The query handler factory to supply the query handler.
    * @return QueryHandler a QueryHandler object which was created for the same queryString before
    */
-  public QueryHandler getQueryHandler(QueryHandler.Validity validityStatus, String queryToAnalyze, long line, int day, Class queryHandlerClass)
+  public QueryHandler getQueryHandler(QueryHandler.Validity validityStatus, String queryToAnalyze, long line, int day, QueryHandlerFactory queryHandlerFactory)
   {
     Tuple2<QueryHandler.Validity, String> tuple = new Tuple2<QueryHandler.Validity, String>(validityStatus, queryToAnalyze);
 
@@ -111,12 +116,7 @@ public class Cache
     //check if requested object already exists in cache
     if (!queryHandlerLRUMap.containsKey(tuple)) {
       //if not create a new one
-      try {
-        queryHandler = (QueryHandler) queryHandlerClass.getConstructor(QueryHandler.Validity.class, Long.class, Integer.class, String.class).newInstance(validityStatus, line, day, queryToAnalyze);
-      } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
-        logger.error("Failed to create query handler object" + e);
-      }
-
+      queryHandler = queryHandlerFactory.getQueryHandler(validityStatus, line, day, queryToAnalyze);
 
       if (Main.isWithUniqueQueryDetection()) {
 

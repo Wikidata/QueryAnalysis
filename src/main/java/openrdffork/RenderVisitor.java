@@ -1,4 +1,4 @@
-package anonymize;
+package openrdffork;
 
 import org.openrdf.query.parser.sparql.ast.*;
 

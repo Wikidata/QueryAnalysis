@@ -1,6 +1,7 @@
 package anonymize;
 
 import general.Main;
+import openrdffork.RenderVisitor;
 import openrdffork.StandardizingSPARQLParser;
 import org.openrdf.query.MalformedQueryException;
 import org.openrdf.query.parser.ParsedQuery;

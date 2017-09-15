@@ -1,21 +1,23 @@
 /**
  *
  */
-package anonymize;
+package output;
 
 import com.univocity.parsers.tsv.TsvWriter;
 import com.univocity.parsers.tsv.TsvWriterSettings;
+
 import general.Main;
+import openrdffork.RenderVisitor;
 import openrdffork.StandardizingSPARQLParser;
 import org.apache.log4j.Logger;
 import org.openrdf.query.MalformedQueryException;
 import org.openrdf.query.parser.ParsedQuery;
 import org.openrdf.query.parser.sparql.ast.*;
-import output.OutputHandler;
-import output.OutputHandlerTSV;
+
 import query.OpenRDFQueryHandler;
 import query.QueryHandler;
 import query.QueryHandler.Validity;
+import query.factories.QueryHandlerFactory;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
@@ -36,7 +38,7 @@ public class OutputHandlerAnonymizer extends OutputHandler
   /**
    * The class of which a queryHandlerObject should be created.
    */
-  private Class queryHandlerClass;
+  private QueryHandlerFactory queryHandlerFactory;
   /**
    * A writer created at object creation to be used in line-by-line writing.
    */
@@ -52,24 +54,24 @@ public class OutputHandlerAnonymizer extends OutputHandler
 
   /**
    * @param fileToWrite            The file to write the anonymized queries to.
-   * @param queryHandlerClassToSet The query handler class to use for checking query validity.
+   * @param queryHandlerFactoryToSet The query handler factory to supply the query handler to be used to check validity.
    * @throws FileNotFoundException If the file exists but is a directory rather than a regular file,
    *                               does not exist but cannot be created,
    *                               or cannot be opened for any other reason
    */
-  public OutputHandlerAnonymizer(String fileToWrite, Class queryHandlerClassToSet) throws FileNotFoundException
+  public OutputHandlerAnonymizer(String fileToWrite, QueryHandlerFactory queryHandlerFactoryToSet) throws FileNotFoundException
   {
-    super(fileToWrite, queryHandlerClassToSet);
+    super(fileToWrite, queryHandlerFactoryToSet);
   }
 
   /**
    * @param fileToWrite            The file to write the anonymized queries to.
-   * @param queryHandlerClassToSet The query handler class to use for checking query validity.
+   * @param queryHandlerFactoryToSet The query handler class to use for checking query validity.
    * @throws FileNotFoundException If the file exists but is a directory rather than a regular file,
    *                               does not exist but cannot be created,
    *                               or cannot be opened for any other reason
    */
-  public void initialize(String fileToWrite, Class queryHandlerClassToSet) throws FileNotFoundException
+  public void initialize(String fileToWrite, QueryHandlerFactory queryHandlerFactoryToSet) throws FileNotFoundException
   {
     if (!Main.gzipOutput) {
       outputStream = new FileOutputStream(fileToWrite + ".tsv");
@@ -81,7 +83,7 @@ public class OutputHandlerAnonymizer extends OutputHandler
       }
     }
     writer = new TsvWriter(outputStream, new TsvWriterSettings());
-    this.queryHandlerClass = queryHandlerClassToSet;
+    this.queryHandlerFactory = queryHandlerFactoryToSet;
 
     List<String> header = new ArrayList<>();
     header.add("#anonymizedQuery");
@@ -95,13 +97,7 @@ public class OutputHandlerAnonymizer extends OutputHandler
   {
     List<Object> line = new ArrayList<>();
 
-    QueryHandler queryHandler = null;
-    try {
-      queryHandler = (QueryHandler) queryHandlerClass.getConstructor(QueryHandler.Validity.class, Long.class, Integer.class, String.class).newInstance(validityStatus, currentLine, currentDay, queryToAnalyze);
-    } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
-      logger.error("Failed to create query handler object" + e);
-      return;
-    }
+    QueryHandler queryHandler = queryHandlerFactory.getQueryHandler(validityStatus, currentLine, currentDay, queryToAnalyze);
 
     if (queryHandler.getValidityStatus().getValue() > 0) {
       ASTQueryContainer qc;

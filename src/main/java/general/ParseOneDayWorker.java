@@ -2,13 +2,17 @@ package general;
 
 
 import input.InputHandler;
+import input.factories.InputHandlerFactory;
 import openrdffork.TupleExprWrapper;
 import org.apache.log4j.Logger;
 import output.OutputHandler;
 import output.OutputHandlerTSV;
+import output.factories.OutputHandlerFactory;
 import query.OpenRDFQueryHandler;
+import query.factories.QueryHandlerFactory;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,23 +26,54 @@ public class ParseOneDayWorker implements Runnable
    * Define a static logger variable.
    */
   private static final Logger logger = Logger.getLogger(ParseOneDayWorker.class);
+  /**
+   * The inputHandler to process from.
+   */
   private InputHandler inputHandler;
+  /**
+   * The output handler to process to.
+   */
   private OutputHandler outputHandler;
+  /**
+   * The day this worker is processing.
+   */
   private int day;
+  /**
+   * If the query types should be written out.
+   */
   private Boolean writeQueryTypes;
+  /**
+   * A map for holding all query types found on this day.
+   */
   private HashMap<TupleExprWrapper, String> queryTypes = new HashMap<TupleExprWrapper, String>();
 
-  public ParseOneDayWorker(InputHandler inputHandlerToSet, int day, String outputFile, Boolean writeQueryTypes) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException
+  /**
+   * @param inputHandlerFactory The input handler factory to supply the input handler.
+   * @param inputFile The file to read from.
+   * @param outputHandlerFactory The output handler factory to supply the output handler.
+   * @param outputFile The file to write to.
+   * @param queryHandlerFactory The query handler factory to supply the query handler.
+   * @param dayToSet The day being processed.
+   * @param writeQueryTypes If the query types should be written or not.
+   * @throws IOException If the input or output handler could not be created.
+   */
+  public ParseOneDayWorker(InputHandlerFactory inputHandlerFactory, String inputFile, OutputHandlerFactory outputHandlerFactory, String outputFile, QueryHandlerFactory queryHandlerFactory, int dayToSet, Boolean writeQueryTypes) throws IOException
   {
-
     try {
-      outputHandler = new OutputHandlerTSV(outputFile, OpenRDFQueryHandler.class);
-    } catch (FileNotFoundException e) {
-      logger.error("File " + outputFile + "could not be created or written to.", e);
+      this.inputHandler = inputHandlerFactory.getInputHandler(inputFile);
     }
-
-    this.inputHandler = inputHandlerToSet;
-    this.day = day;
+    catch (IOException e) {
+      logger.warn("File " + inputFile + " could not be found.");
+      throw e;
+    }
+    try {
+      this.outputHandler = outputHandlerFactory.getOutputHandler(outputFile, queryHandlerFactory);
+    }
+    catch (FileNotFoundException e) {
+      logger.error("File " + outputFile + "could not be created or written to.", e);
+      throw e;
+    }
+    this.day = dayToSet;
     this.writeQueryTypes = writeQueryTypes;
     for (Map.Entry<TupleExprWrapper, String> entry : Main.queryTypes.entrySet()) {
       this.queryTypes.put(entry.getKey(), entry.getValue());

@@ -4,7 +4,11 @@ import general.Main;
 import general.ParseOneDayWorker;
 import input.InputHandler;
 import input.InputHandlerTSV;
+import input.factories.InputHandlerTSVFactory;
 import logging.LoggingHandler;
+import output.factories.OutputHandlerAnonymizerFactory;
+import query.factories.OpenRDFQueryHandlerFactory;
+
 import org.apache.commons.cli.*;
 import org.apache.log4j.Logger;
 
@@ -108,17 +112,15 @@ public class Anonymizer
     for (int day = 1; day <= 31; day++) {
       String inputFile = inputFilePrefix + String.format("%02d", day) + inputFileSuffix;
       InputHandler inputHandler;
-      try {
-        inputHandler = new InputHandlerTSV(inputFile);
-      } catch (IOException e) {
-        logger.warn("File " + inputFile + " could not be found.");
-        continue;
-      }
 
       String outputFile = outputFolder + "/AnonymousQueryCnt" + String.format("%02d", day);
 
-      Runnable parseOneMonthWorker = new ParseOneDayWorker(inputHandler, day, outputFile, false);
-      executor.execute(parseOneMonthWorker);
+      try {
+        Runnable parseOneMonthWorker = new ParseOneDayWorker(new InputHandlerTSVFactory(), inputFile, new OutputHandlerAnonymizerFactory(), outputFile, new OpenRDFQueryHandlerFactory(), day, false);
+        executor.execute(parseOneMonthWorker);
+      }
+      catch (IOException e) {
+      }
     }
     executor.shutdown();
 

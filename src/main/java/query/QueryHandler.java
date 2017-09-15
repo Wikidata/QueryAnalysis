@@ -15,21 +15,27 @@ import java.util.Map.Entry;
 public abstract class QueryHandler implements Serializable
 {
 
-  public QueryHandler(Validity validity, Long line, Integer day, String queryString)
+  /**
+   * @param validity The validity as determined by the decoding process.
+   * @param lineToSet The line this query came from.
+   * @param dayToSet The day this query came from.
+   * @param queryStringToSet The query as a string.
+   */
+  public QueryHandler(Validity validity, Long lineToSet, Integer dayToSet, String queryStringToSet)
   {
-    this.day = day;
-    this.line = line;
+    this.day = dayToSet;
+    this.line = lineToSet;
     this.validityStatus = validity;
 
-    this.setUniqeId(this.day, this.line, queryString);
+    this.setUniqeId(this.day, this.line, queryStringToSet);
     this.setOriginalId(this.getUniqeId());
 
-    if (queryString.equals("")) {
+    if (queryStringToSet.equals("")) {
       this.validityStatus = Validity.EMPTY;
     } else if (validityStatus == null || validityStatus.getValue() > -1) {
-      this.queryStringWithoutPrefixes = queryString;
-      this.lengthNoAddedPrefixes = queryString.length();
-      this.queryString = queryString;
+      this.queryStringWithoutPrefixes = queryStringToSet;
+      this.lengthNoAddedPrefixes = queryStringToSet.length();
+      this.queryString = queryStringToSet;
       update();
     }
   }
@@ -166,6 +172,15 @@ public abstract class QueryHandler implements Serializable
    */
   protected int day;
 
+  /**
+   *
+   */
+  public QueryHandler()
+  {
+    this.queryString = "";
+    this.validityStatus = Validity.DEFAULT;
+  }
+
   public String getUniqeId()
   {
     return uniqeId;
@@ -184,10 +199,10 @@ public abstract class QueryHandler implements Serializable
   /**
    * Generates an id based on the parameters.
    *
-   * @param day
-   * @param line
-   * @param queryString
-   * @return
+   * @param day The day this query came from.
+   * @param line The line this query came from.
+   * @param queryString The query string for this query.
+   * @return The generated id.
    */
   public static String generateId(int day, long line, String queryString)
   {
@@ -208,16 +223,6 @@ public abstract class QueryHandler implements Serializable
    * The id of the first queryHandler with this queryString.
    */
   private String originalId;
-
-
-  /**
-   *
-   */
-  public QueryHandler()
-  {
-    this.queryString = "";
-    this.validityStatus = Validity.DEFAULT;
-  }
 
   /**
    * Update the handler to represent the string in queryString.

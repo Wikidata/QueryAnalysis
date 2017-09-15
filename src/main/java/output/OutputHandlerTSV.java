@@ -6,6 +6,7 @@ import general.Main;
 import org.apache.log4j.Logger;
 import query.Cache;
 import query.QueryHandler;
+import query.factories.QueryHandlerFactory;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -30,7 +31,7 @@ public class OutputHandlerTSV extends OutputHandler
   /**
    * The class of which a queryHandlerObject should be created.
    */
-  private Class queryHandlerClass;
+  private QueryHandlerFactory queryHandlerFactory;
 
   /**
    * A writer created at object creation to be used in line-by-line writing.
@@ -49,26 +50,26 @@ public class OutputHandlerTSV extends OutputHandler
 
   /**
    * @param fileToWrite            location of the file to write the received values to
-   * @param queryHandlerClassToSet handler class used to analyze the query string that will be written
+   * @param queryHandlerFactoryToSet The query handler factory to supply the query handler to generate the output with.
    * @throws FileNotFoundException if the file exists but is a directory
    *                               rather than a regular file, does not exist but cannot be created,
    *                               or cannot be opened for any other reason
    */
-  public OutputHandlerTSV(String fileToWrite, Class queryHandlerClassToSet) throws FileNotFoundException
+  public OutputHandlerTSV(String fileToWrite, QueryHandlerFactory queryHandlerFactoryToSet) throws FileNotFoundException
   {
-    super(fileToWrite, queryHandlerClassToSet);
+    super(fileToWrite, queryHandlerFactoryToSet);
   }
 
   /**
    * Creates the file specified in the constructor and writes the header.
    *
    * @param fileToWrite       location of the file to write the received values to
-   * @param queryHandlerClass handler class used to analyze the query string that will be written
+   * @param queryHandlerFactoryToSet The query handler factory to supply the query handler to generate the output with.
    * @throws FileNotFoundException if the file exists but is a directory
    *                               rather than a regular file, does not exist but cannot be created,
    *                               or cannot be opened for any other reason
    */
-  public void initialize(String fileToWrite, Class queryHandlerClass) throws FileNotFoundException
+  public void initialize(String fileToWrite, QueryHandlerFactory queryHandlerFactoryToSet) throws FileNotFoundException
   {
     if (!Main.gzipOutput) {
       outputStream = new FileOutputStream(fileToWrite + ".tsv");
@@ -80,7 +81,7 @@ public class OutputHandlerTSV extends OutputHandler
       }
     }
     writer = new TsvWriter(outputStream, new TsvWriterSettings());
-    this.queryHandlerClass = queryHandlerClass;
+    this.queryHandlerFactory = queryHandlerFactoryToSet;
 
     List<String> header = new ArrayList<>();
     header.add("#Valid");
@@ -133,7 +134,7 @@ public class OutputHandlerTSV extends OutputHandler
   @Override
   public final void writeLine(String queryToAnalyze, QueryHandler.Validity validityStatus, String userAgent, long currentLine, int day, String currentFile)
   {
-    QueryHandler queryHandler = cache.getQueryHandler(validityStatus, queryToAnalyze, currentLine, day, queryHandlerClass);
+    QueryHandler queryHandler = cache.getQueryHandler(validityStatus, queryToAnalyze, currentLine, day, queryHandlerFactory);
 
     queryHandler.setUserAgent(userAgent);
     queryHandler.setCurrentFile(currentFile);
