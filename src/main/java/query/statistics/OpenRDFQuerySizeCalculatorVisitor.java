@@ -1,4 +1,4 @@
-package query;
+package query.statistics;
 
 
 import org.apache.log4j.Logger;

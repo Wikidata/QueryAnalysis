@@ -1,4 +1,4 @@
-package query;
+package query.statistics;
 
 import org.openrdf.query.parser.sparql.ASTVisitorBase;
 import org.openrdf.query.parser.sparql.ast.*;

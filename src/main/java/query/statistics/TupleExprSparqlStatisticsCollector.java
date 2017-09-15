@@ -1,4 +1,4 @@
-package query;
+package query.statistics;
 
 import org.openrdf.query.algebra.ArbitraryLengthPath;
 import org.openrdf.query.algebra.QueryModelNode;
