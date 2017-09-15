@@ -2,9 +2,12 @@ package anonymize;
 
 import general.Main;
 import openrdffork.RenderVisitor;
+import openrdffork.StandardizingPrefixDeclProcessor;
 import openrdffork.StandardizingSPARQLParser;
 import org.openrdf.query.MalformedQueryException;
 import org.openrdf.query.parser.ParsedQuery;
+import org.openrdf.query.parser.sparql.BaseDeclProcessor;
+import org.openrdf.query.parser.sparql.StringEscapesProcessor;
 import org.openrdf.query.parser.sparql.ast.*;
 import query.OpenRDFQueryHandler;
 
@@ -13,6 +16,7 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Map;
 
 import static java.nio.file.Files.readAllBytes;
 
@@ -23,18 +27,16 @@ public class Test
   {
     Main.loadStandardPrefixes();
 
+    Anonymizer.loadWhitelistDatatypes();
+
     int worked = 0;
     int failed = 0;
     int failedToParse = 0;
 
     try (DirectoryStream<Path> directoryStream =
-             Files.newDirectoryStream(Paths.get("/home/adrian/workspace/java/months/inputData/processedLogData/exampleQueries/"))) {
+             Files.newDirectoryStream(Paths.get("/home/adrian/workspace/java/months/exampleQueries/"))) {
       for (Path filePath : directoryStream) {
         if (Files.isRegularFile(filePath)) {
-          /*if (!filePath.endsWith("Battles_per_year_per_continent_and_country_last_80_years_(animated).exampleQuery")) {
-            continue;
-          }*/
-
           String queryString = new String(readAllBytes(filePath));
 
           try {
@@ -51,8 +53,13 @@ public class Test
             //e.printStackTrace();
             continue;
           }
+
           try {
             StandardizingSPARQLParser.debug(qc);
+            StringEscapesProcessor.process(qc);
+            BaseDeclProcessor.process(qc, OpenRDFQueryHandler.BASE_URI);
+            StandardizingPrefixDeclProcessor.process(qc);
+            StandardizingSPARQLParser.anonymize(qc);
           } catch (MalformedQueryException e) {
             System.out.println("Failed to debug or anonymize query. " + queryString);
           }
@@ -64,6 +71,7 @@ public class Test
             //e.printStackTrace();
             continue;
           }
+
           try {
             ParsedQuery parsedQuery = new StandardizingSPARQLParser().parseQuery(renderedQueryString, OpenRDFQueryHandler.BASE_URI);
             worked++;

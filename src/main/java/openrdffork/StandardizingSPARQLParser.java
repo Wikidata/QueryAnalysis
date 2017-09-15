@@ -3,6 +3,7 @@
  */
 package openrdffork;
 
+import org.apache.log4j.Logger;
 import org.openrdf.model.impl.ValueFactoryImpl;
 import org.openrdf.query.Dataset;
 import org.openrdf.query.IncompatibleOperationException;
@@ -15,6 +16,9 @@ import org.openrdf.query.parser.ParsedTupleQuery;
 import org.openrdf.query.parser.sparql.*;
 import org.openrdf.query.parser.sparql.ast.*;
 
+import anonymize.Anonymizer;
+import query.OpenRDFQueryHandler;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -25,6 +29,11 @@ import java.util.Map;
  */
 public class StandardizingSPARQLParser extends SPARQLParser
 {
+
+  /**
+   * Define a static logger variable.
+   */
+  private static final Logger logger = Logger.getLogger(StandardizingSPARQLParser.class);
 
   /**
    * Moves BIND()-clauses to the top of the query.
@@ -80,7 +89,7 @@ public class StandardizingSPARQLParser extends SPARQLParser
   {
     final Map<String, Integer> variables = new HashMap<>();
     final Map<String, Integer> strings = new HashMap<>();
-    final Map<String, Integer> rdfLiterals = new HashMap<>();
+
     try {
       queryContainer.jjtAccept(new ASTVisitorBase()
       {
@@ -97,6 +106,19 @@ public class StandardizingSPARQLParser extends SPARQLParser
         @Override
         public Object visit(ASTString string, Object data) throws VisitorException
         {
+          // Find the datatype for this.
+          Node parent = string.jjtGetParent();
+          if (parent instanceof ASTRDFLiteral) {
+            if (parent.jjtGetNumChildren() > 1) {
+              Node sibling = parent.jjtGetChild(1);
+              if (sibling instanceof ASTIRI) {
+                if (Anonymizer.whitelistedDatatypes.contains(((ASTIRI) sibling).getValue())) {
+                  return super.visit(string, data);
+                }
+              }
+            }
+          }
+
           if (!strings.containsKey(string.getValue())) {
             strings.put(string.getValue(), strings.keySet().size() + 1);
           }

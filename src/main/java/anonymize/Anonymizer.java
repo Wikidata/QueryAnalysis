@@ -12,11 +12,17 @@ import query.factories.OpenRDFQueryHandlerFactory;
 import org.apache.commons.cli.*;
 import org.apache.log4j.Logger;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.file.Files;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -28,9 +34,14 @@ public class Anonymizer
 {
 
   /**
+   * A list containing all datatypes excluded from anonymization.
+   */
+  public static final List<String> whitelistedDatatypes = new ArrayList<String>();
+
+  /**
    * Define a static logger variable.
    */
-  private static final Logger logger = Logger.getLogger(Main.class);
+  private static final Logger logger = Logger.getLogger(Anonymizer.class);
 
   public static void main(String[] args) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException
   {
@@ -90,6 +101,7 @@ public class Anonymizer
     LoggingHandler.initFileLog("Anonymizer", "nothing");
 
     Main.loadStandardPrefixes();
+    Anonymizer.loadWhitelistDatatypes();
 
     File lockFile;
 
@@ -134,5 +146,20 @@ public class Anonymizer
     long millis = TimeUnit.MILLISECONDS.convert(stopTime - startTime, TimeUnit.NANOSECONDS);
     Date date = new Date(millis);
     System.out.println("Finished executing with all threads: " + new SimpleDateFormat("mm-dd HH:mm:ss:SSSSSSS").format(date));
+  }
+
+  public static void loadWhitelistDatatypes() {
+    try (BufferedReader reader = new BufferedReader(new FileReader("anonymization/whitelist"))) {
+      String line = null;
+      while ((line = reader.readLine()) != null) {
+        Anonymizer.whitelistedDatatypes.add(line);
+      }
+    }
+    catch (FileNotFoundException e) {
+      logger.error("Could not read the anonymization whitelist.", e);
+    }
+    catch (IOException e) {
+      logger.error("Could not read the anonymization whitelist.", e);
+    }
   }
 }

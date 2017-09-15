@@ -8,10 +8,13 @@ import com.univocity.parsers.tsv.TsvWriterSettings;
 
 import general.Main;
 import openrdffork.RenderVisitor;
+import openrdffork.StandardizingPrefixDeclProcessor;
 import openrdffork.StandardizingSPARQLParser;
 import org.apache.log4j.Logger;
 import org.openrdf.query.MalformedQueryException;
 import org.openrdf.query.parser.ParsedQuery;
+import org.openrdf.query.parser.sparql.BaseDeclProcessor;
+import org.openrdf.query.parser.sparql.StringEscapesProcessor;
 import org.openrdf.query.parser.sparql.ast.*;
 
 import query.OpenRDFQueryHandler;
@@ -34,7 +37,7 @@ public class OutputHandlerAnonymizer extends OutputHandler
   /**
    * Define a static logger variable.
    */
-  private static final Logger logger = Logger.getLogger(OutputHandlerTSV.class);
+  private static final Logger logger = Logger.getLogger(OutputHandlerAnonymizer.class);
   /**
    * The class of which a queryHandlerObject should be created.
    */
@@ -109,6 +112,9 @@ public class OutputHandlerAnonymizer extends OutputHandler
       }
       try {
         StandardizingSPARQLParser.debug(qc);
+        StringEscapesProcessor.process(qc);
+        BaseDeclProcessor.process(qc, OpenRDFQueryHandler.BASE_URI);
+        StandardizingPrefixDeclProcessor.process(qc);
         StandardizingSPARQLParser.anonymize(qc);
       } catch (MalformedQueryException e) {
         logger.error("Failed to debug or anonymize query. " + queryToAnalyze);
