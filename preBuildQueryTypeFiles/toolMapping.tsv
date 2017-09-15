@@ -143,6 +143,12 @@ thisAustralianStatisticalGeography2011IDOptionalDescriptionWithLabel	Mozilla/5.0
 thisTaxonRankParentTaxon	Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36	toolSearchingForTaxonsOfParentTaxon	-1	needs more data
 thisArticleAboutInLanguageIsPartOfWikiGroupWithLimit	Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36	toolSearchingForArticlesFromGroup	-1	needs more data
 thisAustralianStatisticalGeography2011IDOptionalDescriptionWithLabel	Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36	toolSearchingForAustralianGeography	-1	needs more data
+AllSubjectsAllPredicatesEntity	Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36			
+AllSubjectsAllPredicatesEntityStatement	Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36			
+AllSubjectsAllPredicatesReference	Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36			
+entityAllPropertiesAndObjects	Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36			
+entityStatementAllPredicatesAndObjects	Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36			
+referenceAllPredicatesAndObjects	Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36			
 thisAustralianStatisticalGeography2011IDOptionalDescriptionWithLabel	Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36	toolSearchingForAustralianGeography	-1	needs more data
 thisHasLabel_cityOrRegion	Mozilla/5.0 (Windows NT 6.1; WOW64; rv:35.0) Gecko/20100101 Firefox/35.0	toolSearchingForHasLabelWithConstraints	-1	needs more data (possible Source: 1)
 thisHasLabel_existingCountries	Mozilla/5.0 (Windows NT 6.1; WOW64; rv:35.0) Gecko/20100101 Firefox/35.0	toolSearchingForHasLabelWithConstraints	-1	needs more data (possible Source: 1)
