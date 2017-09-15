@@ -97,7 +97,7 @@ public class OutputHandlerAnonymizer extends OutputHandler
 
     QueryHandler queryHandler = null;
     try {
-      queryHandler = (QueryHandler) queryHandlerClass.getConstructor(QueryHandler.Validity.class, Long.class, Integer.class, String.class).newInstance(validityStatus, line, currentDay, queryToAnalyze);
+      queryHandler = (QueryHandler) queryHandlerClass.getConstructor(QueryHandler.Validity.class, Long.class, Integer.class, String.class).newInstance(validityStatus, currentLine, currentDay, queryToAnalyze);
     } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
       logger.error("Failed to create query handler object" + e);
       return;
