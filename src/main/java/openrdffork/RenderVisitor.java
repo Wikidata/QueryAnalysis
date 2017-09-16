@@ -133,11 +133,13 @@ public class RenderVisitor implements SyntaxTreeBuilderVisitor
   {
     String result = data.toString() + " VALUES ( ";
     int i = 0;
-    while (node.jjtGetChild(i) instanceof ASTVar) {
-      result += node.jjtGetChild(i).jjtAccept(this, data).toString();
-      i++;
-      if (i >= node.jjtGetNumChildren()) {
-        break;
+    if (node.jjtGetNumChildren() > 0) {
+      while (node.jjtGetChild(i) instanceof ASTVar) {
+        result += node.jjtGetChild(i).jjtAccept(this, data).toString();
+        i++;
+        if (i >= node.jjtGetNumChildren()) {
+          break;
+        }
       }
     }
     result += " ) {\n";
