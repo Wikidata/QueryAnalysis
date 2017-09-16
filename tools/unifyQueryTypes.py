@@ -26,54 +26,55 @@ def unifyQueryTypes(month, monthsFolder = config.monthsFolder, referenceDirector
 
 	owd = os.getcwd()
 	os.chdir(utility.addMissingSlash(monthsFolder) + utility.addMissingSlash(month))
-	
+
 	referenceQueryTypeDirectory = utility.addMissingSlash(referenceDirectory)
-	
+
 	readme = "README.md"
-	
+
 	processedFolder = "processedLogData/"
-	
+
 	processedPrefix = "QueryProcessedOpenRDF"
 	processedSuffix = ".tsv.gz"
-	
+
 	processedFilePrefix = processedFolder + processedPrefix
-	
+
 	# Variable for the folder containing the query-Type files
 	queryTypeSubfolder = processedFolder + "queryTypeFiles/"
-	
+
 	temporaryDirectory = "temp/"
-	
+
 	if not os.path.exists(temporaryDirectory):
 		os.makedirs(temporaryDirectory)
-	
+
 	if not os.path.exists(temporaryDirectory + processedFolder):
 		os.makedirs(temporaryDirectory + processedFolder)
-	
+
 	duplicatesFile = "duplicates.txt"
-	
+
 	if not os.path.exists(jdupesExecutable):
 		print "ERROR: Could not find jdupes executable."
-	
+		sys.exit(1)
+
 	if referenceQueryTypeDirectory != None:
 		os.system(jdupesExecutable + " " + queryTypeSubfolder + " " + referenceQueryTypeDirectory + " > " + duplicatesFile)
 	else:
 		os.system(jdupesExecutable + " " + queryTypeSubfolder + " > " + duplicatesFile)
-	
+
 	# Dictionary to hold the replacement query type for all duplicate query types
 	# (separate because we might need to replace some of these that have the same name as the ones in the reference folder)
 	replacementDict = dict()
-	
+
 	# Dictionary to held the replacement query type for all query types that exist in the reference folder
 	replacementDictReferenceFolder = dict()
-	
+
 	# Since jdupes output consists of the full path and we have to differentiate between duplicates from this month and from the reference folder
 	# we create a regex to find the query type name from the duplicates.txt-line (one for this month and one for the reference directory)
 	patternHere = re.compile(queryTypeSubfolder + "(.*)\.queryType\n")
 	patternReference = None
 	if referenceQueryTypeDirectory != None:
 		patternReference = re.compile(referenceQueryTypeDirectory + "(.*)\.queryType\n")
-	
-	
+
+
 	# takes a list of lines from duplicates.txt (all files point to the same query type) and unifies them by adding an entry to the replacement dict
 	# for each duplicate query type as well as deleting said duplicate query types
 	def handleNewQueryTypes(queryTypeBlock):
@@ -81,27 +82,27 @@ def unifyQueryTypes(month, monthsFolder = config.monthsFolder, referenceDirector
 		for entry in block:
 			os.remove(entry[:-1])
 			replacementDict[patternHere.match(entry).group(1)] = unifiyngQueryType
-	
-	
+
+
 	# Reads the lines from jdupes output and separates it into blocks (each terminated by endline character)
-	
+
 	with open(duplicatesFile) as dupes:
 		block = []
-	
+
 		for line in dupes:
 			if line.endswith("README.md\n"):
 				continue
 			if line == "\n":
 				if len(block) < 2:
 					continue
-	
+
 				# If the reference query type directory was not set every block is a new block (meaning there is no query type in the reference folder that might be equal to this block)
 				if referenceQueryTypeDirectory == None:
 					handleNewQueryTypes(block)
 				else:
 					referenceQueryType = ""
 					entryToDelete = ""
-	
+
 					# Find the line in this block that matches the reference query type directory (if it exists)
 					for entry in block:
 						match = patternReference.match(entry)
@@ -109,7 +110,7 @@ def unifyQueryTypes(month, monthsFolder = config.monthsFolder, referenceDirector
 							referenceQueryType = match.group(1)
 							entryToDelete = entry
 							break
-	
+
 					if referenceQueryType == "":
 						handleNewQueryTypes(block)
 					else:
@@ -123,89 +124,92 @@ def unifyQueryTypes(month, monthsFolder = config.monthsFolder, referenceDirector
 							os.remove(entry[:-1])
 							toBeReplaced = patternHere.match(entry).group(1)
 							if toBeReplaced != referenceQueryType:
-								replacementDictReferenceFolder[patternHere.match(entry).group(1)] = referenceQueryType
+								replacementDictReferenceFolder[toBeReplaced] = referenceQueryType
 				block = []
 				continue
 			block.append(line)
-	
+
 	os.remove(duplicatesFile)
-	
+
 	# set of files in the reference directory to check for conflicts with the new query types
 	referenceFiles = set()
 	# set of files in the current working directory for query types to check for conflicts with the reference query-Types
 	localFiles = set()
-	
+
 	for (dirpath, dirnames, filenames) in os.walk(referenceQueryTypeDirectory):
 		for file in filenames:
 			if (file.endswith(readme)):
 				continue
 			referenceFiles.add(file)
 		break
-	
+
 	for (dirpath, dirnames, filenames) in os.walk(queryTypeSubfolder):
 		for file in filenames:
 			if (file.endswith(readme)):
 				continue
 			localFiles.add(file)
 		break
-	
+
 	replacementReplacementDict = dict()
-	
+
+	referenceDirectorySize = len(referenceFiles)
+
 	for localFile in localFiles:
-	
-		# If there is a naming conflict with the reference folder we add an increasing number to the query type until
+
+		# If there is a naming conflict with the reference folder we add the number of reference directory files to the file name
 		if localFile in referenceFiles:
-			i = 1
+			referenceDirectorySize += 1
+
 			localFileParts = localFile.split(".")
-			newName = localFileParts[0] + "_%d" % i
-			while (newName + "." + localFileParts[1] in referenceFiles):
-				newName = localFileParts[0] + "_%d" % i
-				i += 1
+			newName = localFileParts[0] + "_%d" % referenceDirectorySize
+
 			replacementReplacementDict[localFileParts[0]] = newName
 			replacementDict[localFileParts[0]] = newName
 			os.rename(queryTypeSubfolder + localFileParts[0] + ".queryType", queryTypeSubfolder + newName + ".queryType")
-	
+
+	# Every entry that mapped a query type to a query type that was renamed because of a naming conflict is mapped to the new name instead
 	for key, value in replacementDict.iteritems():
 		if value in replacementReplacementDict:
 			replacementDict[key] = replacementReplacementDict[value]
-	
+
+	# Finally, add all entires mapping local query types to reference query types to the replacementDict
 	for key, value in replacementDictReferenceFolder.iteritems():
 		if key not in replacementDict:
 			replacementDict[key] = value
 		else:
 			print "ERROR: Query type " + key + " appears both as an old and a new query type. This is probably an embarrassing error on the authors part."
 			sys.exit(1)
-	
+
 	if referenceQueryTypeDirectory != None:
 		for filename in glob.glob(queryTypeSubfolder + "*.queryType"):
 			shutil.copy(filename, referenceQueryTypeDirectory + os.path.basename(filename))
 			os.remove(filename)
-			
+
 	shutil.rmtree(queryTypeSubfolder)
-	
+
 	columnIdentifier = "#QueryType"
-	
+
 	for filename in glob.glob(processedFilePrefix + "*" + processedSuffix):
 		print "Working on " + filename
 		with gzip.open(filename) as p, gzip.open(temporaryDirectory + filename, "w") as temp_p:
 			pReader = csv.DictReader(p, delimiter="\t")
-	
+
 			pWriter = csv.DictWriter(temp_p, None, delimiter="\t")
-	
+
 			for processed in pReader:
 				if pWriter.fieldnames is None:
 					ph = dict((h, h) for h in pReader.fieldnames)
 					pWriter.fieldnames = pReader.fieldnames
 					pWriter.writerow(ph)
-	
+
 				if processed[columnIdentifier] in replacementDict:
 					processed[columnIdentifier] = replacementDict[processed[columnIdentifier]]
 				pWriter.writerow(processed)
-	
+
 		shutil.copy(temporaryDirectory + filename, filename)
-	
+
 	shutil.rmtree(temporaryDirectory)
-	
+
 	os.remove(utility.addMissingSlash(monthsFolder) + utility.addMissingSlash(month) + "locked")
 	os.chdir(owd)
 
@@ -221,12 +225,11 @@ if __name__ == '__main__':
 	parser.add_argument("--jdupesExecutable", "-j", default=config.jdupesExecutable, type=str,
 					help="The location of the jdupes executable.")
 	parser.add_argument("month", type=str, help="The month whose query types should be unified.")
-	
+
 	if (len(sys.argv[1:]) == 0):
 		parser.print_help()
 		parser.exit()
-	
-	args = parser.parse_args()
-	
-	unifyQueryTypes(args.month, args.monthsFolder, args.referenceDirectory, args.jdupesExecutable)
 
+	args = parser.parse_args()
+
+	unifyQueryTypes(args.month, args.monthsFolder, args.referenceDirectory, args.jdupesExecutable)
