@@ -13,11 +13,11 @@ from utility import utility
 
 import config
 
-# This script uses jdupes to check the queryTypeFiles-Folder and the reference query types folder for duplicates.
+# This script uses fdupes to check the queryTypeFiles-Folder and the reference query types folder for duplicates.
 # If it finds duplicates it chooses one of the queryTypes (the one in the reference query types folder if one exists, otherwise at random)
 # and renames all other duplicate entries in #QueryType to that query type
 
-def unifyQueryTypes(month, monthsFolder = config.monthsFolder, referenceDirectory = config.queryReferenceDirectory, jdupesExecutable = config.jdupesExecutable):
+def unifyQueryTypes(month, monthsFolder = config.monthsFolder, referenceDirectory = config.queryReferenceDirectory, fdupesExecutable = config.fdupesExecutable):
 	if os.path.isfile(utility.addMissingSlash(monthsFolder) + utility.addMissingSlash(month) + "locked"):
 		print "ERROR: The month " + month + " is being edited at the moment."
 		sys.exit()
@@ -51,14 +51,14 @@ def unifyQueryTypes(month, monthsFolder = config.monthsFolder, referenceDirector
 
 	duplicatesFile = "duplicates.txt"
 
-	if not os.path.exists(jdupesExecutable):
-		print "ERROR: Could not find jdupes executable."
+	if not os.path.exists(fdupesExecutable):
+		print "ERROR: Could not find fdupes executable."
 		sys.exit(1)
 
 	if referenceQueryTypeDirectory != None:
-		os.system(jdupesExecutable + " " + queryTypeSubfolder + " " + referenceQueryTypeDirectory + " > " + duplicatesFile)
+		os.system(fdupesExecutable + " " + queryTypeSubfolder + " " + referenceQueryTypeDirectory + " > " + duplicatesFile)
 	else:
-		os.system(jdupesExecutable + " " + queryTypeSubfolder + " > " + duplicatesFile)
+		os.system(fdupesExecutable + " " + queryTypeSubfolder + " > " + duplicatesFile)
 
 	# Dictionary to hold the replacement query type for all duplicate query types
 	# (separate because we might need to replace some of these that have the same name as the ones in the reference folder)
@@ -67,7 +67,7 @@ def unifyQueryTypes(month, monthsFolder = config.monthsFolder, referenceDirector
 	# Dictionary to held the replacement query type for all query types that exist in the reference folder
 	replacementDictReferenceFolder = dict()
 
-	# Since jdupes output consists of the full path and we have to differentiate between duplicates from this month and from the reference folder
+	# Since fdupes output consists of the full path and we have to differentiate between duplicates from this month and from the reference folder
 	# we create a regex to find the query type name from the duplicates.txt-line (one for this month and one for the reference directory)
 	patternHere = re.compile(queryTypeSubfolder + "(.*)\.queryType\n")
 	patternReference = None
@@ -84,7 +84,7 @@ def unifyQueryTypes(month, monthsFolder = config.monthsFolder, referenceDirector
 			replacementDict[patternHere.match(entry).group(1)] = unifiyngQueryType
 
 
-	# Reads the lines from jdupes output and separates it into blocks (each terminated by endline character)
+	# Reads the lines from fdupes output and separates it into blocks (each terminated by endline character)
 
 	with open(duplicatesFile) as dupes:
 		block = []
@@ -215,15 +215,15 @@ def unifyQueryTypes(month, monthsFolder = config.monthsFolder, referenceDirector
 
 if __name__ == '__main__':
 	parser = argparse.ArgumentParser(
-		description="This script uses jdupes to check the queryTypeFiles-Folder and the reference query types folder for duplicates.\n" +
+		description="This script uses fdupes to check the queryTypeFiles-Folder and the reference query types folder for duplicates.\n" +
 		"If it finds duplicates it chooses one of the queryTypes (the one in the reference query types folder if one exists, otherwise at random)\n" +
 		"and renames all other duplicate entries in #QueryType to that query type ")
 	parser.add_argument("--monthsFolder", "-m", default=config.monthsFolder, type=str,
 	                    help="The folder in which the months directories are residing.")
 	parser.add_argument("--referenceDirectory", "-r", default=config.queryReferenceDirectory, type=str,
 					help="The directory with the reference query types.")
-	parser.add_argument("--jdupesExecutable", "-j", default=config.jdupesExecutable, type=str,
-					help="The location of the jdupes executable.")
+	parser.add_argument("--fdupesExecutable", "-f", default=config.fdupesExecutable, type=str,
+					help="The location of the fdupes executable.")
 	parser.add_argument("month", type=str, help="The month whose query types should be unified.")
 
 	if (len(sys.argv[1:]) == 0):
@@ -232,4 +232,4 @@ if __name__ == '__main__':
 
 	args = parser.parse_args()
 
-	unifyQueryTypes(args.month, args.monthsFolder, args.referenceDirectory, args.jdupesExecutable)
+	unifyQueryTypes(args.month, args.monthsFolder, args.referenceDirectory, args.fdupesExecutable)

@@ -49,9 +49,9 @@ parser.add_argument("--referenceDirectory", "-r",
                     default=config.queryReferenceDirectory,
                     type=str,
                     help="The directory with the reference query types.")
-parser.add_argument("--jdupesExecutable", "-j",
-                    default=config.jdupesExecutable, type=str,
-                    help="The location of the jdupes executable.")
+parser.add_argument("--fdupesExecutable", "-f",
+                    default=config.fdupesExecutable, type=str,
+                    help="The location of the fdupes executable.")
 parser.add_argument("--monthsFolder", "-m", default=config.monthsFolder,
                     type=str,
                     help="The folder in which the months directory are "
@@ -189,6 +189,6 @@ for monthName in args.months.split(","):
     if not args.noQueryTypeUnification:
         print "Starting to unify the query types for " + monthName + "."
 
-        unifyQueryTypes.unifyQueryTypes(monthName, args.monthsFolder, args.referenceDirectory, args.jdupesExecutable)
+        unifyQueryTypes.unifyQueryTypes(monthName, args.monthsFolder, args.referenceDirectory, args.fdupesExecutable)
     else:
         print "WARNING: The query types in " + monthName + " are not unified."
