@@ -127,17 +127,21 @@ public class OutputHandlerAnonymizer extends OutputHandler
         return;
       }
       try {
-        ParsedQuery parsedQuery = new StandardizingSPARQLParser().parseQuery(renderedQueryString, OpenRDFQueryHandler.BASE_URI);
-      } catch (MalformedQueryException e) {
+        new StandardizingSPARQLParser().parseQuery(renderedQueryString, OpenRDFQueryHandler.BASE_URI);
+      }
+      catch (MalformedQueryException e) {
         String queryName = this.threadNumber + "_" + this.failedQueriesNumber + ".query";
         logger.error("Anonymized query was not valid anymore. " + queryName, e);
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(this.outputFile.substring(0, this.outputFile.lastIndexOf("/")) + "failedQueriesFolder/" + queryName))) {
           bw.write(queryToAnalyze);
           this.failedQueriesNumber++;
         } catch (IOException i) {
-          logger.error("Could not write the readme for example queries folder.", i);
+          logger.error("Could not write the failed query to failed queries folder.", i);
         }
         return;
+      }
+      catch (ClassCastException e) {
+        logger.error("Unexpected class cast exception after anonymization.", e);
       }
 
       String encodedRenderedQueryString;
