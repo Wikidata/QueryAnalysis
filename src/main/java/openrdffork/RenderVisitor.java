@@ -602,7 +602,7 @@ public class RenderVisitor implements SyntaxTreeBuilderVisitor
       }
     }
     if (allPathOneInPropertySet) {
-      result += "(!(" + visitChildren(node, data.toString(), "|") + "))";
+      result += "!(" + visitChildren(node, data.toString(), "|") + ")";
     } else {
       result += visitChildren(node, data.toString());
     }
