@@ -85,12 +85,13 @@ public class InputHandlerTSV extends InputHandler
         String queryString = queryTuple._1;
         QueryHandler.Validity validity = queryTuple._2;
         String userAgent = row[2].toString();
+        String timeStamp = row[3].toString();
         Long line = parsingContext.currentLine();
 
         try {
-          outputHandler.writeLine(queryString, validity, userAgent, line, day, inputFile);
+          outputHandler.writeLine(queryString, validity, userAgent, timeStamp, line, day, inputFile);
         } catch (NullPointerException e) {
-          outputHandler.writeLine("", QueryHandler.Validity.INTERNAL_ERROR, userAgent, line, day, inputFile);
+          outputHandler.writeLine("", QueryHandler.Validity.INTERNAL_ERROR, userAgent, timeStamp, line, day, inputFile);
           logger.error("Unexpected Null Pointer Exception in writeLine.", e);
         }
       }

@@ -82,10 +82,12 @@ public abstract class OutputHandler implements Serializable
    * @param queryToAnalyze The query that should be analyzed and written.
    * @param validityStatus The validity status which was the result of the decoding process of the URI
    * @param userAgent      The user agent with which the query was being executed as.
+   * @param timeStamp      The time stamp of the query.
    * @param currentLine    The line from which the data to be written originates.
+   * @param currentDay     The day from which the data to be written originates.
    * @param currentFile    The file from which the data to be written originates.
    */
-  public abstract void writeLine(String queryToAnalyze, QueryHandler.Validity validityStatus, String userAgent, long currentLine, int currentDay, String currentFile);
+  public abstract void writeLine(String queryToAnalyze, QueryHandler.Validity validityStatus, String userAgent, String timeStamp, long currentLine, int currentDay, String currentFile);
 
   /**
    * Closes any files that might have been opened.

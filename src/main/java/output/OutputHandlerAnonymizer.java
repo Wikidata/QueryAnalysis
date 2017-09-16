@@ -90,12 +90,13 @@ public class OutputHandlerAnonymizer extends OutputHandler
 
     List<String> header = new ArrayList<>();
     header.add("#anonymizedQuery");
+    header.add("#timestamp");
     writer.writeHeaders(header);
   }
 
 
   @Override
-  public void writeLine(String queryToAnalyze, Validity validityStatus, String userAgent, long currentLine, int currentDay,
+  public void writeLine(String queryToAnalyze, Validity validityStatus, String userAgent, String timeStamp, long currentLine, int currentDay,
                         String currentFile)
   {
     List<Object> line = new ArrayList<>();
@@ -151,7 +152,8 @@ public class OutputHandlerAnonymizer extends OutputHandler
         logger.error("Apparently this system does not support UTF-8. Please fix this before running the program again.");
         return;
       }
-      line.add(encodedRenderedQueryString);
+      line.add("?query=" + encodedRenderedQueryString);
+      line.add(timeStamp);
       writer.writeRow(line);
     }
   }
