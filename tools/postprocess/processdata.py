@@ -15,15 +15,31 @@ processedPrefix = "QueryProcessedOpenRDF"
 processedSuffix = ".tsv.gz"
 sourcePrefix = "QueryCnt"
 
+anonymousDataFolder = "anonymousRawData/"
+anonymousFilePrefix = "AnonymousQueryCnt"
+anonymousFileSuffix = ".tsv.gz"
 
-def processMonth(handler, month, monthsFolder):
+
+def processMonth(handler, month, monthsFolder, anonymous = False):
+    folderToSearch = processedFolder
+    prefixToSearch = processedPrefix
+    suffixToSearch = processedSuffix
+    
+    if anonymous:
+        folderToSearch = anonymousDataFolder
+        prefixToSearch = anonymousFilePrefix
+        suffixToSearch = anonymousFileSuffix
+    
     for filename in glob.glob(utility.addMissingSlash(monthsFolder)
                               + utility.addMissingSlash(month)
-                              + processedFolder + processedPrefix + "*"
-                              + processedSuffix):
+                              + folderToSearch + prefixToSearch + "*"
+                              + suffixToSearch):
         day = os.path.basename(filename)[len(
             processedPrefix):][:-len(processedSuffix)]
-        processDay(handler, int(day), month, monthsFolder)
+        if anonymous:
+            processDayAnonymous(handler, int(day), month, monthsFolder)
+        else:
+            processDay(handler, int(day), month, monthsFolder)
 
 
 def processDay(handler, day, month, monthsFolder,
@@ -56,6 +72,32 @@ def processDay(handler, day, month, monthsFolder,
                 processed['#day'] = day
                 processed['#user_agent'] = source['user_agent']
                 handler.handle(sparqlQuery, processed)
+            elif i > endIdx:
+                break
+            i += 1
+
+def processDayAnonymous(handler, day, month, monthsFolder, startIdx=0, endIdx=sys.maxint):
+    anonymousFileName = utility.addMissingSlash(monthsFolder) \
+    + utility.addMissingSlash(month) \
+    + anonymousDataFolder + anonymousFilePrefix + "%02d" % day + anonymousFileSuffix
+    
+    print "Working on: " + anonymousFileName
+    with gzip.open(anonymousFileName) as a:
+        aReader = csv.DictReader(a, delimiter="\t")
+        
+        i = 0
+        for anonymous in aReader:
+            if startIdx <= i <= endIdx:
+                requestParameters = dict(urlparse.parse_qsl(urlparse.urlsplit(
+                    anonymous['#anonymizedQuery']).query))
+
+                if 'query' in requestParameters.keys():
+                    sparqlQuery = requestParameters['query']
+                else:
+                    sparqlQuery = None
+                    
+                anonymous["#timestamp"] = anonymous["#timestamp"]
+                handler.handle(sparqlQuery, anonymous)
             elif i > endIdx:
                 break
             i += 1

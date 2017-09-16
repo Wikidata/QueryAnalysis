@@ -22,6 +22,7 @@ parser.add_argument("--startline", "-s", default=0, type=int, help="The line"
                     + " from which we want to start displaying the data.")
 parser.add_argument("--endline", "-e", default=sys.maxint, type=int,
                     help="The line where we want to stop displaying the data.")
+parser.add_argument("--line", "-l", type=int, help="Set if you only want to display one specific line.")
 parser.add_argument("month", type=str, help="The month from which lines "
                     + "should be displayed.")
 parser.add_argument("day", type=int, help="The day of the month from which "
@@ -31,12 +32,22 @@ parser.add_argument("metrics", type=str, help="The metrics that should be "
 parser.add_argument("--metricsNotNull", "-n", default="", type=str,
                     help="The list of metrics that shouldn't be null, "
                     + "separated by comma")
+parser.add_argument("--anonymous", "-a", action="store_true", help="Check to switch to viewing the anonymous data."
+                    + " WARNING: No processed metrics are available for anonymous data because the anonymous files"
+                    + " do not synch up to the processed files due to dropping the invalid lines.")
 
 if (len(sys.argv[1:]) == 0):
     parser.print_help()
     parser.exit()
 
 args = parser.parse_args()
+
+startLine = args.startline
+endLine = args.endline
+
+if args.line != None:
+    startLine = args.line
+    endLine = args.line
 
 if os.path.isfile(utility.addMissingSlash(args.monthsFolder)
                   + utility.addMissingSlash(args.month) + "locked") \
@@ -83,5 +94,7 @@ class ViewDataHandler:
 
 handler = ViewDataHandler()
 
-processdata.processDay(handler, args.day, args.month, args.monthsFolder,
-                       startIdx=args.startline, endIdx=args.endline)
+if args.anonymous:
+    processdata.processDayAnonymous(handler, args.day, args.month, args.monthsFolder, startIdx=startLine, endIdx=endLine)
+else:
+    processdata.processDay(handler, args.day, args.month, args.monthsFolder, startIdx=startLine, endIdx=endLine)
