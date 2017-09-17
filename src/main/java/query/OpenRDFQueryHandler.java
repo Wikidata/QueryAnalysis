@@ -334,6 +334,15 @@ public class OpenRDFQueryHandler extends QueryHandler
         compare.setRightArg(normalizeValueExprHelper(compare.getRightArg(), valueConstants));
       }
     });
+    normalizedQuery.getTupleExpr().visit(new QueryModelVisitorBase<VisitorException>()
+    {
+
+      @Override
+      public void meet(IsLiteral isLiteral)
+      {
+        isLiteral.setArg(normalizeValueExprHelper(isLiteral.getArg(), valueConstants));
+      }
+    });
     this.setqIDs(subjectsAndObjects);
     this.setpIDs(predicates);
     return normalizedQuery;
