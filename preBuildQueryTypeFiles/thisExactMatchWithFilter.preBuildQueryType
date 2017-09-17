@@ -1,0 +1,5 @@
+SELECT ?item
+WHERE {
+  ?item <http://www.wikidata.org/prop/direct/P2888> <http://purl.uniprot.org/uniprot/Q8NDI1> .
+  FILTER (!isLITERAL (<http://purl.uniprot.org/uniprot/Q8NDI1> ))
+}
