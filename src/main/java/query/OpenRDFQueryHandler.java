@@ -28,9 +28,15 @@ import java.util.regex.Pattern;
  */
 public class OpenRDFQueryHandler extends QueryHandler
 {
-  public OpenRDFQueryHandler(Validity validity, Long line, Integer day, String queryString)
+  /**
+   * @param validity The validity as determined by the decoding process.
+   * @param lineToSet The line this query came from.
+   * @param dayToSet The day this query came from.
+   * @param queryStringToSet The query as a string.
+   */
+  public OpenRDFQueryHandler(Validity validity, Long lineToSet, Integer dayToSet, String queryStringToSet)
   {
-    super(validity, line, day, queryString);
+    super(validity, lineToSet, dayToSet, queryStringToSet);
   }
 
   /**
