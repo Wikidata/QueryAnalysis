@@ -155,7 +155,7 @@ public class Cache
       queryHandler = queryHandlerLRUMap.get(tuple);
 
       //if found in cache we need to update the uniqueId to the "real" value!
-      queryHandler.setUniqeId(day, line, queryToAnalyze);
+      queryHandler.setUniqeId(day, line);
     }
 
     //and return it

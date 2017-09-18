@@ -26,13 +26,9 @@ import com.univocity.parsers.common.ParsingContext;
 import com.univocity.parsers.common.processor.ObjectRowProcessor;
 import com.univocity.parsers.tsv.TsvParser;
 import com.univocity.parsers.tsv.TsvParserSettings;
-import input.InputHandler;
-import input.InputHandlerTSV;
 import input.factories.InputHandlerTSVFactory;
 import logging.LoggingHandler;
 import openrdffork.TupleExprWrapper;
-import output.factories.OutputHandlerTSVFactory;
-
 import org.apache.commons.cli.*;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
@@ -42,6 +38,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.openrdf.query.parser.ParsedQuery;
+import output.factories.OutputHandlerTSVFactory;
 import query.OpenRDFQueryHandler;
 import query.QueryHandler;
 import query.factories.OpenRDFQueryHandlerFactory;
@@ -128,6 +125,11 @@ public final class Main
   private static String workingDirectory;
 
   /**
+   * The name of the month we're working with - we assume that it's the last part of workingDirectory.
+   */
+  public static String month;
+
+  /**
    * If set to true we calculate the OriginalIDs
    */
   private static boolean withUniqueQueryDetection = false;
@@ -194,6 +196,9 @@ public final class Main
         inputFilePrefix = workingDirectory + "rawLogData/QueryCnt";
 
         outputFolder = workingDirectory + "processedLogData/";
+
+        month = new File(workingDirectory.substring(0, workingDirectory.length() - 1)).getName();
+
       } else {
         System.out.println("Please specify the directory which we should work on using the option '--workingDirectory DIRECTORY' or '-w DIRECTORY'");
         return;

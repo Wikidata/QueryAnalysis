@@ -14,7 +14,6 @@ import java.util.Map.Entry;
  */
 public abstract class QueryHandler implements Serializable
 {
-
   /**
    * @param validity The validity as determined by the decoding process.
    * @param lineToSet The line this query came from.
@@ -27,7 +26,7 @@ public abstract class QueryHandler implements Serializable
     this.line = lineToSet;
     this.validityStatus = validity;
 
-    this.setUniqeId(this.day, this.line, queryStringToSet);
+    this.setUniqeId(this.day, this.line);
     this.setOriginalId(this.getUniqeId());
 
     if (queryStringToSet.equals("")) {
@@ -191,22 +190,22 @@ public abstract class QueryHandler implements Serializable
     return originalId;
   }
 
-  public void setUniqeId(int day, long line, String queryString)
+  public void setUniqeId(int day, long line)
   {
-    this.uniqeId = QueryHandler.generateId(day, line, queryString);
+    this.uniqeId = QueryHandler.generateId(Main.month, day, line);
   }
 
   /**
    * Generates an id based on the parameters.
    *
+   * @param month The month this query came from.
    * @param day The day this query came from.
    * @param line The line this query came from.
-   * @param queryString The query string for this query.
    * @return The generated id.
    */
-  public static String generateId(int day, long line, String queryString)
+  public static String generateId(String month, int day, long line)
   {
-    return day + "_" + line + "_" + queryString.hashCode();
+    return month + "_" + day + "_" + line;
   }
 
   /**
