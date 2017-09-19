@@ -301,11 +301,44 @@ public class OpenRDFQueryHandler extends QueryHandler
     final Set<String> subjectsAndObjects = new HashSet<String>();
     final Set<String> predicates = new HashSet<String>();
 
+    final Set<String> predicateVariables = new HashSet<String>();
+
     normalizedQuery.getTupleExpr().visit(new QueryModelVisitorBase<VisitorException>()
     {
 
       @Override
-      public void meet(StatementPattern statementPattern)
+      public void meet(StatementPattern statementPattern) throws VisitorException
+      {
+        Var predicate = statementPattern.getPredicateVar();
+
+        if (!predicate.isConstant() && !predicate.isAnonymous()) {
+          predicateVariables.add(predicate.getName());
+        }
+
+        meetNode(statementPattern);
+      }
+    }
+    );
+
+    normalizedQuery.getTupleExpr().visit(new QueryModelVisitorBase<VisitorException>()
+    {
+
+      @Override
+      public void meet(ExtensionElem extensionElem) throws VisitorException
+      {
+        if (!predicateVariables.contains(extensionElem.getName())) {
+          extensionElem.setExpr(normalizeValueExprHelper(extensionElem.getExpr(), valueConstants));
+        }
+
+        meetNode(extensionElem);
+      }
+    });
+
+    normalizedQuery.getTupleExpr().visit(new QueryModelVisitorBase<VisitorException>()
+    {
+
+      @Override
+      public void meet(StatementPattern statementPattern) throws VisitorException
       {
         statementPattern.setSubjectVar(normalizeSubjectsAndObjectsHelper(statementPattern.getSubjectVar(), valueConstants, subjectsAndObjects));
         statementPattern.setObjectVar(normalizeSubjectsAndObjectsHelper(statementPattern.getObjectVar(), valueConstants, subjectsAndObjects));
@@ -318,37 +351,48 @@ public class OpenRDFQueryHandler extends QueryHandler
         }
 
         checkForVariable(statementPattern.getPredicateVar());
+        meetNode(statementPattern);
       }
     });
+
     normalizedQuery.getTupleExpr().visit(new QueryModelVisitorBase<VisitorException>()
     {
 
       @Override
-      public void meet(ArbitraryLengthPath arbitraryLengthPath)
+      public void meet(ArbitraryLengthPath arbitraryLengthPath) throws VisitorException
       {
         arbitraryLengthPath.setSubjectVar(normalizeSubjectsAndObjectsHelper(arbitraryLengthPath.getSubjectVar(), valueConstants, subjectsAndObjects));
         arbitraryLengthPath.setObjectVar(normalizeSubjectsAndObjectsHelper(arbitraryLengthPath.getObjectVar(), valueConstants, subjectsAndObjects));
+
+        meetNode(arbitraryLengthPath);
       }
     });
+
     normalizedQuery.getTupleExpr().visit(new QueryModelVisitorBase<VisitorException>()
     {
 
       @Override
-      public void meet(Compare compare)
+      public void meet(Compare compare) throws VisitorException
       {
         compare.setLeftArg(normalizeValueExprHelper(compare.getLeftArg(), valueConstants));
         compare.setRightArg(normalizeValueExprHelper(compare.getRightArg(), valueConstants));
+
+        meetBinaryValueOperator(compare);
       }
     });
+
     normalizedQuery.getTupleExpr().visit(new QueryModelVisitorBase<VisitorException>()
     {
 
       @Override
-      public void meet(IsLiteral isLiteral)
+      public void meet(IsLiteral isLiteral) throws VisitorException
       {
         isLiteral.setArg(normalizeValueExprHelper(isLiteral.getArg(), valueConstants));
+
+        meetUnaryValueOperator(isLiteral);
       }
     });
+
     this.setqIDs(subjectsAndObjects);
     this.setpIDs(predicates);
     return normalizedQuery;
@@ -488,7 +532,7 @@ public class OpenRDFQueryHandler extends QueryHandler
           "Query was: " + this.getQueryStringWithoutPrefixes());
       throw new NoURIException();
     }
-    String normalizedURI = uri.substring(0, uri.lastIndexOf(lastIndexOf)) + lastIndexOf + "QName" + foundNames.get(uri);
+    String normalizedURI = uri.substring(0, uri.lastIndexOf(lastIndexOf)) + lastIndexOf + "QNumber" + foundNames.get(uri);
     return normalizedURI;
   }
 
