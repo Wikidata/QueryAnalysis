@@ -289,8 +289,10 @@ public final class Main
     }
 
     // close MabDb Database - if this goes wrong the file is corrupted the next time we execute this
-    Cache.mapDb.close();
 
+    if (Main.isWithUniqueQueryDetection()) {
+      Cache.mapDb.close();
+    }
 
     // writeQueryTypes(queryTypes);
     if (exampleQueries) {

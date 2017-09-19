@@ -50,14 +50,16 @@ public class Cache
    */
   public Cache()
   {
-    synchronized (this) {
-      if (mapDb == null) {
-        mapDb = DBMaker.fileDB(Main.getWorkingDirectory() + "onDiskMap.db").fileChannelEnable().fileMmapEnable().make();
-        for (int i = 0; i < numberOfDiskMaps; i++) {
-          onDiskBasedHashMapArray[i] = mapDb.hashMap("map" + i, Serializer.BYTE_ARRAY, Serializer.STRING).createOrOpen();
+
+    if (Main.isWithUniqueQueryDetection()) {
+      synchronized (this) {
+        if (mapDb == null) {
+          mapDb = DBMaker.fileDB(Main.getWorkingDirectory() + "onDiskMap.db").fileChannelEnable().fileMmapEnable().make();
+          for (int i = 0; i < numberOfDiskMaps; i++) {
+            onDiskBasedHashMapArray[i] = mapDb.hashMap("map" + i, Serializer.BYTE_ARRAY, Serializer.STRING).createOrOpen();
+          }
         }
       }
-
     }
   }
 
