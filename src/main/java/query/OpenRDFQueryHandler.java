@@ -3,10 +3,6 @@ package query;
 import general.Main;
 import openrdffork.StandardizingSPARQLParser;
 import openrdffork.TupleExprWrapper;
-import query.statistics.OpenRDFQuerySizeCalculatorVisitor;
-import query.statistics.QueryContainerSparqlStatisticsCollector;
-import query.statistics.TupleExprSparqlStatisticsCollector;
-
 import org.apache.log4j.Logger;
 import org.openrdf.model.Value;
 import org.openrdf.model.impl.URIImpl;
@@ -17,6 +13,9 @@ import org.openrdf.query.algebra.helpers.StatementPatternCollector;
 import org.openrdf.query.parser.ParsedQuery;
 import org.openrdf.query.parser.sparql.ASTVisitorBase;
 import org.openrdf.query.parser.sparql.ast.*;
+import query.statistics.OpenRDFQuerySizeCalculatorVisitor;
+import query.statistics.QueryContainerSparqlStatisticsCollector;
+import query.statistics.TupleExprSparqlStatisticsCollector;
 import utility.NoURIException;
 
 import java.util.*;

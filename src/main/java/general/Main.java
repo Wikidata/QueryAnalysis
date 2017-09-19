@@ -278,8 +278,7 @@ public final class Main
       try {
         Runnable parseOneMonthWorker = new ParseOneDayWorker(new InputHandlerTSVFactory(), inputFile, new OutputHandlerTSVFactory(), outputFile, new OpenRDFQueryHandlerFactory(), day, true);
         executor.execute(parseOneMonthWorker);
-      }
-      catch (IOException e) {
+      } catch (IOException e) {
       }
     }
     executor.shutdown();

@@ -6,14 +6,11 @@ import input.factories.InputHandlerFactory;
 import openrdffork.TupleExprWrapper;
 import org.apache.log4j.Logger;
 import output.OutputHandler;
-import output.OutputHandlerTSV;
 import output.factories.OutputHandlerFactory;
-import query.OpenRDFQueryHandler;
 import query.factories.QueryHandlerFactory;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -48,28 +45,26 @@ public class ParseOneDayWorker implements Runnable
   private HashMap<TupleExprWrapper, String> queryTypes = new HashMap<TupleExprWrapper, String>();
 
   /**
-   * @param inputHandlerFactory The input handler factory to supply the input handler.
-   * @param inputFile The file to read from.
+   * @param inputHandlerFactory  The input handler factory to supply the input handler.
+   * @param inputFile            The file to read from.
    * @param outputHandlerFactory The output handler factory to supply the output handler.
-   * @param outputFile The file to write to.
-   * @param queryHandlerFactory The query handler factory to supply the query handler.
-   * @param dayToSet The day being processed.
-   * @param writeQueryTypes If the query types should be written or not.
+   * @param outputFile           The file to write to.
+   * @param queryHandlerFactory  The query handler factory to supply the query handler.
+   * @param dayToSet             The day being processed.
+   * @param writeQueryTypes      If the query types should be written or not.
    * @throws IOException If the input or output handler could not be created.
    */
   public ParseOneDayWorker(InputHandlerFactory inputHandlerFactory, String inputFile, OutputHandlerFactory outputHandlerFactory, String outputFile, QueryHandlerFactory queryHandlerFactory, int dayToSet, Boolean writeQueryTypes) throws IOException
   {
     try {
       this.inputHandler = inputHandlerFactory.getInputHandler(inputFile);
-    }
-    catch (IOException e) {
+    } catch (IOException e) {
       logger.warn("File " + inputFile + " could not be found.");
       throw e;
     }
     try {
       this.outputHandler = outputHandlerFactory.getOutputHandler(outputFile, queryHandlerFactory);
-    }
-    catch (FileNotFoundException e) {
+    } catch (FileNotFoundException e) {
       logger.error("File " + outputFile + "could not be created or written to.", e);
       throw e;
     }

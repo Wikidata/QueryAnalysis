@@ -15,9 +15,9 @@ import java.util.Map.Entry;
 public abstract class QueryHandler implements Serializable
 {
   /**
-   * @param validity The validity as determined by the decoding process.
-   * @param lineToSet The line this query came from.
-   * @param dayToSet The day this query came from.
+   * @param validity         The validity as determined by the decoding process.
+   * @param lineToSet        The line this query came from.
+   * @param dayToSet         The day this query came from.
    * @param queryStringToSet The query as a string.
    */
   public QueryHandler(Validity validity, Long lineToSet, Integer dayToSet, String queryStringToSet)
@@ -199,8 +199,8 @@ public abstract class QueryHandler implements Serializable
    * Generates an id based on the parameters.
    *
    * @param month The month this query came from.
-   * @param day The day this query came from.
-   * @param line The line this query came from.
+   * @param day   The day this query came from.
+   * @param line  The line this query came from.
    * @return The generated id.
    */
   public static String generateId(String month, int day, long line)

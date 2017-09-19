@@ -3,6 +3,7 @@
  */
 package openrdffork;
 
+import anonymize.Anonymizer;
 import org.apache.log4j.Logger;
 import org.openrdf.model.impl.ValueFactoryImpl;
 import org.openrdf.query.Dataset;
@@ -15,9 +16,6 @@ import org.openrdf.query.parser.ParsedQuery;
 import org.openrdf.query.parser.ParsedTupleQuery;
 import org.openrdf.query.parser.sparql.*;
 import org.openrdf.query.parser.sparql.ast.*;
-
-import anonymize.Anonymizer;
-import query.OpenRDFQueryHandler;
 
 import java.util.ArrayList;
 import java.util.HashMap;

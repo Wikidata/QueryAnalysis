@@ -4,6 +4,10 @@ import general.Main;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.collections.map.LRUMap;
 import org.apache.log4j.Logger;
+import org.mapdb.DB;
+import org.mapdb.DBMaker;
+import org.mapdb.HTreeMap;
+import org.mapdb.Serializer;
 import org.openrdf.query.MalformedQueryException;
 import org.openrdf.query.parser.sparql.ast.ASTQueryContainer;
 import org.openrdf.query.parser.sparql.ast.ParseException;
@@ -12,7 +16,6 @@ import org.openrdf.query.parser.sparql.ast.TokenMgrError;
 import query.factories.QueryHandlerFactory;
 import scala.Tuple2;
 
-import java.sql.*;
 import java.util.Collections;
 import java.util.Map;
 
@@ -36,8 +39,8 @@ public class Cache
    */
   private Map<Tuple2<QueryHandler.Validity, String>, QueryHandler> queryHandlerLRUMap = (Map<Tuple2<QueryHandler.Validity, String>, QueryHandler>) Collections.synchronizedMap(new LRUMap(100000));
 
-
-  private static Connection onDiskDatabaseConnection = null;
+  private static DB mapDb = null;
+  private static HTreeMap<byte[], String> onDiskBasedHashMap;
 
   /**
    * exists only to prevent this Class from being instantiated
@@ -45,26 +48,11 @@ public class Cache
   public Cache()
   {
     synchronized (this) {
-      if (onDiskDatabaseConnection == null) {
-        if (Main.isWithUniqueQueryDetection()) {
-          // first open connection
-          try {
-            //onDiskDatabaseConnection = DriverManager.getConnection("jdbc:sqlite:" + Main.getWorkingDirectory() + "onDiskDatabase.db");
-            onDiskDatabaseConnection = DriverManager.getConnection("jdbc:sqlite:/media/bernd/onDiskDatabase.db");
-          } catch (SQLException e) {
-            logger.error("Could not open the on disk database " + e);
-          }
-
-          // then create the databases
-
-          try {
-            Statement statement = onDiskDatabaseConnection.createStatement();
-            statement.executeUpdate("CREATE TABLE IF NOT EXISTS uniqueQueryIds (queryString TEXT, uniqueId TEXT NOT NULL);  CREATE INDEX queryStringIndex ON uniqueQueryIds(queryString);");
-          } catch (SQLException e) {
-            logger.error("Could not create the uniqueQueryIds table in the disk database " + e);
-          }
-        }
+      if (mapDb == null) {
+        mapDb = DBMaker.fileDB("/media/bernd/onDiskBasedHashMap.db").fileMmapEnable().make();
+        onDiskBasedHashMap = mapDb.hashMap("map", Serializer.BYTE_ARRAY, Serializer.STRING).createOrOpen();
       }
+
     }
   }
 
@@ -100,10 +88,10 @@ public class Cache
    * Note that only the validityStatus and queryToAnalyze Setters were called for
    * these QueryHandlers
    *
-   * @param validityStatus The validity status which was the result of the decoding process of the URI
-   * @param queryToAnalyze The query that should be analyzed and written.
-   * @param line The line this query came from.
-   * @param day The day this query came from.
+   * @param validityStatus      The validity status which was the result of the decoding process of the URI
+   * @param queryToAnalyze      The query that should be analyzed and written.
+   * @param line                The line this query came from.
+   * @param day                 The day this query came from.
    * @param queryHandlerFactory The query handler factory to supply the query handler.
    * @return QueryHandler a QueryHandler object which was created for the same queryString before
    */
@@ -120,33 +108,18 @@ public class Cache
 
       if (Main.isWithUniqueQueryDetection()) {
 
-        // check if queryString exists already in the on disk database and if so exchange originalId
-        try {
-          PreparedStatement preparedStatement = onDiskDatabaseConnection.prepareStatement("SELECT uniqueId FROM uniqueQueryIds WHERE queryString = ?");
-          String query = "";
-          if (queryHandler.getQueryStringWithoutPrefixes() != null) {
-            query = queryHandler.getQueryStringWithoutPrefixes();
-          }
-          String md5 = DigestUtils.md5Hex(query);
-          preparedStatement.setString(1, md5);
-          ResultSet resultSet = preparedStatement.executeQuery();
+        // to prevent null pointer exceptions from empty queries
+        String query = "";
+        if (queryHandler.getQueryStringWithoutPrefixes() != null) {
+          query = queryHandler.getQueryStringWithoutPrefixes();
+        }
+        byte[] md5 = DigestUtils.md5(query);
 
-          String uniqueId = null;
-
-          while (resultSet.next()) {
-            uniqueId = resultSet.getString("uniqueId");
-          }
-
-          if (uniqueId != null) {
-            queryHandler.setOriginalId(uniqueId);
-          } else {
-            preparedStatement = onDiskDatabaseConnection.prepareStatement("INSERT INTO uniqueQueryIds(queryString, uniqueId) VALUES(?,?) ");
-            preparedStatement.setString(1, md5);
-            preparedStatement.setString(2, queryHandler.getUniqeId());
-            preparedStatement.executeUpdate();
-          }
-        } catch (SQLException e) {
-          e.printStackTrace();
+        // check if the md5 hash already exists in the onDiskBasedHashMap
+        if (onDiskBasedHashMap.containsKey(md5)) {
+          queryHandler.setOriginalId(onDiskBasedHashMap.get(md5));
+        } else {
+          onDiskBasedHashMap.put(md5, queryHandler.getUniqeId());
         }
       }
 
