@@ -39,8 +39,11 @@ public class Cache
    */
   private Map<Tuple2<QueryHandler.Validity, String>, QueryHandler> queryHandlerLRUMap = (Map<Tuple2<QueryHandler.Validity, String>, QueryHandler>) Collections.synchronizedMap(new LRUMap(100000));
 
-  private static DB mapDb = null;
-  private static HTreeMap<byte[], String> onDiskBasedHashMap;
+  public static DB mapDb = null;
+
+  private final static int numberOfDiskMaps = 16;
+
+  private static HTreeMap<byte[], String>[] onDiskBasedHashMapArray = new HTreeMap[numberOfDiskMaps];
 
   /**
    * exists only to prevent this Class from being instantiated
@@ -49,16 +52,13 @@ public class Cache
   {
     synchronized (this) {
       if (mapDb == null) {
-        mapDb = DBMaker.fileDB(Main.getWorkingDirectory() + "onDiskMap.db").fileMmapEnable().make();
-        onDiskBasedHashMap = mapDb.hashMap("map", Serializer.BYTE_ARRAY, Serializer.STRING).createOrOpen();
+        mapDb = DBMaker.fileDB(Main.getWorkingDirectory() + "onDiskMap.db").fileChannelEnable().fileMmapEnable().make();
+        for (int i = 0; i < numberOfDiskMaps; i++) {
+          onDiskBasedHashMapArray[i] = mapDb.hashMap("map" + i, Serializer.BYTE_ARRAY, Serializer.STRING).createOrOpen();
+        }
       }
 
     }
-  }
-
-  protected void finalize() throws Throwable
-  {
-    super.finalize();
   }
 
   /**
@@ -116,10 +116,11 @@ public class Cache
         byte[] md5 = DigestUtils.md5(query);
 
         // check if the md5 hash already exists in the onDiskBasedHashMap
-        if (onDiskBasedHashMap.containsKey(md5)) {
-          queryHandler.setOriginalId(onDiskBasedHashMap.get(md5));
+        int index = Math.floorMod(query.hashCode(), numberOfDiskMaps);
+        if (onDiskBasedHashMapArray[index].containsKey(md5)) {
+          queryHandler.setOriginalId(onDiskBasedHashMapArray[index].get(md5));
         } else {
-          onDiskBasedHashMap.put(md5, queryHandler.getUniqeId());
+          onDiskBasedHashMapArray[index].put(md5, queryHandler.getUniqeId());
         }
       }
 

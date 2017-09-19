@@ -39,6 +39,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.openrdf.query.parser.ParsedQuery;
 import output.factories.OutputHandlerTSVFactory;
+import query.Cache;
 import query.OpenRDFQueryHandler;
 import query.QueryHandler;
 import query.factories.OpenRDFQueryHandlerFactory;
@@ -286,6 +287,10 @@ public final class Main
     while (!executor.isTerminated()) {
       //wait until all workers are finished
     }
+
+    // close MabDb Database - if this goes wrong the file is corrupted the next time we execute this
+    Cache.mapDb.close();
+
 
     // writeQueryTypes(queryTypes);
     if (exampleQueries) {

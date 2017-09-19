@@ -114,6 +114,7 @@ public class OutputHandlerTSV extends OutputHandler
   public final void closeFiles()
   {
     writer.close();
+
     try {
       outputStream.close();
     } catch (IOException e) {
