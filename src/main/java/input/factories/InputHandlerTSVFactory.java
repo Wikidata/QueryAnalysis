@@ -1,16 +1,15 @@
 /**
- * 
+ *
  */
 package input.factories;
-
-import java.io.IOException;
 
 import input.InputHandler;
 import input.InputHandlerTSV;
 
+import java.io.IOException;
+
 /**
  * @author adrian
- *
  */
 public class InputHandlerTSVFactory implements InputHandlerFactory
 {

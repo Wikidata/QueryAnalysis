@@ -5,25 +5,21 @@ package output;
 
 import com.univocity.parsers.tsv.TsvWriter;
 import com.univocity.parsers.tsv.TsvWriterSettings;
-
 import general.Main;
 import openrdffork.RenderVisitor;
 import openrdffork.StandardizingPrefixDeclProcessor;
 import openrdffork.StandardizingSPARQLParser;
 import org.apache.log4j.Logger;
 import org.openrdf.query.MalformedQueryException;
-import org.openrdf.query.parser.ParsedQuery;
 import org.openrdf.query.parser.sparql.BaseDeclProcessor;
 import org.openrdf.query.parser.sparql.StringEscapesProcessor;
 import org.openrdf.query.parser.sparql.ast.*;
-
 import query.OpenRDFQueryHandler;
 import query.QueryHandler;
 import query.QueryHandler.Validity;
 import query.factories.QueryHandlerFactory;
 
 import java.io.*;
-import java.lang.reflect.InvocationTargetException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
@@ -56,7 +52,7 @@ public class OutputHandlerAnonymizer extends OutputHandler
   private int failedQueriesNumber = 0;
 
   /**
-   * @param fileToWrite            The file to write the anonymized queries to.
+   * @param fileToWrite              The file to write the anonymized queries to.
    * @param queryHandlerFactoryToSet The query handler factory to supply the query handler to be used to check validity.
    * @throws FileNotFoundException If the file exists but is a directory rather than a regular file,
    *                               does not exist but cannot be created,
@@ -68,7 +64,7 @@ public class OutputHandlerAnonymizer extends OutputHandler
   }
 
   /**
-   * @param fileToWrite            The file to write the anonymized queries to.
+   * @param fileToWrite              The file to write the anonymized queries to.
    * @param queryHandlerFactoryToSet The query handler class to use for checking query validity.
    * @throws FileNotFoundException If the file exists but is a directory rather than a regular file,
    *                               does not exist but cannot be created,
@@ -129,8 +125,7 @@ public class OutputHandlerAnonymizer extends OutputHandler
       }
       try {
         new StandardizingSPARQLParser().parseQuery(renderedQueryString, OpenRDFQueryHandler.BASE_URI);
-      }
-      catch (MalformedQueryException e) {
+      } catch (MalformedQueryException e) {
         String queryName = this.threadNumber + "_" + this.failedQueriesNumber + ".query";
         logger.error("Anonymized query was not valid anymore. " + queryName, e);
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(this.outputFile.substring(0, this.outputFile.lastIndexOf("/")) + "failedQueriesFolder/" + queryName))) {
@@ -140,8 +135,7 @@ public class OutputHandlerAnonymizer extends OutputHandler
           logger.error("Could not write the failed query to failed queries folder.", i);
         }
         return;
-      }
-      catch (ClassCastException e) {
+      } catch (ClassCastException e) {
         logger.error("Unexpected class cast exception after anonymization.", e);
       }
 

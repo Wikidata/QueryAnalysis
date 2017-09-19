@@ -75,4 +75,4 @@ tools/visualisePropertyTree/bower_components/
 exampleMonthsFolder/exampleMonth/processedLogData/
 
 
-/exampleMonthsFolder/exampleMonth/onDiskDatabase.db
+/exampleMonthsFolder/exampleMonth/onDiskMap.db

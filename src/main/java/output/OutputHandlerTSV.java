@@ -49,7 +49,7 @@ public class OutputHandlerTSV extends OutputHandler
   private Cache cache = new Cache();
 
   /**
-   * @param fileToWrite            location of the file to write the received values to
+   * @param fileToWrite              location of the file to write the received values to
    * @param queryHandlerFactoryToSet The query handler factory to supply the query handler to generate the output with.
    * @throws FileNotFoundException if the file exists but is a directory
    *                               rather than a regular file, does not exist but cannot be created,
@@ -63,7 +63,7 @@ public class OutputHandlerTSV extends OutputHandler
   /**
    * Creates the file specified in the constructor and writes the header.
    *
-   * @param fileToWrite       location of the file to write the received values to
+   * @param fileToWrite              location of the file to write the received values to
    * @param queryHandlerFactoryToSet The query handler factory to supply the query handler to generate the output with.
    * @throws FileNotFoundException if the file exists but is a directory
    *                               rather than a regular file, does not exist but cannot be created,
@@ -114,6 +114,7 @@ public class OutputHandlerTSV extends OutputHandler
   public final void closeFiles()
   {
     writer.close();
+
     try {
       outputStream.close();
     } catch (IOException e) {

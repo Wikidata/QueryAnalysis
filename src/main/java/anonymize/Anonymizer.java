@@ -3,22 +3,15 @@ package anonymize;
 import general.Main;
 import general.ParseOneDayWorker;
 import input.InputHandler;
-import input.InputHandlerTSV;
 import input.factories.InputHandlerTSVFactory;
 import logging.LoggingHandler;
+import org.apache.commons.cli.*;
+import org.apache.log4j.Logger;
 import output.factories.OutputHandlerAnonymizerFactory;
 import query.factories.OpenRDFQueryHandlerFactory;
 
-import org.apache.commons.cli.*;
-import org.apache.log4j.Logger;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.lang.reflect.InvocationTargetException;
-import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -130,8 +123,7 @@ public class Anonymizer
       try {
         Runnable parseOneMonthWorker = new ParseOneDayWorker(new InputHandlerTSVFactory(), inputFile, new OutputHandlerAnonymizerFactory(), outputFile, new OpenRDFQueryHandlerFactory(), day, false);
         executor.execute(parseOneMonthWorker);
-      }
-      catch (IOException e) {
+      } catch (IOException e) {
       }
     }
     executor.shutdown();
@@ -148,17 +140,16 @@ public class Anonymizer
     System.out.println("Finished executing with all threads: " + new SimpleDateFormat("mm-dd HH:mm:ss:SSSSSSS").format(date));
   }
 
-  public static void loadWhitelistDatatypes() {
+  public static void loadWhitelistDatatypes()
+  {
     try (BufferedReader reader = new BufferedReader(new FileReader("anonymization/whitelist"))) {
       String line = null;
       while ((line = reader.readLine()) != null) {
         Anonymizer.whitelistedDatatypes.add(line);
       }
-    }
-    catch (FileNotFoundException e) {
+    } catch (FileNotFoundException e) {
       logger.error("Could not read the anonymization whitelist.", e);
-    }
-    catch (IOException e) {
+    } catch (IOException e) {
       logger.error("Could not read the anonymization whitelist.", e);
     }
   }
