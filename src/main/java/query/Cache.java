@@ -49,7 +49,7 @@ public class Cache
   {
     synchronized (this) {
       if (mapDb == null) {
-        mapDb = DBMaker.fileDB("/media/bernd/onDiskBasedHashMap.db").fileMmapEnable().make();
+        mapDb = DBMaker.fileDB(Main.getWorkingDirectory() + "onDiskMap.db").fileMmapEnable().make();
         onDiskBasedHashMap = mapDb.hashMap("map", Serializer.BYTE_ARRAY, Serializer.STRING).createOrOpen();
       }
 
