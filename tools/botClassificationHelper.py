@@ -27,7 +27,7 @@ parser.add_argument("--filter", "-f", default="", type=str, help="Constraints "
                     + " set the --outputPath to some value other than the "
                     + "default.")
 parser.add_argument("--numberOfCombinations", "-n", type=int, help="The number N for which combinations should be generated."
-                    + " Default is 100.", default = 100)
+                    + " Default is 40.", default = 40)
 parser.add_argument("--switchKeys", "-s", help="Switch to searching for top N user agents and their top N query types.", action="store_true")
 parser.add_argument("month", type=str,
                     help="The month for which the ranking should be " 
