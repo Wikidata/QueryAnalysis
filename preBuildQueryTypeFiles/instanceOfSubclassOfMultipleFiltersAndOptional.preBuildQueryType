@@ -1,0 +1,14 @@
+PREFIX schema: <http://schema.org/>
+
+SELECT DISTINCT ?c2 ?c5 ?x ?y WHERE {
+  {
+    OPTIONAL {?item ?x wd:Q532.}
+    OPTIONAL {?item ?y wd:Q486972.}
+    ?item (wdt:P31) ?c.
+    ?c (wdt:P279+) ?c2.
+    ?c2 rdfs:label ?c5.
+    FILTER(?item = wd:Q875800)
+    FILTER((LANG(?c5)) = "en")
+    FILTER(?c2 = wd:Q43229 ||  ?c2 =  wd:Q17334923 ||?c2 =  wd:Q215627  )
+  }
+}

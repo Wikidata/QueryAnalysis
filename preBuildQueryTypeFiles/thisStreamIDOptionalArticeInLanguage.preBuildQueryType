@@ -1,0 +1,10 @@
+SELECT ?item ?itemLabel ?itemAltLabel ?itemDescription ?wpzh_page_title
+WHERE {
+  ?item wdt:P1733 "344410".
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "zh". }
+  OPTIONAL {
+      ?article schema:about ?item .
+      ?article schema:inLanguage "zh" .
+      ?article schema:about ?item; schema:isPartOf <https://zh.wikipedia.org/>; schema:name ?wpzh_page_title .
+    }
+}
