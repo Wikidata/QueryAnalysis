@@ -1,12 +1,11 @@
 package input.factories;
 
-import java.io.IOException;
-
 import input.InputHandler;
+
+import java.io.IOException;
 
 /**
  * @author adrian
- *
  */
 public interface InputHandlerFactory
 {

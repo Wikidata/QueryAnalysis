@@ -69,7 +69,7 @@ public abstract class OutputHandler implements Serializable
   /**
    * Method to be called before using writeLine().
    *
-   * @param fileToWrite            The file to write the output to.
+   * @param fileToWrite              The file to write the output to.
    * @param queryHandlerFactoryToSet The query handler factory to supply the query handler for generating the output.
    * @throws FileNotFoundException If there was some error concerning the file to write to.
    */

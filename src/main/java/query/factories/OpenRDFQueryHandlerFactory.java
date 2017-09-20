@@ -6,14 +6,13 @@ import query.QueryHandler.Validity;
 
 /**
  * @author adrian
- *
  */
 public class OpenRDFQueryHandlerFactory implements QueryHandlerFactory
 {
   /**
-   * @param validity The validity as determined by the decoding process.
-   * @param lineToSet The line this query came from.
-   * @param dayToSet The day this query came from.
+   * @param validity         The validity as determined by the decoding process.
+   * @param lineToSet        The line this query came from.
+   * @param dayToSet         The day this query came from.
    * @param queryStringToSet The query as a string.
    * @return An OpenRDFQueryHandler based on the parameters.
    */

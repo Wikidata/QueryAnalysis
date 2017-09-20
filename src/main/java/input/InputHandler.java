@@ -40,7 +40,7 @@ public abstract class InputHandler
    * Read the file given by reader and hands the data to the outputHandler.
    *
    * @param outputHandler Handles the data that should be written.
-   * @param day The day we are reading from.
+   * @param day           The day we are reading from.
    */
   public abstract void parseTo(OutputHandler outputHandler, int day);
 
