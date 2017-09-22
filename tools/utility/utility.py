@@ -36,7 +36,7 @@ class filter:
     
     def checkLine(self, processed):
         for key, value in self.parameters.iteritems():
-            match = re.match(value, processed[key])
+            match = re.match(value, str(processed[key]))
             if match == None:
                 return False
         return True
