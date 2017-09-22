@@ -27,6 +27,24 @@ import java.util.regex.Pattern;
  */
 public class OpenRDFQueryHandler extends QueryHandler
 {
+
+  /**
+   * The base URI to resolve any possible relative URIs against.
+   */
+  public static final String BASE_URI = "https://query.wikidata.org/bigdata/namespace/wdq/sparql";
+  /**
+   * The regular expression to determine if a string is a point as per wktLiteral.
+   */
+  public static final Pattern POINT_REGEX = Pattern.compile("^Point\\(([-+]?[\\d]{1,2}\\.\\d+\\s*[-+]?[\\d]{1,3}\\.\\d+?)\\)$");
+  /**
+   * Define a static logger variable.
+   */
+  private static final Logger logger = Logger.getLogger(OpenRDFQueryHandler.class);
+  /**
+   * The query object created from query-string.
+   */
+  private ParsedQuery query;
+
   /**
    * @param validity The validity as determined by the decoding process.
    * @param lineToSet The line this query came from.
@@ -37,19 +55,6 @@ public class OpenRDFQueryHandler extends QueryHandler
   {
     super(validity, lineToSet, dayToSet, queryStringToSet);
   }
-
-  /**
-   * The base URI to resolve any possible relative URIs against.
-   */
-  public static final String BASE_URI = "https://query.wikidata.org/bigdata/namespace/wdq/sparql";
-  /**
-   * Define a static logger variable.
-   */
-  private static final Logger logger = Logger.getLogger(OpenRDFQueryHandler.class);
-  /**
-   * The query object created from query-string.
-   */
-  private ParsedQuery query;
 
   /**
    * {@inheritDoc}
@@ -564,8 +569,7 @@ public class OpenRDFQueryHandler extends QueryHandler
         @Override
         public Object visit(ASTString string, Object data) throws VisitorException
         {
-          Pattern pattern = Pattern.compile("^Point\\(([-+]?[\\d]{1,2}\\.\\d+\\s*[-+]?[\\d]{1,3}\\.\\d+?)\\)$");
-          Matcher matcher = pattern.matcher(string.getValue());
+          Matcher matcher = POINT_REGEX.matcher(string.getValue());
           if (matcher.find()) {
             coordinates.add(matcher.group(1));
           }

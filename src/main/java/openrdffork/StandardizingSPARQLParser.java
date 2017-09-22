@@ -4,6 +4,8 @@
 package openrdffork;
 
 import anonymize.Anonymizer;
+import query.OpenRDFQueryHandler;
+
 import org.apache.log4j.Logger;
 import org.openrdf.model.impl.ValueFactoryImpl;
 import org.openrdf.query.Dataset;
@@ -21,6 +23,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author adrian
@@ -120,7 +124,14 @@ public class StandardizingSPARQLParser extends SPARQLParser
           if (!strings.containsKey(string.getValue())) {
             strings.put(string.getValue(), strings.keySet().size() + 1);
           }
-          string.setValue("string" + strings.get(string.getValue()));
+          Matcher matcher = OpenRDFQueryHandler.POINT_REGEX.matcher(string.getValue());
+          if (matcher.find()) {
+            String number = String.valueOf(strings.get(string.getValue()));
+            number = number.substring(0, 1) + "." + number.substring(1);
+            string.setValue("POINT(" + number + " " + number + ")");
+          } else {
+            string.setValue("string" + strings.get(string.getValue()));
+          }
           return super.visit(string, data);
         }
       }, null);
