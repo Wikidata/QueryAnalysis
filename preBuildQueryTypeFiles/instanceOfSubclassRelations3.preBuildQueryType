@@ -1,0 +1,17 @@
+SELECT DISTINCT ?UnitClass ?UnitClassLabel ?wayPoint ?wayPointLabel ?wayPointParent ?wayPointParentLabel
+WHERE {
+  Values ?startPoint {
+    wd:Q47574
+    wd:Q309314
+  }
+  BIND(wd:Q453224 as ?endPoint)
+  ?endPoint wdt:P31?|wdt:P279? ?UnitClass.
+  ?UnitClass wdt:P31*/wdt:P279* ?startPoint.
+  ?UnitClass wdt:P31*/wdt:P279* ?wayPoint.
+  ?wayPoint wdt:P31|wdt:P279 ?wayPointParent.
+  ?wayPointParent wdt:P279* ?startPoint.
+  SERVICE wikibase:label {
+    bd:serviceParam wikibase:language "de, en"
+  }
+}
+

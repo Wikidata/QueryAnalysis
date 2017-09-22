@@ -1,0 +1,7 @@
+SELECT ?stubvar22
+WHERE {
+  ?item <http://www.wikidata.org/prop/direct/P352> ?uniprot ;
+        <http://www.wikidata.org/prop/direct/P2888> <http://purl.uniprot.org/uniprot/P00740> ;
+        <http://www.wikidata.org/prop/direct/P703> <http://www.wikidata.org/entity/Q15978631> .
+  FILTER (!isLITERAL (<http://purl.uniprot.org/uniprot/P00740> ))
+}

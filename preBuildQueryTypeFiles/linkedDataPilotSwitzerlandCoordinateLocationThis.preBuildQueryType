@@ -1,0 +1,4 @@
+SELECT ?Mayor
+WHERE {
+  <http://classifications.data.admin.ch/municipality/1002> <http://www.wikidata.org/prop/direct/P6> ?Mayor .
+}

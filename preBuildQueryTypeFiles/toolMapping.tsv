@@ -96,8 +96,10 @@ thisPubMedIDthatWithFilter	Magnus labs tools	toolSearchingForPublicationIDs	-1	n
 thisIMDb_ID	Mechanize/2.7.5 Ruby/2.2.6p396 (http://github.com/sparklemotion/mechanize/)	toolUsingMechanizeForIMDb	-1	needs more data
 thisIMDb_ID	MovieGuide-wikidata/0.1	movieguide	0.1	https://github.com/nandhp/movieguide
 acidDissociationConstantThis	Mozilla/4.0 (compatible; Virtuoso)	toolSearchingForChemical	-1	needs more data
+coordianteLocationThis	Mozilla/4.0 (compatible; Virtuoso)	toolSearchingForMajors	-1	needs more data
 InCHIKeyThis	Mozilla/4.0 (compatible; Virtuoso)	toolSearchingForChemical	-1	needs more data
 itemsWithPicturesFromCatalogue	Mozilla/4.0 (compatible; Virtuoso)	toolSearchingForItemsFromCatalogue	-1	needs more data
+linkedDataPilotSwitzerlandCoordinateLocationThis	Mozilla/4.0 (compatible; Virtuoso)	toolSearchingForMajors	-1	needs more data
 thisCBSMunicipalityCodeThisWithLabel	Mozilla/4.0 (compatible; Virtuoso)	toolSearchingForCBSMunicipality	-1	needs more data
 thisCBSMunicipalityCodeWithLabel	Mozilla/4.0 (compatible; Virtuoso)	toolSearchingForCBSMunicipality	-1	needs more data
 thisCBSMunicipalityCodeWithLabelWithPopulation	Mozilla/4.0 (compatible; Virtuoso)	toolSearchingForCBSMunicipality	-1	needs more data
@@ -105,6 +107,7 @@ thisCollectionDepictsPositionHeld	Mozilla/4.0 (compatible; Virtuoso)	toolSearchi
 thisExactMatchWithFilter	Mozilla/4.0 (compatible; Virtuoso)	toolSearchingForExactMatches	-1	needs more data
 thisHasLabelLocatedInCoordinatesThat	Mozilla/4.0 (compatible; Virtuoso)	toolSearchingForLocationByLabel	-1	needs more data
 thisMultipleCatalogProperties	Mozilla/4.0 (compatible; Virtuoso)	toolSearchingForItemsFromCatalogue	-1	needs more data
+thisUniProtIDThatExactMatchFoundInTaxon	Mozilla/4.0 (compatible; Virtuoso)	toolSearchingForUniProtID	-1	needs more data
 thisUniProtIDWithFilterIsLiteral	Mozilla/4.0 (compatible; Virtuoso)	toolSearchingForUniProtID	-1	needs more data
 thisInstanceOfGenderDescription	Mozilla/5.0	toolSearchingForHumans	5	needs more data
 thisSubclassOfWithLabelOrderByLabel	Mozilla/5.0	toolSearchingForSubclassOf	5	needs more data
@@ -124,6 +127,7 @@ thisNCBITaxonomyIDSubclassOfOperon	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_
 thisNCBILocusTagFoundInTaxonNCBITaxonomyIDWithEncodes	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36	toolSearchingForGeneRelated	-1	needs more data
 thisFreebaseIDWithLabelOptionalInstanceOf	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.143 Safari/537.36	toolSeatchingForFreebaseID	-1	needs more data
 thisFreebaseIDWithLabelOptionalInstanceOf2	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.143 Safari/537.36	toolSeatchingForFreebaseID	-1	needs more data
+entityAllOptionalLabelImageCoordinatesArticleInLanguage	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/603.2.5 (KHTML, like Gecko) Version/10.1.1 Safari/603.2.5	toolSearchingForMultipleInformationAboutEntity	-1	needs more data
 entityLabelImageAbstractLocationEnglishWikipediaArticle	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/603.2.5 (KHTML, like Gecko) Version/10.1.1 Safari/603.2.5	toolSearchingForMultipleInformationAboutEntity	-1	needs more data
 entityLabelImageDescriptionAllOptional	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/603.2.5 (KHTML, like Gecko) Version/10.1.1 Safari/603.2.5	toolSeaerchingForOptionalInformationAboutEntites	-1	needs more data
 schemaAboutEntityLabelImageCoordinatesAllOptional	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/603.2.5 (KHTML, like Gecko) Version/10.1.1 Safari/603.2.5	toolSeaerchingForOptionalInformationAboutEntites	-1	needs more data
@@ -142,6 +146,7 @@ referenceAllPredicatesAndObjects	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_0)
 thisNCBILocusTagFoundInTaxonNCBITaxonomyIDWithEncodes	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36	toolSearchingForGeneRelated	-1	needs more data
 entityLabelImageAbstractLocationEnglishWikipediaArticle	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_5) AppleWebKit/603.2.4 (KHTML, like Gecko) Version/10.1.1 Safari/603.2.4	toolSearchingForMultipleInformationAboutEntity	-1	needs more data
 thisAustralianStatisticalGeography2011IDOptionalDescriptionWithLabel	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_5) AppleWebKit/603.2.4 (KHTML, like Gecko) Version/10.1.1 Safari/603.2.4	toolSearchingForAustralianGeography	-1	needs more data
+coordinateLocationThisViaBind	Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:55.0) Gecko/20100101 Firefox/55.0	toolSearchingForLocation	-1	needs more data
 thisTaxonRankParentTaxon	Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36	toolSearchingForTaxonsOfParentTaxon	-1	needs more data
 thisArticleAboutInLanguageIsPartOfWikiGroupWithLimit	Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36	toolSearchingForArticlesFromGroup	-1	needs more data
 thisAustralianStatisticalGeography2011IDOptionalDescriptionWithLabel	Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36	toolSearchingForAustralianGeography	-1	needs more data
@@ -164,6 +169,7 @@ thisIMDb_ID	Mozilla/5.0 (Windows NT; Windows NT 10.0; es-ES) WindowsPowerShell/5
 thisIMDb_ID	Mozilla/5.0 (Windows NT; Windows NT 10.0; es-ES) WindowsPowerShell/5.1.14393.576	toolUsingWindowsPowerShellForIMDb	-1	needs more data (possible Source: 0)
 thisIMDb_ID	Mozilla/5.0 (Windows NT; Windows NT 10.0; es-ES) WindowsPowerShell/5.1.14393.693	toolUsingWindowsPowerShellForIMDb	-1	needs more data (possible Source: 0)
 thisIMDb_ID	Mozilla/5.0 (Windows NT; Windows NT 10.0; es-ES) WindowsPowerShell/5.1.15063.138	toolUsingWindowsPowerShellForIMDb	-1	needs more data (possible Source: 0)
+thisStreamIDOptionalArticeInLanguage	Mozilla/5.0 (Windows; U; Windows NT 5.1; zh-CN; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3	toolSearchingForArticlesAboutSteamItems	-1	needs more data
 thisDerivedFromStatedInPaper	Mozilla/5.0 (Windows; U; WindowsNT 5.1; en-US; rv1.8.1.6) Gecko/20070725 Firefox/2.0.0.6	toolSearchingForRelationToPaperStatements	-1	needs more data
 AllSubjectsAllPredicatesEntity	Mozilla/5.0 (X11; Linux x86_64; rv:55.0) Gecko/20100101 Firefox/55.0	toolSearchingEverythingForEntities	-1	needs more data
 AllSubjectsAllPredicatesEntityStatement	Mozilla/5.0 (X11; Linux x86_64; rv:55.0) Gecko/20100101 Firefox/55.0	toolSearchingEverythingForEntities	-1	needs more data
@@ -171,8 +177,15 @@ AllSubjectsAllPredicatesReference	Mozilla/5.0 (X11; Linux x86_64; rv:55.0) Gecko
 entityAllPropertiesAndObjects	Mozilla/5.0 (X11; Linux x86_64; rv:55.0) Gecko/20100101 Firefox/55.0	toolSearchingEverythingForEntities	-1	needs more data
 entityStatementAllPredicatesAndObjects	Mozilla/5.0 (X11; Linux x86_64; rv:55.0) Gecko/20100101 Firefox/55.0	toolSearchingEverythingForEntities	-1	needs more data
 referenceAllPredicatesAndObjects	Mozilla/5.0 (X11; Linux x86_64; rv:55.0) Gecko/20100101 Firefox/55.0	toolSearchingEverythingForEntities	-1	needs more data
+AllSubjectsAllPredicatesEntity	Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36	toolSearchingEverythingForEntities	-1	needs more data
+AllSubjectsAllPredicatesEntityStatement	Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36	toolSearchingEverythingForEntities	-1	needs more data
+AllSubjectsAllPredicatesReference	Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36	toolSearchingEverythingForEntities	-1	needs more data
+entityAllPropertiesAndObjects	Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36	toolSearchingEverythingForEntities	-1	needs more data
+entityStatementAllPredicatesAndObjects	Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36	toolSearchingEverythingForEntities	-1	needs more data
+referenceAllPredicatesAndObjects	Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36	toolSearchingEverythingForEntities	-1	needs more data
 instanceOfSubclassRelations	Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.86 Safari/537.36	toolSearchingForRelations	-1	needs more data
 instanceOfSubclassRelations2	Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.86 Safari/537.36	toolSearchingForRelations	-1	needs more data
+instanceOfSubclassRelations3	Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.86 Safari/537.36	toolSearchingForRelations	-1	needs more data
 AllSubjectsAllPredicatesEntity	Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/58.0.3029.110 Chrome/58.0.3029.110 Safari/537.36	toolSearchingEverythingForEntities	-1	needs more data
 AllSubjectsAllPredicatesEntityStatement	Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/58.0.3029.110 Chrome/58.0.3029.110 Safari/537.36	toolSearchingEverythingForEntities	-1	needs more data
 AllSubjectsAllPredicatesReference	Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/58.0.3029.110 Chrome/58.0.3029.110 Safari/537.36	toolSearchingEverythingForEntities	-1	needs more data
@@ -758,4 +771,3 @@ thisUniProtID	sparqlwrapper 1.7.6 (rdflib.github.ioSLASHsparqlwrapper)	toolUsing
 entityAllPropertiesAllObjectsWithInstanceAndLabel	sparqlwrapper 1.8.0 (rdflib.github.io/sparqlwrapper)	toolSearchingForInformationAboutEntity	1.8.0	needs more data
 instanceOfThis	sparqlwrapper 1.8.0 (rdflib.github.io/sparqlwrapper)	toolUsingSparqlwrapperPython	1.8.0	needs more data
 thisWikiLovesMonumentsID	sparqlwrapper 1.8.0 (rdflib.github.io/sparqlwrapper)	toolUsingSparqlwrapperPythonForWikiLovesMonumentsID	1.8.0	needs more data
-thisStreamIDOptionalArticeInLanguage	Mozilla/5.0 (Windows; U; Windows NT 5.1; zh-CN; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3	toolSearchingForArticlesAboutSteamItems	-1	needs more data

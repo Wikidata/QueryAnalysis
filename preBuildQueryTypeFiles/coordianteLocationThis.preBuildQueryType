@@ -1,0 +1,4 @@
+SELECT ?Mayor
+WHERE {
+  <http://www.wikidata.org/entity/Q7151> <http://www.wikidata.org/prop/direct/P6> ?Mayor .
+}

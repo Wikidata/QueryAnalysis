@@ -1,0 +1,8 @@
+SELECT ?itemLabel ?coord
+WHERE {
+  BIND (wd:Q534914 AS ?item).
+  ?item wdt:P625 ?coord
+  SERVICE wikibase:label {
+    bd:serviceParam wikibase:language "de".
+  }
+}
