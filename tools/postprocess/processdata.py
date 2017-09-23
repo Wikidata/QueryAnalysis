@@ -35,7 +35,7 @@ def processMonth(handler, month, monthsFolder, anonymous = False):
                               + folderToSearch + prefixToSearch + "*"
                               + suffixToSearch):
         day = os.path.basename(filename)[len(
-            processedPrefix):][:-len(processedSuffix)]
+            prefixToSearch):][:-len(suffixToSearch)]
         if anonymous:
             processDayAnonymous(handler, int(day), month, monthsFolder)
         else:
