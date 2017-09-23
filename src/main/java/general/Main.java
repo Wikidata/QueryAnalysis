@@ -274,7 +274,7 @@ public final class Main
     for (int day = 1; day <= 31; day++) {
       String inputFile = inputFilePrefix + String.format("%02d", day) + inputFileSuffix;
 
-      String outputFile = outputFolder + "/QueryProcessed" + queryParserName + String.format("%02d", day);
+      String outputFile = outputFolder + "QueryProcessed" + queryParserName + String.format("%02d", day);
 
       try {
         Runnable parseOneMonthWorker = new ParseOneDayWorker(new InputHandlerTSVFactory(), inputFile, new OutputHandlerTSVFactory(), outputFile, new OpenRDFQueryHandlerFactory(), day, true);

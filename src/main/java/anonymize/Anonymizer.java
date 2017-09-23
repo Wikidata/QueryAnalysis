@@ -118,7 +118,7 @@ public class Anonymizer
       String inputFile = inputFilePrefix + String.format("%02d", day) + inputFileSuffix;
       InputHandler inputHandler;
 
-      String outputFile = outputFolder + "/AnonymousQueryCnt" + String.format("%02d", day);
+      String outputFile = outputFolder + "AnonymousQueryCnt" + String.format("%02d", day);
 
       try {
         Runnable parseOneMonthWorker = new ParseOneDayWorker(new InputHandlerTSVFactory(), inputFile, new OutputHandlerAnonymizerFactory(), outputFile, new OpenRDFQueryHandlerFactory(), day, false);

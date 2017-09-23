@@ -72,12 +72,14 @@ public class OutputHandlerTSV extends OutputHandler
   public void initialize(String fileToWrite, QueryHandlerFactory queryHandlerFactoryToSet) throws FileNotFoundException
   {
     if (!Main.gzipOutput) {
-      outputStream = new FileOutputStream(fileToWrite + ".tsv");
+      outputFile = fileToWrite + ".tsv";
+      outputStream = new FileOutputStream(outputFile);
     } else {
       try {
-        outputStream = new GZIPOutputStream(new FileOutputStream(new File(fileToWrite + ".tsv.gz")));
+        outputFile = fileToWrite + ".tsv.gz";
+        outputStream = new GZIPOutputStream(new FileOutputStream(new File(outputFile)));
       } catch (IOException e) {
-        logger.error("Somehow we are unable to write the output to " + fileToWrite + ".tsv.gz", e);
+        logger.error("Somehow we are unable to write the output to " + outputFile, e);
       }
     }
     writer = new TsvWriter(outputStream, new TsvWriterSettings());
