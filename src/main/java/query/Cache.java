@@ -150,7 +150,9 @@ public class Cache
             if (onDiskBasedHashMapArray[index].containsKey(md5)) {
               queryHandler.setOriginalId(onDiskBasedHashMapArray[index].get(md5));
             } else {
+              // yay, we're the first and only thread which is allowed to write this queryto the map
               onDiskBasedHashMapArray[index].put(md5, queryHandler.getUniqeId());
+              queryHandler.setFirst();
             }
           }
         }
