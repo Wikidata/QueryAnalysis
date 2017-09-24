@@ -87,6 +87,7 @@ public class OutputHandlerTSV extends OutputHandler
 
     List<String> header = new ArrayList<>();
     header.add("#Valid");
+    header.add("#First");
     header.add("#UniqueId");
     header.add("#OriginalId");
     header.add("#ToolName");
@@ -147,6 +148,11 @@ public class OutputHandlerTSV extends OutputHandler
     // the order in which fields are being written to this list is important - it needs to be the same as the one for the header above!
     List<Object> line = new ArrayList<>();
     line.add(queryHandler.getValidityStatus());
+    if (queryHandler.isFirst()) {
+      line.add("FIRST");
+    } else {
+      line.add("COPY");
+    }
     line.add(queryHandler.getUniqeId());
     line.add(queryHandler.getOriginalId());
     line.add(queryHandler.getToolName());
