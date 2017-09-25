@@ -106,6 +106,7 @@ public class OutputHandlerTSV extends OutputHandler
     header.add("#Categories");
     header.add("#Coordinates");
     header.add("#UsedSparqlFeatures");
+    header.add("#PrimaryLanguage");
 
     header.add("#original_line(filename_line)");
     writer.writeHeaders(header);
@@ -172,8 +173,8 @@ public class OutputHandlerTSV extends OutputHandler
       line.add(queryHandler.getCategoriesString());
       line.add(queryHandler.getCoordinatesString());
 
-      Map<String, Integer> sparqlStatistics = queryHandler.getSparqlStatistics();
       //add all sparqlStatisticNodes
+      Map<String, Integer> sparqlStatistics = queryHandler.getSparqlStatistics();
       String sparqlStatisticsLine = "";
       for (Map.Entry<String, Integer> sparqlStatisticFeature : sparqlStatistics.entrySet()) {
         if (sparqlStatisticFeature.getValue() != 0) {
@@ -182,6 +183,7 @@ public class OutputHandlerTSV extends OutputHandler
         }
       }
       line.add(sparqlStatisticsLine);
+      line.add(queryHandler.getPrimaryLanguage());
 
     } else {
       for (int i = 0; i < 13; i++) {

@@ -46,9 +46,9 @@ public class OpenRDFQueryHandler extends QueryHandler
   private ParsedQuery query;
 
   /**
-   * @param validity The validity as determined by the decoding process.
-   * @param lineToSet The line this query came from.
-   * @param dayToSet The day this query came from.
+   * @param validity         The validity as determined by the decoding process.
+   * @param lineToSet        The line this query came from.
+   * @param dayToSet         The day this query came from.
    * @param queryStringToSet The query as a string.
    */
   public OpenRDFQueryHandler(Validity validity, Long lineToSet, Integer dayToSet, String queryStringToSet)
@@ -156,6 +156,8 @@ public class OpenRDFQueryHandler extends QueryHandler
       this.query.getTupleExpr().visit(tupleExprSparqlStatisticsCollector);
 
       this.sparqlStatistics.putAll(tupleExprSparqlStatisticsCollector.getStatistics());
+
+      this.primaryLanguage = tupleExprSparqlStatisticsCollector.getPrimaryLanguage();
 
     } catch (TokenMgrError | ParseException e) {
       logger.error("Failed to parse the query although it was found valid - this is a serious bug.", e);
@@ -308,20 +310,20 @@ public class OpenRDFQueryHandler extends QueryHandler
     final Set<String> predicateVariables = new HashSet<String>();
 
     normalizedQuery.getTupleExpr().visit(new QueryModelVisitorBase<VisitorException>()
-    {
+                                         {
 
-      @Override
-      public void meet(StatementPattern statementPattern) throws VisitorException
-      {
-        Var predicate = statementPattern.getPredicateVar();
+                                           @Override
+                                           public void meet(StatementPattern statementPattern) throws VisitorException
+                                           {
+                                             Var predicate = statementPattern.getPredicateVar();
 
-        if (!predicate.isConstant() && !predicate.isAnonymous()) {
-          predicateVariables.add(predicate.getName());
-        }
+                                             if (!predicate.isConstant() && !predicate.isAnonymous()) {
+                                               predicateVariables.add(predicate.getName());
+                                             }
 
-        meetNode(statementPattern);
-      }
-    }
+                                             meetNode(statementPattern);
+                                           }
+                                         }
     );
 
     normalizedQuery.getTupleExpr().visit(new QueryModelVisitorBase<VisitorException>()

@@ -16,10 +16,16 @@ import java.util.LinkedList;
 public class TupleExprSparqlStatisticsCollector extends QueryModelVisitorBase
 {
   private HashMap<String, Integer> statistics = new HashMap<>();
+  private String primaryLanguage = "--DEFAULT--";
 
   public HashMap<String, Integer> getStatistics()
   {
     return statistics;
+  }
+
+  public String getPrimaryLanguage()
+  {
+    return primaryLanguage;
   }
 
   /**
@@ -58,6 +64,13 @@ public class TupleExprSparqlStatisticsCollector extends QueryModelVisitorBase
   {
     if (node.getParentNode() instanceof Service && node.getSubjectVar().getName().equals("-const-http://www.bigdata.com/rdf#serviceParam-uri") && node.getPredicateVar().getName().equals("-const-http://wikiba.se/ontology#language-uri")) {
       this.add("LangService");
+
+      // save first asked language
+      String value = node.getObjectVar().getValue().stringValue();
+      int index = value.indexOf(",");
+      if (index != -1) {
+        this.primaryLanguage = value.substring(0, index);
+      }
     }
     super.meetNode(node);
   }
