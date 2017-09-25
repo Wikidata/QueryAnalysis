@@ -106,6 +106,11 @@ public abstract class QueryHandler implements Serializable
    * Contains the sparql statistics.
    */
   protected HashMap<String, Integer> sparqlStatistics;
+
+  /**
+   * Contains the first named language in the language service call
+   */
+  protected String primaryLanguage;
   /**
    * Saves the query-string with added prefixes.
    */
@@ -320,6 +325,14 @@ public abstract class QueryHandler implements Serializable
    * Useful for caching.
    */
   protected abstract void computeSparqlStatistics();
+
+  public String getPrimaryLanguage()
+  {
+    if (this.sparqlStatistics == null) {
+      this.computeSparqlStatistics();
+    }
+    return primaryLanguage;
+  }
 
   /**
    * @return a map containing the number of occurrences of each sparql features
