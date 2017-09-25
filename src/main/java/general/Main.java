@@ -140,10 +140,7 @@ public final class Main
     return withUniqueQueryDetection;
   }
 
-  public static String getWorkingDirectory()
-  {
-    return workingDirectory;
-  }
+  private static String dbLocation;
 
   /**
    * Since this is a utility class, it should not be instantiated.
@@ -171,6 +168,7 @@ public final class Main
     options.addOption("e", "noExampleQueriesOutput", false, "Disables the matching of example queries.");
     options.addOption("i", "ignoreLock", false, "Ignores the lock file.");
     options.addOption("u", "withUniqueQueryDetection", false, "Deunify queries.");
+    options.addOption("p", "dbLocation", true, "The path of the uniqueQueriesMapDb file. Default is in the working directory.");
 
 
     //some parameters which can be changed through parameters
@@ -224,6 +222,11 @@ public final class Main
       }
       if (cmd.hasOption("withUniqueQueryDetection")) {
         withUniqueQueryDetection = true;
+      }
+      if (cmd.hasOption("dbLocation")) {
+        dbLocation = cmd.getOptionValue("dbLocation");
+      } else {
+        dbLocation = workingDirectory + "onDiskMap.db";
       }
     } catch (UnrecognizedOptionException e) {
       System.out.println("Unrecognized commandline option: " + e.getOption());
@@ -603,6 +606,11 @@ public final class Main
         logger.error("Could not write the example query " + exampleQuery.getValue() + ".", e);
       }
     }
+  }
+
+  public static String getDbLocation()
+  {
+    return dbLocation;
   }
 }
 
