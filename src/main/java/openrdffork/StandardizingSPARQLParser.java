@@ -156,6 +156,7 @@ public class StandardizingSPARQLParser extends SPARQLParser
     final Map<String, Integer> variables = new HashMap<>();
     final Map<String, Integer> strings = new HashMap<>();
     final Map<Long, Long> limits = new HashMap<>();
+    final Map<Long, Long> offsets = new HashMap<>();
     final Map<String, Integer> numericLiterals = new HashMap<>();
     final Map<String, Integer> rdfLiterals = new HashMap<>();
     try {
@@ -189,6 +190,16 @@ public class StandardizingSPARQLParser extends SPARQLParser
           }
           limit.setValue(limits.get(limit.getValue()));
           return super.visit(limit, data);
+        }
+
+        @Override
+        public Object visit(ASTOffset offset, Object data) throws VisitorException
+        {
+          if (!offsets.containsKey(offset.getValue())) {
+            offsets.put(offset.getValue(), (long) (offsets.keySet().size() + 1));
+          }
+          offset.setValue(offset.getValue());
+          return super.visit(offset, data);
         }
 
         @Override
