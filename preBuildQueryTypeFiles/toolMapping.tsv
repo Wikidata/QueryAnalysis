@@ -132,6 +132,7 @@ entityAllOptionalLabelImageCoordinatesArticleInLanguage	Mozilla/5.0 (Macintosh; 
 entityLabelImageAbstractLocationEnglishWikipediaArticle	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/603.2.5 (KHTML, like Gecko) Version/10.1.1 Safari/603.2.5	toolSearchingForMultipleInformationAboutEntity	-1	needs more data
 entityLabelImageDescriptionAllOptional	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/603.2.5 (KHTML, like Gecko) Version/10.1.1 Safari/603.2.5	toolSeaerchingForOptionalInformationAboutEntites	-1	needs more data
 schemaAboutEntityLabelImageCoordinatesAllOptional	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/603.2.5 (KHTML, like Gecko) Version/10.1.1 Safari/603.2.5	toolSeaerchingForOptionalInformationAboutEntites	-1	needs more data
+schemaAboutEntityLabelImageCoordinatesAllOptional	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/603.3.8 (KHTML, like Gecko) Version/10.1.2 Safari/603.3.8	toolSeaerchingForOptionalInformationAboutEntites	-1	needs more data
 AllSubjectsAllPredicatesEntity	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36	toolSearchingEverythingForEntities	-1	needs more data
 AllSubjectsAllPredicatesEntityStatement	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36	toolSearchingEverythingForEntities	-1	needs more data
 AllSubjectsAllPredicatesReference	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36	toolSearchingEverythingForEntities	-1	needs more data
@@ -158,13 +159,17 @@ AllSubjectsAllPredicatesEntityStatement	Mozilla/5.0 (Windows NT 10.0; Win64; x64
 AllSubjectsAllPredicatesReference	Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36	toolSearchingEverythingForEntities	-1	needs more data
 entityAllPropertiesAndObjects	Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36	toolSearchingEverythingForEntities	-1	needs more data
 entityStatementAllPredicatesAndObjects	Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36	toolSearchingEverythingForEntities	-1	needs more data
+instanceOfSubclassRelations	Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36	toolSearchingForRelations	-1	needs more data
 referenceAllPredicatesAndObjects	Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36	toolSearchingEverythingForEntities	-1	needs more data
+instanceOfSubclassRelations	Mozilla/5.0 (Windows NT 10.0; WOW64; rv:55.0) Gecko/20100101 Firefox/55.0	toolSearchingForRelations	-1	needs more data
 thisAustralianStatisticalGeography2011IDOptionalDescriptionWithLabel	Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36	toolSearchingForAustralianGeography	-1	needs more data
 thisHasLabel_cityOrRegion	Mozilla/5.0 (Windows NT 6.1; WOW64; rv:35.0) Gecko/20100101 Firefox/35.0	toolSearchingForHasLabelWithConstraints	-1	needs more data (possible Source: 1)
 thisHasLabel_existingCountries	Mozilla/5.0 (Windows NT 6.1; WOW64; rv:35.0) Gecko/20100101 Firefox/35.0	toolSearchingForHasLabelWithConstraints	-1	needs more data (possible Source: 1)
 thisHasLabel_geographicalObjects	Mozilla/5.0 (Windows NT 6.1; WOW64; rv:35.0) Gecko/20100101 Firefox/35.0	toolSearchingForHasLabelWithConstraints	-1	needs more data (possible Source: 1)
+instanceOfSubclassRelations2	Mozilla/5.0 (Windows NT 6.1; WOW64; rv:53.0) Gecko/20100101 Firefox/53.0	toolSearchingForRelations	-1	needs more data
 instanceOfSubclassRelations	Mozilla/5.0 (Windows NT 6.1; WOW64; rv:54.0) Gecko/20100101 Firefox/54.0	toolSearchingForRelations	-1	needs more data
 thisAustralianStatisticalGeography2011IDOptionalDescriptionWithLabel	Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.109 Safari/537.36	toolSearchingForAustralianGeography	-1	needs more data
+instanceOfSubclassRelations2	Mozilla/5.0 (Windows NT 6.3; WOW64; rv:53.0) Gecko/20100101 Firefox/53.0	toolSearchingForRelations	-1	needs more data
 thisIMDb_ID	Mozilla/5.0 (Windows NT; Windows NT 10.0; es-ES) WindowsPowerShell/5.1.14393.206	toolUsingWindowsPowerShellForIMDb	-1	needs more data (possible Source: 0)
 thisIMDb_ID	Mozilla/5.0 (Windows NT; Windows NT 10.0; es-ES) WindowsPowerShell/5.1.14393.479	toolUsingWindowsPowerShellForIMDb	-1	needs more data (possible Source: 0)
 thisIMDb_ID	Mozilla/5.0 (Windows NT; Windows NT 10.0; es-ES) WindowsPowerShell/5.1.14393.576	toolUsingWindowsPowerShellForIMDb	-1	needs more data (possible Source: 0)
@@ -184,6 +189,7 @@ AllSubjectsAllPredicatesReference	Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/53
 entityAllPropertiesAndObjects	Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36	toolSearchingEverythingForEntities	-1	needs more data
 entityStatementAllPredicatesAndObjects	Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36	toolSearchingEverythingForEntities	-1	needs more data
 referenceAllPredicatesAndObjects	Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36	toolSearchingEverythingForEntities	-1	needs more data
+instanceOfSubclassRelations	Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36	toolSearchingForRelations	-1	needs more data
 instanceOfSubclassRelations	Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.86 Safari/537.36	toolSearchingForRelations	-1	needs more data
 instanceOfSubclassRelations2	Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.86 Safari/537.36	toolSearchingForRelations	-1	needs more data
 instanceOfSubclassRelations3	Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.86 Safari/537.36	toolSearchingForRelations	-1	needs more data
@@ -226,6 +232,7 @@ thiselCinema_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:50.0) Gecko/2010
 thisEldoblaje_Movie_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:50.0) Gecko/20100101 Firefox/50.0	toolSearchingForMovieDatabseID	-1	needs more data
 thiselFilm_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:50.0) Gecko/20100101 Firefox/50.0	toolSearchingForMovieDatabseID	-1	needs more data
 thisElonet_movie_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:50.0) Gecko/20100101 Firefox/50.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisExplotationVisaNumber	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:50.0) Gecko/20100101 Firefox/50.0	toolSearchingForMovieDatabseID	-1	needs more data
 thisfilm-documentaire.fr_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:50.0) Gecko/20100101 Firefox/50.0	toolSearchingForMovieDatabseID	-1	needs more data
 thisFilmAffinity_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:50.0) Gecko/20100101 Firefox/50.0	toolSearchingForMovieDatabseID	-1	needs more data
 thisFilmPolski.pl_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:50.0) Gecko/20100101 Firefox/50.0	toolSearchingForMovieDatabseID	-1	needs more data
@@ -295,6 +302,7 @@ thiselCinema_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:50.0) Gecko/2010
 thisEldoblaje_Movie_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:50.0) Gecko/20100101 Firefox/51.0	toolSearchingForMovieDatabseID	-1	needs more data
 thiselFilm_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:50.0) Gecko/20100101 Firefox/51.0	toolSearchingForMovieDatabseID	-1	needs more data
 thisElonet_movie_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:50.0) Gecko/20100101 Firefox/51.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisExplotationVisaNumber	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:50.0) Gecko/20100101 Firefox/51.0	toolSearchingForMovieDatabseID	-1	needs more data
 thisfilm-documentaire.fr_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:50.0) Gecko/20100101 Firefox/51.0	toolSearchingForMovieDatabseID	-1	needs more data
 thisFilmAffinity_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:50.0) Gecko/20100101 Firefox/51.0	toolSearchingForMovieDatabseID	-1	needs more data
 thisFilmPolski.pl_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:50.0) Gecko/20100101 Firefox/51.0	toolSearchingForMovieDatabseID	-1	needs more data
@@ -364,6 +372,7 @@ thiselCinema_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:50.0) Gecko/2010
 thisEldoblaje_Movie_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:50.0) Gecko/20100101 Firefox/52.0	toolSearchingForMovieDatabseID	-1	needs more data
 thiselFilm_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:50.0) Gecko/20100101 Firefox/52.0	toolSearchingForMovieDatabseID	-1	needs more data
 thisElonet_movie_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:50.0) Gecko/20100101 Firefox/52.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisExplotationVisaNumber	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:50.0) Gecko/20100101 Firefox/52.0	toolSearchingForMovieDatabseID	-1	needs more data
 thisfilm-documentaire.fr_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:50.0) Gecko/20100101 Firefox/52.0	toolSearchingForMovieDatabseID	-1	needs more data
 thisFilmAffinity_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:50.0) Gecko/20100101 Firefox/52.0	toolSearchingForMovieDatabseID	-1	needs more data
 thisFilmPolski.pl_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:50.0) Gecko/20100101 Firefox/52.0	toolSearchingForMovieDatabseID	-1	needs more data
@@ -433,6 +442,7 @@ thiselCinema_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:50.0) Gecko/2010
 thisEldoblaje_Movie_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:50.0) Gecko/20100101 Firefox/53.0	toolSearchingForMovieDatabseID	-1	needs more data
 thiselFilm_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:50.0) Gecko/20100101 Firefox/53.0	toolSearchingForMovieDatabseID	-1	needs more data
 thisElonet_movie_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:50.0) Gecko/20100101 Firefox/53.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisExplotationVisaNumber	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:50.0) Gecko/20100101 Firefox/53.0	toolSearchingForMovieDatabseID	-1	needs more data
 thisfilm-documentaire.fr_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:50.0) Gecko/20100101 Firefox/53.0	toolSearchingForMovieDatabseID	-1	needs more data
 thisFilmAffinity_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:50.0) Gecko/20100101 Firefox/53.0	toolSearchingForMovieDatabseID	-1	needs more data
 thisFilmPolski.pl_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:50.0) Gecko/20100101 Firefox/53.0	toolSearchingForMovieDatabseID	-1	needs more data
@@ -502,6 +512,7 @@ thiselCinema_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:50.0) Gecko/2010
 thisEldoblaje_Movie_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:50.0) Gecko/20100101 Firefox/54.0	toolSearchingForMovieDatabseID	-1	needs more data
 thiselFilm_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:50.0) Gecko/20100101 Firefox/54.0	toolSearchingForMovieDatabseID	-1	needs more data
 thisElonet_movie_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:50.0) Gecko/20100101 Firefox/54.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisExplotationVisaNumber	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:50.0) Gecko/20100101 Firefox/54.0	toolSearchingForMovieDatabseID	-1	needs more data
 thisfilm-documentaire.fr_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:50.0) Gecko/20100101 Firefox/54.0	toolSearchingForMovieDatabseID	-1	needs more data
 thisFilmAffinity_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:50.0) Gecko/20100101 Firefox/54.0	toolSearchingForMovieDatabseID	-1	needs more data
 thisFilmPolski.pl_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:50.0) Gecko/20100101 Firefox/54.0	toolSearchingForMovieDatabseID	-1	needs more data
@@ -571,6 +582,7 @@ thiselCinema_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:53.0) Gecko/2010
 thisEldoblaje_Movie_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0	toolSearchingForMovieDatabseID	-1	needs more data
 thiselFilm_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0	toolSearchingForMovieDatabseID	-1	needs more data
 thisElonet_movie_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisExplotationVisaNumber	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0	toolSearchingForMovieDatabseID	-1	needs more data
 thisfilm-documentaire.fr_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0	toolSearchingForMovieDatabseID	-1	needs more data
 thisFilmAffinity_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0	toolSearchingForMovieDatabseID	-1	needs more data
 thisFilmPolski.pl_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0	toolSearchingForMovieDatabseID	-1	needs more data
@@ -644,6 +656,7 @@ thiselCinema_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:54.0) Gecko/2010
 thisEldoblaje_Movie_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:54.0) Gecko/20100101 Firefox/54.0	toolSearchingForMovieDatabseID	-1	needs more data
 thiselFilm_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:54.0) Gecko/20100101 Firefox/54.0	toolSearchingForMovieDatabseID	-1	needs more data
 thisElonet_movie_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:54.0) Gecko/20100101 Firefox/54.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisExplotationVisaNumber	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:54.0) Gecko/20100101 Firefox/54.0	toolSearchingForMovieDatabseID	-1	needs more data
 thisfilm-documentaire.fr_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:54.0) Gecko/20100101 Firefox/54.0	toolSearchingForMovieDatabseID	-1	needs more data
 thisFilmAffinity_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:54.0) Gecko/20100101 Firefox/54.0	toolSearchingForMovieDatabseID	-1	needs more data
 thisFilmPolski.pl_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:54.0) Gecko/20100101 Firefox/54.0	toolSearchingForMovieDatabseID	-1	needs more data
@@ -713,6 +726,7 @@ thiselCinema_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:55.0) Gecko/2010
 thisEldoblaje_Movie_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:55.0) Gecko/20100101 Firefox/55.0	toolSearchingForMovieDatabseID	-1	needs more data
 thiselFilm_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:55.0) Gecko/20100101 Firefox/55.0	toolSearchingForMovieDatabseID	-1	needs more data
 thisElonet_movie_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:55.0) Gecko/20100101 Firefox/55.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisExplotationVisaNumber	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:55.0) Gecko/20100101 Firefox/55.0	toolSearchingForMovieDatabseID	-1	needs more data
 thisfilm-documentaire.fr_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:55.0) Gecko/20100101 Firefox/55.0	toolSearchingForMovieDatabseID	-1	needs more data
 thisFilmAffinity_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:55.0) Gecko/20100101 Firefox/55.0	toolSearchingForMovieDatabseID	-1	needs more data
 thisFilmPolski.pl_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:55.0) Gecko/20100101 Firefox/55.0	toolSearchingForMovieDatabseID	-1	needs more data
