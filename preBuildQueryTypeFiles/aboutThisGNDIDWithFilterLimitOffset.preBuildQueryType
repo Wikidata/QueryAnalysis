@@ -1,0 +1,9 @@
+SELECT ?cid ?p ?o
+WHERE {
+  ?cid wdt:P227 ?gnd.
+  ?article schema:about ?cid .
+  filter( regex(str(?article), "en.wikipedia.org" )) .
+  ?cid ?p ?o
+}
+limit 10000
+offset 1069000
