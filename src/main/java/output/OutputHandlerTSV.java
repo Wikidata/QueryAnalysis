@@ -87,6 +87,7 @@ public class OutputHandlerTSV extends OutputHandler
 
     List<String> header = new ArrayList<>();
     header.add("#Valid");
+    header.add("#First");
     header.add("#UniqueId");
     header.add("#OriginalId");
     header.add("#ToolName");
@@ -105,6 +106,7 @@ public class OutputHandlerTSV extends OutputHandler
     header.add("#Categories");
     header.add("#Coordinates");
     header.add("#UsedSparqlFeatures");
+    header.add("#PrimaryLanguage");
 
     header.add("#original_line(filename_line)");
     writer.writeHeaders(header);
@@ -147,6 +149,11 @@ public class OutputHandlerTSV extends OutputHandler
     // the order in which fields are being written to this list is important - it needs to be the same as the one for the header above!
     List<Object> line = new ArrayList<>();
     line.add(queryHandler.getValidityStatus());
+    if (queryHandler.isFirst()) {
+      line.add("FIRST");
+    } else {
+      line.add("COPY");
+    }
     line.add(queryHandler.getUniqeId());
     line.add(queryHandler.getOriginalId());
     line.add(queryHandler.getToolName());
@@ -166,8 +173,8 @@ public class OutputHandlerTSV extends OutputHandler
       line.add(queryHandler.getCategoriesString());
       line.add(queryHandler.getCoordinatesString());
 
-      Map<String, Integer> sparqlStatistics = queryHandler.getSparqlStatistics();
       //add all sparqlStatisticNodes
+      Map<String, Integer> sparqlStatistics = queryHandler.getSparqlStatistics();
       String sparqlStatisticsLine = "";
       for (Map.Entry<String, Integer> sparqlStatisticFeature : sparqlStatistics.entrySet()) {
         if (sparqlStatisticFeature.getValue() != 0) {
@@ -176,6 +183,7 @@ public class OutputHandlerTSV extends OutputHandler
         }
       }
       line.add(sparqlStatisticsLine);
+      line.add(queryHandler.getPrimaryLanguage());
 
     } else {
       for (int i = 0; i < 13; i++) {

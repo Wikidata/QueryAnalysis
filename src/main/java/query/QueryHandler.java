@@ -14,6 +14,8 @@ import java.util.Map.Entry;
  */
 public abstract class QueryHandler implements Serializable
 {
+  private boolean isFirst = false;
+
   /**
    * @param validity         The validity as determined by the decoding process.
    * @param lineToSet        The line this query came from.
@@ -104,6 +106,11 @@ public abstract class QueryHandler implements Serializable
    * Contains the sparql statistics.
    */
   protected HashMap<String, Integer> sparqlStatistics;
+
+  /**
+   * Contains the first named language in the language service call
+   */
+  protected String primaryLanguage;
   /**
    * Saves the query-string with added prefixes.
    */
@@ -318,6 +325,14 @@ public abstract class QueryHandler implements Serializable
    * Useful for caching.
    */
   protected abstract void computeSparqlStatistics();
+
+  public String getPrimaryLanguage()
+  {
+    if (this.sparqlStatistics == null) {
+      this.computeSparqlStatistics();
+    }
+    return primaryLanguage;
+  }
 
   /**
    * @return a map containing the number of occurrences of each sparql features
@@ -797,6 +812,20 @@ public abstract class QueryHandler implements Serializable
    * Computes if this query is simple or complex.
    */
   public abstract void computeSimpleOrComplex();
+
+  /**
+   * If called this query is being marked the first processed query with this
+   * query String
+   */
+  public void setFirst()
+  {
+    this.isFirst = true;
+  }
+
+  public boolean isFirst()
+  {
+    return isFirst;
+  }
 
   /**
    * @author adrian
