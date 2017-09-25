@@ -46,9 +46,8 @@ class SparqlStatisticHandler:
         result = ""
         for featureName in keys:
             featureCount = self.statistic[featureName]
-            result += '{:<28} {:>8}\t{:>5}%'.format(
-                featureName, featureCount,
-                round(float(featureCount) / self.totalCount * 100, 2)) + "\n"
+            result += featureName + "\t" +  str(featureCount) + "\t" + \
+                    str(round(float(featureCount) / self.totalCount * 100, 2)) + "\n"
 
         print(result)
 
