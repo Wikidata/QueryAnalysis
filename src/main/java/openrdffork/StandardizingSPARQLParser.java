@@ -196,7 +196,7 @@ public class StandardizingSPARQLParser extends SPARQLParser
           if (!offsets.containsKey(offset.getValue())) {
             offsets.put(offset.getValue(), (long) (offsets.keySet().size() + 1));
           }
-          offset.setValue(offset.getValue());
+          offset.setValue(offsets.get(offset.getValue()));
           return super.visit(offset, data);
         }
 
