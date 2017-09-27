@@ -3,6 +3,8 @@ package query;
 import general.Main;
 import openrdffork.StandardizingSPARQLParser;
 import openrdffork.TupleExprWrapper;
+
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.log4j.Logger;
 import org.openrdf.model.Value;
 import org.openrdf.model.impl.URIImpl;
@@ -246,7 +248,12 @@ public class OpenRDFQueryHandler extends QueryHandler
       throw new IllegalStateException();
     }
 
-    String result = queryTypes.get(new TupleExprWrapper(normalizedQuery.getTupleExpr()));
+    String normalizedQueryDump = normalizedQuery.getTupleExpr().toString();
+
+    byte[] normalizedMD5 = DigestUtils.md5(normalizedQueryDump);
+    int normalizedIndex = Math.floorMod(normalizedQueryDump.hashCode(), Main.numerOfQueryTypeDiskMaps);
+
+    String result = Main.queryTypes[normalizedIndex].get(normalizedMD5);
 
     if (result != null) {
       this.queryType = result;
@@ -254,9 +261,18 @@ public class OpenRDFQueryHandler extends QueryHandler
     }
 
     if (Main.dynamicQueryTypes) {
-      String newQueryType = "qt:" + String.valueOf(threadNumber) + "_" + String.valueOf(queryTypes.size());
-      queryTypes.put(new TupleExprWrapper(normalizedQuery.getTupleExpr()), newQueryType);
-      this.queryType = newQueryType;
+      synchronized (Main.queryTypes[normalizedIndex]) {
+        result = Main.queryTypes[normalizedIndex].get(normalizedMD5);
+
+        if (result != null) {
+          this.queryType = result;
+          return;
+        } else {
+          String newQueryType = "qt:" + String.valueOf(normalizedIndex) + "_" + String.valueOf(Main.queryTypes[normalizedIndex].size());
+          Main.queryTypes[normalizedIndex].put(normalizedMD5, newQueryType);
+          this.queryType = newQueryType;
+        }
+      }
     } else {
       this.queryType = "UNKNOWN";
     }

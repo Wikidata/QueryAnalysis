@@ -30,6 +30,7 @@ import input.factories.InputHandlerTSVFactory;
 import logging.LoggingHandler;
 import openrdffork.TupleExprWrapper;
 import org.apache.commons.cli.*;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.jsoup.Connection;
@@ -37,6 +38,10 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.mapdb.DB;
+import org.mapdb.DBMaker;
+import org.mapdb.HTreeMap;
+import org.mapdb.Serializer;
 import org.openrdf.query.parser.ParsedQuery;
 import output.factories.OutputHandlerTSVFactory;
 import query.Cache;
@@ -71,9 +76,13 @@ public final class Main
    */
   public static final Map<String, Set<String>> propertyGroupMapping = new HashMap<String, Set<String>>();
   /**
+   * Number of disk maps for query types.
+   */
+  public static int numerOfQueryTypeDiskMaps = 16;
+  /**
    * Saves the premade queryTypes.
    */
-  public static final Map<TupleExprWrapper, String> queryTypes = new HashMap<TupleExprWrapper, String>();
+  public static final HTreeMap<byte[], String>[] queryTypes = new HTreeMap[numerOfQueryTypeDiskMaps];
   /**
    * Saves the mapping of query type and user agent to tool name and version.
    */
@@ -243,7 +252,13 @@ public final class Main
     LoggingHandler.initConsoleLog();
 
     loadStandardPrefixes();
-    loadPreBuildQueryTypes();
+
+    DB mapDb = DBMaker.fileDB(Main.getDbLocation()).fileChannelEnable().fileMmapEnable().make();
+    for (int i = 0; i < numerOfQueryTypeDiskMaps; i++) {
+      queryTypes[i] = mapDb.hashMap("queryTypeMap" + i, Serializer.BYTE_ARRAY, Serializer.STRING).createOrOpen();
+    }
+    loadPreBuildQueryTypes(mapDb);
+
     loadUserAgentRegex();
     if (exampleQueries) {
       getExampleQueries();
@@ -297,10 +312,7 @@ public final class Main
       Cache.mapDb.close();
     }
 
-    // writeQueryTypes(queryTypes);
-    if (exampleQueries) {
-      writeExampleQueries(outputFolder);
-    }
+    mapDb.close();
 
     if (!cmd.hasOption("ignoreLock")) {
       lockFile.delete();
@@ -363,8 +375,9 @@ public final class Main
   /**
    * Loads all pre-build query types.
    */
-  private static void loadPreBuildQueryTypes()
+  private static void loadPreBuildQueryTypes(DB mapDb)
   {
+
     try (DirectoryStream<Path> directoryStream =
              Files.newDirectoryStream(Paths.get("preBuildQueryTypeFiles"))) {
       for (Path filePath : directoryStream) {
@@ -379,7 +392,11 @@ public final class Main
             ParsedQuery normalizedPreBuildQuery = queryHandler.getNormalizedQuery();
             String queryTypeName = filePath.toString().substring(filePath.toString().lastIndexOf("/") + 1, filePath.toString().lastIndexOf("."));
             if (normalizedPreBuildQuery != null) {
-              queryTypes.put(new TupleExprWrapper(normalizedPreBuildQuery.getTupleExpr()), queryTypeName);
+              String queryDump = normalizedPreBuildQuery.getTupleExpr().toString();
+              byte[] md5 = DigestUtils.md5(queryDump);
+
+              int index = Math.floorMod(queryDump.hashCode(), numerOfQueryTypeDiskMaps);
+              queryTypes[index].put(md5, queryTypeName);
             } else {
               logger.info("Pre-build query " + queryTypeName + " could not be parsed.");
             }

@@ -50,10 +50,6 @@ public abstract class QueryHandler implements Serializable
    * The number of the thread (needs to be unique for one run).
    */
   protected int threadNumber = -1;
-  /**
-   * The map holding the query types.
-   */
-  protected Map<TupleExprWrapper, String> queryTypes;
 
   /**
    * A pattern of a SPARQL query where all "parameter" information is removed from
@@ -249,14 +245,6 @@ public abstract class QueryHandler implements Serializable
   public void setThreadNumber(int threadNumberToSet)
   {
     threadNumber = threadNumberToSet;
-  }
-
-  /**
-   * @param queryTypesToSet {@link #queryTypes}
-   */
-  public void setQueryTypes(Map<TupleExprWrapper, String> queryTypesToSet)
-  {
-    this.queryTypes = queryTypesToSet;
   }
 
   /**
