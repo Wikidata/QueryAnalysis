@@ -120,6 +120,10 @@ public final class Main
    */
   public static boolean gzipOutput = true;
   /**
+   * The name of the month we're working with - we assume that it's the last part of workingDirectory.
+   */
+  public static String month;
+  /**
    * Saves if example queries should be matched.
    */
   private static boolean exampleQueries = true;
@@ -131,25 +135,22 @@ public final class Main
    * Saves the output folder name for query types.
    */
   private static String outputFolderNameQueryTypes;
-
+  /**
+   * The directory we are processing.
+   */
   private static String workingDirectory;
-
   /**
-   * The name of the month we're working with - we assume that it's the last part of workingDirectory.
+   * If set to true we calculate the OriginalIDs.
    */
-  public static String month;
-
+  private static boolean withUniqueQueryDetection;
   /**
-   * If set to true we calculate the OriginalIDs
+   * The location of the unique query map db file.
    */
-  private static boolean withUniqueQueryDetection = false;
-
-  public static boolean isWithUniqueQueryDetection()
-  {
-    return withUniqueQueryDetection;
-  }
-
   private static String dbLocation;
+  /**
+   * The location of the query type map db file.
+   */
+  private static String queryTypeMapDbLocation;
 
   /**
    * Since this is a utility class, it should not be instantiated.
@@ -157,6 +158,14 @@ public final class Main
   private Main()
   {
     throw new AssertionError("Instantiating utility class Main");
+  }
+
+  /**
+   * @return if unique query detection was enabled.
+   */
+  public static boolean isWithUniqueQueryDetection()
+  {
+    return withUniqueQueryDetection;
   }
 
   /**
@@ -178,6 +187,7 @@ public final class Main
     options.addOption("i", "ignoreLock", false, "Ignores the lock file.");
     options.addOption("u", "withUniqueQueryDetection", false, "Deunify queries.");
     options.addOption("p", "dbLocation", true, "The path of the uniqueQueriesMapDb file. Default is in the working directory.");
+    options.addOption("q", "queryTypeMapLocation", true, "The path of the query type map db file. Default is in the working directory.");
 
 
     //some parameters which can be changed through parameters
@@ -235,7 +245,12 @@ public final class Main
       if (cmd.hasOption("dbLocation")) {
         dbLocation = cmd.getOptionValue("dbLocation");
       } else {
-        dbLocation = workingDirectory + "onDiskMap.db";
+        dbLocation = workingDirectory + "uniqueQueryMap.db";
+      }
+      if (cmd.hasOption("queryTypeMapLocation")) {
+        queryTypeMapDbLocation = cmd.getOptionValue("queryTypeMapLocation");
+      } else {
+        queryTypeMapDbLocation = workingDirectory + "queryTypeMap.db";
       }
     } catch (UnrecognizedOptionException e) {
       System.out.println("Unrecognized commandline option: " + e.getOption());
@@ -253,7 +268,7 @@ public final class Main
 
     loadStandardPrefixes();
 
-    DB mapDb = DBMaker.fileDB(Main.getDbLocation()).fileChannelEnable().fileMmapEnable().make();
+    DB mapDb = DBMaker.fileDB(queryTypeMapDbLocation).fileChannelEnable().fileMmapEnable().make();
     for (int i = 0; i < numerOfQueryTypeDiskMaps; i++) {
       queryTypes[i] = mapDb.hashMap("queryTypeMap" + i, Serializer.BYTE_ARRAY, Serializer.STRING).createOrOpen();
     }
