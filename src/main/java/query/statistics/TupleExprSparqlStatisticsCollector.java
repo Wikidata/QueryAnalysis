@@ -51,7 +51,6 @@ public class TupleExprSparqlStatisticsCollector extends QueryModelVisitorBase
     neededNodes.add("Filter");
     neededNodes.add("Join");
     neededNodes.add("Reduced");
-    neededNodes.add("ValueConstant");
     neededNodes.add("Graph");
     String className = node.getClass().getSimpleName();
     if (neededNodes.contains(className)) {
@@ -78,9 +77,9 @@ public class TupleExprSparqlStatisticsCollector extends QueryModelVisitorBase
   public void meet(ArbitraryLengthPath node) throws Exception
   {
     if (node.getMinLength() == 0) {
-      this.add("+");
-    } else {
       this.add("*");
+    } else {
+      this.add("+");
     }
     super.meetNode(node);
   }
