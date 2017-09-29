@@ -46,10 +46,12 @@ class SparqlStatisticHandler:
     def printKeys(self, keys):
         pprint(self.statistic)
         result = ""
+        i = 1
         for featureName in keys:
             featureCount = self.statistic[featureName]
-            result += featureName + "\t" +  str(featureCount) + "\t" + \
-                    str(round(float(featureCount) / self.totalCount * 100, 2)) + "\n"
+            result += featureName + "\t" +  str(featureCount) + "\t=B" + str(i) + "/B34\n"
+
+            i += 1
 
         print(result)
 
@@ -71,6 +73,7 @@ class SparqlStatisticHandler:
 
         self.statistic["And"] = self.statistic["Join"]
         self.statistic["Values"] = self.statistic["BindingValue"]
+        self.statistic["'+"] = self.statistic["+"]
 
         # only print specified columns
         toPrintKeys = ["Select", "Ask", "Describe", "Construct", "Distinct",
@@ -78,10 +81,11 @@ class SparqlStatisticHandler:
                        "Optional", "Graph", "Not Exists", "Minus", "Exists", "Count",
                        "Max", "Min", "Avg", "Sum", "Group By", "Having", "Service",
                        "LangService", "Sample", "Bind", "GroupConcat",
-                       "Reduced", "Values", "+", "*"]
+                       "Reduced", "Values", "'+", "*"]
 
 
         self.printKeys(toPrintKeys)
+        print("Total:\t" + str(self.totalCount))
 
 
 pprint(args)
