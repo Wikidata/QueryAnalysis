@@ -42,7 +42,7 @@ os.chdir(
     utility.addMissingSlash(args.monthsFolder) +
     utility.addMissingSlash(args.month))
 
-subfolder = "queryTypeDataset/"
+subfolder = "uniqueQueryDataset/"
 
 processedPrefix = "processedLogData/QueryProcessedOpenRDF"
 sourcePrefix = "rawLogData/QueryCnt"
@@ -51,8 +51,6 @@ if not os.path.exists(subfolder):
     os.makedirs(subfolder)
     os.makedirs(subfolder + "processedLogData")
     os.makedirs(subfolder + "rawLogData")
-
-usedQueryTypes = set()
 
 for i in xrange(1, 32):
     if not (os.path.exists(processedPrefix + "%02d" % i + ".tsv.gz")
@@ -82,8 +80,6 @@ for i in xrange(1, 32):
                 sWriter.fieldnames = sReader.fieldnames
                 sWriter.writerow(sh)
 
-            if (processed['#QueryType'] not in usedQueryTypes):
+            if (processed['#First'] == "FIRST"):
                 pWriter.writerow(processed)
                 sWriter.writerow(source)
-
-            usedQueryTypes.add(processed['#QueryType'])
