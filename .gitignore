@@ -74,5 +74,5 @@ tools/visualisePropertyTree/bower_components/
 # example log files
 exampleMonthsFolder/exampleMonth/processedLogData/
 
-
+/exampleMonthsFolder/exampleMonth/uniqueQueryDataset/
 /exampleMonthsFolder/exampleMonth/onDiskMap.db
