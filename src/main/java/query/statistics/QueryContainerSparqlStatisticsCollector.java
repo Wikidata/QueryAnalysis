@@ -38,6 +38,11 @@ public class QueryContainerSparqlStatisticsCollector extends ASTVisitorBase
     return this.visitNode(node, data);
   }
 
+  public Object visit(ASTBindingValue node, Object data) throws VisitorException
+  {
+    return this.visitNode(node, data);
+  }
+
   public Object visit(ASTConstructQuery node, Object data) throws VisitorException
   {
     return this.visitNode(node, data);

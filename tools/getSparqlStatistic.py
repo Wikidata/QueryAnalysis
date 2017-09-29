@@ -2,10 +2,11 @@ import argparse
 import os
 import sys
 from collections import defaultdict
+from pprint import pprint
+
+import config
 from postprocess import processdata
 from utility import utility
-import config
-from pprint import pprint
 
 parser = argparse.ArgumentParser(description="Prints out the SPARQL statistic")
 parser.add_argument("--monthsFolder", "-m", default=config.monthsFolder,
@@ -43,6 +44,7 @@ class SparqlStatisticHandler:
                 self.statistic[usedSparqlFeature.lstrip()] += 1
 
     def printKeys(self, keys):
+        pprint(self.statistic)
         result = ""
         for featureName in keys:
             featureCount = self.statistic[featureName]
@@ -68,20 +70,21 @@ class SparqlStatisticHandler:
         self.statistic["Service"] = self.statistic["ServiceGraphPattern"]
 
         self.statistic["And"] = self.statistic["Join"]
-        self.statistic["Value"] = self.statistic["ValueConstant"]
+        self.statistic["Values"] = self.statistic["BindingValue"]
 
         # only print specified columns
         toPrintKeys = ["Select", "Ask", "Describe", "Construct", "Distinct",
                        "Limit", "Offset", "Order By", "Filter", "And", "Union",
                        "Optional", "Graph", "Not Exists", "Minus", "Exists", "Count",
                        "Max", "Min", "Avg", "Sum", "Group By", "Having", "Service",
-                       "LangService", "Join", "Sample", "Bind", "GroupConcat",
-                       "Reduced", "Value", "+", "*"]
+                       "LangService", "Sample", "Bind", "GroupConcat",
+                       "Reduced", "Values", "+", "*"]
 
 
         self.printKeys(toPrintKeys)
 
 
+pprint(args)
 handler = SparqlStatisticHandler()
 
 processdata.processMonth(handler, args.month, args.monthsFolder)
