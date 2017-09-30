@@ -45,20 +45,14 @@ parser.add_argument("--noGzipOutput", "-g", help="Disables gzipping of the "
 parser.add_argument("--noExampleQueriesOutput", "-e", help="Disables the "
                     + "matching of example queries.", action="store_true")
 parser.add_argument("--withUniqueQueryDetection", "-u", help="Enable unique query detection", action="store_true")
-parser.add_argument("--referenceDirectory", "-r",
-                    default=config.queryReferenceDirectory,
-                    type=str,
-                    help="The directory with the reference query types.")
-parser.add_argument("--fdupesExecutable", "-f",
-                    default=config.fdupesExecutable, type=str,
-                    help="The location of the fdupes executable.")
+parser.add_argument("--dbLocation", "-p", type = str, default = config.dbLocation, help = "The path of the uniqueQueriesMapDb file.")
+parser.add_argument("--queryTypeMapLocation", "-q", type = str, default = config.queryTypeMapDbLocation, help = "The path of the query type map db file. Default is in the working directory.")
 parser.add_argument("--monthsFolder", "-m", default=config.monthsFolder,
                     type=str,
                     help="The folder in which the months directory are "
                     + "residing.")
 parser.add_argument("--year", "-y", default=datetime.now().year, type=int,
                     help="The year to be processed (default current year).")
-parser.add_argument("--noQueryTypeUnification", "-q", help="Disables the unifying of query types.", action="store_true")
 parser.add_argument("months", type=str, help="The months to be processed")
 
 # These are the field we extract from wmf.wdqs_extract that form the raw
@@ -150,7 +144,7 @@ for monthName in args.months.split(","):
 
     mavenCall = ['mvn', 'exec:java@QueryAnalysis']
 
-    mavenArguments = '-Dexec.args=-w ' + month + ' -n ' + str(args.threads)
+    mavenArguments = '-Dexec.args=-w ' + month + ' -n ' + str(args.threads) + ' -p ' + args.dbLocation + " -q " + args.queryTypeMapLocation
 
     if args.logging:
         mavenArguments += " -l"
@@ -182,13 +176,3 @@ for monthName in args.months.split(","):
         sys.exit(1)
 
     os.chdir(owd)
-
-    # Finally we call the query type unification
-    # (see python unifyQueryTypes.py for details)
-    
-    if not args.noQueryTypeUnification:
-        print "Starting to unify the query types for " + monthName + "."
-
-        unifyQueryTypes.unifyQueryTypes(monthName, args.monthsFolder, args.referenceDirectory, args.fdupesExecutable)
-    else:
-        print "WARNING: The query types in " + monthName + " are not unified."

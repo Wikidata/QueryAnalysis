@@ -14,33 +14,6 @@ import java.util.Map.Entry;
  */
 public abstract class QueryHandler implements Serializable
 {
-  private boolean isFirst = false;
-
-  /**
-   * @param validity         The validity as determined by the decoding process.
-   * @param lineToSet        The line this query came from.
-   * @param dayToSet         The day this query came from.
-   * @param queryStringToSet The query as a string.
-   */
-  public QueryHandler(Validity validity, Long lineToSet, Integer dayToSet, String queryStringToSet)
-  {
-    this.day = dayToSet;
-    this.line = lineToSet;
-    this.validityStatus = validity;
-
-    this.setUniqeId(this.day, this.line);
-    this.setOriginalId(this.getUniqeId());
-
-    if (queryStringToSet.equals("")) {
-      this.validityStatus = Validity.EMPTY;
-    } else if (validityStatus == null || validityStatus.getValue() > -1) {
-      this.queryStringWithoutPrefixes = queryStringToSet;
-      this.lengthNoAddedPrefixes = queryStringToSet.length();
-      this.queryString = queryStringToSet;
-      update();
-    }
-  }
-
   /**
    * Define a static logger variable.
    */
@@ -51,10 +24,10 @@ public abstract class QueryHandler implements Serializable
    */
   protected int threadNumber = -1;
   /**
-   * The map holding the query types.
+   * The day at which the Query was being created;
+   * Used for the calculation of the uniqueId.
    */
-  protected Map<TupleExprWrapper, String> queryTypes;
-
+  protected int day;
   /**
    * A pattern of a SPARQL query where all "parameter" information is removed from
    * the query
@@ -106,11 +79,18 @@ public abstract class QueryHandler implements Serializable
    * Contains the sparql statistics.
    */
   protected HashMap<String, Integer> sparqlStatistics;
-
   /**
-   * Contains the first named language in the language service call
+   * Contains the first named language in the language service call.
    */
   protected String primaryLanguage;
+  /**
+   * Saves the current line the query was from.
+   */
+  protected long line;
+  /**
+   * If this entry was the first entry for this specific query.
+   */
+  private boolean isFirst;
   /**
    * Saves the query-string with added prefixes.
    */
@@ -120,13 +100,9 @@ public abstract class QueryHandler implements Serializable
    */
   private String queryStringWithoutPrefixes;
   /**
-   * Saves if queryString is a valid query, and if not, why
+   * Saves if queryString is a valid query, and if not, why.
    */
   private Validity validityStatus;
-  /**
-   * Saves the current line the query was from.
-   */
-  protected long line;
   /**
    * Saves the current file the query was from.
    */
@@ -152,6 +128,14 @@ public abstract class QueryHandler implements Serializable
    */
   private boolean toolComputed;
   /**
+   * True if the user category information was already computed.
+   */
+  private boolean sourceCategoryComputed;
+  /**
+   * The source category of this entry (BOT, USER OR UNKNOWN).
+   */
+  private SourceCategory sourceCategory;
+  /**
    * The userAgent string which executed this query.
    */
   private String userAgent;
@@ -166,17 +150,19 @@ public abstract class QueryHandler implements Serializable
   /**
    * The geo coordinates as a string of comma separated values.
    */
-  private String coordinatesString = null;
+  private String coordinatesString;
   /**
    * The categories as a string of comma separated values.
    */
-  private String categories = null;
-
+  private String categories;
   /**
-   * The day at which the Query was being created;
-   * Used for the calculation of the uniqueId.
+   * The unique id consists of the hash of the QueryString combined with the line it was being executed.
    */
-  protected int day;
+  private String uniqeId;
+  /**
+   * The id of the first queryHandler with this queryString.
+   */
+  private String originalId;
 
   /**
    *
@@ -185,6 +171,31 @@ public abstract class QueryHandler implements Serializable
   {
     this.queryString = "";
     this.validityStatus = Validity.DEFAULT;
+  }
+
+  /**
+   * @param validity         The validity as determined by the decoding process.
+   * @param lineToSet        The line this query came from.
+   * @param dayToSet         The day this query came from.
+   * @param queryStringToSet The query as a string.
+   */
+  public QueryHandler(Validity validity, Long lineToSet, Integer dayToSet, String queryStringToSet)
+  {
+    this.day = dayToSet;
+    this.line = lineToSet;
+    this.validityStatus = validity;
+
+    this.setUniqeId(this.day, this.line);
+    this.setOriginalId(this.getUniqeId());
+
+    if (queryStringToSet.equals("")) {
+      this.validityStatus = Validity.EMPTY;
+    } else if (validityStatus == null || validityStatus.getValue() > -1) {
+      this.queryStringWithoutPrefixes = queryStringToSet;
+      this.lengthNoAddedPrefixes = queryStringToSet.length();
+      this.queryString = queryStringToSet;
+      update();
+    }
   }
 
   public String getUniqeId()
@@ -215,20 +226,10 @@ public abstract class QueryHandler implements Serializable
     return month + "_" + day + "_" + line;
   }
 
-  /**
-   * The unique id consists of the hash of the QueryString combined with the line it was being executed.
-   */
-  private String uniqeId;
-
   protected void setOriginalId(String originalId)
   {
     this.originalId = originalId;
   }
-
-  /**
-   * The id of the first queryHandler with this queryString.
-   */
-  private String originalId;
 
   /**
    * Update the handler to represent the string in queryString.
@@ -249,14 +250,6 @@ public abstract class QueryHandler implements Serializable
   public void setThreadNumber(int threadNumberToSet)
   {
     threadNumber = threadNumberToSet;
-  }
-
-  /**
-   * @param queryTypesToSet {@link #queryTypes}
-   */
-  public void setQueryTypes(Map<TupleExprWrapper, String> queryTypesToSet)
-  {
-    this.queryTypes = queryTypesToSet;
   }
 
   /**
@@ -284,11 +277,11 @@ public abstract class QueryHandler implements Serializable
   }
 
   /**
-   * @param validityStatus validityStatus to set the variable valid to
+   * @param validityStatusToSet validityStatus to set the variable valid to
    */
-  public final void setValidityStatus(Validity validityStatus)
+  public final void setValidityStatus(Validity validityStatusToSet)
   {
-    this.validityStatus = validityStatus;
+    this.validityStatus = validityStatusToSet;
   }
 
   /**
@@ -385,7 +378,7 @@ public abstract class QueryHandler implements Serializable
   /**
    * Computes the query type.
    *
-   * @throws IllegalStateException
+   * @throws IllegalStateException If called on an invalid query.
    */
   protected abstract void computeQueryType() throws IllegalStateException;
 
@@ -422,11 +415,11 @@ public abstract class QueryHandler implements Serializable
   }
 
   /**
-   * @param currentFile the current file the query originated from
+   * @param currentFileToSet the current file the query originated from
    */
-  public final void setCurrentFile(String currentFile)
+  public final void setCurrentFile(String currentFileToSet)
   {
-    this.currentFile = currentFile;
+    this.currentFile = currentFileToSet;
   }
 
   /**
@@ -496,7 +489,7 @@ public abstract class QueryHandler implements Serializable
       if (toolCommentLineEndIndex == -1) {
         toolCommentLineEndIndex = queryStringWithoutPrefixes.length();
       }
-      this.toolName = this.queryStringWithoutPrefixes.substring(toolIndex + 6, toolCommentLineEndIndex);
+      this.toolName = this.queryStringWithoutPrefixes.substring(toolIndex + 6, toolCommentLineEndIndex).trim();
       this.toolVersion = "0.1";
       return;
     }
@@ -543,6 +536,33 @@ public abstract class QueryHandler implements Serializable
       this.computeTool();
     }
     return toolVersion;
+  }
+
+  /**
+   * Computes the source category for lazy loading.
+   */
+  private void computeSourceCategory()
+  {
+    if (Main.sourceCategoryUserToolName.contains(this.getToolName()) || this.getToolName().equals("USER")) {
+      this.sourceCategory = SourceCategory.USER;
+      this.sourceCategoryComputed = true;
+    } else if (this.getToolName().equals("UNKNOWN")) {
+      this.sourceCategory = SourceCategory.UNKNOWN;
+      this.sourceCategoryComputed = true;
+    } else {
+      this.sourceCategory = SourceCategory.BOT;
+      this.sourceCategoryComputed = true;
+    }
+  }
+  /**
+   * @return The source category this query most likely came from.
+   */
+  public final SourceCategory getSourceCategory()
+  {
+    if (!sourceCategoryComputed) {
+      this.computeSourceCategory();
+    }
+    return sourceCategory;
   }
 
   /**
@@ -849,6 +869,26 @@ public abstract class QueryHandler implements Serializable
      * The query is of complex complexity.
      */
     COMPLEX
+  }
+
+  /**
+   * @author adrian
+   * An enumeration specifying the source of the query.
+   */
+  public enum SourceCategory
+  {
+    /**
+     * If the query was send by a bot.
+     */
+    BOT,
+    /**
+     * If the query was send by a real user.
+     */
+    USER,
+    /**
+     * If the distinction could not be made.
+     */
+    UNKNOWN
   }
 
   /**

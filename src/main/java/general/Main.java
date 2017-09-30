@@ -30,6 +30,7 @@ import input.factories.InputHandlerTSVFactory;
 import logging.LoggingHandler;
 import openrdffork.TupleExprWrapper;
 import org.apache.commons.cli.*;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.jsoup.Connection;
@@ -37,6 +38,10 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.mapdb.DB;
+import org.mapdb.DBMaker;
+import org.mapdb.HTreeMap;
+import org.mapdb.Serializer;
 import org.openrdf.query.parser.ParsedQuery;
 import output.factories.OutputHandlerTSVFactory;
 import query.Cache;
@@ -71,9 +76,13 @@ public final class Main
    */
   public static final Map<String, Set<String>> propertyGroupMapping = new HashMap<String, Set<String>>();
   /**
+   * Number of disk maps for query types.
+   */
+  public static final int numerOfQueryTypeDiskMaps = 16;
+  /**
    * Saves the premade queryTypes.
    */
-  public static final Map<TupleExprWrapper, String> queryTypes = new HashMap<TupleExprWrapper, String>();
+  public static final HTreeMap<byte[], String>[] queryTypes = new HTreeMap[numerOfQueryTypeDiskMaps];
   /**
    * Saves the mapping of query type and user agent to tool name and version.
    */
@@ -99,6 +108,10 @@ public final class Main
    */
   public static final Set<String> simpleQueryWhitelist = new HashSet<String>();
   /**
+   * Saves all user agents that should be in the source category user.
+   */
+  public static final Set<String> sourceCategoryUserToolName = new HashSet<String>();
+  /**
    * Saves if metrics should be calculated for bot queries.
    */
   public static boolean withBots = true;
@@ -111,6 +124,10 @@ public final class Main
    */
   public static boolean gzipOutput = true;
   /**
+   * The name of the month we're working with - we assume that it's the last part of workingDirectory.
+   */
+  public static String month;
+  /**
    * Saves if example queries should be matched.
    */
   private static boolean exampleQueries = true;
@@ -122,25 +139,22 @@ public final class Main
    * Saves the output folder name for query types.
    */
   private static String outputFolderNameQueryTypes;
-
+  /**
+   * The directory we are processing.
+   */
   private static String workingDirectory;
-
   /**
-   * The name of the month we're working with - we assume that it's the last part of workingDirectory.
+   * If set to true we calculate the OriginalIDs.
    */
-  public static String month;
-
+  private static boolean withUniqueQueryDetection;
   /**
-   * If set to true we calculate the OriginalIDs
+   * The location of the unique query map db file.
    */
-  private static boolean withUniqueQueryDetection = false;
-
-  public static boolean isWithUniqueQueryDetection()
-  {
-    return withUniqueQueryDetection;
-  }
-
   private static String dbLocation;
+  /**
+   * The location of the query type map db file.
+   */
+  private static String queryTypeMapDbLocation;
 
   /**
    * Since this is a utility class, it should not be instantiated.
@@ -148,6 +162,14 @@ public final class Main
   private Main()
   {
     throw new AssertionError("Instantiating utility class Main");
+  }
+
+  /**
+   * @return if unique query detection was enabled.
+   */
+  public static boolean isWithUniqueQueryDetection()
+  {
+    return withUniqueQueryDetection;
   }
 
   /**
@@ -169,6 +191,7 @@ public final class Main
     options.addOption("i", "ignoreLock", false, "Ignores the lock file.");
     options.addOption("u", "withUniqueQueryDetection", false, "Deunify queries.");
     options.addOption("p", "dbLocation", true, "The path of the uniqueQueriesMapDb file. Default is in the working directory.");
+    options.addOption("q", "queryTypeMapLocation", true, "The path of the query type map db file. Default is in the working directory.");
 
 
     //some parameters which can be changed through parameters
@@ -226,7 +249,12 @@ public final class Main
       if (cmd.hasOption("dbLocation")) {
         dbLocation = cmd.getOptionValue("dbLocation");
       } else {
-        dbLocation = workingDirectory + "onDiskMap.db";
+        dbLocation = workingDirectory + "uniqueQueryMap.db";
+      }
+      if (cmd.hasOption("queryTypeMapLocation")) {
+        queryTypeMapDbLocation = cmd.getOptionValue("queryTypeMapLocation");
+      } else {
+        queryTypeMapDbLocation = workingDirectory + "queryTypeMap.db";
       }
     } catch (UnrecognizedOptionException e) {
       System.out.println("Unrecognized commandline option: " + e.getOption());
@@ -243,10 +271,19 @@ public final class Main
     LoggingHandler.initConsoleLog();
 
     loadStandardPrefixes();
-    loadPreBuildQueryTypes();
+
+    DB mapDb = DBMaker.fileDB(queryTypeMapDbLocation).fileChannelEnable().fileMmapEnable().make();
+    for (int i = 0; i < numerOfQueryTypeDiskMaps; i++) {
+      queryTypes[i] = mapDb.hashMap("queryTypeMap" + i, Serializer.BYTE_ARRAY, Serializer.STRING).createOrOpen();
+    }
+    loadPreBuildQueryTypes(mapDb);
+
     loadUserAgentRegex();
+    loadToolNamesForUserCategory();
+
     if (exampleQueries) {
       getExampleQueries();
+      writeExampleQueries(outputFolder);
     }
     loadPropertyGroupMapping();
 
@@ -268,11 +305,6 @@ public final class Main
     long startTime = System.nanoTime();
 
     ExecutorService executor = Executors.newFixedThreadPool(numberOfThreads);
-
-    prepareWritingQueryTypes(outputFolder);
-
-    String testQuery = "SELECT * WHERE { ?var wdt:P31/wdt:P279* wd:Q123 }";
-    QueryHandler testHandler = new OpenRDFQueryHandler(QueryHandler.Validity.DEFAULT, -1L, -1, testQuery);
 
     for (int day = 1; day <= 31; day++) {
       String inputFile = inputFilePrefix + String.format("%02d", day) + inputFileSuffix;
@@ -297,10 +329,7 @@ public final class Main
       Cache.mapDb.close();
     }
 
-    // writeQueryTypes(queryTypes);
-    if (exampleQueries) {
-      writeExampleQueries(outputFolder);
-    }
+    mapDb.close();
 
     if (!cmd.hasOption("ignoreLock")) {
       lockFile.delete();
@@ -310,6 +339,47 @@ public final class Main
     long millis = TimeUnit.MILLISECONDS.convert(stopTime - startTime, TimeUnit.NANOSECONDS);
     Date date = new Date(millis);
     System.out.println("Finished executing with all threads: " + new SimpleDateFormat("mm-dd HH:mm:ss:SSSSSSS").format(date));
+  }
+
+  /**
+   * Loads all user agents that should be in the user source category.
+   */
+  private static void loadToolNamesForUserCategory()
+  {
+    TsvParserSettings parserSettings = new TsvParserSettings();
+    parserSettings.setLineSeparatorDetectionEnabled(true);
+    parserSettings.setHeaderExtractionEnabled(true);
+    parserSettings.setSkipEmptyLines(true);
+    parserSettings.setReadInputOnSeparateThread(true);
+
+    ObjectRowProcessor rowProcessor = new ObjectRowProcessor()
+    {
+      @Override
+      public void rowProcessed(Object[] row, ParsingContext parsingContext)
+      {
+        if (row.length < 1) {
+          logger.warn("Ignoring line without tab while parsing.");
+          return;
+        }
+        if (row.length == 1) {
+          sourceCategoryUserToolName.add(row[0].toString());
+          return;
+        }
+        logger.warn("Line with row length " + row.length + " found. Is the formatting of toolNameForUserCategory.tsv correct?");
+        return;
+      }
+
+    };
+
+    parserSettings.setProcessor(rowProcessor);
+
+    TsvParser parser = new TsvParser(parserSettings);
+
+    try {
+      parser.parse(new InputStreamReader(new FileInputStream("userAgentClassification/toolNameForUserCategory.tsv")));
+    } catch (FileNotFoundException e) {
+      logger.error("Could not open configuration file for standard prefixes.", e);
+    }
   }
 
   /**
@@ -362,9 +432,12 @@ public final class Main
 
   /**
    * Loads all pre-build query types.
+   *
+   * @param mapDb The map-DB reference for the on disk database to be used.
    */
-  private static void loadPreBuildQueryTypes()
+  private static void loadPreBuildQueryTypes(DB mapDb)
   {
+
     try (DirectoryStream<Path> directoryStream =
              Files.newDirectoryStream(Paths.get("preBuildQueryTypeFiles"))) {
       for (Path filePath : directoryStream) {
@@ -379,7 +452,11 @@ public final class Main
             ParsedQuery normalizedPreBuildQuery = queryHandler.getNormalizedQuery();
             String queryTypeName = filePath.toString().substring(filePath.toString().lastIndexOf("/") + 1, filePath.toString().lastIndexOf("."));
             if (normalizedPreBuildQuery != null) {
-              queryTypes.put(new TupleExprWrapper(normalizedPreBuildQuery.getTupleExpr()), queryTypeName);
+              String queryDump = normalizedPreBuildQuery.getTupleExpr().toString();
+              byte[] md5 = DigestUtils.md5(queryDump);
+
+              int index = Math.floorMod(queryDump.hashCode(), numerOfQueryTypeDiskMaps);
+              queryTypes[index].put(md5, queryTypeName);
             } else {
               logger.info("Pre-build query " + queryTypeName + " could not be parsed.");
             }
@@ -425,6 +502,9 @@ public final class Main
     }
   }
 
+  /**
+   * Loads the mapping of property to groups.
+   */
   private static void loadPropertyGroupMapping()
   {
     TsvParserSettings parserSettings = new TsvParserSettings();
@@ -464,6 +544,9 @@ public final class Main
     parser.parse(file);
   }
 
+  /**
+   * Loads multiple regular expressions that should match all browser user agents.
+   */
   private static void loadUserAgentRegex()
   {
     try (BufferedReader br = new BufferedReader(new FileReader("userAgentClassification/userAgentRegex.dat"))) {
@@ -471,9 +554,11 @@ public final class Main
       while ((line = br.readLine()) != null) {
         userAgentRegex.add(line);
       }
-    } catch (FileNotFoundException e) {
+    }
+    catch (FileNotFoundException e) {
       logger.error("Could not find userAgentRegex.dat", e);
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       logger.error("IOError while trying to read userAgentRegex.dat", e);
     }
   }
@@ -530,48 +615,6 @@ public final class Main
         }
       } else {
         logger.error("Could not find header to: " + link.text());
-      }
-    }
-  }
-
-  /**
-   * Creates the output folder for query types (if necessary) and deletes the old files if we're creating new dynamic query types.
-   *
-   * @param outputFolder The input folder to create the query type subfolder in
-   */
-  private static void prepareWritingQueryTypes(String outputFolder)
-  {
-    File outputFolderFile = new File(outputFolder);
-    outputFolderFile.mkdir();
-
-    outputFolderNameQueryTypes = outputFolder + "queryTypeFiles/";
-    File outputQueryTypeFolderFile = new File(outputFolderNameQueryTypes);
-    if (dynamicQueryTypes) {
-      FileUtils.deleteQuietly(outputQueryTypeFolderFile);
-    }
-    outputQueryTypeFolderFile.mkdir();
-    try (BufferedWriter bw = new BufferedWriter(new FileWriter(outputFolderNameQueryTypes + "README.md"))) {
-      bw.write("This directory contains one file for each query type found in this month.\n" +
-          "The name of the file (<name>.queryType) corresponds to the #QueryType entry in the processed logs.\n" +
-          "WARNING: Until unifiyQueryTypes.py has been run on its parent directory this directory contains duplicates as the same query type can have multiple names.");
-    } catch (IOException e) {
-      logger.error("Could not create the readme for the query type folder.", e);
-    }
-  }
-
-  /**
-   * Writes all found query Types to queryType/queryTypeFiles/.
-   *
-   * @param queryTypesToWrite The map containing the query types to be written.
-   */
-  public static void writeQueryTypes(Map<TupleExprWrapper, String> queryTypesToWrite)
-  {
-    for (Entry<TupleExprWrapper, String> parsedQuery : queryTypesToWrite.entrySet()) {
-      String queryType = parsedQuery.getValue();
-      try (BufferedWriter bw = new BufferedWriter(new FileWriter(outputFolderNameQueryTypes + queryType + ".queryType"))) {
-        bw.write(parsedQuery.getKey().toString());
-      } catch (IOException e) {
-        logger.error("Could not write the query type " + queryType + ".", e);
       }
     }
   }
