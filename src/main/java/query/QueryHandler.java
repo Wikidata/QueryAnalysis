@@ -24,6 +24,10 @@ public abstract class QueryHandler implements Serializable
    */
   protected int threadNumber = -1;
   /**
+   * The map holding the query types.
+   */
+  protected Map<TupleExprWrapper, String> queryTypes;
+  /**
    * The day at which the Query was being created;
    * Used for the calculation of the uniqueId.
    */
@@ -250,6 +254,14 @@ public abstract class QueryHandler implements Serializable
   public void setThreadNumber(int threadNumberToSet)
   {
     threadNumber = threadNumberToSet;
+  }
+
+  /**
+   * @param queryTypesToSet {@link #queryTypes}
+   */
+  public void setQueryTypes(Map<TupleExprWrapper, String> queryTypesToSet)
+  {
+    this.queryTypes = queryTypesToSet;
   }
 
   /**

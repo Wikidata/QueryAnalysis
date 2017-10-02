@@ -145,6 +145,7 @@ public class OutputHandlerTSV extends OutputHandler
     queryHandler.setUserAgent(userAgent);
     queryHandler.setCurrentFile(currentFile);
     queryHandler.setThreadNumber(threadNumber);
+    queryHandler.setQueryTypes(queryTypes);
 
     // the order in which fields are being written to this list is important - it needs to be the same as the one for the header above!
     List<Object> line = new ArrayList<>();

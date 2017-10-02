@@ -76,13 +76,9 @@ public final class Main
    */
   public static final Map<String, Set<String>> propertyGroupMapping = new HashMap<String, Set<String>>();
   /**
-   * Number of disk maps for query types.
-   */
-  public static final int numerOfQueryTypeDiskMaps = 16;
-  /**
    * Saves the premade queryTypes.
    */
-  public static final HTreeMap<byte[], String>[] queryTypes = new HTreeMap[numerOfQueryTypeDiskMaps];
+  public static final Map<TupleExprWrapper, String> queryTypes = new HashMap<TupleExprWrapper, String>();
   /**
    * Saves the mapping of query type and user agent to tool name and version.
    */
@@ -151,10 +147,6 @@ public final class Main
    * The location of the unique query map db file.
    */
   private static String dbLocation;
-  /**
-   * The location of the query type map db file.
-   */
-  private static String queryTypeMapDbLocation;
 
   /**
    * Since this is a utility class, it should not be instantiated.
@@ -191,7 +183,6 @@ public final class Main
     options.addOption("i", "ignoreLock", false, "Ignores the lock file.");
     options.addOption("u", "withUniqueQueryDetection", false, "Deunify queries.");
     options.addOption("p", "dbLocation", true, "The path of the uniqueQueriesMapDb file. Default is in the working directory.");
-    options.addOption("q", "queryTypeMapLocation", true, "The path of the query type map db file. Default is in the working directory.");
 
 
     //some parameters which can be changed through parameters
@@ -251,11 +242,6 @@ public final class Main
       } else {
         dbLocation = workingDirectory + "uniqueQueryMap.db";
       }
-      if (cmd.hasOption("queryTypeMapLocation")) {
-        queryTypeMapDbLocation = cmd.getOptionValue("queryTypeMapLocation");
-      } else {
-        queryTypeMapDbLocation = workingDirectory + "queryTypeMap.db";
-      }
     } catch (UnrecognizedOptionException e) {
       System.out.println("Unrecognized commandline option: " + e.getOption());
       HelpFormatter formatter = new HelpFormatter();
@@ -272,11 +258,8 @@ public final class Main
 
     loadStandardPrefixes();
 
-    DB mapDb = DBMaker.fileDB(queryTypeMapDbLocation).fileChannelEnable().fileMmapEnable().make();
-    for (int i = 0; i < numerOfQueryTypeDiskMaps; i++) {
-      queryTypes[i] = mapDb.hashMap("queryTypeMap" + i, Serializer.BYTE_ARRAY, Serializer.STRING).createOrOpen();
-    }
-    loadPreBuildQueryTypes(mapDb);
+    loadPreBuildQueryTypes();
+    prepareWritingQueryTypes(outputFolder);
 
     loadUserAgentRegex();
     loadToolNamesForUserCategory();
@@ -328,8 +311,6 @@ public final class Main
     if (Main.isWithUniqueQueryDetection()) {
       Cache.mapDb.close();
     }
-
-    mapDb.close();
 
     if (!cmd.hasOption("ignoreLock")) {
       lockFile.delete();
@@ -432,10 +413,8 @@ public final class Main
 
   /**
    * Loads all pre-build query types.
-   *
-   * @param mapDb The map-DB reference for the on disk database to be used.
    */
-  private static void loadPreBuildQueryTypes(DB mapDb)
+  private static void loadPreBuildQueryTypes()
   {
 
     try (DirectoryStream<Path> directoryStream =
@@ -452,11 +431,7 @@ public final class Main
             ParsedQuery normalizedPreBuildQuery = queryHandler.getNormalizedQuery();
             String queryTypeName = filePath.toString().substring(filePath.toString().lastIndexOf("/") + 1, filePath.toString().lastIndexOf("."));
             if (normalizedPreBuildQuery != null) {
-              String queryDump = normalizedPreBuildQuery.getTupleExpr().toString();
-              byte[] md5 = DigestUtils.md5(queryDump);
-
-              int index = Math.floorMod(queryDump.hashCode(), numerOfQueryTypeDiskMaps);
-              queryTypes[index].put(md5, queryTypeName);
+              queryTypes.put(new TupleExprWrapper(normalizedPreBuildQuery.getTupleExpr()), queryTypeName);
             } else {
               logger.info("Pre-build query " + queryTypeName + " could not be parsed.");
             }
@@ -615,6 +590,48 @@ public final class Main
         }
       } else {
         logger.error("Could not find header to: " + link.text());
+      }
+    }
+  }
+
+  /**
+   * Creates the output folder for query types (if necessary) and deletes the old files if we're creating new dynamic query types.
+   *
+   * @param outputFolder The input folder to create the query type sub-folder in.
+   */
+  private static void prepareWritingQueryTypes(String outputFolder)
+  {
+    File outputFolderFile = new File(outputFolder);
+    outputFolderFile.mkdir();
+
+    outputFolderNameQueryTypes = outputFolder + "queryTypeFiles/";
+    File outputQueryTypeFolderFile = new File(outputFolderNameQueryTypes);
+    if (dynamicQueryTypes) {
+      FileUtils.deleteQuietly(outputQueryTypeFolderFile);
+    }
+    outputQueryTypeFolderFile.mkdir();
+    try (BufferedWriter bw = new BufferedWriter(new FileWriter(outputFolderNameQueryTypes + "README.md"))) {
+      bw.write("This directory contains one file for each query type found in this month.\n" +
+          "The name of the file (<name>.queryType) corresponds to the #QueryType entry in the processed logs.\n" +
+          "WARNING: Until unifiyQueryTypes.py has been run on its parent directory this directory contains duplicates as the same query type can have multiple names.");
+    } catch (IOException e) {
+      logger.error("Could not create the readme for the query type folder.", e);
+    }
+  }
+
+  /**
+   * Writes all found query Types to queryType/queryTypeFiles/.
+   *
+   * @param queryTypesToWrite The map containing the query types to be written.
+   */
+  public static void writeQueryTypes(Map<TupleExprWrapper, String> queryTypesToWrite)
+  {
+    for (Entry<TupleExprWrapper, String> parsedQuery : queryTypesToWrite.entrySet()) {
+      String queryType = parsedQuery.getValue();
+      try (BufferedWriter bw = new BufferedWriter(new FileWriter(outputFolderNameQueryTypes + queryType + ".queryType"))) {
+        bw.write(parsedQuery.getKey().toString());
+      } catch (IOException e) {
+        logger.error("Could not write the query type " + queryType + ".", e);
       }
     }
   }
