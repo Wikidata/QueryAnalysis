@@ -10,7 +10,7 @@ import config
 # array metrics)
 
 # This list contains all fields that should not be split because they could contain commas
-notToSplit = ["user_agent"]
+notToSplit = ["user_agent", "ToolName"]
 
 def fieldRanking(month, metric, monthsFolder = config.monthsFolder, ignoreLock = False, outputPath = None, filterParams = "", nosplitting = False, writeOut = False):
 	if os.path.isfile(utility.addMissingSlash(monthsFolder)

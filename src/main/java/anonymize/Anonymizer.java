@@ -116,7 +116,6 @@ public class Anonymizer
 
     for (int day = 1; day <= 31; day++) {
       String inputFile = inputFilePrefix + String.format("%02d", day) + inputFileSuffix;
-      InputHandler inputHandler;
 
       String outputFile = outputFolder + "AnonymousQueryCnt" + String.format("%02d", day);
 

@@ -73,6 +73,6 @@ for i in xrange(1, 32):
                 sWriter.fieldnames = sReader.fieldnames
                 sWriter.writerow(sh)
 
-            if (processed["#ToolName"] == "USER"):
+            if (processed["#SourceCategory"] == "USER"):
                 pWriter.writerow(processed)
                 sWriter.writerow(source)

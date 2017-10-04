@@ -99,7 +99,7 @@ public class OutputHandlerAnonymizer extends OutputHandler
   {
     List<Object> line = new ArrayList<>();
 
-    QueryHandler queryHandler = queryHandlerFactory.getQueryHandler(validityStatus, currentLine, currentDay, queryToAnalyze);
+    QueryHandler queryHandler = queryHandlerFactory.getQueryHandler(validityStatus, currentLine, currentDay, queryToAnalyze, userAgent, currentFile, threadNumber);
 
     if (queryHandler.getValidityStatus().getValue() > 0) {
       ASTQueryContainer qc;

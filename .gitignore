@@ -48,6 +48,7 @@ test/
 !toolMapping.tsv
 !standardPrefixes.tsv
 !propertyGroupMapping.tsv
+!toolNameForUserCategory.tsv
 
 #error logs
 /logs/

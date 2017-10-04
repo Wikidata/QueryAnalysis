@@ -35,14 +35,6 @@ public class ParseOneDayWorker implements Runnable
    * The day this worker is processing.
    */
   private int day;
-  /**
-   * If the query types should be written out.
-   */
-  private Boolean writeQueryTypes;
-  /**
-   * A map for holding all query types found on this day.
-   */
-  private HashMap<TupleExprWrapper, String> queryTypes = new HashMap<TupleExprWrapper, String>();
 
   /**
    * @param inputHandlerFactory  The input handler factory to supply the input handler.
@@ -69,10 +61,6 @@ public class ParseOneDayWorker implements Runnable
       throw e;
     }
     this.day = dayToSet;
-    this.writeQueryTypes = writeQueryTypes;
-    for (Map.Entry<TupleExprWrapper, String> entry : Main.queryTypes.entrySet()) {
-      this.queryTypes.put(entry.getKey(), entry.getValue());
-    }
   }
 
 
@@ -81,12 +69,7 @@ public class ParseOneDayWorker implements Runnable
   {
     logger.info("Start processing " + inputHandler.getInputFile());
     outputHandler.setThreadNumber(day);
-    outputHandler.setQueryTypes(queryTypes);
     inputHandler.parseTo(outputHandler, day);
     logger.info("Done processing " + inputHandler.getInputFile() + " to " + outputHandler.getOutputFile() + ".");
-
-    if (writeQueryTypes) {
-      Main.writeQueryTypes(queryTypes);
-    }
   }
 }
