@@ -183,7 +183,7 @@ public final class Main
     options.addOption("l", "logging", false, "Enables file logging.");
     options.addOption("w", "workingDirectory", true, "The directory we should be working on.");
     options.addOption("h", "help", false, "Displays this help.");
-    options.addOption("n", "numberOfThreads", true, "Number of used threads, default 1");
+    options.addOption("t", "numberOfThreads", true, "Number of used threads, default 1");
     options.addOption("b", "noBotMetrics", false, "Disables metric calculation for bot queries.");
     options.addOption("d", "noDynamicQueryTypes", false, "Disables dynamic generation of query types.");
     options.addOption("g", "noGzipOutput", false, "Disables gzipping of the output files.");

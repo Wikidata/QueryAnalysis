@@ -144,7 +144,7 @@ for monthName in args.months.split(","):
 
     mavenCall = ['mvn', 'exec:java@QueryAnalysis']
 
-    mavenArguments = '-Dexec.args=-w ' + month + ' -n ' + str(args.threads) + ' -p ' + args.dbLocation + " -q " + args.queryTypeMapLocation
+    mavenArguments = '-Dexec.args=-w ' + month + ' -t ' + str(args.threads) + ' -p ' + args.dbLocation + " -q " + args.queryTypeMapLocation
 
     if args.logging:
         mavenArguments += " -l"
