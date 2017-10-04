@@ -78,11 +78,11 @@ public final class Main
   /**
    * Number of disk maps for query types.
    */
-  public static final int numerOfQueryTypeDiskMaps = 16;
+  public static final int numberOfQueryTypeDiskMaps = 1600;
   /**
    * Saves the premade queryTypes.
    */
-  public static final HTreeMap<byte[], String>[] queryTypes = new HTreeMap[numerOfQueryTypeDiskMaps];
+  public static final HTreeMap<byte[], String>[] queryTypes = new HTreeMap[numberOfQueryTypeDiskMaps];
   /**
    * Saves the mapping of query type and user agent to tool name and version.
    */
@@ -136,10 +136,6 @@ public final class Main
    */
   private static final Logger logger = Logger.getLogger(Main.class);
   /**
-   * Saves the output folder name for query types.
-   */
-  private static String outputFolderNameQueryTypes;
-  /**
    * The directory we are processing.
    */
   private static String workingDirectory;
@@ -183,7 +179,7 @@ public final class Main
     options.addOption("l", "logging", false, "Enables file logging.");
     options.addOption("w", "workingDirectory", true, "The directory we should be working on.");
     options.addOption("h", "help", false, "Displays this help.");
-    options.addOption("t", "numberOfThreads", true, "Number of used threads, default 1");
+    options.addOption("t", "threads", true, "Number of used threads, default 1");
     options.addOption("b", "noBotMetrics", false, "Disables metric calculation for bot queries.");
     options.addOption("d", "noDynamicQueryTypes", false, "Disables dynamic generation of query types.");
     options.addOption("g", "noGzipOutput", false, "Disables gzipping of the output files.");
@@ -228,8 +224,8 @@ public final class Main
       if (cmd.hasOption("logging")) {
         LoggingHandler.initFileLog(queryParserName, inputFilePrefix);
       }
-      if (cmd.hasOption("numberOfThreads")) {
-        numberOfThreads = Integer.parseInt(cmd.getOptionValue("numberOfThreads"));
+      if (cmd.hasOption("threads")) {
+        numberOfThreads = Integer.parseInt(cmd.getOptionValue("threads"));
       }
       if (cmd.hasOption("noBotMetrics")) {
         withBots = false;
@@ -273,7 +269,7 @@ public final class Main
     loadStandardPrefixes();
 
     DB mapDb = DBMaker.fileDB(queryTypeMapDbLocation).fileChannelEnable().fileMmapEnable().make();
-    for (int i = 0; i < numerOfQueryTypeDiskMaps; i++) {
+    for (int i = 0; i < numberOfQueryTypeDiskMaps; i++) {
       queryTypes[i] = mapDb.hashMap("queryTypeMap" + i, Serializer.BYTE_ARRAY, Serializer.STRING).createOrOpen();
     }
     loadPreBuildQueryTypes(mapDb);
@@ -455,7 +451,7 @@ public final class Main
               String queryDump = normalizedPreBuildQuery.getTupleExpr().toString();
               byte[] md5 = DigestUtils.md5(queryDump);
 
-              int index = Math.floorMod(queryDump.hashCode(), numerOfQueryTypeDiskMaps);
+              int index = Math.floorMod(queryDump.hashCode(), numberOfQueryTypeDiskMaps);
               queryTypes[index].put(md5, queryTypeName);
             } else {
               logger.info("Pre-build query " + queryTypeName + " could not be parsed.");

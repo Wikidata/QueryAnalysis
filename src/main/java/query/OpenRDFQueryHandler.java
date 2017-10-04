@@ -256,7 +256,7 @@ public class OpenRDFQueryHandler extends QueryHandler
     String normalizedQueryDump = normalizedQuery.getTupleExpr().toString();
 
     byte[] normalizedMD5 = DigestUtils.md5(normalizedQueryDump);
-    int normalizedIndex = Math.floorMod(normalizedQueryDump.hashCode(), Main.numerOfQueryTypeDiskMaps);
+    int normalizedIndex = Math.floorMod(normalizedQueryDump.hashCode(), Main.numberOfQueryTypeDiskMaps);
 
     String result = Main.queryTypes[normalizedIndex].get(normalizedMD5);
 
