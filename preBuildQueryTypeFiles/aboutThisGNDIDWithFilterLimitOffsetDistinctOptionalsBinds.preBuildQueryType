@@ -1,0 +1,28 @@
+SELECT DISTINCT ?s ?article ?pLabel ?oLabel
+WHERE {
+  ?s wdt:P227 ?gnd.
+  ?article schema:about ?s .
+  filter(regex(str(?article), "en.wikipedia.org" )) .
+  ?s ?pLabel ?oLabel .
+}
+limit 1000
+offset 565000SELECT DISTINCT *
+WHERE {
+  ?s wdt:P227 ?gnd.
+  ?article schema:about ?s .
+  filter(regex(str(?article), "en.wikipedia.org" )) .
+  ?s ?p ?o .
+  optional {
+    ?wd wikibase:directClaim ?p .
+    ?wd rdfs:label ?pLabelTemp .
+    filter langMatches(lang(?pLabelTemp), "en") .
+  } .
+  BIND ( IF (BOUND (?pLabelTemp), ?pLabelTemp, ?p )  as ?pLabel  ) .
+  optional {
+    ?o rdfs:label ?oLabelTemp .
+    filter langMatches(lang(?oLabelTemp), "en") .
+  } .
+  BIND ( IF (BOUND (?oLabelTemp), ?oLabelTemp, ?o )  as ?oLabel  ) .
+}
+limit 1000
+offset 227000
