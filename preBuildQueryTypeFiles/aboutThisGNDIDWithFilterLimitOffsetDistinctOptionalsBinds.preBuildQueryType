@@ -1,12 +1,4 @@
-SELECT DISTINCT ?s ?article ?pLabel ?oLabel
-WHERE {
-  ?s wdt:P227 ?gnd.
-  ?article schema:about ?s .
-  filter(regex(str(?article), "en.wikipedia.org" )) .
-  ?s ?pLabel ?oLabel .
-}
-limit 1000
-offset 565000SELECT DISTINCT *
+SELECT DISTINCT *
 WHERE {
   ?s wdt:P227 ?gnd.
   ?article schema:about ?s .
