@@ -140,11 +140,7 @@ public class OutputHandlerTSV extends OutputHandler
   @Override
   public final void writeLine(String queryToAnalyze, QueryHandler.Validity validityStatus, String userAgent, String timeStamp, long currentLine, int day, String currentFile)
   {
-    QueryHandler queryHandler = cache.getQueryHandler(validityStatus, queryToAnalyze, currentLine, day, queryHandlerFactory);
-
-    queryHandler.setUserAgent(userAgent);
-    queryHandler.setCurrentFile(currentFile);
-    queryHandler.setThreadNumber(threadNumber);
+    QueryHandler queryHandler = cache.getQueryHandler(validityStatus, queryToAnalyze, currentLine, day, userAgent, currentFile, threadNumber, queryHandlerFactory);
 
     // the order in which fields are being written to this list is important - it needs to be the same as the one for the header above!
     List<Object> line = new ArrayList<>();

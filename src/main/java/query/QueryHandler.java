@@ -178,12 +178,18 @@ public abstract class QueryHandler implements Serializable
    * @param lineToSet        The line this query came from.
    * @param dayToSet         The day this query came from.
    * @param queryStringToSet The query as a string.
+   * @param userAgentToSet The user agent that send this query.
+   * @param currentFileToSet The file this query came from.
+   * @param threadNumberToSet The number of the thread (Needs to be unique per thread).
    */
-  public QueryHandler(Validity validity, Long lineToSet, Integer dayToSet, String queryStringToSet)
+  public QueryHandler(Validity validity, Long lineToSet, Integer dayToSet, String queryStringToSet, String userAgentToSet, String currentFileToSet, int threadNumberToSet)
   {
     this.day = dayToSet;
     this.line = lineToSet;
     this.validityStatus = validity;
+    this.userAgent = userAgentToSet;
+    this.currentFile = currentFileToSet;
+    this.threadNumber = threadNumberToSet;
 
     this.setUniqeId(this.day, this.line);
     this.setOriginalId(this.getUniqeId());
@@ -242,14 +248,6 @@ public abstract class QueryHandler implements Serializable
   public final Logger getLogger()
   {
     return logger;
-  }
-
-  /**
-   * @param threadNumberToSet {@link #threadNumber}
-   */
-  public void setThreadNumber(int threadNumberToSet)
-  {
-    threadNumber = threadNumberToSet;
   }
 
   /**
@@ -415,14 +413,6 @@ public abstract class QueryHandler implements Serializable
   }
 
   /**
-   * @param currentFileToSet the current file the query originated from
-   */
-  public final void setCurrentFile(String currentFileToSet)
-  {
-    this.currentFile = currentFileToSet;
-  }
-
-  /**
    * @return the length of the query without the added prefixes
    */
   public int getLengthNoAddedPrefixes()
@@ -571,14 +561,6 @@ public abstract class QueryHandler implements Serializable
   private String getUserAgent()
   {
     return userAgent;
-  }
-
-  /**
-   * @param userAgent The user agent that posed this query.
-   */
-  public final void setUserAgent(String userAgent)
-  {
-    this.userAgent = userAgent;
   }
 
   /**

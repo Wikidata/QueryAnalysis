@@ -15,6 +15,8 @@ import org.openrdf.query.algebra.helpers.StatementPatternCollector;
 import org.openrdf.query.parser.ParsedQuery;
 import org.openrdf.query.parser.sparql.ASTVisitorBase;
 import org.openrdf.query.parser.sparql.ast.*;
+
+import query.QueryHandler.Validity;
 import query.statistics.OpenRDFQuerySizeCalculatorVisitor;
 import query.statistics.QueryContainerSparqlStatisticsCollector;
 import query.statistics.TupleExprSparqlStatisticsCollector;
@@ -52,10 +54,13 @@ public class OpenRDFQueryHandler extends QueryHandler
    * @param lineToSet        The line this query came from.
    * @param dayToSet         The day this query came from.
    * @param queryStringToSet The query as a string.
+   * @param userAgentToSet The user agent that send this query.
+   * @param currentFileToSet The file this query came from.
+   * @param threadNumberToSet The number of the thread (Needs to be unique per thread).
    */
-  public OpenRDFQueryHandler(Validity validity, Long lineToSet, Integer dayToSet, String queryStringToSet)
+  public OpenRDFQueryHandler(Validity validity, Long lineToSet, Integer dayToSet, String queryStringToSet, String userAgentToSet, String currentFileToSet, int threadNumberToSet)
   {
-    super(validity, lineToSet, dayToSet, queryStringToSet);
+    super(validity, lineToSet, dayToSet, queryStringToSet, userAgentToSet, currentFileToSet, threadNumberToSet);
   }
 
   /**

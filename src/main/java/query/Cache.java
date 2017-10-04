@@ -15,6 +15,7 @@ import org.openrdf.query.parser.sparql.ast.SyntaxTreeBuilder;
 import org.openrdf.query.parser.sparql.ast.TokenMgrError;
 import query.factories.QueryHandlerFactory;
 import scala.Tuple2;
+import scala.Tuple5;
 
 import java.util.Collections;
 import java.util.Map;
@@ -44,7 +45,7 @@ public class Cache
   /**
    * The memory cached query handler objects.
    */
-  private Map<Tuple2<QueryHandler.Validity, String>, QueryHandler> queryHandlerLRUMap = (Map<Tuple2<QueryHandler.Validity, String>, QueryHandler>) Collections.synchronizedMap(new LRUMap(100000));
+  private Map<Tuple5<QueryHandler.Validity, String, String, String, Integer>, QueryHandler> queryHandlerLRUMap = (Map<Tuple5<QueryHandler.Validity, String, String, String, Integer>, QueryHandler>) Collections.synchronizedMap(new LRUMap(100000));
 
   public static DB mapDb = null;
 
@@ -106,12 +107,15 @@ public class Cache
    * @param queryToAnalyze      The query that should be analyzed and written.
    * @param line                The line this query came from.
    * @param day                 The day this query came from.
+   * @param userAgent The user agent that send this query.
+   * @param currentFile The file this query came from.
+   * @param threadNumber The number of the thread (Needs to be unique per thread).
    * @param queryHandlerFactory The query handler factory to supply the query handler.
    * @return QueryHandler a QueryHandler object which was created for the same queryString before
    */
-  public QueryHandler getQueryHandler(QueryHandler.Validity validityStatus, String queryToAnalyze, long line, int day, QueryHandlerFactory queryHandlerFactory)
+  public QueryHandler getQueryHandler(QueryHandler.Validity validityStatus, String queryToAnalyze, long line, int day, String userAgent, String currentFile, int threadNumber, QueryHandlerFactory queryHandlerFactory)
   {
-    Tuple2<QueryHandler.Validity, String> tuple = new Tuple2<QueryHandler.Validity, String>(validityStatus, queryToAnalyze);
+    Tuple5<QueryHandler.Validity, String, String, String, Integer> tuple = new Tuple5<QueryHandler.Validity, String, String, String, Integer>(validityStatus, queryToAnalyze, userAgent, currentFile, threadNumber);
 
     QueryHandler queryHandler;
 
@@ -126,7 +130,7 @@ public class Cache
     //check if requested object already exists in cache
     if (!queryHandlerLRUMap.containsKey(tuple)) {
       //if not create a new one
-      queryHandler = queryHandlerFactory.getQueryHandler(validityStatus, line, day, queryToAnalyze);
+      queryHandler = queryHandlerFactory.getQueryHandler(validityStatus, line, day, queryToAnalyze, userAgent, currentFile, threadNumber);
 
       if (Main.isWithUniqueQueryDetection()) {
 
