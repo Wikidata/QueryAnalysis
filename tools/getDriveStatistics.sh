@@ -15,7 +15,7 @@ mkdir -p logs/op
 function analyzeMonth() {
     python2 getSparqlStatistic.py -m $1 $2 > logs/sp/sparqlStatistic$2.txt
     python2 operatorUsageStatistic.py -m $1 $2 > logs/op/operatorUsageStatistic$2.txt 
-    python2 generalStat.py -m $1 $2 > logs/generalStat$2.txt 
+    python2 generalStat.py -m $1 $2 > logs/generalStat$1$2.txt 
 }
 
 analyzeMonth $1 $2
