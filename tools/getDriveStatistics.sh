@@ -16,6 +16,9 @@ function analyzeMonth() {
     python2 getSparqlStatistic.py -m $1 $2 > logs/sp/sparqlStatistic$3$2.txt
     python2 operatorUsageStatistic.py -m $1 $2 > logs/op/operatorUsageStatistic$3$2.txt 
     python2 generalStat.py -m $1 $2 > logs/generalStat$3$2.txt 
+    echo $3_$2 >> logs/generalStat$3$2.txt
+    echo $3_$2 >> logs/sp/sparqlStatistic$3$2.txt
+    echo $3_$2 >> logs/op/operatorUsageStatistic$3$2.txt
 }
 
 analyzeMonth $1 $2 $2
