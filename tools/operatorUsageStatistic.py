@@ -84,7 +84,7 @@ class OperatorStatisticHandler:
         i = 1
         for featureName, featureCount in self.statistic.iteritems():
             print(featureName + "\t" + str(featureCount) + "\t=B" + str(i) +
-                  "/B17")
+                  "/B16")
             i += 1
 
         print("Total:\t" + str(self.totalCount))
