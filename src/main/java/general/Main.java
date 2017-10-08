@@ -327,6 +327,11 @@ public final class Main
 
     mapDb.close();
 
+    if (Main.withUniqueQueryDetection) {
+      File file = new File(getDbLocation());
+      file.delete();
+    }
+
     if (!cmd.hasOption("ignoreLock")) {
       lockFile.delete();
     }
