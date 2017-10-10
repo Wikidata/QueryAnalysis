@@ -9,13 +9,19 @@ from postprocess import processdata
 from utility import utility
 
 parser = argparse.ArgumentParser(description="Prints out the SPARQL statistic")
-parser.add_argument("--monthsFolder", "-m", default=config.monthsFolder,
-                    type=str, help="the folder in which the months directory "
-                    + "are residing")
-parser.add_argument("--ignoreLock", "-i", help="Ignore locked file and execute"
-                    + " anyways", action="store_true")
-parser.add_argument("month", type=str,
-                    help="the month which we're interested in")
+parser.add_argument(
+    "--monthsFolder",
+    "-m",
+    default=config.monthsFolder,
+    type=str,
+    help="the folder in which the months directory " + "are residing")
+parser.add_argument(
+    "--ignoreLock",
+    "-i",
+    help="Ignore locked file and execute" + " anyways",
+    action="store_true")
+parser.add_argument(
+    "month", type=str, help="the month which we're interested in")
 
 if (len(sys.argv[1:]) == 0):
     parser.print_help()
@@ -26,7 +32,8 @@ args = parser.parse_args()
 if os.path.isfile(utility.addMissingSlash(args.monthsFolder)
                   + utility.addMissingSlash(args.month) + "locked") \
    and not args.ignoreLock:
-    print("ERROR: The month " + str(args.month) + " is being edited at the moment." +
+    print("ERROR: The month " + str(args.month) +
+          " is being edited at the moment." +
           " Use -i if you want to force the execution of this script.")
     sys.exit()
 
@@ -44,19 +51,17 @@ class SparqlStatisticHandler:
                 self.statistic[usedSparqlFeature.lstrip()] += 1
 
     def printKeys(self, keys):
-        pprint(self.statistic)
         result = ""
         i = 1
         for featureName in keys:
             featureCount = self.statistic[featureName]
-            result += featureName + "\t" +  str(featureCount) + "\t=B" + str(i) + "/B34\n"
+            result += str(featureCount) + "\n"
 
             i += 1
 
         print(result)
 
     def printSparqlTranslation(self):
-        pprint(self.statistic)
         self.statistic["Select"] = self.statistic["SelectQuery"]
         self.statistic["Ask"] = self.statistic["AskQuery"]
         self.statistic["Describe"] = self.statistic["DescribeQuery"]
@@ -76,21 +81,28 @@ class SparqlStatisticHandler:
         self.statistic["'+"] = self.statistic["+"]
 
         # only print specified columns
-        toPrintKeys = ["Select", "Ask", "Describe", "Construct", "Distinct",
-                       "Limit", "Offset", "Order By", "Filter", "And", "Union",
-                       "Optional", "Graph", "Not Exists", "Minus", "Exists", "Count",
-                       "Max", "Min", "Avg", "Sum", "Group By", "Having", "Service",
-                       "LangService", "Sample", "Bind", "GroupConcat",
-                       "Reduced", "Values", "'+", "*"]
-
+        toPrintKeys = [
+            "Select", "Ask", "Describe", "Construct", "Distinct", "Limit",
+            "Offset", "Order By", "Filter", "And", "Union", "Optional",
+            "Graph", "Not Exists", "Minus", "Exists", "Count", "Max", "Min",
+            "Avg", "Sum", "Group By", "Having", "Service", "LangService",
+            "Sample", "Bind", "GroupConcat", "Reduced", "Values", "'+", "*"
+        ]
 
         self.printKeys(toPrintKeys)
+        print("t ")
         print("Total:\t" + str(self.totalCount))
 
 
-pprint(args)
 handler = SparqlStatisticHandler()
 
 processdata.processMonth(handler, args.month, args.monthsFolder)
+
+a, b, c = args.month.split("#")
+
+print(a)
+print(b)
+print(c)
+print("")
 
 handler.printSparqlTranslation()
