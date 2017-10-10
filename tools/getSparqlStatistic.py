@@ -90,7 +90,7 @@ class SparqlStatisticHandler:
         ]
 
         self.printKeys(toPrintKeys)
-        print("t ")
+        print(" ")
         print("Total:\t" + str(self.totalCount))
 
 

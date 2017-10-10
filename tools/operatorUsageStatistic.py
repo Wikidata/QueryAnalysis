@@ -67,6 +67,8 @@ class OperatorStatisticHandler:
                 for operator in itertools.combinations(operators, i):
                     allOperatorsCombinations.add(operator)
 
+            noOperator = True
+
             for operatorCombination in allOperatorsCombinations:
                 # check if this operator combination is present in current
                 # query
@@ -76,22 +78,33 @@ class OperatorStatisticHandler:
                         allOperatorsPresent = False
 
                 if allOperatorsPresent:
-                    self.statistic[repr(operatorCombination)] += 1
+                    self.statistic[", ".join(operatorCombination)] += 1
+                    noOperator = False
+
+            if noOperator:
+                self.statistic["None"] += 1
 
     def printSparqlTranslation(self):
-        pprint(self.statistic)
         result = ""
         i = 1
-        for featureName, featureCount in self.statistic.iteritems():
-            print(featureName + "\t" + str(featureCount) + "\t=B" + str(i) +
-                  "/B16")
+        for featureName, featureCount in sorted(self.statistic.iteritems()):
+            #print(featureName)
+            print(featureCount)
             i += 1
 
-        print("Total:\t" + str(self.totalCount))
+        print("")
+        print(str(self.totalCount))
 
 
 handler = OperatorStatisticHandler()
 
 processdata.processMonth(handler, args.month, args.monthsFolder)
+
+a, b, c = args.month.split("#")
+
+print(a)
+print(b)
+print(c)
+print("")
 
 handler.printSparqlTranslation()
