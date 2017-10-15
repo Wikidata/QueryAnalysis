@@ -24,6 +24,9 @@ if (len(sys.argv[1:]) == 0):
 args = parser.parse_args()
 
 monthsFolder = utility.addMissingSlash(args.monthsFolder)
+statisticsSubfolder = monthsFolder + "statistics/"
+if not os.path.exists(statisticsSubfolder):
+    os.makedirs(statisticsSubfolder)
 
 for monthName in args.months.split(","):
     if os.path.isfile(utility.addMissingSlash(args.monthsFolder) + utility.addMissingSlash(monthName) + "locked") and not args.ignoreLock:
@@ -37,7 +40,7 @@ for monthName in args.months.split(","):
             for script, scriptName in {"getSparqlStatistic.py":"sparqlFeatures", "operatorUsageStatistic.py":"operatorUsage", "generalStat.py":"generalStats"}.iteritems():
                 filename = scriptName + "#" + monthName.strip("/").replace("/", "SLASH") + "#" + secondKey + "#" + thirdKey
                 print "Working on " + filename
-                with open(monthsFolder + filename, "w") as f:
+                with open(statisticsSubfolder + filename, "w") as f:
                     monthFolder = month + secondFolder + "/" + thirdFolder + "/"
                     if subprocess.call(['python', script, monthFolder.strip("/"), '-m', args.monthsFolder, '-p', monthName + "\n" + secondKey + "\n" + thirdKey], stdout = f) != 0:
                         print "ERROR: Could not calculate " + filename
