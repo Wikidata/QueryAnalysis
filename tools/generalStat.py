@@ -22,6 +22,7 @@ parser.add_argument(
     "-i",
     help="Ignore locked file and execute" + " anyways",
     action="store_true")
+parser.add_argument("--position", "-p", default="default position", type=str, help="The position to be displayed before the data.")
 parser.add_argument(
     "month", type=str, help="the month which we're interested in")
 
@@ -69,5 +70,8 @@ class GeneralStatisticsHandler:
 handler = GeneralStatisticsHandler()
 
 processdata.processMonth(handler, args.month, args.monthsFolder)
+
+print args.position
+print ""
 
 handler.printStat()

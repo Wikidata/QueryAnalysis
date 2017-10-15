@@ -20,6 +20,7 @@ parser.add_argument(
     "-i",
     help="Ignore locked file and execute" + " anyways",
     action="store_true")
+parser.add_argument("--position", "-p", default="default position", type=str, help="The position to be displayed before the data.")
 parser.add_argument(
     "month", type=str, help="the month which we're interested in")
 
@@ -98,11 +99,7 @@ handler = SparqlStatisticHandler()
 
 processdata.processMonth(handler, args.month, args.monthsFolder)
 
-a, b, c = args.month.split("#")
-
-print(a)
-print(b)
-print(c)
-print("")
+print args.position
+print ""
 
 handler.printSparqlTranslation()
