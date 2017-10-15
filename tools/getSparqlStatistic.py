@@ -97,7 +97,7 @@ class SparqlStatisticHandler:
 
 handler = SparqlStatisticHandler()
 
-processdata.processMonth(handler, args.month, args.monthsFolder)
+processdata.processMonth(handler, args.month, args.monthsFolder, notifications = False)
 
 print args.position
 print ""

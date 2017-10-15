@@ -36,6 +36,7 @@ for monthName in args.months.split(","):
         for thirdKey, thirdFolder in {"all":"", "unique":"uniqueQueryDataset", "queryType":"queryTypeDataset"}.iteritems():
             for script, scriptName in {"getSparqlStatistic.py":"sparqlFeatures", "operatorUsageStatistic.py":"operatorUsage", "generalStat.py":"generalStats"}.iteritems():
                 filename = scriptName + "#" + monthName.strip("/").replace("/", "SLASH") + "#" + secondKey + "#" + thirdKey
+                print "Working on " + filename
                 with open(monthsFolder + filename, "w") as f:
                     monthFolder = month + secondFolder + "/" + thirdFolder + "/"
                     if subprocess.call(['python', script, monthFolder.strip("/"), '-m', args.monthsFolder, '-p', monthName + "\n" + secondKey + "\n" + thirdKey], stdout = f) != 0:

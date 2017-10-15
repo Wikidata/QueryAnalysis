@@ -99,7 +99,7 @@ class OperatorStatisticHandler:
 
 handler = OperatorStatisticHandler()
 
-processdata.processMonth(handler, args.month, args.monthsFolder)
+processdata.processMonth(handler, args.month, args.monthsFolder, notifications = False)
 
 print args.position
 print ""

@@ -20,16 +20,16 @@ anonymousFilePrefix = "AnonymousQueryCnt"
 anonymousFileSuffix = ".tsv.gz"
 
 
-def processMonth(handler, month, monthsFolder, anonymous = False):
+def processMonth(handler, month, monthsFolder, anonymous = False, notifications = True):
     folderToSearch = processedFolder
     prefixToSearch = processedPrefix
     suffixToSearch = processedSuffix
-    
+
     if anonymous:
         folderToSearch = anonymousDataFolder
         prefixToSearch = anonymousFilePrefix
         suffixToSearch = anonymousFileSuffix
-    
+
     for filename in glob.glob(utility.addMissingSlash(monthsFolder)
                               + utility.addMissingSlash(month)
                               + folderToSearch + prefixToSearch + "*"
@@ -37,19 +37,20 @@ def processMonth(handler, month, monthsFolder, anonymous = False):
         day = os.path.basename(filename)[len(
             prefixToSearch):][:-len(suffixToSearch)]
         if anonymous:
-            processDayAnonymous(handler, int(day), month, monthsFolder)
+            processDayAnonymous(handler, int(day), month, monthsFolder, notifications = notifications)
         else:
-            processDay(handler, int(day), month, monthsFolder)
+            processDay(handler, int(day), month, monthsFolder, notifications = notifications)
 
 
 def processDay(handler, day, month, monthsFolder,
-               startIdx=0, endIdx=sys.maxint):
+               startIdx=0, endIdx=sys.maxint, notifications = True):
     processedFileName = utility.addMissingSlash(monthsFolder) \
         + utility.addMissingSlash(month) \
         + processedFolder + processedPrefix + "%02d" % day \
         + processedSuffix
 
-    print "Working on: " + processedFileName
+    if notifications:
+        print "Working on: " + processedFileName
     with gzip.open(processedFileName) as p, \
             gzip.open(utility.addMissingSlash(monthsFolder)
                       + utility.addMissingSlash(month) + "rawLogData/"
@@ -76,15 +77,16 @@ def processDay(handler, day, month, monthsFolder,
                 break
             i += 1
 
-def processDayAnonymous(handler, day, month, monthsFolder, startIdx=0, endIdx=sys.maxint):
+def processDayAnonymous(handler, day, month, monthsFolder, startIdx=0, endIdx=sys.maxint, notifications = True):
     anonymousFileName = utility.addMissingSlash(monthsFolder) \
     + utility.addMissingSlash(month) \
     + anonymousDataFolder + anonymousFilePrefix + "%02d" % day + anonymousFileSuffix
-    
-    print "Working on: " + anonymousFileName
+
+    if notifications:
+        print "Working on: " + anonymousFileName
     with gzip.open(anonymousFileName) as a:
         aReader = csv.DictReader(a, delimiter="\t")
-        
+
         i = 0
         for anonymous in aReader:
             if startIdx <= i <= endIdx:
@@ -95,7 +97,7 @@ def processDayAnonymous(handler, day, month, monthsFolder, startIdx=0, endIdx=sy
                     sparqlQuery = requestParameters['query']
                 else:
                     sparqlQuery = None
-                    
+
                 anonymous["#timestamp"] = anonymous["#timestamp"]
                 handler.handle(sparqlQuery, anonymous)
             elif i > endIdx:
