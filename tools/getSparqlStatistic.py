@@ -106,6 +106,5 @@ processdata.processMonth(
     handler, args.month, args.monthsFolder, notifications=False)
 
 print args.position
-print ""
 
 handler.printSparqlTranslation()
