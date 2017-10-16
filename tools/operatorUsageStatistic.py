@@ -25,6 +25,12 @@ parser.add_argument(
     help="Ignore locked file and execute" + " anyways",
     action="store_true")
 parser.add_argument(
+    "--position",
+    "-p",
+    default="default position",
+    type=str,
+    help="The position to be displayed before the data.")
+parser.add_argument(
     "month", type=str, help="the month which we're interested in")
 
 if (len(sys.argv[1:]) == 0):
@@ -67,6 +73,8 @@ class OperatorStatisticHandler:
                 for operator in itertools.combinations(operators, i):
                     allOperatorsCombinations.add(operator)
 
+            noOperator = True
+
             for operatorCombination in allOperatorsCombinations:
                 # check if this operator combination is present in current
                 # query
@@ -76,22 +84,29 @@ class OperatorStatisticHandler:
                         allOperatorsPresent = False
 
                 if allOperatorsPresent:
-                    self.statistic[repr(operatorCombination)] += 1
+                    self.statistic[", ".join(operatorCombination)] += 1
+                    noOperator = False
+
+            if noOperator:
+                self.statistic["None"] += 1
 
     def printSparqlTranslation(self):
-        pprint(self.statistic)
         result = ""
         i = 1
-        for featureName, featureCount in self.statistic.iteritems():
-            print(featureName + "\t" + str(featureCount) + "\t=B" + str(i) +
-                  "/B16")
+        for featureName, featureCount in sorted(self.statistic.iteritems()):
+            #print(featureName)
+            print(featureCount)
             i += 1
 
-        print("Total:\t" + str(self.totalCount))
+        print("")
+        print(str(self.totalCount))
 
 
 handler = OperatorStatisticHandler()
 
-processdata.processMonth(handler, args.month, args.monthsFolder)
+processdata.processMonth(
+    handler, args.month, args.monthsFolder, notifications=False)
+
+print args.position
 
 handler.printSparqlTranslation()
