@@ -37,10 +37,13 @@ for monthName in args.months.split(","):
 
     for secondKey, secondFolder in {"user":"userData", "nonUser":"nonUserData"}.iteritems():
         for thirdKey, thirdFolder in {"all":"", "unique":"uniqueQueryDataset", "queryType":"queryTypeDataset"}.iteritems():
-            for script, scriptName in {"getSparqlStatistic.py":"sparqlFeatures", "operatorUsageStatistic.py":"operatorUsage", "generalStat.py":"generalStats"}.iteritems():
-                filename = scriptName + "#" + monthName.strip("/").replace("/", "SLASH") + "#" + secondKey + "#" + thirdKey
-                print "Working on " + filename
-                with open(statisticsSubfolder + filename, "w") as f:
+            for script, scriptFolder in {"getSparqlStatistic.py":"sparqlFeatures", "operatorUsageStatistic.py":"operatorUsage", "generalStat.py":"generalStats"}.iteritems():
+                folder = utility.addMissingSlash(statisticsSubfolder + scriptFolder)
+                if not os.path.exists(folder):
+                    os.makedirs(folder)
+                filename = monthName.strip("/").replace("/", "SLASH") + "#" + secondKey + "#" + thirdKey
+                print "Working with " + script + " on " + filename
+                with open(folder + filename, "w") as f:
                     monthFolder = month + secondFolder + "/" + thirdFolder + "/"
                     if subprocess.call(['python', script, monthFolder.strip("/"), '-m', args.monthsFolder, '-p', monthName + "\n" + secondKey + "\n" + thirdKey], stdout = f) != 0:
                         print "ERROR: Could not calculate " + filename
