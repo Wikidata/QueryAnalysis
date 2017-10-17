@@ -51,10 +51,22 @@ if os.path.isfile(utility.addMissingSlash(args.monthsFolder)
 class OperatorStatisticHandler:
     statistic = defaultdict(int)
     totalCount = 0
+    operators = ["Filter", "Join", "Union", "Optional"]
+
+    def __init__(self):
+        allOperatorsCombinations = set()
+
+        # generate all possible combinations
+        for i in [1, 2, 3, 4]:
+            for operator in itertools.combinations(self.operators, i):
+                allOperatorsCombinations.add(operator)
+        for operators in allOperatorsCombinations:
+            self.statistic[", ".join(sorted(operators))] = 0
 
     def handle(self, sparqlQuery, processed):
         if (processed['#Valid'] == 'VALID'):
             self.totalCount += 1
+
             usedSparqlFeatures = set()
             for usedSparqlFeature in processed['#UsedSparqlFeatures'].split(
                     ","):
@@ -64,37 +76,22 @@ class OperatorStatisticHandler:
                     usedSparqlFeature = "Optional"
                 usedSparqlFeatures.add(usedSparqlFeature.lstrip())
 
-            operators = ["Filter", "Join", "Union", "Optional"]
+            # check which operators are present:
+            presentOperators = set()
+            for operator in self.operators:
+                if operator in usedSparqlFeatures:
+                    presentOperators.add(operator)
 
-            allOperatorsCombinations = set()
-
-            # generate all possible combinations
-            for i in [1, 2, 3, 4]:
-                for operator in itertools.combinations(operators, i):
-                    allOperatorsCombinations.add(operator)
-
-            noOperator = True
-
-            for operatorCombination in allOperatorsCombinations:
-                # check if this operator combination is present in current
-                # query
-                allOperatorsPresent = True
-                for operator in operatorCombination:
-                    if operator not in usedSparqlFeatures:
-                        allOperatorsPresent = False
-
-                if allOperatorsPresent:
-                    self.statistic[", ".join(operatorCombination)] += 1
-                    noOperator = False
-
-            if noOperator:
+            if len(presentOperators) == 0:
                 self.statistic["None"] += 1
+            else:
+                self.statistic[", ".join(sorted(presentOperators))] += 1
 
     def printSparqlTranslation(self):
         result = ""
         i = 1
         for featureName, featureCount in sorted(self.statistic.iteritems()):
-            #print(featureName)
+            # print(featureName + "\t" + str(featureCount))
             print(featureCount)
             i += 1
 
