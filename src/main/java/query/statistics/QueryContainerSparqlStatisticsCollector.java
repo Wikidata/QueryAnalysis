@@ -13,6 +13,11 @@ public class QueryContainerSparqlStatisticsCollector extends ASTVisitorBase
 {
   private HashMap<String, Integer> statistics = new HashMap<>();
 
+  /**
+   * Saves if there was a select query in this query.
+   */
+  private boolean foundSelectQuery = false;
+
   public HashMap<String, Integer> getStatistics()
   {
     return statistics;
@@ -35,6 +40,9 @@ public class QueryContainerSparqlStatisticsCollector extends ASTVisitorBase
 
   public Object visit(ASTSelectQuery node, Object data) throws VisitorException
   {
+    if (node.jjtGetParent() instanceof ASTGraphPatternGroup) {
+      add("SubSelect");
+    }
     return this.visitNode(node, data);
   }
 
