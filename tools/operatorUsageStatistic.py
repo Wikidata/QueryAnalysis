@@ -97,11 +97,11 @@ class OperatorStatisticHandler:
                 if operator in usedSparqlFeatures:
                     presentOperators.add(operator)
 
+            if "Other" in usedSparqlFeatures:
+                self.statistic["Other"] += 1
+
             if len(presentOperators) == 0:
-                if "Other" in usedSparqlFeatures:
-                    self.statistic["Other"] += 1
-                else:
-                    self.statistic["None"] += 1
+                self.statistic["None"] += 1
             else:
                 self.statistic[", ".join(sorted(presentOperators))] += 1
 
