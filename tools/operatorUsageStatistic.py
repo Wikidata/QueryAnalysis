@@ -109,8 +109,8 @@ class OperatorStatisticHandler:
         result = ""
         i = 1
         for featureName, featureCount in sorted(self.statistic.iteritems()):
-            print(featureName + "\t" + str(featureCount))
-            # print(featureCount)
+            # print(featureName + "\t" + str(featureCount))
+            print(featureCount)
             i += 1
 
         print("")
