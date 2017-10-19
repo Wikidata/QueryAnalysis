@@ -51,7 +51,7 @@ if os.path.isfile(utility.addMissingSlash(args.monthsFolder)
 class OperatorStatisticHandler:
     statistic = defaultdict(int)
     totalCount = 0
-    operators = ["Filter", "Join", "Union", "Optional"]
+    operators = ["Filter", "Join", "Union", "Optional", "Values", "Path"]
 
     def __init__(self):
         allOperatorsCombinations = set()
@@ -68,13 +68,28 @@ class OperatorStatisticHandler:
             self.totalCount += 1
 
             usedSparqlFeatures = set()
+            other = 0
             for usedSparqlFeature in processed['#UsedSparqlFeatures'].split(
                     ","):
                 if usedSparqlFeature == " UnionGraphPattern":
                     usedSparqlFeature = "Union"
                 elif usedSparqlFeature == " OptionalGraphPattern":
                     usedSparqlFeature = "Optional"
+                elif usedSparqlFeature == " BindingValue":
+                    usedSparqlFeature = "Values"
+                elif usedSparqlFeature == " +" or usedSparqlFeature == " *":
+                    usedSparqlFeature = "Path"
+                elif usedSparqlFeature == " MinusGraphPattern":
+                    other += 1
+                elif usedSparqlFeature == " ServiceGraphPattern":
+                    other += 1
+                elif usedSparqlFeature == " LangService":
+                    other + -1
                 usedSparqlFeatures.add(usedSparqlFeature.lstrip())
+
+            # other is MinusGraphPattern + ServiceGraphPattern - LangService
+            if other == 2:
+                usedSparqlFeatures.add("Other")
 
             # check which operators are present:
             presentOperators = set()
@@ -83,7 +98,10 @@ class OperatorStatisticHandler:
                     presentOperators.add(operator)
 
             if len(presentOperators) == 0:
-                self.statistic["None"] += 1
+                if "Other" in usedSparqlFeatures:
+                    self.statistic["Other"] += 1
+                else:
+                    self.statistic["None"] += 1
             else:
                 self.statistic[", ".join(sorted(presentOperators))] += 1
 
@@ -91,8 +109,8 @@ class OperatorStatisticHandler:
         result = ""
         i = 1
         for featureName, featureCount in sorted(self.statistic.iteritems()):
-            # print(featureName + "\t" + str(featureCount))
-            print(featureCount)
+            print(featureName + "\t" + str(featureCount))
+            # print(featureCount)
             i += 1
 
         print("")
