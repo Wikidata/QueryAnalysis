@@ -138,9 +138,4 @@ df = pandas.read_csv(pathBase + "Query_Type_Data.tsv", sep="\t",
 df = df.sort(["#QueryTypeCount"], ascending=False)
 df.to_csv(pathBase + "Query_Type_Data.tsv", sep="\t")
 
-with open(pathBase + "Query_Type_Data.tsv", 'rb') as f_in, gzip.open(pathBase + "Query_Type_Data.tsv.gz", 'wb') as f_out:
-    shutil.copyfileobj(f_in, f_out)
-
-os.remove(pathBase + "Query_Type_Data.tsv")
-
 print "Done."
