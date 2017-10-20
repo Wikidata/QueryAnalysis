@@ -57,7 +57,7 @@ class OperatorStatisticHandler:
         allOperatorsCombinations = set()
 
         # generate all possible combinations
-        for i in [1, 2, 3, 4]:
+        for i in [1, 2, 3, 4, 5, 6]:
             for operator in itertools.combinations(self.operators, i):
                 allOperatorsCombinations.add(operator)
         for operators in allOperatorsCombinations:
