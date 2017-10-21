@@ -5,6 +5,7 @@ import sys
 
 from utility import utility
 import config
+import fieldRanking
 
 os.nice(19)
 
@@ -29,6 +30,8 @@ if not os.path.exists(statisticsSubfolder):
     os.makedirs(statisticsSubfolder)
 
 for monthName in args.months.split(","):
+    cleanMonthName = monthName.strip("/").replace("/", "SLASH")
+
     if os.path.isfile(utility.addMissingSlash(args.monthsFolder) + utility.addMissingSlash(monthName) + "locked") and not args.ignoreLock:
         print "ERROR: The month " + monthName + " is being edited at the moment. Use -i if you want to force the execution of this script."
         continue
@@ -37,13 +40,16 @@ for monthName in args.months.split(","):
 
     for secondKey, secondFolder in {"user":"userData", "nonUser":"nonUserData"}.iteritems():
         for thirdKey, thirdFolder in {"all":"", "unique":"uniqueQueryDataset", "queryType":"queryTypeDataset"}.iteritems():
+            monthFolder = month + secondFolder + "/" + thirdFolder + "/"
+            monthFolder = monthFolder.strip("/")
+
+            filename = cleanMonthName + "#" + secondKey + "#" + thirdKey
+            fieldRanking.fieldRanking(monthFolder, "QueryType", monthsFolder = args.monthsFolder, outputPath = statisticsSubfolder + "queryType_Ranking", outputFilename = filename, writeOut = True, notifications = False)
             for script, scriptFolder in {"getSparqlStatistic.py":"sparqlFeatures", "operatorUsageStatistic.py":"operatorUsage", "generalStat.py":"generalStats"}.iteritems():
                 folder = utility.addMissingSlash(statisticsSubfolder + scriptFolder)
                 if not os.path.exists(folder):
                     os.makedirs(folder)
-                filename = monthName.strip("/").replace("/", "SLASH") + "#" + secondKey + "#" + thirdKey
                 print "Working with " + script + " on " + filename
                 with open(folder + filename, "w") as f:
-                    monthFolder = month + secondFolder + "/" + thirdFolder + "/"
-                    if subprocess.call(['python', script, monthFolder.strip("/"), '-m', args.monthsFolder, '-p', monthName + "\n" + secondKey + "\n" + thirdKey], stdout = f) != 0:
+                    if subprocess.call(['python', script, monthFolder, '-m', args.monthsFolder, '-p', monthName + "\n" + secondKey + "\n" + thirdKey], stdout = f) != 0:
                         print "ERROR: Could not calculate " + filename
