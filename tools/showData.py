@@ -23,11 +23,11 @@ parser.add_argument("--startline", "-s", default=0, type=int, help="The line"
 parser.add_argument("--endline", "-e", default=sys.maxint, type=int,
                     help="The line where we want to stop displaying the data.")
 parser.add_argument("--line", "-l", type=int, help="Set if you only want to display one specific line.")
+parser.add_argument("--day", "-d", default = 1, type=int, help="The day of the month from which "
+                    + "lines should be displayed. Default is 1.")
 parser.add_argument("month", type=str, help="The month from which lines "
                     + "should be displayed.")
-parser.add_argument("day", type=int, help="The day of the month from which "
-                    + "lines should be displayed.")
-parser.add_argument("metrics", type=str, help="The metrics that should be "
+parser.add_argument("--metricsToBeViewed", "-v", default = "", type=str, help="The metrics that should be "
                     + "show, separated by comma (e.g QuerySize,QueryType)")
 parser.add_argument("--metricsNotNull", "-n", default="", type=str,
                     help="The list of metrics that shouldn't be null, "
@@ -35,6 +35,8 @@ parser.add_argument("--metricsNotNull", "-n", default="", type=str,
 parser.add_argument("--anonymous", "-a", action="store_true", help="Check to switch to viewing the anonymous data."
                     + " WARNING: No processed metrics are available for anonymous data because the anonymous files"
                     + " do not synch up to the processed files due to dropping the invalid lines.")
+parser.add_argument("--queryTypeRanking", "-q", action="store_true", help="Display lines from the ranked query type file."
+                    + " NOTE: The day setting is ignored if query type ranking is enabled.")
 
 if (len(sys.argv[1:]) == 0):
     parser.print_help()
@@ -59,8 +61,9 @@ if os.path.isfile(utility.addMissingSlash(args.monthsFolder)
 metrics = list()
 metricsNotNull = list()
 
-for metric in args.metrics.split(","):
-    metrics.append(utility.addMissingDoubleCross(metric))
+if args.metricsToBeViewed is not "":
+    for metric in args.metricsToBeViewed.split(","):
+        metrics.append(utility.addMissingDoubleCross(metric))
 
 if args.metricsNotNull is not "":
     for metric in args.metricsNotNull.split(","):
@@ -83,18 +86,20 @@ class ViewDataHandler:
 
         for metric in metrics:
             data[0].append(processed[metric])
-            print tabulate(data, headers=metrics)
-            print "Query:"
-            if sparqlQuery is None:
-                print "Error: Could not find query in uri_query."
-            else:
-                print sparqlQuery
-                print ""
+        print tabulate(data, headers=metrics)
+        print "Query:"
+        if sparqlQuery is None:
+            print "Error: Could not find query in uri_query."
+        else:
+            print sparqlQuery
+            print ""
 
 
 handler = ViewDataHandler()
 
 if args.anonymous:
     processdata.processDayAnonymous(handler, args.day, args.month, args.monthsFolder, startIdx=startLine, endIdx=endLine)
+elif args.queryTypeRanking:
+    processdata.processRankedQueryType(handler, args.month, args.monthsFolder, startIdx = startLine, endIdx = endLine)
 else:
     processdata.processDay(handler, args.day, args.month, args.monthsFolder, startIdx=startLine, endIdx=endLine)

@@ -19,6 +19,9 @@ anonymousDataFolder = "anonymousRawData/"
 anonymousFilePrefix = "AnonymousQueryCnt"
 anonymousFileSuffix = ".tsv.gz"
 
+rankedQueryTypeFolder = "queryTypeDataRanking/"
+rankedQueryTypeFile = "Query_Type_Data_Ranking.tsv"
+
 
 def processMonth(handler, month, monthsFolder, anonymous = False, notifications = True):
     folderToSearch = processedFolder
@@ -100,6 +103,23 @@ def processDayAnonymous(handler, day, month, monthsFolder, startIdx=0, endIdx=sy
 
                 anonymous["#timestamp"] = anonymous["#timestamp"]
                 handler.handle(sparqlQuery, anonymous)
+            elif i > endIdx:
+                break
+            i += 1
+
+def processRankedQueryType(handler, month, monthsFolder, startIdx = 0, endIdx = sys.maxint, notifications = True):
+    rankedQueryTypeFilename = utility.addMissingSlash(monthsFolder) + utility.addMissingSlash(month) + rankedQueryTypeFolder + rankedQueryTypeFile
+
+    if notifications:
+        print "Working on: " + rankedQueryTypeFilename
+
+    with open(rankedQueryTypeFilename) as r:
+        rReader = csv.DictReader(r, delimiter = "\t")
+
+        i = 0
+        for ranked in rReader:
+            if startIdx <= i <= endIdx:
+                handler.handle(ranked["#ExampleQuery"], ranked)
             elif i > endIdx:
                 break
             i += 1

@@ -19,10 +19,10 @@ from utility import utility
 # The file contains all metrics that are specific for the query type (ignoring
 # things like subject and object names) as well as one example query for this
 # query type
-# TODO: Setup command line parameters  
+# TODO: Setup command line parameters
 
 fieldBasedOnQueryType = ['#Valid', '#QuerySize', '#VariableCountHead',
-                         '#VariableCountPattern', '#TripleCountWithService', 
+                         '#VariableCountPattern', '#TripleCountWithService',
                          '#QueryComplexity', '#SubjectsAndObjects', '#Predicates',
                          '#Categories', '#UsedSparqlFeatures']
 
@@ -58,10 +58,11 @@ if os.path.isfile(utility.addMissingSlash(args.monthsFolder) +
     + " Use -i if you want to force the execution of this script."
     sys.exit()
 
-os.chdir(utility.addMissingSlash(args.monthsFolder) 
+os.chdir(utility.addMissingSlash(args.monthsFolder)
          + utility.addMissingSlash(args.month))
 
-pathBase = "queryTypeData/"
+pathBase = "queryTypeDataRanking/"
+fileName = "Query_Type_Data_Ranking.tsv"
 
 processedPrefix = "processedLogData/QueryProcessedOpenRDF"
 sourcePrefix = "rawLogData/QueryCnt"
@@ -69,7 +70,7 @@ sourcePrefix = "rawLogData/QueryCnt"
 if not os.path.exists(pathBase):
     os.makedirs(pathBase)
 
-with open(pathBase + "Query_Type_Data.tsv", "w") as types:
+with open(pathBase + fileName, "w") as types:
     typeWriter = csv.DictWriter(types, None, delimiter="\t")
 
     th = {"#QueryType":"#QueryType", "#QueryTypeCount":"#QueryTypeCount", "#ExampleQuery":"#ExampleQuery"}
@@ -121,7 +122,7 @@ with open(pathBase + "Query_Type_Data.tsv", "w") as types:
                     for key in processed:
                         if key in fieldBasedOnQueryType:
                             processedToWrite[key] = processed[key]
-                            
+
                     processedToWrite["#QueryType"] = queryType
                     processedToWrite["#QueryTypeCount"] = queryTypes[queryType]
 
@@ -133,9 +134,9 @@ if len(queryTypes) > 0:
     for key in queryTypes:
         print "\t" + key
 
-df = pandas.read_csv(pathBase + "Query_Type_Data.tsv", sep="\t", 
+df = pandas.read_csv(pathBase + fileName, sep="\t",
                      header=0, index_col=0)
 df = df.sort(["#QueryTypeCount"], ascending=False)
-df.to_csv(pathBase + "Query_Type_Data.tsv", sep="\t")
+df.to_csv(pathBase + fileName, sep="\t")
 
 print "Done."
