@@ -268,6 +268,8 @@ public final class Main
 
     loadStandardPrefixes();
 
+    backupQueryTypeMap();
+
     DB mapDb = DBMaker.fileDB(queryTypeMapDbLocation).fileChannelEnable().fileMmapEnable().make();
     for (int i = 0; i < numberOfQueryTypeDiskMaps; i++) {
       queryTypes[i] = mapDb.hashMap("queryTypeMap" + i, Serializer.BYTE_ARRAY, Serializer.STRING).createOrOpen();
@@ -340,6 +342,20 @@ public final class Main
     long millis = TimeUnit.MILLISECONDS.convert(stopTime - startTime, TimeUnit.NANOSECONDS);
     Date date = new Date(millis);
     System.out.println("Finished executing with all threads: " + new SimpleDateFormat("mm-dd HH:mm:ss:SSSSSSS").format(date));
+  }
+
+  /**
+   * Creates a backup of the query type map db file if it exists.
+   */
+  private static void backupQueryTypeMap()
+  {
+    Path currentQueryTypeMapPath = Paths.get(queryTypeMapDbLocation);
+    Path backupQueryTypeMapPath = Paths.get(queryTypeMapDbLocation + ".bak");
+    try {
+      Files.copy(currentQueryTypeMapPath, backupQueryTypeMapPath);
+    } catch (IOException e) {
+      logger.error("Failed to backup query type map file.", e);
+    }
   }
 
   /**
