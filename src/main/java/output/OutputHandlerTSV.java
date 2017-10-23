@@ -100,6 +100,7 @@ public class OutputHandlerTSV extends OutputHandler
     header.add("#VariableCountHead");
     header.add("#VariableCountPattern");
     header.add("#TripleCountWithService");
+    header.add("#TripleCountWithoutService");
     header.add("#QueryType");
     header.add("#QueryComplexity");
     header.add("#SubjectsAndObjects");
@@ -163,6 +164,7 @@ public class OutputHandlerTSV extends OutputHandler
       line.add(queryHandler.getVariableCountHead());
       line.add(queryHandler.getVariableCountPattern());
       line.add(queryHandler.getTripleCountWithService());
+      line.add(queryHandler.getTripleCountWithoutService());
       line.add(queryHandler.getQueryType());
       line.add(queryHandler.getSimpleOrComplex());
       line.add(queryHandler.getqIDString());

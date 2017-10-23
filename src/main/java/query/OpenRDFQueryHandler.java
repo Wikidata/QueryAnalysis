@@ -240,6 +240,51 @@ public class OpenRDFQueryHandler extends QueryHandler
   /**
    * {@inheritDoc}
    */
+  @Override
+  protected final void computeTripleCountWithoutService()
+  {
+    if (getValidityStatus() != QueryHandler.Validity.VALID) {
+      this.tripleCountWithoutService = -1;
+      return;
+    }
+
+    final List<StatementPattern> statementPatterns = new ArrayList<StatementPattern>();
+
+    try {
+      query.getTupleExpr().visit(new QueryModelVisitorBase<VisitorException>()
+      {
+
+        @Override
+        public void meet(StatementPattern statementPattern) throws VisitorException
+        {
+          statementPatterns.add(statementPattern);
+        }
+
+        @Override
+        public void meet(Filter node) throws VisitorException
+        {
+          // Skip boolean constraints
+          node.getArg().visit(this);
+        }
+        @Override
+        public void meet(Service service) throws VisitorException
+        {
+          // skip service calls
+        }
+      }
+      );
+
+      this.tripleCountWithoutService = statementPatterns.size();
+    }
+    catch (VisitorException e) {
+      this.tripleCountWithoutService = -1;
+      logger.error("Visitor exception while calculating the triple count without SERVICE.", e);
+    }
+  }
+
+  /**
+   * {@inheritDoc}
+   */
   public final void computeQueryType() throws IllegalStateException
   {
     if (this.getValidityStatus() != QueryHandler.Validity.VALID) {
@@ -331,20 +376,20 @@ public class OpenRDFQueryHandler extends QueryHandler
     final Set<String> predicateVariables = new HashSet<String>();
 
     normalizedQuery.getTupleExpr().visit(new QueryModelVisitorBase<VisitorException>()
-                                         {
+    {
 
-                                           @Override
-                                           public void meet(StatementPattern statementPattern) throws VisitorException
-                                           {
-                                             Var predicate = statementPattern.getPredicateVar();
+      @Override
+      public void meet(StatementPattern statementPattern) throws VisitorException
+      {
+        Var predicate = statementPattern.getPredicateVar();
 
-                                             if (!predicate.isConstant() && !predicate.isAnonymous()) {
-                                               predicateVariables.add(predicate.getName());
-                                             }
+        if (!predicate.isConstant() && !predicate.isAnonymous()) {
+          predicateVariables.add(predicate.getName());
+        }
 
-                                             meetNode(statementPattern);
-                                           }
-                                         }
+        meetNode(statementPattern);
+      }
+    }
     );
 
     normalizedQuery.getTupleExpr().visit(new QueryModelVisitorBase<VisitorException>()

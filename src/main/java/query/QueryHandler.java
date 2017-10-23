@@ -72,9 +72,14 @@ public abstract class QueryHandler implements Serializable
   protected Integer variableCountPattern = null;
   /**
    * The number of triples in the query pattern
-   * (including triples in SERIVCE blocks).
+   * (including triples in SERVICE blocks).
    */
   protected Integer tripleCountWithService = null;
+  /**
+   * The number of triples in the query pattern
+   * (excluding tirples in SERVICE blocks).
+   */
+  protected Integer tripleCountWithoutService = null;
   /**
    * Contains the sparql statistics.
    */
@@ -356,11 +361,11 @@ public abstract class QueryHandler implements Serializable
 
   /**
    * Computes the number of triples in the query pattern
-   * (including triples in SERIVCE blocks).
+   * (including triples in SERVICE blocks).
    * Useful for caching.
    */
   protected abstract void computeTripleCountWithService();
-
+  
   /**
    * @return Returns the number of triples in the query pattern
    * (including triples in SERIVCE blocks).
@@ -371,6 +376,23 @@ public abstract class QueryHandler implements Serializable
       this.computeTripleCountWithService();
     }
     return this.tripleCountWithService;
+  }
+
+  /**
+   * Computes the number of triples in the query pattern
+   * (excluding triples in SERVICE blocks).
+   */
+  protected abstract void computeTripleCountWithoutService();
+
+  /**
+   * @return The number of triples in the query pattern (excluding triples in SERVICE blocks).
+   */
+  public Integer getTripleCountWithoutService()
+  {
+    if (this.tripleCountWithoutService == null) {
+      this.computeTripleCountWithoutService();
+    }
+    return this.tripleCountWithoutService;
   }
 
   /**
