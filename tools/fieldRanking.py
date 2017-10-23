@@ -35,7 +35,7 @@ def fieldRanking(month, metric, monthsFolder = config.monthsFolder, ignoreLock =
 	if outputPath is not None:
 		pathBase = utility.addMissingSlash(outputPath)
 
-	outputFile = month.strip("/") + "_" + metric + "_Ranking.tsv"
+	outputFile = month.strip("/").replace("/", "_") + "_" + metric + "_Ranking.tsv"
 
 	if outputFilename is not None:
 		outputFile = outputFilename
@@ -83,10 +83,9 @@ def fieldRanking(month, metric, monthsFolder = config.monthsFolder, ignoreLock =
 
 		def writeCount(self, filename, metricsCount, count):
 		    with open(filename, "w") as file:
-		        file.write(header)
-		        for k, v in sorted(metricsCount.iteritems(),
-		                           key=lambda (k, v): (v, k), reverse=True):
-		            file.write(str(k) + "\t" + str(v) + "\n")
+				file.write(header)
+				for k, v in sorted(metricsCount.iteritems(), key=lambda (k, v): (v, k), reverse=True):
+					file.write(str(k) + "\t" + str(v) + "\n")
 
 	handler = FieldRankingHandler()
 

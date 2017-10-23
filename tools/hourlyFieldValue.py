@@ -43,7 +43,7 @@ def hourlyFieldValue(month, metric, monthsFolder = config.monthsFolder, ignoreLo
             + utility.addMissingSlash(month) \
             + utility.addMissingSlash(metric)
 
-    outputFile = month + "_" + metric + "_Hourly_Values.tsv"
+    outputFile = month.strip("/").replace("/", "_") + "_" + metric + "_Hourly_Values.tsv"
 
     if outputFilename is not None:
     	outputFile = outputFilename
