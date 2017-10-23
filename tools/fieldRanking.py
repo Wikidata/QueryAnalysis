@@ -30,12 +30,12 @@ def fieldRanking(month, metric, monthsFolder = config.monthsFolder, ignoreLock =
 
 	pathBase = utility.addMissingSlash(monthsFolder) \
 		    + utility.addMissingSlash(month) \
-		    + utility.addMissingSlash(metric) + "ranking/"
+		    + utility.addMissingSlash(metric)
 
 	if outputPath is not None:
 		pathBase = utility.addMissingSlash(outputPath)
 
-	outputFile = "Full_Month_" + metric + "_Ranking.tsv"
+	outputFile = month.strip("/") + "_" + metric + "_Ranking.tsv"
 
 	if outputFilename is not None:
 		outputFile = outputFilename
