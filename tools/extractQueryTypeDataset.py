@@ -9,7 +9,7 @@ from utility import utility
 
 parser = argparse.ArgumentParser(
     description="Creates a subset of the raw log files and the processed log "
-    + "files where for each present QueryType an example Query is being " +
+    + "files where for each present Unique Query an example Query is being " +
     "inserted")
 parser.add_argument(
     "--monthsFolder",
@@ -38,52 +38,54 @@ if os.path.isfile(utility.addMissingSlash(args.monthsFolder) +
     + "Use -i if you want to force the execution of this script."
     sys.exit()
 
-os.chdir(
-    utility.addMissingSlash(args.monthsFolder) +
-    utility.addMissingSlash(args.month))
+for monthName in args.month.split(","):
+    subfolder = utility.addMissingSlash(args.monthsFolder) + utility.addMissingSlash(monthName)
+    subfolderUnique = subfolder + "queryTypeDataset/"
 
-subfolder = "queryTypeDataset/"
+    processedFolderName = "processedLogData/"
+    sourceFolderName = "rawLogData/"
 
-processedPrefix = "processedLogData/QueryProcessedOpenRDF"
-sourcePrefix = "rawLogData/QueryCnt"
+    processedPrefix = processedFolderName + "QueryProcessedOpenRDF"
+    sourcePrefix = sourceFolderName + "QueryCnt"
 
-if not os.path.exists(subfolder):
-    os.makedirs(subfolder)
-    os.makedirs(subfolder + "processedLogData")
-    os.makedirs(subfolder + "rawLogData")
+    if not os.path.exists(subfolderUnique):
+        os.makedirs(subfolderUnique)
+    if not os.path.exists(subfolderUnique + processedFolderName):
+        os.makedirs(subfolderUnique + processedFolderName)
+    if not os.path.exists(subfolderUnique + sourceFolderName):
+        os.makedirs(subfolderUnique + sourceFolderName)
 
-usedQueryTypes = set()
+    usedQueryTypes = set()
 
-for i in xrange(1, 32):
-    if not (os.path.exists(processedPrefix + "%02d" % i + ".tsv.gz")
-            and gzip.os.path.exists(sourcePrefix + "%02d" % i + ".tsv.gz")):
-        continue
-    print "Working on %02d" % i
-    with gzip.open(processedPrefix + "%02d" % i + ".tsv.gz") as p, \
-            gzip.open(sourcePrefix + "%02d" % i + ".tsv.gz") as s, \
-            gzip.open(subfolder + processedPrefix + "%02d" % i
-                      + ".tsv.gz", "w") as user_p, \
-            gzip.open(subfolder + sourcePrefix + "%02d" % i
-                      + ".tsv.gz", "w") as user_s:
-        pReader = csv.DictReader(p, delimiter="\t")
-        sReader = csv.DictReader(s, delimiter="\t")
+    for i in xrange(1, 32):
+        if not (os.path.exists(subfolder + processedPrefix + "%02d" % i + ".tsv.gz")
+                and gzip.os.path.exists(subfolder + sourcePrefix + "%02d" % i + ".tsv.gz")):
+            continue
+        print "Working on %02d" % i
+        with gzip.open(subfolder + processedPrefix + "%02d" % i + ".tsv.gz") as p, \
+                gzip.open(subfolder + sourcePrefix + "%02d" % i + ".tsv.gz") as s, \
+                gzip.open(subfolderUnique + processedPrefix + "%02d" % i
+                          + ".tsv.gz", "w") as user_p, \
+                gzip.open(subfolderUnique + sourcePrefix + "%02d" % i
+                          + ".tsv.gz", "w") as user_s:
+            pReader = csv.DictReader(p, delimiter="\t")
+            sReader = csv.DictReader(s, delimiter="\t")
 
-        pWriter = csv.DictWriter(user_p, None, delimiter="\t")
-        sWriter = csv.DictWriter(user_s, None, delimiter="\t")
+            pWriter = csv.DictWriter(user_p, None, delimiter="\t")
+            sWriter = csv.DictWriter(user_s, None, delimiter="\t")
 
-        for processed, source in izip(pReader, sReader):
-            if pWriter.fieldnames is None:
-                ph = dict((h, h) for h in pReader.fieldnames)
-                pWriter.fieldnames = pReader.fieldnames
-                pWriter.writerow(ph)
+            for processed, source in izip(pReader, sReader):
+                if pWriter.fieldnames is None:
+                    ph = dict((h, h) for h in pReader.fieldnames)
+                    pWriter.fieldnames = pReader.fieldnames
+                    pWriter.writerow(ph)
 
-            if sWriter.fieldnames is None:
-                sh = dict((h, h) for h in sReader.fieldnames)
-                sWriter.fieldnames = sReader.fieldnames
-                sWriter.writerow(sh)
+                if sWriter.fieldnames is None:
+                    sh = dict((h, h) for h in sReader.fieldnames)
+                    sWriter.fieldnames = sReader.fieldnames
+                    sWriter.writerow(sh)
 
-            if (processed['#QueryType'] not in usedQueryTypes):
-                pWriter.writerow(processed)
-                sWriter.writerow(source)
-
-            usedQueryTypes.add(processed['#QueryType'])
+                if (processed['#QueryType'] not in usedQueryTypes):
+                    pWriter.writerow(processed)
+                    sWriter.writerow(source)
+                    usedQueryTypes.add(processed['#QueryType'])
