@@ -44,7 +44,9 @@ for monthName in args.months.split(","):
             monthFolder = monthFolder.strip("/")
 
             filename = cleanMonthName + "#" + secondKey + "#" + thirdKey
+            print "Working with fieldRanking on " + filename
             fieldRanking.fieldRanking(monthFolder, "Predicates", monthsFolder = args.monthsFolder, outputPath = statisticsSubfolder + "predicates_Ranking", outputFilename = filename, writeOut = True, notifications = False)
+            print "Working with fieldRanking on " + filename
             fieldRanking.fieldRanking(monthFolder, "Categories", monthsFolder = args.monthsFolder, outputPath = statisticsSubfolder + "categories_Ranking", outputFilename = filename, writeOut = True, notifications = False)
             if thirdKey is not "queryType":
                 fieldRanking.fieldRanking(monthFolder, "QueryType", monthsFolder = args.monthsFolder, outputPath = statisticsSubfolder + "queryType_Ranking", outputFilename = filename, writeOut = True, notifications = False)
