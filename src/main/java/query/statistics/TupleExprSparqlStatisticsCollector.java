@@ -69,6 +69,8 @@ public class TupleExprSparqlStatisticsCollector extends QueryModelVisitorBase
       int index = value.indexOf(",");
       if (index != -1) {
         this.primaryLanguage = value.substring(0, index);
+      } else {
+        this.primaryLanguage = value;
       }
     }
     super.meetNode(node);
