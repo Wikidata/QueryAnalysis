@@ -23,7 +23,7 @@ def writeOutMethod(filename, fieldValues, dictionary):
 
 
 
-def hourlyFieldValue(month, metric, monthsFolder = config.monthsFolder, ignoreLock = False, outputPath = None, filterParams = "", writeOut = False):
+def hourlyFieldValue(month, metric, monthsFolder = config.monthsFolder, ignoreLock = False, outputPath = None, outputFilename = None, filterParams = "", writeOut = False):
     if os.path.isfile(utility.addMissingSlash(monthsFolder)
                       + utility.addMissingSlash(month) + "locked") \
        and not ignoreLock:
@@ -41,7 +41,12 @@ def hourlyFieldValue(month, metric, monthsFolder = config.monthsFolder, ignoreLo
 
     pathBase = utility.addMissingSlash(monthsFolder) \
             + utility.addMissingSlash(month) \
-            + utility.addMissingSlash(metric) + "hourly/"
+            + utility.addMissingSlash(metric)
+
+    outputFile = month + "_" + metric + "_Hourly_Values.tsv"
+
+    if outputFilename is not None:
+    	outputFile = outputFilename
 
     filter = utility.filter()
 
@@ -53,21 +58,14 @@ def hourlyFieldValue(month, metric, monthsFolder = config.monthsFolder, ignoreLo
 
         monthlyData = dict()
 
-        allDailyFieldValues = dict()
-
-        allDailyData = dict()
-
         def handle(self, sparqlQuery, processed):
             if not filter.checkLine(processed):
                 return
 
             day = processed["#day"]
 
-            if day not in self.allDailyFieldValues:
-                self.allDailyFieldValues[day] = set()
-                self.allDailyData[day] = dict()
+            if day not in self.monthlyFieldValues:
                 for j in xrange(0, 24):
-                    self.allDailyData[day][j] = dict()
                     self.monthlyData[j + 24 * (day - 1)] = dict()
 
             try:
@@ -76,15 +74,9 @@ def hourlyFieldValue(month, metric, monthsFolder = config.monthsFolder, ignoreLo
                 print processed["#hour"] + " could not be parsed as integer"
                 return
 
-            if hour in self.allDailyData[day]:
+            if hour in xrange(0,24):
                 data = processed["#" + metric]
-                self.allDailyFieldValues[day].add(data)
                 self.monthlyFieldValues.add(data)
-                if data in self.allDailyData[day][hour]:
-                    self.allDailyData[day][hour][data] += 1
-                else:
-                    self.allDailyData[day][hour][data] = 1
-
                 monthlyHour = hour + 24 * (day - 1)
                 if data in self.monthlyData[monthlyHour]:
                     self.monthlyData[monthlyHour][data] += 1
@@ -94,12 +86,7 @@ def hourlyFieldValue(month, metric, monthsFolder = config.monthsFolder, ignoreLo
                 print hour + " is not in 0-23"
 
         def writeHourlyValues(self):
-            writeOutMethod(pathBase + "Full_Month_" + metric + "_Hourly_Values.tsv", self.monthlyFieldValues, self.monthlyData)
-            for day in self.allDailyFieldValues:
-                writeOutMethod(pathBase + "Day_" + str(day) + "_" + metric
-                         + "_Hourly_Values.tsv",
-                         self.allDailyFieldValues[day], self.allDailyData[day])
-
+            writeOutMethod(pathBase + outputFile, self.monthlyFieldValues, self.monthlyData)
 
     handler = hourlyFieldValueHandler()
 
@@ -120,8 +107,9 @@ if __name__ == '__main__':
                         + "are residing.")
     parser.add_argument("--ignoreLock", "-i", help="Ignore locked file and execute"
                         + " anyways", action="store_true")
-    parser.add_argument("--outputPath", "-o", type=str, help="The path where the"
+    parser.add_argument("--outputPath", "-p", type=str, help="The path where the"
                         + " output files should be generated.")
+    parser.add_argument("--outputFilename", "-o", type=str, help="The name of the output file to be generated.")
     parser.add_argument("--filter", "-f", default="", type=str,
                         help="Constraints used to limit the lines used to generate"
                         + " the output."
@@ -142,6 +130,6 @@ if __name__ == '__main__':
         parser.exit()
 
     args = parser.parse_args()
-        
-    
-    hourlyFieldValue(args.month, args.metric, monthsFolder = args.monthsFolder, ignoreLock = args.ignoreLock, outputPath = args.outputPath, filterParams = args.filter, writeOut = True)
+
+
+    hourlyFieldValue(args.month, args.metric, monthsFolder = args.monthsFolder, ignoreLock = args.ignoreLock, outputPath = args.outputPath, outputFilename = args.outputFilename, filterParams = args.filter, writeOut = True)
