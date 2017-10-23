@@ -268,12 +268,11 @@ public final class Main
 
     loadStandardPrefixes();
 
-    backupQueryTypeMap();
-
     DB mapDb = DBMaker.fileDB(queryTypeMapDbLocation).fileChannelEnable().fileMmapEnable().make();
     for (int i = 0; i < numberOfQueryTypeDiskMaps; i++) {
       queryTypes[i] = mapDb.hashMap("queryTypeMap" + i, Serializer.BYTE_ARRAY, Serializer.STRING).createOrOpen();
     }
+    backupQueryTypeMap();
     loadPreBuildQueryTypes(mapDb);
 
     loadUserAgentRegex();
