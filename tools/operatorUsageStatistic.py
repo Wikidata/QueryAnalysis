@@ -100,7 +100,7 @@ class OperatorStatisticHandler:
             if "Other" in usedSparqlFeatures:
                 self.statistic["Other"] += 1
 
-            if len(presentOperators) == 0:
+            if len(presentOperators) == 0 or "Other" in usedSparqlFeatures:
                 self.statistic["None"] += 1
             else:
                 self.statistic[", ".join(sorted(presentOperators))] += 1
@@ -109,7 +109,7 @@ class OperatorStatisticHandler:
         result = ""
         i = 1
         for featureName, featureCount in sorted(self.statistic.iteritems()):
-            # print(featureName + "\t" + str(featureCount))
+            #print(featureName + "\t" + str(featureCount))
             print(featureCount)
             i += 1
 
