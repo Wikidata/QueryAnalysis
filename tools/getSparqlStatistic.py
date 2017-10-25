@@ -61,6 +61,7 @@ class SparqlStatisticHandler:
         i = 1
         for featureName in keys:
             featureCount = self.statistic[featureName]
+            # result += featureName + ": " + str(featureCount) + "\n"
             result += str(featureCount) + "\n"
 
             i += 1
@@ -86,13 +87,16 @@ class SparqlStatisticHandler:
         self.statistic["Values"] = self.statistic["BindingValue"]
         self.statistic["'+"] = self.statistic["+"]
 
+        self.statistic["Subquery"] = self.statistic["SubSelect"]
+
         # only print specified columns
         toPrintKeys = [
             "Select", "Ask", "Describe", "Construct", "Distinct", "Limit",
             "Offset", "Order By", "Filter", "And", "Union", "Optional",
             "Graph", "Not Exists", "Minus", "Exists", "Count", "Max", "Min",
             "Avg", "Sum", "Group By", "Having", "Service", "LangService",
-            "Sample", "Bind", "GroupConcat", "Reduced", "Values", "'+", "*"
+            "Sample", "Bind", "GroupConcat", "Reduced", "Values", "'+", "*",
+            "Subquery"
         ]
 
         self.printKeys(toPrintKeys)
