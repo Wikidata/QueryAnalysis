@@ -51,13 +51,16 @@ if os.path.isfile(utility.addMissingSlash(args.monthsFolder)
 class OperatorStatisticHandler:
     statistic = defaultdict(int)
     totalCount = 0
-    operators = ["Filter", "Join", "Union", "Optional", "Values", "Path"]
+    operators = [
+        "Filter", "Join", "Union", "Optional", "Values", "Path", "Other"
+    ]
+    otherSparqlFeatures = set()
 
     def __init__(self):
         allOperatorsCombinations = set()
 
         # generate all possible combinations
-        for i in [1, 2, 3, 4, 5, 6]:
+        for i in [1, 2, 3, 4, 5, 6, 7]:
             for operator in itertools.combinations(self.operators, i):
                 allOperatorsCombinations.add(operator)
         for operators in allOperatorsCombinations:
@@ -68,28 +71,31 @@ class OperatorStatisticHandler:
             self.totalCount += 1
 
             usedSparqlFeatures = set()
-            other = 0
+
             for usedSparqlFeature in processed['#UsedSparqlFeatures'].split(
                     ","):
-                if usedSparqlFeature == " UnionGraphPattern":
+                usedSparqlFeature = usedSparqlFeature.lstrip()
+                if usedSparqlFeature == "UnionGraphPattern":
                     usedSparqlFeature = "Union"
-                elif usedSparqlFeature == " OptionalGraphPattern":
+                elif usedSparqlFeature == "OptionalGraphPattern":
                     usedSparqlFeature = "Optional"
-                elif usedSparqlFeature == " BindingValue":
+                elif usedSparqlFeature == "BindingValue":
                     usedSparqlFeature = "Values"
-                elif usedSparqlFeature == " +" or usedSparqlFeature == " *":
+                elif usedSparqlFeature == "+" or usedSparqlFeature == "*":
                     usedSparqlFeature = "Path"
-                elif usedSparqlFeature == " MinusGraphPattern":
-                    other += 1
-                elif usedSparqlFeature == " ServiceGraphPattern":
-                    other += 1
-                elif usedSparqlFeature == " LangService":
-                    other + -1
-                usedSparqlFeatures.add(usedSparqlFeature.lstrip())
+                elif usedSparqlFeature == "LangService":
+                    usedSparqlFeature = ""
+                elif usedSparqlFeature == "Filter" or usedSparqlFeature == "ExistsFunc" or usedSparqlFeature == "NotExistsFunc":
+                    usedSparqlFeature = "Filter"
+                elif usedSparqlFeature == "Join":
+                    usedSparqlFeature = "Join"
+                elif usedSparqlFeature == "SelectQuery" or usedSparqlFeature == "ConstructQuery" or usedSparqlFeature == "AskQuery" or usedSparqlFeature == "DescribeQuery" or usedSparqlFeature == "":
+                    usedSparqlFeature = ""
+                else:
+                    self.otherSparqlFeatures.add(usedSparqlFeature)
+                    usedSparqlFeature = "Other"
 
-            # other is MinusGraphPattern + ServiceGraphPattern - LangService
-            if other == 2:
-                usedSparqlFeatures.add("Other")
+                usedSparqlFeatures.add(usedSparqlFeature)
 
             # check which operators are present:
             presentOperators = set()
@@ -97,10 +103,7 @@ class OperatorStatisticHandler:
                 if operator in usedSparqlFeatures:
                     presentOperators.add(operator)
 
-            if "Other" in usedSparqlFeatures:
-                self.statistic["Other"] += 1
-
-            if len(presentOperators) == 0 or "Other" in usedSparqlFeatures:
+            if len(presentOperators) == 0:
                 self.statistic["None"] += 1
             else:
                 self.statistic[", ".join(sorted(presentOperators))] += 1
@@ -109,12 +112,14 @@ class OperatorStatisticHandler:
         result = ""
         i = 1
         for featureName, featureCount in sorted(self.statistic.iteritems()):
-            #print(featureName + "\t" + str(featureCount))
-            print(featureCount)
+            print(featureName + "\t" + str(featureCount))
+            #print(featureCount)
             i += 1
 
         print("")
         print(str(self.totalCount))
+
+        pprint(self.otherSparqlFeatures)
 
 
 handler = OperatorStatisticHandler()
