@@ -275,34 +275,45 @@ public class StandardizingSPARQLParser extends SPARQLParser
     }
   }
 
-  @Override
-  public final ParsedQuery parseQuery(String queryString, String baseURI)
-      throws MalformedQueryException
+  /**
+   * @param queryString The query to parsed.
+   * @param baseURI The base URI to resolve any possible relative URIs against.
+   * @return The ASTQueryContainer representing this query.
+   * @throws MalformedQueryException If the query was in any way malformed.
+   */
+  public final ASTQueryContainer getDebuggedASTQueryContainer(String queryString, String baseURI) throws MalformedQueryException
   {
     try {
       ASTQueryContainer qc = SyntaxTreeBuilder.parseQuery(queryString);
       debug(qc);
-      return parseQuery(qc, baseURI);
+      return qc;
     } catch (TokenMgrError | ParseException e) {
       throw new MalformedQueryException(e.getMessage(), e);
     }
   }
 
+  @Override
+  public final ParsedQuery parseQuery(String queryString, String baseURI)
+      throws MalformedQueryException
+  {
+    ASTQueryContainer qc = getDebuggedASTQueryContainer(queryString, baseURI);
+    return parseQuery(qc, baseURI);
+  }
+
   /**
    * @param queryString The query to be parsed normalized
-   * @param baseURI     The The base URI to resolve any possible relative URIs against
+   * @param baseURI     The base URI to resolve any possible relative URIs against
    * @return The parsed and partially normalized query
    * @throws MalformedQueryException If the query was in any way malformed
    */
   public final ParsedQuery parseNormalizeQuery(String queryString, String baseURI)
       throws MalformedQueryException
   {
+    ASTQueryContainer qc = getDebuggedASTQueryContainer(queryString, baseURI);
     try {
-      ASTQueryContainer qc = SyntaxTreeBuilder.parseQuery(queryString);
-      debug(qc);
       normalize(qc);
       return parseQuery(qc, baseURI);
-    } catch (TokenMgrError | ParseException e) {
+    } catch (TokenMgrError e) {
       throw new MalformedQueryException(e.getMessage(), e);
     }
   }
