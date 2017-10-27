@@ -161,6 +161,10 @@ public abstract class QueryHandler implements Serializable
    */
   private String categories;
   /**
+   * The non-simple property paths as a string of comma separated values.
+   */
+  protected String nonSimplePropertyPaths;
+  /**
    * The unique id consists of the hash of the QueryString combined with the line it was being executed.
    */
   private String uniqeId;
@@ -641,7 +645,7 @@ public abstract class QueryHandler implements Serializable
    * @param anyIDstoString The set that should be converted into a string.
    * @return The IDs as a string of comma separated values.
    */
-  private String computeAnyIDString(Set<String> anyIDstoString)
+  protected String computeAnyIDString(Set<String> anyIDstoString)
   {
     if (anyIDstoString == null) {
       return "";
@@ -794,6 +798,22 @@ public abstract class QueryHandler implements Serializable
   }
 
   /**
+   * Computes the non-simple property paths as a string of comma separated values.
+   */
+  protected abstract void computeNonSimplePropertyPaths();
+
+  /**
+   * @return {@link #nonSimplePropertyPaths}
+   */
+  public String getNonSimplePropertyPathsString()
+  {
+    if (this.nonSimplePropertyPaths == null) {
+      this.computeNonSimplePropertyPaths();
+    }
+    return nonSimplePropertyPaths;
+  }
+
+  /**
    * Computes the coordinates as a string of comma separated values.
    */
   private void computeCoordinatesString()
@@ -838,14 +858,16 @@ public abstract class QueryHandler implements Serializable
   public abstract void computeSimpleOrComplex();
 
   /**
-   * If called this query is being marked the first processed query with this
-   * query String
+   * If called this query is being marked the first processed query with this query String.
    */
   public void setFirst()
   {
     this.isFirst = true;
   }
 
+  /**
+   * @return If this is the first time this specific query-string appeared in the current dataset.
+   */
   public boolean isFirst()
   {
     return isFirst;

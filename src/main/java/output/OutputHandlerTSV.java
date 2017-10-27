@@ -103,6 +103,7 @@ public class OutputHandlerTSV extends OutputHandler
     header.add("#TripleCountWithoutService");
     header.add("#QueryType");
     header.add("#QueryComplexity");
+    header.add("#NonSimplePropertyPaths");
     header.add("#SubjectsAndObjects");
     header.add("#Predicates");
     header.add("#Categories");
@@ -167,6 +168,7 @@ public class OutputHandlerTSV extends OutputHandler
       line.add(queryHandler.getTripleCountWithoutService());
       line.add(queryHandler.getQueryType());
       line.add(queryHandler.getSimpleOrComplex());
+      line.add(queryHandler.getNonSimplePropertyPathsString());
       line.add(queryHandler.getqIDString());
       line.add(queryHandler.getpIDString());
       line.add(queryHandler.getCategoriesString());

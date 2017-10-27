@@ -17,9 +17,11 @@ import org.openrdf.query.parser.sparql.ASTVisitorBase;
 import org.openrdf.query.parser.sparql.ast.*;
 
 import query.QueryHandler.Validity;
+import query.statistics.NonSimplePropertyPathVisitor;
 import query.statistics.OpenRDFQuerySizeCalculatorVisitor;
 import query.statistics.QueryContainerSparqlStatisticsCollector;
 import query.statistics.TupleExprSparqlStatisticsCollector;
+import scala.Tuple2;
 import utility.NoURIException;
 
 import java.util.*;
@@ -69,7 +71,7 @@ public class OpenRDFQueryHandler extends QueryHandler
   public final void update()
   {
     try {
-      this.query = this.parseQuery(getQueryString());
+      parseQuery(getQueryString());
       this.setValidityStatus(QueryHandler.Validity.VALID);
     } catch (MalformedQueryException e) {
       String message = e.getMessage();
@@ -101,18 +103,16 @@ public class OpenRDFQueryHandler extends QueryHandler
    * Parses a given SPARQL 1.1 query into an OpenRDF ParsedQuery object.
    *
    * @param queryToParse SPARQL-query as string that should be parsed to OpenRDF
-   * @return Returns the query as an OpenRDF ParsedQuery object
    * @throws MalformedQueryException if the supplied query was malformed
    */
-  private ParsedQuery parseQuery(String queryToParse) throws MalformedQueryException
+  private void parseQuery(String queryToParse) throws MalformedQueryException
   {
     //the third argument is the baseURI to resolve any relative URIs that are in
     //the query against, but it can be NULL as well
     StandardizingSPARQLParser parser = new StandardizingSPARQLParser();
 
     try {
-      ParsedQuery parsedQuery = parser.parseQuery(queryToParse, BASE_URI);
-      return parsedQuery;
+      query = parser.parseQuery(queryToParse, BASE_URI);
     } catch (Throwable e) {
       // kind of a dirty hack to catch an java.lang.error which occurs when trying to parse a query which contains f.e. the following string: "jul\ius" where the \ is an invalid escape character
       //because this error is kind of an MalformedQueryException we will just throw it as one
@@ -151,10 +151,11 @@ public class OpenRDFQueryHandler extends QueryHandler
       return;
     }
     try {
-      ASTQueryContainer astQueryContainer = SyntaxTreeBuilder.parseQuery(this.getQueryString());
+
+      ASTQueryContainer queryContainer = new StandardizingSPARQLParser().getDebuggedASTQueryContainer(getQueryString(), BASE_URI);
 
       QueryContainerSparqlStatisticsCollector queryContainerSparqlStatisticsCollector = new QueryContainerSparqlStatisticsCollector();
-      astQueryContainer.jjtAccept(queryContainerSparqlStatisticsCollector, null);
+      queryContainer.jjtAccept(queryContainerSparqlStatisticsCollector, null);
 
       this.sparqlStatistics = queryContainerSparqlStatisticsCollector.getStatistics();
 
@@ -166,7 +167,7 @@ public class OpenRDFQueryHandler extends QueryHandler
 
       this.primaryLanguage = tupleExprSparqlStatisticsCollector.getPrimaryLanguage();
 
-    } catch (TokenMgrError | ParseException e) {
+    } catch (TokenMgrError | MalformedQueryException e) {
       logger.error("Failed to parse the query although it was found valid - this is a serious bug.", e);
     } catch (VisitorException e) {
       logger.error("Failed to calculate the SPARQL Keyword Statistics. Error occured while visiting the query.", e);
@@ -620,6 +621,8 @@ public class OpenRDFQueryHandler extends QueryHandler
     }
     return name;
   }
+  
+  
 
   @Override
   public final void computeCoordinates()
@@ -647,6 +650,28 @@ public class OpenRDFQueryHandler extends QueryHandler
     } catch (TokenMgrError | ParseException | VisitorException e) {
       logger.error("Unexpected error while computing the coordinates in " + getQueryString(), e);
       this.coordinates.add("ERROR");
+    }
+  }
+
+  @Override
+  protected final void computeNonSimplePropertyPaths()
+  {
+    if (getValidityStatus() != QueryHandler.Validity.VALID) {
+      this.nonSimplePropertyPaths = getValidityStatus().toString();
+      return;
+    }
+
+    try {
+      ASTQueryContainer qc = new StandardizingSPARQLParser().getDebuggedASTQueryContainer(getQueryString(), BASE_URI);
+      Set<String> nonSimplePropertyPaths = new NonSimplePropertyPathVisitor().getNonSimplePropertyPaths(qc);
+      this.nonSimplePropertyPaths = this.computeAnyIDString(nonSimplePropertyPaths);
+      if (this.nonSimplePropertyPaths.equals("")) {
+        this.nonSimplePropertyPaths = "NONE";
+      }
+    }
+    catch (VisitorException | MalformedQueryException e) {
+      this.nonSimplePropertyPaths = "INTERNAL_ERROR";
+      logger.error("Unexpected error while calculating non-simple property paths.", e);
     }
   }
 

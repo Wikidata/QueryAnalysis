@@ -56,6 +56,7 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.Map.Entry;
@@ -351,7 +352,7 @@ public final class Main
     Path currentQueryTypeMapPath = Paths.get(queryTypeMapDbLocation);
     Path backupQueryTypeMapPath = Paths.get(queryTypeMapDbLocation + ".bak");
     try {
-      Files.copy(currentQueryTypeMapPath, backupQueryTypeMapPath);
+      Files.copy(currentQueryTypeMapPath, backupQueryTypeMapPath, StandardCopyOption.REPLACE_EXISTING);
     } catch (IOException e) {
       logger.error("Failed to backup query type map file.", e);
     }
