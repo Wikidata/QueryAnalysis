@@ -52,9 +52,8 @@ class OperatorStatisticHandler:
     statistic = defaultdict(int)
     totalCount = 0
     operators = [
-        "Filter", "Join", "Union", "Optional", "Values", "Path", "Other"
+        "Filter", "Join", "Union", "Optional", "Values", "Path", "Subquery"
     ]
-    otherSparqlFeatures = set()
 
     def __init__(self):
         allOperatorsCombinations = set()
@@ -71,6 +70,11 @@ class OperatorStatisticHandler:
             self.totalCount += 1
 
             usedSparqlFeatures = set()
+
+            langService = False
+            other = False
+            service = False
+            nonService = False
 
             for usedSparqlFeature in processed['#UsedSparqlFeatures'].split(
                     ","):
@@ -89,13 +93,28 @@ class OperatorStatisticHandler:
                     usedSparqlFeature = "Filter"
                 elif usedSparqlFeature == "Join":
                     usedSparqlFeature = "Join"
+                elif usedSparqlFeature == "SubSelect":
+                    usedSparqlFeature = "Subquery"
                 elif usedSparqlFeature == "SelectQuery" or usedSparqlFeature == "ConstructQuery" or usedSparqlFeature == "AskQuery" or usedSparqlFeature == "DescribeQuery" or usedSparqlFeature == "":
                     usedSparqlFeature = ""
-                else:
-                    self.otherSparqlFeatures.add(usedSparqlFeature)
-                    usedSparqlFeature = "Other"
+                elif usedSparqlFeature == "LangService":
+                    langService = True
+                    usedSparqlFeature = ""
+                elif usedSparqlFeature == "Service":
+                    service = True
+                    usedSparqlFeature = ""
+                    other = True
+                elif usedSparqlFeature == "MinusGraphPattern" or usedSparqlFeature == "Bind":
+                    other = True
+                    nonService = True
+                    usedSparqlFeature = ""
 
                 usedSparqlFeatures.add(usedSparqlFeature)
+
+            # this is the case in which there was only a langService -> this
+            # one is allowed to be NOT in OTHER
+            if service and langService and not nonService:
+                other = False
 
             # check which operators are present:
             presentOperators = set()
@@ -105,6 +124,8 @@ class OperatorStatisticHandler:
 
             if len(presentOperators) == 0:
                 self.statistic["None"] += 1
+            elif other:
+                self.statistic["Other"] += 1
             else:
                 self.statistic[", ".join(sorted(presentOperators))] += 1
 
@@ -112,14 +133,12 @@ class OperatorStatisticHandler:
         result = ""
         i = 1
         for featureName, featureCount in sorted(self.statistic.iteritems()):
-            print(featureName + "\t" + str(featureCount))
-            #print(featureCount)
+            #print(featureName + "\t" + str(featureCount))
+            print(featureCount)
             i += 1
 
         print("")
         print(str(self.totalCount))
-
-        pprint(self.otherSparqlFeatures)
 
 
 handler = OperatorStatisticHandler()
