@@ -167,7 +167,7 @@ public class OpenRDFQueryHandler extends QueryHandler
 
       this.primaryLanguage = tupleExprSparqlStatisticsCollector.getPrimaryLanguage();
 
-    } catch (TokenMgrError | ParseException e) {
+    } catch (TokenMgrError | MalformedQueryException e) {
       logger.error("Failed to parse the query although it was found valid - this is a serious bug.", e);
     } catch (VisitorException e) {
       logger.error("Failed to calculate the SPARQL Keyword Statistics. Error occured while visiting the query.", e);
