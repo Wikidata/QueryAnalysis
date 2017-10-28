@@ -8,7 +8,7 @@ import java.util.Set;
 
 import org.openrdf.query.parser.sparql.ast.*;
 
-import openrdffork.RenderVisitor;
+import openrdffork.IRIShorteningRenderVisitor;
 
 /**
  * @author adrian
@@ -318,7 +318,7 @@ public final class NonSimplePropertyPathVisitor implements SyntaxTreeBuilderVisi
     }
     while (true);
 
-    nonSimplePropertyPaths.add(new RenderVisitor().visit(pathAlternative, "").toString());
+    nonSimplePropertyPaths.add(new IRIShorteningRenderVisitor().visit(pathAlternative, "").toString());
     return null;
   }
 
