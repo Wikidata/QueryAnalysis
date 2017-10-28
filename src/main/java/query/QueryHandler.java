@@ -617,23 +617,23 @@ public abstract class QueryHandler implements Serializable
   {
     Set<String> anyIDs = new HashSet<String>();
     for (String anyID : anyIDstoSet) {
-      anyIDs.add(replaceExplicitURI(anyID));
+      anyIDs.add(replaceExplicitURI(anyID)._2);
     }
     return anyIDs;
   }
   /**
    * @param explicitURI The explicit uri whose begining should be replaced by shorthand values from Main.prefixes.
-   * @return The shortend uri or the original if there was no fitting entry in Main.prefixes.
+   * @return True and the shortend uri or False and the original if there was no fitting entry in Main.prefixes.
    */
-  public String replaceExplicitURI(String explicitURI)
+  public static Tuple2<Boolean, String> replaceExplicitURI(String explicitURI)
   {
     for (Map.Entry<String, String> entry : Main.prefixList) {
       String regex = "^" + entry.getValue() + "[^/]*$";
       if (explicitURI.matches(regex)) {
-        return explicitURI.replaceFirst(entry.getValue(), entry.getKey() + ":");
+        return new Tuple2<Boolean, String>(true, explicitURI.replaceFirst(entry.getValue(), entry.getKey() + ":"));
       }
     }
-    return explicitURI;
+    return new Tuple2<Boolean, String>(false, explicitURI);
   }
 
   /**

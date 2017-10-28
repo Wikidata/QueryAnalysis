@@ -23,7 +23,7 @@ public class RenderVisitor implements SyntaxTreeBuilderVisitor
    * @return The concatenated results of the children visit methods.
    * @throws VisitorException If an exception occurs while visiting the children.
    */
-  private String visitChildren(Node node, Object data) throws VisitorException
+  protected String visitChildren(Node node, Object data) throws VisitorException
   {
     return visitChildren(node, data, defaultChildrenLink, defaultStartIndex);
   }
@@ -610,7 +610,7 @@ public class RenderVisitor implements SyntaxTreeBuilderVisitor
   }
 
   @Override
-  public final Object visit(ASTIRI node, Object data) throws VisitorException
+  public Object visit(ASTIRI node, Object data) throws VisitorException
   {
     // TODO Find out if this can have a RDFValue
     String result = " <" + node.getValue() + "> ";
