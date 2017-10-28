@@ -615,30 +615,25 @@ public abstract class QueryHandler implements Serializable
    */
   private Set<String> setAnyIDs(Set<String> anyIDstoSet)
   {
-    List<Map.Entry<String, String>> prefixList = new ArrayList<Map.Entry<String, String>>(Main.prefixes.entrySet());
-    Collections.sort(prefixList, new Comparator<Map.Entry<String, String>>()
-    {
-
-      @Override
-      public int compare(Entry<String, String> arg0, Entry<String, String> arg1)
-      {
-        return Integer.valueOf(arg1.getValue().length()).compareTo(Integer.valueOf(arg0.getValue().length()));
-      }
-    });
-
     Set<String> anyIDs = new HashSet<String>();
     for (String anyID : anyIDstoSet) {
-      boolean wasAdded = false;
-      for (Map.Entry<String, String> entry : prefixList) {
-        if (anyID.startsWith(entry.getValue())) {
-          anyIDs.add(anyID.replaceFirst(entry.getValue(), entry.getKey() + ":"));
-          wasAdded = true;
-          break;
-        }
-      }
-      if (!wasAdded) anyIDs.add(anyID);
+      anyIDs.add(replaceExplicitURI(anyID));
     }
     return anyIDs;
+  }
+  /**
+   * @param explicitURI The explicit uri whose begining should be replaced by shorthand values from Main.prefixes.
+   * @return The shortend uri or the original if there was no fitting entry in Main.prefixes.
+   */
+  public String replaceExplicitURI(String explicitURI)
+  {
+    for (Map.Entry<String, String> entry : Main.prefixList) {
+      String regex = "^" + entry.getValue() + "[^/]*$";
+      if (explicitURI.matches(regex)) {
+        return explicitURI.replaceFirst(entry.getValue(), entry.getKey() + ":");
+      }
+    }
+    return explicitURI;
   }
 
   /**

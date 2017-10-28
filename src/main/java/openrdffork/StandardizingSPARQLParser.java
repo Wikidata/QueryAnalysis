@@ -278,7 +278,7 @@ public class StandardizingSPARQLParser extends SPARQLParser
   /**
    * @param queryString The query to parsed.
    * @param baseURI The base URI to resolve any possible relative URIs against.
-   * @return The ASTQueryContainer representing this query.
+   * @return The ASTQueryContainer representing this query after debugging.
    * @throws MalformedQueryException If the query was in any way malformed.
    */
   public final ASTQueryContainer getDebuggedASTQueryContainer(String queryString, String baseURI) throws MalformedQueryException
@@ -290,6 +290,21 @@ public class StandardizingSPARQLParser extends SPARQLParser
     } catch (TokenMgrError | ParseException e) {
       throw new MalformedQueryException(e.getMessage(), e);
     }
+  }
+
+  /**
+   * @param queryString The query to be parsed.
+   * @param baseURI The base URI to resolve any possible relative URIs against.
+   * @return The ASTQueryContainer representing this query after debugging and prefix processing.
+   * @throws MalformedQueryException If the query was in any way malformed
+   */
+  public final ASTQueryContainer getASTQueryContainerPrefixesProcessed(String queryString, String baseURI) throws MalformedQueryException
+  {
+    ASTQueryContainer qc = getDebuggedASTQueryContainer(queryString, baseURI);
+    StringEscapesProcessor.process(qc);
+    BaseDeclProcessor.process(qc, baseURI);
+    StandardizingPrefixDeclProcessor.process(qc);
+    return qc;
   }
 
   @Override

@@ -104,6 +104,10 @@ public final class Main
    */
   public static final BiMap<String, String> prefixes = HashBiMap.create();
   /**
+   * A list saving the entries from {@link #prefixes} sorted by uri length.
+   */
+  public static final List<Map.Entry<String, String>> prefixList = new ArrayList<Map.Entry<String, String>>();
+  /**
    * Saves if a prefix excludes a query from the simple dataset.
    */
   public static final Set<String> simpleQueryWhitelist = new HashSet<String>();
@@ -444,6 +448,17 @@ public final class Main
     } catch (FileNotFoundException e) {
       logger.error("Could not open configuration file for standard prefixes.", e);
     }
+
+    prefixList.addAll(Main.prefixes.entrySet());
+    Collections.sort(prefixList, new Comparator<Map.Entry<String, String>>()
+    {
+
+      @Override
+      public int compare(Entry<String, String> arg0, Entry<String, String> arg1)
+      {
+        return Integer.valueOf(arg1.getValue().length()).compareTo(Integer.valueOf(arg0.getValue().length()));
+      }
+    });
   }
 
   /**

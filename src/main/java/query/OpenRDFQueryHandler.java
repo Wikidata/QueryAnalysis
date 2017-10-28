@@ -621,8 +621,6 @@ public class OpenRDFQueryHandler extends QueryHandler
     }
     return name;
   }
-  
-  
 
   @Override
   public final void computeCoordinates()
@@ -662,7 +660,7 @@ public class OpenRDFQueryHandler extends QueryHandler
     }
 
     try {
-      ASTQueryContainer qc = new StandardizingSPARQLParser().getDebuggedASTQueryContainer(getQueryString(), BASE_URI);
+      ASTQueryContainer qc = new StandardizingSPARQLParser().getASTQueryContainerPrefixesProcessed(getQueryString(), BASE_URI);
       Set<String> nonSimplePropertyPaths = new NonSimplePropertyPathVisitor().getNonSimplePropertyPaths(qc);
       this.nonSimplePropertyPaths = this.computeAnyIDString(nonSimplePropertyPaths);
       if (this.nonSimplePropertyPaths.equals("")) {
