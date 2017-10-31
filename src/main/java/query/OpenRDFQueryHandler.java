@@ -50,6 +50,10 @@ public class OpenRDFQueryHandler extends QueryHandler
    * The query object created from query-string.
    */
   private ParsedQuery query;
+  /**
+   * A pattern to find uris in variable names.
+   */
+  private Pattern variableNameURIs = Pattern.compile(Pattern.quote("-const-") + "(.*?)" + Pattern.quote("-uri"));
 
   /**
    * @param validity         The validity as determined by the decoding process.
@@ -466,6 +470,17 @@ public class OpenRDFQueryHandler extends QueryHandler
       }
     });
 
+    normalizedQuery.getTupleExpr().visit(new QueryModelVisitorBase<VisitorException>()
+    {
+
+      @Override
+      public void meet(StatementPattern statementPattern) throws VisitorException {
+        statementPattern.setSubjectVar(normalizeNonConstAnonymousHelper(statementPattern.getSubjectVar(), valueConstants));
+        statementPattern.setObjectVar(normalizeNonConstAnonymousHelper(statementPattern.getObjectVar(), valueConstants));
+        meetNode(statementPattern);
+      }
+    });
+
     this.setqIDs(subjectsAndObjects);
     this.setpIDs(predicates);
     return normalizedQuery;
@@ -520,6 +535,22 @@ public class OpenRDFQueryHandler extends QueryHandler
    *
    * @param var                The variable to be normalized
    * @param foundNames         The list of already found names
+   * @return the normalized name (if applicable)
+   */
+  private Var normalizeNonConstAnonymousHelper(Var var, Map<String, Integer> foundNames)
+  {
+    if (var.isConstant() || !var.isAnonymous()) {
+      return var;
+    }
+    var.setName(normalizedVariableName(var.getName(), foundNames));
+    return var;
+  }
+
+  /**
+   * A helper function to find the fitting replacement value for wikidata uri normalization.
+   *
+   * @param var                The variable to be normalized
+   * @param foundNames         The list of already found names
    * @param subjectsAndObjects The set to save all found subjects and objects.
    * @return the normalized name (if applicable)
    */
@@ -543,8 +574,39 @@ public class OpenRDFQueryHandler extends QueryHandler
       return var;
     }
 
-    String name = "-const-" + uri + "-uri";
+    String name = normalizedVariableName(var.getName(), foundNames);
     return new Var(name, new URIImpl(uri));
+  }
+
+  /**
+   * @param variableName The variable name containing the URI.
+   * @param foundNames The list of already found names.
+   * @return the normalized name (if applicable)
+   */
+  private String normalizedVariableName(String variableName, Map<String, Integer> foundNames)
+  {
+    Map<String, String> replacementMap = new HashMap<String, String>();
+
+    Matcher matcher = variableNameURIs.matcher(variableName);
+    while (matcher.find()) {
+      String uri = matcher.group(1);
+      if (!foundNames.containsKey(uri)) {
+        foundNames.put(uri, foundNames.size() + 1);
+      }
+      try {
+        replacementMap.put(uri, normalizedURI(uri, foundNames));
+      }
+      catch (NoURIException e) {
+        logger.error("Found string " + uri + " in uri position but could not normalize it.", e);
+      }
+    }
+    String result = variableName;
+    for (Map.Entry<String, String> entry : replacementMap.entrySet()) {
+      String toReplace = entry.getKey();
+      String replacingValue = entry.getValue();
+      result = result.replaceFirst(toReplace, replacingValue);
+    }
+    return result;
   }
 
   /**
