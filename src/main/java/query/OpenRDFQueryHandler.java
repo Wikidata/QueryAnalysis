@@ -427,7 +427,7 @@ public class OpenRDFQueryHandler extends QueryHandler
           // NoURIException is used to notify us that there is no URI in this predicate, so we just don't add it.
         }
 
-        checkForVariable(statementPattern.getPredicateVar());
+        //checkForVariable(statementPattern.getPredicateVar());
         meetNode(statementPattern);
       }
     });
@@ -491,6 +491,7 @@ public class OpenRDFQueryHandler extends QueryHandler
    *
    * @param var The Var to check.
    */
+  /*
   private void checkForVariable(Var var)
   {
     if (var != null) {
@@ -499,6 +500,7 @@ public class OpenRDFQueryHandler extends QueryHandler
       }
     }
   }
+  */
 
   /**
    * A helper function to find the fitting replacement value for wikidata uri normalization.
