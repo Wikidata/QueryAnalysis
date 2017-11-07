@@ -606,7 +606,7 @@ public class OpenRDFQueryHandler extends QueryHandler
     for (Map.Entry<String, String> entry : replacementMap.entrySet()) {
       String toReplace = entry.getKey();
       String replacingValue = entry.getValue();
-      result = result.replaceFirst(toReplace, replacingValue);
+      result = result.replaceFirst(Pattern.quote(toReplace), Matcher.quoteReplacement(replacingValue));
     }
     return result;
   }
