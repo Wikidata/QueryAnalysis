@@ -11,6 +11,8 @@ parser.add_argument("--ignoreLock", "-i", help="Ignore locked file and "
                     + "execute anyways", action="store_true")
 parser.add_argument("--threads", "-t", default=10, type=int, help="The number "
                     + "of threads to run the java program with (default 7).")
+parser.add_argument("--logging", "-l", help="Enables file logging.",
+                    action="store_true")
 parser.add_argument("--monthsFolder", "-m", default=config.monthsFolder,
                     type=str,
                     help="The folder in which the months directory are "
@@ -29,6 +31,8 @@ for monthName in args.months.split(","):
 
     month = utility.addMissingSlash(os.path.abspath(utility.addMissingSlash(args.monthsFolder) + utility.addMissingSlash(monthName)))
     mavenArguments = '-Dexec.args=-w ' + month + ' -n ' + str(args.threads)
+    if args.logging:
+        mavenArguments += " -l"
     mavenCall.append(mavenArguments)
 
     owd = os.getcwd()

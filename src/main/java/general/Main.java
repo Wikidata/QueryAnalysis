@@ -159,7 +159,7 @@ public final class Main
   /**
    * The query type map.
    */
-  private static DB mapDb;
+  public static DB mapDb;
 
   /**
    * Since this is a utility class, it should not be instantiated.

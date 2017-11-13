@@ -142,6 +142,9 @@ public class Anonymizer
 
     lockFile.delete();
 
+    Main.mapDb.close();
+    new File(Main.queryTypeMapDbLocation).delete();
+
     long stopTime = System.nanoTime();
     long millis = TimeUnit.MILLISECONDS.convert(stopTime - startTime, TimeUnit.NANOSECONDS);
     Date date = new Date(millis);

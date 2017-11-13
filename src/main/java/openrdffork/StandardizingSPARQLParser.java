@@ -96,11 +96,23 @@ public class StandardizingSPARQLParser extends SPARQLParser
 
         public Object visit(ASTVar variable, Object data) throws VisitorException
         {
-          if (!variables.containsKey(variable.getName())) {
-            variables.put(variable.getName(), variables.keySet().size() + 1);
+          String label = "Label";
+
+          if (variable.getName().toLowerCase().endsWith(label.toLowerCase())) {
+            String variableName = variable.getName().substring(0, variable.getName().length() - label.length());
+            variable.setName(replacementName(variableName) + label);
+          } else {
+            variable.setName(replacementName(variable.getName()));
           }
-          variable.setName("var" + variables.get(variable.getName()));
           return super.visit(variable, data);
+        }
+
+        private String replacementName(String variableName)
+        {
+          if (!variables.containsKey(variableName)) {
+            variables.put(variableName, variables.keySet().size() + 1);
+          }
+          return "var" + variables.get(variableName);
         }
 
         @Override
