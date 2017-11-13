@@ -524,12 +524,24 @@ public abstract class QueryHandler implements Serializable
       return;
     }
 
+    if (isOrganicUserAgent(this.getUserAgent())) {
+      this.toolName = "USER";
+      this.toolVersion = "1.0";
+    }
+  }
+
+  /**
+   * @param userAgent The user agent to be checked
+   * @return If the user agent is recognized as organic
+   */
+  public static boolean isOrganicUserAgent(String userAgent)
+  {
     for (String regex : Main.userAgentRegex) {
-      if (this.userAgent.matches(regex)) {
-        this.toolName = "USER";
-        this.toolVersion = "1.0";
+      if (userAgent.matches(regex)) {
+        return true;
       }
     }
+    return false;
   }
 
   /**
@@ -584,7 +596,7 @@ public abstract class QueryHandler implements Serializable
   /**
    * @return The user agent that posed this query.
    */
-  private String getUserAgent()
+  public String getUserAgent()
   {
     return userAgent;
   }

@@ -89,6 +89,8 @@ public class OutputHandlerAnonymizer extends OutputHandler
     List<String> header = new ArrayList<>();
     header.add("#anonymizedQuery");
     header.add("#timestamp");
+    header.add("#sourceCategory");
+    header.add("#userAgent");
     writer.writeHeaders(header);
   }
 
@@ -101,7 +103,7 @@ public class OutputHandlerAnonymizer extends OutputHandler
 
     QueryHandler queryHandler = queryHandlerFactory.getQueryHandler(validityStatus, currentLine, currentDay, queryToAnalyze, userAgent, currentFile, threadNumber);
 
-    if (queryHandler.getValidityStatus().getValue() > 0) {
+    if (queryHandler.getValidityStatus().equals(QueryHandler.Validity.VALID)) {
       ASTQueryContainer qc;
       try {
         qc = SyntaxTreeBuilder.parseQuery(queryToAnalyze);
@@ -150,6 +152,16 @@ public class OutputHandlerAnonymizer extends OutputHandler
       }
       line.add("?query=" + encodedRenderedQueryString);
       line.add(timeStamp);
+      if (queryHandler.getSourceCategory().equals(QueryHandler.SourceCategory.USER)) {
+        line.add("organic");
+      } else {
+        line.add("robotic");
+      }
+      if (QueryHandler.isOrganicUserAgent(queryHandler.getUserAgent())) {
+        line.add("browser");
+      } else {
+        line.add(queryHandler.getUserAgent());
+      }
       writer.writeRow(line);
     }
   }

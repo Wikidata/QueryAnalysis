@@ -155,7 +155,11 @@ public final class Main
   /**
    * The location of the query type map db file.
    */
-  private static String queryTypeMapDbLocation;
+  public static String queryTypeMapDbLocation;
+  /**
+   * The query type map.
+   */
+  private static DB mapDb;
 
   /**
    * Since this is a utility class, it should not be instantiated.
@@ -273,12 +277,9 @@ public final class Main
 
     loadStandardPrefixes();
 
-    DB mapDb = DBMaker.fileDB(queryTypeMapDbLocation).fileChannelEnable().fileMmapEnable().make();
-    for (int i = 0; i < numberOfQueryTypeDiskMaps; i++) {
-      queryTypes[i] = mapDb.hashMap("queryTypeMap" + i, Serializer.BYTE_ARRAY, Serializer.STRING).createOrOpen();
-    }
+    loadQueryTypeMap();
     backupQueryTypeMap();
-    loadPreBuildQueryTypes(mapDb);
+    loadPreBuildQueryTypes();
 
     loadUserAgentRegex();
     loadToolNamesForUserCategory();
@@ -346,6 +347,17 @@ public final class Main
     long millis = TimeUnit.MILLISECONDS.convert(stopTime - startTime, TimeUnit.NANOSECONDS);
     Date date = new Date(millis);
     System.out.println("Finished executing with all threads: " + new SimpleDateFormat("mm-dd HH:mm:ss:SSSSSSS").format(date));
+  }
+
+  /**
+   * Loads the existing query type map or creates one if it is not present.
+   */
+  public static void loadQueryTypeMap()
+  {
+    mapDb = DBMaker.fileDB(queryTypeMapDbLocation).fileChannelEnable().fileMmapEnable().make();
+    for (int i = 0; i < numberOfQueryTypeDiskMaps; i++) {
+      queryTypes[i] = mapDb.hashMap("queryTypeMap" + i, Serializer.BYTE_ARRAY, Serializer.STRING).createOrOpen();
+    }
   }
 
   /**
@@ -464,10 +476,8 @@ public final class Main
 
   /**
    * Loads all pre-build query types.
-   *
-   * @param mapDb The map-DB reference for the on disk database to be used.
    */
-  private static void loadPreBuildQueryTypes(DB mapDb)
+  public static void loadPreBuildQueryTypes()
   {
 
     try (DirectoryStream<Path> directoryStream =
@@ -579,7 +589,7 @@ public final class Main
   /**
    * Loads multiple regular expressions that should match all browser user agents.
    */
-  private static void loadUserAgentRegex()
+  public static void loadUserAgentRegex()
   {
     try (BufferedReader br = new BufferedReader(new FileReader("userAgentClassification/userAgentRegex.dat"))) {
       String line;

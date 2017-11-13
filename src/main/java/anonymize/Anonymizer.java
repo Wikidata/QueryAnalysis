@@ -39,6 +39,7 @@ public class Anonymizer
   public static void main(String[] args) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException
   {
     Options options = new Options();
+    options.addOption("l", "logging", false, "Enables file logging.");
     options.addOption("w", "workingDirectory", true, "The directory we should be working on.");
     options.addOption("n", "numberOfThreads", true, "Number of used threads, default 1");
 
@@ -78,6 +79,9 @@ public class Anonymizer
         System.out.println("Please specify the directory which we should work on using the option '--workingDirectory DIRECTORY' or '-w DIRECTORY'");
         return;
       }
+      if (cmd.hasOption("logging")) {
+        LoggingHandler.initFileLog("Anonymizer", "nothing");
+      }
     } catch (UnrecognizedOptionException e) {
       System.out.println("Unrecognized commandline option: " + e.getOption());
       HelpFormatter formatter = new HelpFormatter();
@@ -90,10 +94,15 @@ public class Anonymizer
       return;
     }
 
+    Main.queryTypeMapDbLocation = workingDirectory + "queryTypeMap.db";
+
     LoggingHandler.initConsoleLog();
-    LoggingHandler.initFileLog("Anonymizer", "nothing");
 
     Main.loadStandardPrefixes();
+    Main.loadUserAgentRegex();
+    Main.loadQueryTypeMap();
+    Main.loadPreBuildQueryTypes();
+
     Anonymizer.loadWhitelistDatatypes();
 
     File lockFile;
