@@ -17,7 +17,6 @@ import org.openrdf.query.parser.ParsedTupleQuery;
 import org.openrdf.query.parser.sparql.*;
 import org.openrdf.query.parser.sparql.ast.*;
 import query.OpenRDFQueryHandler;
-import scala.reflect.internal.Trees.Super;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -196,17 +195,25 @@ public class StandardizingSPARQLParser extends SPARQLParser
             }
           }
 
+          Matcher matcher = OpenRDFQueryHandler.POINT_REGEX.matcher(string.getValue());
+          if (matcher.find()) {
+            String firstValue = matcher.group(1);
+            String secondValue = matcher.group(2);
+
+            float first = Float.valueOf(firstValue);
+            float second = Float.valueOf(secondValue);
+
+            int roundFirst = (Integer) Math.round(first);
+            int roundSecond = (Integer) Math.round(second);
+
+            string.setValue("POINT(" + roundFirst + " " + roundSecond + ")");
+            return super.visit(string, data);
+          }
+
           if (!strings.containsKey(string.getValue())) {
             strings.put(string.getValue(), strings.keySet().size() + 1);
           }
-          Matcher matcher = OpenRDFQueryHandler.POINT_REGEX.matcher(string.getValue());
-          if (matcher.find()) {
-            String number = String.valueOf(strings.get(string.getValue()));
-            number = number.substring(0, 1) + "." + number.substring(1);
-            string.setValue("POINT(" + number + " " + number + ")");
-          } else {
-            string.setValue("string" + strings.get(string.getValue()));
-          }
+          string.setValue("string" + strings.get(string.getValue()));
           return super.visit(string, data);
         }
       }, null);

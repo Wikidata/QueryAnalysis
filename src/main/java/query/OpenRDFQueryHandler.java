@@ -41,7 +41,7 @@ public class OpenRDFQueryHandler extends QueryHandler
   /**
    * The regular expression to determine if a string is a point as per wktLiteral.
    */
-  public static final Pattern POINT_REGEX = Pattern.compile("^Point\\(([-+]?[\\d]{1,2}\\.\\d+\\s*[-+]?[\\d]{1,3}\\.\\d+?)\\)$");
+  public static final Pattern POINT_REGEX = Pattern.compile("^Point\\(([-+]?[\\d]{1,2}\\.\\d+)\\s*([-+]?[\\d]{1,3}\\.\\d+?)\\)$");
   /**
    * Define a static logger variable.
    */
