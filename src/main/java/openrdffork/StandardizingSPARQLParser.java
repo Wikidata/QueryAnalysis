@@ -17,6 +17,7 @@ import org.openrdf.query.parser.ParsedTupleQuery;
 import org.openrdf.query.parser.sparql.*;
 import org.openrdf.query.parser.sparql.ast.*;
 import query.OpenRDFQueryHandler;
+import scala.reflect.internal.Trees.Super;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -121,6 +122,67 @@ public class StandardizingSPARQLParser extends SPARQLParser
           if (string.getValue().length() < Anonymizer.unanonymizedStringLength) {
             return super.visit(string, data);
           }
+
+          // Determine if this is part of a service call
+          Node rdfLiteral = string.jjtGetParent();
+          if (rdfLiteral instanceof ASTRDFLiteral && rdfLiteral.jjtGetNumChildren() == 1) {
+            Node objectList = rdfLiteral.jjtGetParent();
+            if (objectList instanceof ASTObjectList && objectList.jjtGetNumChildren() == 1) {
+              Node propertyListPath = objectList.jjtGetParent();
+              if (propertyListPath instanceof ASTPropertyListPath && propertyListPath.jjtGetNumChildren() == 2) {
+
+                // Checking the path towards wikibase:language
+                Node pathAlternative = propertyListPath.jjtGetChild(0);
+                if (pathAlternative instanceof ASTPathAlternative && pathAlternative.jjtGetNumChildren() == 1) {
+                  Node pathSequence = pathAlternative.jjtGetChild(0);
+                  if (pathSequence instanceof ASTPathSequence && pathSequence.jjtGetNumChildren() == 1) {
+                    Node pathElt = pathSequence.jjtGetChild(0);
+                    if (pathElt instanceof ASTPathElt && pathElt.jjtGetNumChildren() == 1) {
+                      Node languageIRI = pathElt.jjtGetChild(0);
+                      if (languageIRI instanceof ASTIRI && languageIRI.jjtGetNumChildren() == 0) {
+                        ASTIRI languageASTIRI = (ASTIRI) languageIRI;
+                        if (languageASTIRI.getValue().equals("http://wikiba.se/ontology#language")) {
+
+                          // Checking the path towards ServiceGraphPattern
+                          Node triplesSameSubjectPath = propertyListPath.jjtGetParent();
+                          if (triplesSameSubjectPath instanceof ASTTriplesSameSubjectPath && triplesSameSubjectPath.jjtGetNumChildren() == 2) {
+
+                            // Small branch to serviceParam
+                            Node serviceParamIRI = triplesSameSubjectPath.jjtGetChild(0);
+                            if (serviceParamIRI instanceof ASTIRI && serviceParamIRI.jjtGetNumChildren() == 0) {
+                              ASTIRI serviceParamASTIRI = (ASTIRI) serviceParamIRI;
+                              if (serviceParamASTIRI.getValue().equals("http://www.bigdata.com/rdf#serviceParam")) {
+
+                                // Further on with the path to ServiceGraphPattern
+                                Node basicGraphPattern = triplesSameSubjectPath.jjtGetParent();
+                                if (basicGraphPattern instanceof ASTBasicGraphPattern && basicGraphPattern.jjtGetNumChildren() == 1) {
+                                  Node graphPatternGroup = basicGraphPattern.jjtGetParent();
+                                  if (graphPatternGroup instanceof ASTGraphPatternGroup && graphPatternGroup.jjtGetNumChildren() == 1) {
+                                    Node serviceGraphPattern = graphPatternGroup.jjtGetParent();
+                                    if (serviceGraphPattern instanceof ASTServiceGraphPattern && serviceGraphPattern.jjtGetNumChildren() == 2) {
+                                      // Final check for wikibase:label
+                                      Node labelIRI = serviceGraphPattern.jjtGetChild(0);
+                                      if (labelIRI instanceof ASTIRI && labelIRI.jjtGetNumChildren() == 0) {
+                                        ASTIRI labelASTIRI = (ASTIRI) labelIRI;
+                                        if (labelASTIRI.getValue().equals("http://wikiba.se/ontology#label")) {
+                                          return super.visit(string, data);
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+
           // Find the datatype for this.
           Node parent = string.jjtGetParent();
           if (parent instanceof ASTRDFLiteral) {
