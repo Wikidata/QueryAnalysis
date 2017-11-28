@@ -17,6 +17,8 @@ parser.add_argument("--monthsFolder", "-m", default=config.monthsFolder,
                     type=str,
                     help="The folder in which the months directory are "
                     + "residing.")
+parser.add_argument("--unanonymizedStringLength", "-u", default=0, type=int,
+                    help="Strings of this length or lower should not be anonymized. Default is zero.")
 parser.add_argument("months", type=str, help="The months to be processed")
 
 if (len(sys.argv[1:]) == 0):
@@ -30,7 +32,7 @@ for monthName in args.months.split(","):
     mavenCall = ['mvn', 'exec:java@Anonymizer']
 
     month = utility.addMissingSlash(os.path.abspath(utility.addMissingSlash(args.monthsFolder) + utility.addMissingSlash(monthName)))
-    mavenArguments = '-Dexec.args=-w ' + month + ' -n ' + str(args.threads)
+    mavenArguments = '-Dexec.args=-w ' + month + ' -n ' + str(args.threads) + ' -u ' + str(args.unanonymizedStringLength)
     if args.logging:
         mavenArguments += " -l"
     mavenCall.append(mavenArguments)

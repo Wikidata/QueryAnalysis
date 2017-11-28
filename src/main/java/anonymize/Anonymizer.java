@@ -30,6 +30,10 @@ public class Anonymizer
    * A list containing all datatypes excluded from anonymization.
    */
   public static final List<String> whitelistedDatatypes = new ArrayList<String>();
+  /**
+   * Strings of this length or lower should not be anonymized.
+   */
+  public static int unanonymizedStringLength;
 
   /**
    * Define a static logger variable.
@@ -42,6 +46,7 @@ public class Anonymizer
     options.addOption("l", "logging", false, "Enables file logging.");
     options.addOption("w", "workingDirectory", true, "The directory we should be working on.");
     options.addOption("n", "numberOfThreads", true, "Number of used threads, default 1");
+    options.addOption("u", "unanonymizedStringLength", true, "Strings of this length or lower should not be anonymized. Default is zero.");
 
     CommandLineParser parser = new DefaultParser();
     CommandLine cmd;
@@ -81,6 +86,11 @@ public class Anonymizer
       }
       if (cmd.hasOption("logging")) {
         LoggingHandler.initFileLog("Anonymizer", "nothing");
+      }
+      if (cmd.hasOption("unanonymizedStringLength")) {
+        unanonymizedStringLength = Integer.parseInt(cmd.getOptionValue("unanonymizedStringLength"));
+      } else {
+        unanonymizedStringLength = 0;
       }
     } catch (UnrecognizedOptionException e) {
       System.out.println("Unrecognized commandline option: " + e.getOption());
