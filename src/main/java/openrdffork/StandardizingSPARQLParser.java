@@ -182,34 +182,38 @@ public class StandardizingSPARQLParser extends SPARQLParser
             }
           }
 
+          String datatype = "";
+
           // Find the datatype for this.
           Node parent = string.jjtGetParent();
           if (parent instanceof ASTRDFLiteral) {
             if (parent.jjtGetNumChildren() > 1) {
               Node sibling = parent.jjtGetChild(1);
               if (sibling instanceof ASTIRI) {
-                if (Anonymizer.whitelistedDatatypes.contains(((ASTIRI) sibling).getValue())) {
+                datatype = ((ASTIRI) sibling).getValue();
+                if (Anonymizer.whitelistedDatatypes.contains(datatype)) {
                   return super.visit(string, data);
                 }
               }
             }
           }
 
-          Matcher matcher = OpenRDFQueryHandler.POINT_REGEX.matcher(string.getValue());
-          if (matcher.find()) {
-            String firstValue = matcher.group(1);
-            String secondValue = matcher.group(2);
+          if (datatype.equals("http://www.opengis.net/ont/geosparql#wktLiteral")) {
+            Matcher matcher = OpenRDFQueryHandler.POINT_REGEX.matcher(string.getValue());
+            if (matcher.find()) {
+              String firstValue = matcher.group(1);
+              String secondValue = matcher.group(2);
 
-            float first = Float.valueOf(firstValue);
-            float second = Float.valueOf(secondValue);
+              float first = Float.valueOf(firstValue);
+              float second = Float.valueOf(secondValue);
 
-            int roundFirst = (Integer) Math.round(first);
-            int roundSecond = (Integer) Math.round(second);
+              int roundFirst = (Integer) Math.round(first);
+              int roundSecond = (Integer) Math.round(second);
 
-            string.setValue("POINT(" + roundFirst + " " + roundSecond + ")");
-            return super.visit(string, data);
+              string.setValue("POINT(" + roundFirst + " " + roundSecond + ")");
+              return super.visit(string, data);
+            }
           }
-
           if (!strings.containsKey(string.getValue())) {
             strings.put(string.getValue(), strings.keySet().size() + 1);
           }
