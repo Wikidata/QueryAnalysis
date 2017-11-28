@@ -77,3 +77,4 @@ exampleMonthsFolder/exampleMonth/processedLogData/
 
 exampleMonthsFolder/
 !exampleMonthsFolder/exampleMonth/rawLogData/*.tsv.gz
+!exampleMonthsFolder/exampleMonth/anonymousRawData/*.tsv.gz
