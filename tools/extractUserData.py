@@ -57,22 +57,17 @@ for i in xrange(1, 32):
             gzip.open(subfolder + sourcePrefix + "%02d" % i
                  + ".tsv.gz", "w") as user_s:
         pReader = csv.DictReader(p, delimiter="\t")
-        sReader = csv.DictReader(s, delimiter="\t")
 
         pWriter = csv.DictWriter(user_p, None, delimiter="\t")
-        sWriter = csv.DictWriter(user_s, None, delimiter="\t")
 
-        for processed, source in izip(pReader, sReader):
+        user_s.write(s.readline())
+
+        for processed, source in izip(pReader, s):
             if pWriter.fieldnames is None:
                 ph = dict((h, h) for h in pReader.fieldnames)
                 pWriter.fieldnames = pReader.fieldnames
                 pWriter.writerow(ph)
 
-            if sWriter.fieldnames is None:
-                sh = dict((h, h) for h in sReader.fieldnames)
-                sWriter.fieldnames = sReader.fieldnames
-                sWriter.writerow(sh)
-
-            if (processed["#SourceCategory"] == "USER"):
+            if (processed["#SourceCategory"] != "USER"):
                 pWriter.writerow(processed)
-                sWriter.writerow(source)
+                user_s.write(source)
