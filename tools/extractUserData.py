@@ -68,6 +68,6 @@ for i in xrange(1, 32):
                 pWriter.fieldnames = pReader.fieldnames
                 pWriter.writerow(ph)
 
-            if (processed["#SourceCategory"] != "USER"):
+            if (processed["#SourceCategory"] == "USER"):
                 pWriter.writerow(processed)
                 user_s.write(source)
