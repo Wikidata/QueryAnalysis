@@ -48,6 +48,16 @@ for monthName in args.months.split(","):
             fieldRanking.fieldRanking(monthFolder, "Predicates", monthsFolder = args.monthsFolder, outputPath = statisticsSubfolder + "predicates_Ranking", outputFilename = filename, writeOut = True, notifications = False)
             print "Working with fieldRanking Categories on " + filename
             fieldRanking.fieldRanking(monthFolder, "Categories", monthsFolder = args.monthsFolder, outputPath = statisticsSubfolder + "categories_Ranking", outputFilename = filename, writeOut = True, notifications = False)
+            print "Working with fieldRanking TripleCountWithService on " + filename
+            fieldRanking.fieldRanking(monthFolder, "TripleCountWithService", monthsFolder = args.monthsFolder, outputPath = statisticsSubfolder + "tripleCountWithService_Ranking", outputFilename = filename, writeOut = True, notifications = False)
+            print "Working with fieldRanking TripleCountWithoutService on " + filename
+            fieldRanking.fieldRanking(monthFolder, "TripleCountWithoutService", monthsFolder = args.monthsFolder, outputPath = statisticsSubfolder + "tripleCountWithoutService_Ranking", outputFilename = filename, writeOut = True, notifications = False)
+            print "Working with fieldRanking ToolName on " + filename
+            fieldRanking.fieldRanking(monthFolder, "ToolName", monthsFolder = args.monthsFolder, outputPath = statisticsSubfolder + "toolName_Ranking", outputFilename = filename, writeOut = True, notifications = False)
+            print "Working with fieldRanking NonSimplePropertyPaths on " + filename
+            fieldRanking.fieldRanking(monthFolder, "NonSimplePropertyPaths", monthsFolder = args.monthsFolder, outputPath = statisticsSubfolder + "nonSimplePropertyPaths_Ranking", outputFilename = filename, writeOut = True, notifications = False)
+            print "Working with fieldRanking PrimaryLanguage on " + filename
+            fieldRanking.fieldRanking(monthFolder, "PrimaryLanguage", monthsFolder = args.monthsFolder, outputPath = statisticsSubfolder + "primaryLanguage_Ranking", outputFilename = filename, writeOut = True, notifications = False)
             if thirdKey is not "queryType":
                 print "Working with fieldRanking QueryType on " + filename
                 fieldRanking.fieldRanking(monthFolder, "QueryType", monthsFolder = args.monthsFolder, outputPath = statisticsSubfolder + "queryType_Ranking", outputFilename = filename, writeOut = True, notifications = False)
