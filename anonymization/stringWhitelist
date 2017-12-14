@@ -1,0 +1,9 @@
+com.bigdata.rdf.graph.analytics.SSSP
+com.bigdata.rdf.graph.analytics.BFS
+com.bigdata.rdf.graph.analytics.CC
+com.bigdata.rdf.graph.analytics.PR
+None
+Static
+Runtime
+Managed
+Native

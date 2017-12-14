@@ -31,6 +31,10 @@ public class Anonymizer
    */
   public static final List<String> whitelistedDatatypes = new ArrayList<String>();
   /**
+   * A list containing all strings excluded from anonymization.
+   */
+  public static final List<String> whitelistedStrings = new ArrayList<String>();
+  /**
    * Strings of this length or lower should not be anonymized.
    */
   public static int unanonymizedStringLength;
@@ -114,6 +118,7 @@ public class Anonymizer
     Main.loadPreBuildQueryTypes();
 
     Anonymizer.loadWhitelistDatatypes();
+    Anonymizer.loadWhitelistStrings();
 
     File lockFile;
 
@@ -163,15 +168,29 @@ public class Anonymizer
 
   public static void loadWhitelistDatatypes()
   {
-    try (BufferedReader reader = new BufferedReader(new FileReader("anonymization/whitelist"))) {
+    try (BufferedReader reader = new BufferedReader(new FileReader("anonymization/datatypesWhitelist"))) {
       String line = null;
       while ((line = reader.readLine()) != null) {
         Anonymizer.whitelistedDatatypes.add(line);
       }
     } catch (FileNotFoundException e) {
-      logger.error("Could not read the anonymization whitelist.", e);
+      logger.error("Could not read the anonymization datatypes whitelist.", e);
     } catch (IOException e) {
-      logger.error("Could not read the anonymization whitelist.", e);
+      logger.error("Could not read the anonymization datatypes whitelist.", e);
+    }
+  }
+
+  public static void loadWhitelistStrings()
+  {
+    try (BufferedReader reader = new BufferedReader(new FileReader("anonymization/stringWhitelist"))) {
+      String line = null;
+      while ((line = reader.readLine()) != null) {
+        Anonymizer.whitelistedStrings.add(line);
+      }
+    } catch (FileNotFoundException e) {
+      logger.error("Could not read the anonymization string whitelist.", e);
+    } catch (IOException e) {
+      logger.error("Could not read the anonymization string whitelist.", e);
     }
   }
 }

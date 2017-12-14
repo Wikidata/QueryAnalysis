@@ -17,6 +17,7 @@ import org.openrdf.query.parser.ParsedTupleQuery;
 import org.openrdf.query.parser.sparql.*;
 import org.openrdf.query.parser.sparql.ast.*;
 import query.OpenRDFQueryHandler;
+import scala.reflect.internal.Trees.Super;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -119,6 +120,10 @@ public class StandardizingSPARQLParser extends SPARQLParser
         public Object visit(ASTString string, Object data) throws VisitorException
         {
           if (string.getValue().length() < Anonymizer.unanonymizedStringLength) {
+            return super.visit(string, data);
+          }
+
+          if (Anonymizer.whitelistedStrings.contains(string.getValue())) {
             return super.visit(string, data);
           }
 
