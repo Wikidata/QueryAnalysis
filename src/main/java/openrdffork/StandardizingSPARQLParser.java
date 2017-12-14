@@ -4,6 +4,8 @@
 package openrdffork;
 
 import anonymize.Anonymizer;
+
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.log4j.Logger;
 import org.openrdf.model.impl.ValueFactoryImpl;
 import org.openrdf.query.Dataset;
@@ -124,6 +126,10 @@ public class StandardizingSPARQLParser extends SPARQLParser
           }
 
           if (Anonymizer.whitelistedStrings.contains(string.getValue())) {
+            return super.visit(string, data);
+          }
+
+          if (NumberUtils.isNumber(string.getValue())) {
             return super.visit(string, data);
           }
 
