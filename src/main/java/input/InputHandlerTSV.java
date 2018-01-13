@@ -84,8 +84,14 @@ public class InputHandlerTSV extends InputHandler
 
         String queryString = queryTuple._1;
         QueryHandler.Validity validity = queryTuple._2;
-        String userAgent = row[2].toString();
-        String timeStamp = row[3].toString();
+        String userAgent = "null";
+        if (row[2] != null) {
+          userAgent = row[2].toString();
+        }
+        String timeStamp = "null";
+        if (row[3] != null) {
+          timeStamp = row[3].toString();
+        }
         Long line = parsingContext.currentLine();
 
         try {
