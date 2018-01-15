@@ -136,10 +136,13 @@ class botClassification():
         queryTypeDict[userAgentEntry].append(sparqlQuery)
 
     def threshold(self):
-        for firstKey, firstKeyDict in self.queryTypes.iteritems():
-            for secondKey, secondKeyList in firstKeyDict.items():
-                if (len(secondKeyList) < args.threshold):
-                    del firstKeyDict[secondKey]
+        for queryTypeEntry, queryTypeDict in self.queryTypes.items():
+            for userAgentEntry, queries in queryTypeDict.items():
+                if (len(queries) < args.threshold):
+                    del queryTypeDict[userAgentEntry]
+            if len(queryTypeDict) == 0:
+                del self.queryTypes[queryTypeEntry]
+
 
     def writeOut(self):
         tooLong = 0
