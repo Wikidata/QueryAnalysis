@@ -147,7 +147,7 @@ class botClassification():
     def writeOut(self):
         tooLong = 0
 
-        with open(pathBase + "readme.md", "w") as readmeFile:
+        with open(manualCheckupFolder + "readme.md", "w") as readmeFile:
             print("This directory contains all " + queryType + "-" + userAgent + "-Combinations above a threshold of " + str(args.threshold) + ".", file = readmeFile)
             print("count\t" + queryType, file = readmeFile)
             for queryTypeEntry, count in sorted(self.queryTypesCount.iteritems(), key = lambda (k, v): (v, k), reverse = True):
