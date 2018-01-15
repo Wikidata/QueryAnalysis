@@ -64,7 +64,7 @@ def hourlyFieldValue(month, metric, monthsFolder = config.monthsFolder, ignoreLo
 
             day = processed["#day"]
 
-            if day not in self.monthlyFieldValues:
+            if 24 * (day - 1) not in self.monthlyData:
                 for j in xrange(0, 24):
                     self.monthlyData[j + 24 * (day - 1)] = dict()
 
@@ -83,7 +83,7 @@ def hourlyFieldValue(month, metric, monthsFolder = config.monthsFolder, ignoreLo
                 else:
                     self.monthlyData[monthlyHour][data] = 1
             else:
-                print hour + " is not in 0-23"
+                print str(hour) + " is not in 0-23"
 
         def writeHourlyValues(self):
             writeOutMethod(pathBase + outputFile, self.monthlyFieldValues, self.monthlyData)
