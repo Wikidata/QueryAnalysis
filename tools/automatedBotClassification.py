@@ -150,9 +150,9 @@ class botClassification():
 
         with open(manualCheckupFolder + "readme.md", "w") as readmeFile:
             print("This directory contains all " + queryType + "-" + userAgent + "-Combinations above a threshold of " + str(args.threshold) + ".", file = readmeFile)
-            print("count\t" + queryType, file = readmeFile)
+            print("count\t" + queryType + "\t" + userAgent + "-count", file = readmeFile)
             for queryTypeEntry, count in sorted(self.queryTypesCount.iteritems(), key = lambda (k, v): (v, k), reverse = True):
-                print(str(count) + "\t" + queryTypeEntry, file = readmeFile)
+                print(str(count) + "\t" + queryTypeEntry + "\t" + str(len(self.queryTypes[queryTypeEntry])), file = readmeFile)
 
         for queryTypeEntry, queryTypeDict in self.queryTypes.iteritems():
 
