@@ -142,6 +142,7 @@ class botClassification():
                     del queryTypeDict[userAgentEntry]
             if len(queryTypeDict) == 0:
                 del self.queryTypes[queryTypeEntry]
+                del self.queryTypesCount[queryTypeEntry]
 
 
     def writeOut(self):
