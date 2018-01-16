@@ -1,0 +1,7 @@
+SELECT ?var1 
+WHERE {
+  ?var1  <https://www.wikidata.org/prop/directP352>  "string1".
+ FILTER (  (  isLITERAL (  "string1" )  ) 
+) .
+}
+

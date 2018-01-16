@@ -1,0 +1,11 @@
+SELECT DISTINCT ?var1  ?var2Label  ?var3  ?var4 
+WHERE {
+  ?var1  <http://www.w3.org/2000/01/rdf-schema#label>  "string1"@ja ;
+ <http://www.w3.org/2000/01/rdf-schema#label>  ?var2Label ;
+ <http://schema.org/dateModified>  ?var4 ;
+ <http://www.wikidata.org/prop/direct/P625>  ?var3 .
+ FILTER (  ( (  LANG (  ?var2Label  )  =  "string2" ) ) 
+) .
+}
+ORDER BY  DESC( ?var4 )
+
