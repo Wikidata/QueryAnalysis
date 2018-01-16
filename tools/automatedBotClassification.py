@@ -137,9 +137,14 @@ class botClassification():
 
     def threshold(self):
         for queryTypeEntry, queryTypeDict in self.queryTypes.items():
+            self.queryTypesCount[queryTypeEntry] = 0
             for userAgentEntry, queries in queryTypeDict.items():
-                if (len(queries) < args.threshold):
+                numberOfQueries = len(queries)
+                if (numberOfQueries < args.threshold):
                     del queryTypeDict[userAgentEntry]
+                else
+                    self.queryTypesCount[queryTypeEntry] += numberOfQueries
+
             if len(queryTypeDict) == 0:
                 del self.queryTypes[queryTypeEntry]
                 del self.queryTypesCount[queryTypeEntry]
