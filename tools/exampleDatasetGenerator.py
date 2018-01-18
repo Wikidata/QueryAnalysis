@@ -4,6 +4,7 @@ import argparse
 import glob
 import gzip
 import random
+import sys
 import urllib
 
 from utility import utility
