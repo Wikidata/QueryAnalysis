@@ -113,6 +113,7 @@ qt:1454_999	Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.2; WOW64; Trident/6.
 AllSubjectsAllPredicatesEntityStatement	Mozilla/4.0 (compatible; Virtuoso)	not set	not set	
 thiselFilm_film_ID	Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36	not set	not set	
 qt:175_2695	Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36	not set	not set	
+qt:217_2527	Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.84 Safari/537.36	not set	not set	
 qt:217_2527	Mozilla/4.0 (compatible; Virtuoso)	not set	not set	
 thiscine.gr_film_ID	Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:57.0) Gecko/20100101 Firefox/57.0	not set	not set	
 thisIMDb_ID	Mozilla/4.0 (compatible; Virtuoso)	not set	not set	
@@ -129,6 +130,7 @@ qt:639_2200	Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:57.0) Gecko/20100101 Fir
 qt:639_2200	Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36	not set	not set	
 qt:639_2200	Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.84 Safari/537.36	not set	not set	
 thisUnifrance_film_ID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:57.0) Gecko/20100101 Firefox/57.0	not set	not set	
+qt:768_1226	Mozilla/4.0 (compatible; Virtuoso)	not set	not set	
 qt:768_1226	Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36	not set	not set	
 qt:936_1150	Mozilla/4.0 (compatible; Virtuoso)	not set	not set	
 referenceAllPredicatesAndObjects	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36	toolSearchingEverythingForEntities	-1	needs more data
@@ -862,3 +864,10 @@ totalRevenueWithTotalRevenuePointInTimeLabel	python-requests/2.7.0 CPython/2.7.1
 totalRevenueWithTotalRevenuePointInTimeLabel	python-requests/2.7.0 CPython/2.7.10 Linux/3.13.0-107-generic	toolSerachingForRevenue	3.13.0-107	needs more data
 totalRevenueWithTotalRevenuePointInTimeLabel	python-requests/2.7.0 CPython/2.7.10 Linux/3.13.0-92-generic	toolSerachingForRevenue	3.13.0-92	needs more data
 transitiveSubclassOfThis	Apache-Jena-ARQ/2.12.1	toolSearchingForClassRelated	2.12.1	needs more data
+thisDoubanMovieID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:57.0) Gecko/20100101 Firefox/57.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisCinemathequeQuebecoiseWorkIdentifier	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:57.0) Gecko/20100101 Firefox/57.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisLUMIEREFilmID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:57.0) Gecko/20100101 Firefox/57.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisBFIFilmAndTVIDID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:57.0) Gecko/20100101 Firefox/57.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisPrismaID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:57.0) Gecko/20100101 Firefox/57.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisDaumMovieID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:57.0) Gecko/20100101 Firefox/57.0	toolSearchingForMovieDatabseID	-1	needs more data
+thisCinemagiaFilmID	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:57.0) Gecko/20100101 Firefox/57.0	toolSearchingForMovieDatabseID	-1	needs more data
