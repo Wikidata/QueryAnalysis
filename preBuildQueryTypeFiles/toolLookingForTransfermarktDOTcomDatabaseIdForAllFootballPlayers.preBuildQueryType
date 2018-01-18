@@ -1,6 +1,0 @@
-PREFIX  wdt:  <http://www.wikidata.org/prop/direct/>
-PREFIX  wd:   <http://www.wikidata.org/entity/>
-
-SELECT  *
-WHERE
-  { wd:Q11948 wdt:P2446 ?req_id }
