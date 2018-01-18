@@ -142,7 +142,7 @@ class botClassification():
                 numberOfQueries = len(queries)
                 if (numberOfQueries < args.threshold):
                     del queryTypeDict[userAgentEntry]
-                else
+                else:
                     self.queryTypesCount[queryTypeEntry] += numberOfQueries
 
             if len(queryTypeDict) == 0:
