@@ -1,0 +1,6 @@
+SELECT ?var1 
+WHERE {
+  <http://www.wikidata.org/entity/Q21851559>  <http://www.wikidata.org/prop/direct/P31>  ?var1 .
+  ?var1  <http://www.wikidata.org/prop/direct/P2888>  <http://www.openlinksw.com/schemas/virtrdf#QuadMapFormat> .
+}
+
