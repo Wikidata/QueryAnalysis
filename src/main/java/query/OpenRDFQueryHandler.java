@@ -8,10 +8,14 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.log4j.Logger;
 import org.openrdf.model.Value;
 import org.openrdf.model.impl.URIImpl;
+import org.openrdf.query.Binding;
+import org.openrdf.query.BindingSet;
 import org.openrdf.query.MalformedQueryException;
 import org.openrdf.query.algebra.*;
 import org.openrdf.query.algebra.helpers.QueryModelVisitorBase;
 import org.openrdf.query.algebra.helpers.StatementPatternCollector;
+import org.openrdf.query.impl.BindingImpl;
+import org.openrdf.query.impl.ListBindingSet;
 import org.openrdf.query.parser.ParsedQuery;
 import org.openrdf.query.parser.sparql.ASTVisitorBase;
 import org.openrdf.query.parser.sparql.ast.*;
@@ -415,6 +419,34 @@ public class OpenRDFQueryHandler extends QueryHandler
     {
 
       @Override
+      public void meet(BindingSetAssignment bindingSetAssignment) throws VisitorException
+      {
+        List<BindingSet> bindingSets = new ArrayList<BindingSet>();
+        for (BindingSet bindingSet : bindingSetAssignment.getBindingSets()) {
+          List<String> names = new ArrayList<String>();
+          List<Value> values = new ArrayList<Value>();
+          for (Binding binding : bindingSet) {
+            String name = binding.getName();
+            if (!predicateVariables.contains(name)) {
+              names.add(name);
+              values.add(normalizeValueHelper(binding.getValue(), valueConstants));
+            } else {
+              names.add(name);
+              values.add(binding.getValue());
+            }
+          }
+
+          bindingSets.add(new ListBindingSet(names, values));
+        }
+        bindingSetAssignment.setBindingSets(bindingSets);
+        meetNode(bindingSetAssignment);
+      }
+    });
+
+    normalizedQuery.getTupleExpr().visit(new QueryModelVisitorBase<VisitorException>()
+    {
+
+      @Override
       public void meet(StatementPattern statementPattern) throws VisitorException
       {
         statementPattern.setSubjectVar(normalizeSubjectsAndObjectsHelper(statementPattern.getSubjectVar(), valueConstants, subjectsAndObjects));
@@ -535,6 +567,36 @@ public class OpenRDFQueryHandler extends QueryHandler
   /**
    * A helper function to find the fitting replacement value for wikidata uri normalization.
    *
+   * @param value           The value to be normalized
+   * @param valueConstants  The list of already found names
+   * @return THe normalized name (if applicable)
+   */
+  private Value normalizeValueHelper(Value value, Map<String, Integer> valueConstants)
+  {
+    String uri;
+    try {
+      uri = getURI(value);
+    }
+    catch (NoURIException e) {
+      return value;
+    }
+
+    if (!valueConstants.containsKey(uri)) {
+      valueConstants.put(uri, valueConstants.size());
+    }
+
+    try {
+      uri = normalizedURI(uri, valueConstants);
+    } catch (NoURIException e) {
+      return value;
+    }
+
+    return new URIImpl(uri);
+  }
+
+  /**
+   * A helper function to find the fitting replacement value for wikidata uri normalization.
+   *
    * @param var                The variable to be normalized
    * @param foundNames         The list of already found names
    * @return the normalized name (if applicable)
@@ -622,13 +684,7 @@ public class OpenRDFQueryHandler extends QueryHandler
       throw new NoURIException();
     }
     Value value = var.getValue();
-    if (value == null) {
-      throw new NoURIException();
-    }
-    if (!(value instanceof URIImpl)) {
-      throw new NoURIException();
-    }
-    return value.stringValue();
+    return getURI(value);
   }
 
   /**
@@ -642,6 +698,16 @@ public class OpenRDFQueryHandler extends QueryHandler
       throw new NoURIException();
     }
     Value value = ((ValueConstant) valueExpr).getValue();
+    return getURI(value);
+  }
+
+  /**
+   * @param value The value containing the URI.
+   * @return The URI contained in the variable.
+   * @throws NoURIException If no URI could be found.
+   */
+  private String getURI(Value value) throws NoURIException
+  {
     if (value == null) {
       throw new NoURIException();
     }
