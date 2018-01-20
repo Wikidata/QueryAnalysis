@@ -1,0 +1,5 @@
+SELECT ?var1 
+WHERE {
+  <http://www.wikidata.org/entity/Q354888>  <http://purl.org/dc/terms/subject>  ?var1 .
+}
+

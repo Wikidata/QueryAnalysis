@@ -1,0 +1,5 @@
+SELECT ?var1 
+WHERE {
+  <http://bag.basisregistraties.overheid.nl/bag/id/pand/0363100012157963>  <https://www.wikidata.org/wiki/Property:P31>  ?var1 .
+}
+

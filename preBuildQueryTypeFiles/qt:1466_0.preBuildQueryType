@@ -1,0 +1,19 @@
+SELECT ?var1Label  ?var2  ?var3  ?var4  ?var5 
+WHERE {
+  ?var5  <http://www.wikidata.org/prop/direct/P352>  ?var4 ;
+ <http://www.wikidata.org/prop/direct/P129>  ?var3 ;
+ <http://www.wikidata.org/prop/direct/P2888>  <http://purl.uniprot.org/uniprot/Q08289> ;
+ <http://www.wikidata.org/prop/direct/P703>  <http://www.wikidata.org/entity/Q15978631> ;
+ <http://www.wikidata.org/prop/P129>  ?var6 .
+  ?var6  <http://www.wikidata.org/prop/statement/P129>  ?var3 ;
+ <http://www.wikidata.org/prop/qualifier/P366>  ?var7 .
+  ?var3  <http://www.wikidata.org/prop/direct/P31>  ?var2 ;
+ <http://www.w3.org/2000/01/rdf-schema#label>  ?var1Label .
+ FILTER (  ( !( isLITERAL (  <http://purl.uniprot.org/uniprot/Q08289>  ) ) ) 
+) .
+ FILTER (  ( (  ?var7  =  <http://www.wikidata.org/entity/Q427492>  ) ) 
+) .
+ FILTER (  ( (  "string1" =  LANG (  ?var1Label  )  ) ) 
+) .
+}
+

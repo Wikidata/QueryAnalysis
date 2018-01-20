@@ -1,0 +1,11 @@
+SELECT ?var1  ?var2  ?var3  ?var4 
+WHERE {
+  ?var4  <http://www.wikidata.org/prop/direct/P594>  <http://www.openlinksw.com/virtrdf-data-formats#sql-varchar-fixedlang-x-any> .
+  ?var3  <http://www.wikidata.org/prop/direct/P3433>  ?var4 ;
+ <http://www.wikidata.org/prop/direct/P31>  ?var2 ;
+ <http://www.wikidata.org/prop/direct/P3354>  ?var1 .
+  ?var2  <http://www.wikidata.org/prop/direct/P2888>  <http://purl.obolibrary.org/obo/SO_0001583> .
+ FILTER (  ( !( isLITERAL (  <http://www.openlinksw.com/virtrdf-data-formats#sql-varchar-fixedlang-x-any>  ) ) ) 
+) .
+}
+

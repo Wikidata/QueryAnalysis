@@ -1,0 +1,5 @@
+SELECT ?var1  ?var2 
+WHERE {
+  <http://www.openlinksw.com/virtrdf-data-formats#sql-varchar>  ?var2  ?var1 .
+}
+

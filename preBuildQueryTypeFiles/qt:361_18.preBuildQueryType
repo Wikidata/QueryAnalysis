@@ -1,0 +1,5 @@
+SELECT ?var1 
+WHERE {
+  <http://verdwenengebouwen.nl/gebouw/5323>  <https://www.wikidata.org/wiki/Property:P31>  ?var1 .
+}
+
