@@ -889,3 +889,7 @@ qt:632_1	Mozilla/4.0 (compatible; Virtuoso)	not set	not set	automated
 qt:562_0	Mozilla/4.0 (compatible; Virtuoso)	not set	not set	automated
 qt:1049_0	Mozilla/4.0 (compatible; Virtuoso)	not set	not set	automated
 qt:521_13	Mozilla/4.0 (compatible; Virtuoso)	not set	not set	automated
+qt:1485_13	Mozilla/4.0 (compatible; Virtuoso)	not set	not set	automated
+qt:774_20	Mozilla/4.0 (compatible; Virtuoso)	not set	not set	automated
+AllSubjectsAllPredicatesEntityStatement	Mozilla/5.0 (Windows NT 10.0; WOW64; rv:53.0) Gecko/20100101 Firefox/53.0	not set	not set	automated
+entityStatementAllPredicatesAndObjects	Mozilla/5.0 (Windows NT 10.0; WOW64; rv:53.0) Gecko/20100101 Firefox/53.0	not set	not set	automated
