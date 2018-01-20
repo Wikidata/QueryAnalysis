@@ -1,6 +1,7 @@
 from __future__ import print_function
 
 import argparse
+import csv
 import gzip
 import os
 import shutil
@@ -84,6 +85,13 @@ userAgent = "user_agent"
 
 queryTypeOrder = list()
 
+toolNamesToIgnore = list()
+
+with open ("../userAgentClassification/toolNameForUserCategory.tsv") as toolNames:
+    toolReader = csv.DictReader(toolNames, delimiter="\t")
+    for entry in toolReader:
+        toolNamesToIgnore.append(entry["tool names to be included in the user source category"])
+
 def preparePath(path, directory, i):
     replacedDirectory = directory.replace("/", "SLASH")
 
@@ -123,6 +131,9 @@ class botClassification():
 
     def handle(self, sparqlQuery, processed):
         if not filter.checkLine(processed):
+            return
+
+        if processed["#ToolName"] in toolNamesToIgnore:
             return
 
         queryTypeEntry = processed["#" + queryType]
