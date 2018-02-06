@@ -498,6 +498,13 @@ public final class Main
               byte[] md5 = DigestUtils.md5(queryDump);
 
               int index = Math.floorMod(queryDump.hashCode(), numberOfQueryTypeDiskMaps);
+
+              if (queryTypes[index].containsKey(md5)) {
+                String existingName = queryTypes[index].get(md5);
+                if (!existingName.equals(queryTypeName)) {
+                  logger.info(queryTypes[index].get(md5) + " is duplicate of " + queryTypeName);
+                }
+              }
               queryTypes[index].put(md5, queryTypeName);
             } else {
               logger.info("Pre-build query " + queryTypeName + " could not be parsed.");
