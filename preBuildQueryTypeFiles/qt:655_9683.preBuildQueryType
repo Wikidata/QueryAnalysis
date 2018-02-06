@@ -1,0 +1,5 @@
+SELECT ?var1 
+WHERE {
+  <http://dbpedia.org/resource/Thereus>  <http://www.wikidata.org/prop/direct/P31>  <http://www.wikidata.org/entity/Q3305213> .
+}
+

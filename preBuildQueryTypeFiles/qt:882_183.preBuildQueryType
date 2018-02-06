@@ -1,0 +1,6 @@
+SELECT DISTINCT ?var1 
+WHERE {
+  ?var1  <http://www.w3.org/2000/01/rdf-schema#label>  "string1"@fr .
+  ?var1  <http://www.wikidata.org/prop/direct/P31>  <http://www.wikidata.org/entity/Q5> .
+}
+

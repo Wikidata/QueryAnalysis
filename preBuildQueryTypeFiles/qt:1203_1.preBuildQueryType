@@ -1,0 +1,6 @@
+SELECT ?var1 
+WHERE {
+  ?var1  <http://www.wikidata.org/prop/direct/P128>  <http://www.wikidata.org/entity/Q18032924> .
+}
+LIMIT 10000
+

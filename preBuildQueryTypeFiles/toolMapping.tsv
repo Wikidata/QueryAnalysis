@@ -893,3 +893,35 @@ qt:1485_13	Mozilla/4.0 (compatible; Virtuoso)	not set	not set	automated
 qt:774_20	Mozilla/4.0 (compatible; Virtuoso)	not set	not set	automated
 AllSubjectsAllPredicatesEntityStatement	Mozilla/5.0 (Windows NT 10.0; WOW64; rv:53.0) Gecko/20100101 Firefox/53.0	not set	not set	automated
 entityStatementAllPredicatesAndObjects	Mozilla/5.0 (Windows NT 10.0; WOW64; rv:53.0) Gecko/20100101 Firefox/53.0	not set	not set	automated
+qt:61_505	Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:57.0) Gecko/20100101 Firefox/57.0	not set	not set	automated
+qt:882_183	Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36	not set	not set	automated
+qt:882_183	Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36	not set	not set	automated
+qt:882_183	Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:57.0) Gecko/20100101 Firefox/57.0	not set	not set	automated
+qt:882_183	Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:57.0) Gecko/20100101 Firefox/57.0	not set	not set	automated
+qt:882_183	Mozilla/5.0 (iPhone; CPU iPhone OS 11_2_2 like Mac OS X) AppleWebKit/604.4.7 (KHTML, like Gecko) Version/11.0 Mobile/15C202 Safari/604.1	not set	not set	automated
+qt:882_183	Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko	not set	not set	automated
+qt:300_56	Mozilla/4.0 (compatible; Virtuoso)	not set	not set	automated
+thisInstanceOf	Mozilla/4.0 (compatible; Virtuoso)	not set	not set	automated
+qt:197_437	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:57.0) Gecko/20100101 Firefox/57.0	not set	not set	automated
+qt:522_6	Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.2.1) Gecko/20021204	not set	not set	automated
+qt:517_9743	Mozilla/4.0 (compatible; Virtuoso)	not set	not set	automated
+toolLookingForFootballPlayerBirths	Mozilla/4.0 (compatible; Virtuoso)	not set	not set	automated
+qt:1173_2	Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:55.0) Gecko/20100101 Firefox/55.0	not set	not set	automated
+qt:1203_1	Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36	not set	not set	automated
+qt:1454_2	Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.2; WOW64; Trident/6.0; .NET4.0E; .NET4.0C; .NET CLR 3.5.30729; .NET CLR 2.0.50727; .NET CLR 3.0.30729)	not set	not set	automated
+qt:1279_2	Mozilla/4.0 (compatible; Virtuoso)	not set	not set	automated
+qt:281_9725	Mozilla/4.0 (compatible; Virtuoso)	not set	not set	automated
+qt:934_15	Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.90 Safari/537.36 Vivaldi/1.91.867.38	not set	not set	automated
+qt:828_152	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_2) AppleWebKit/604.4.7 (KHTML, like Gecko) Version/11.0.2 Safari/604.4.7	not set	not set	automated
+toolLookingForFootballPlayerDeaths	Mozilla/4.0 (compatible; Virtuoso)	not set	not set	automated
+qt:921_9879	Mozilla/4.0 (compatible; Virtuoso)	not set	not set	automated
+qt:655_9683	Mozilla/4.0 (compatible; Virtuoso)	not set	not set	automated
+qt:1407_10	Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.90 Safari/537.36 Vivaldi/1.91.867.38	not set	not set	automated
+qt:1145_24	Mozilla/4.0 (compatible; Virtuoso)	not set	not set	automated
+qt:1244_152	Mozilla/5.0 (iPhone; CPU iPhone OS 11_2_2 like Mac OS X) AppleWebKit/604.4.7 (KHTML, like Gecko) Version/11.0 Mobile/15C202 Safari/604.1	not set	not set	automated
+qt:1244_152	Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36	not set	not set	automated
+qt:1244_152	Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36	not set	not set	automated
+qt:1244_152	Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:57.0) Gecko/20100101 Firefox/57.0	not set	not set	automated
+qt:1244_152	Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:57.0) Gecko/20100101 Firefox/57.0	not set	not set	automated
+qt:1244_152	Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko	not set	not set	automated
+qt:127_15	Mozilla/4.0 (compatible; Virtuoso)	not set	not set	automated

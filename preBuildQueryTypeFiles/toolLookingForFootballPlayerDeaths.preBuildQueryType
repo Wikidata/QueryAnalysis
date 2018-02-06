@@ -1,6 +1,5 @@
-PREFIX  wdt:  <http://www.wikidata.org/prop/direct/>
-PREFIX  wd:   <http://www.wikidata.org/entity/>
+SELECT ?var1 
+WHERE {
+  <http://www.wikidata.org/entity/Q3942427>  <http://www.wikidata.org/prop/direct/P570>  ?var1 .
+}
 
-SELECT  *
-WHERE
-  { wd:Q11948 wdt:P570 ?death }

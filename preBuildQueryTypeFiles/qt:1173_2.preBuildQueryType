@@ -1,0 +1,5 @@
+SELECT( COUNT ( ?var1  ) AS  ?var2  )
+WHERE {
+  ?var1 ( <http://www.wikidata.org/prop/direct/P31> / <http://www.wikidata.org/prop/direct/P279> *) <http://www.wikidata.org/entity/Q27686> .
+}
+

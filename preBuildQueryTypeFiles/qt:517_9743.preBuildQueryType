@@ -1,0 +1,9 @@
+SELECT ?var1 
+WHERE {
+  ?var1  <http://www.wikidata.org/prop/direct-normalized/P245>  ?var2 .
+  ?var3  <http://schema.org/about>  ?var1 .
+  VALUES (  ?var2  ) {
+   (  <http://vocab.getty.edu/ulan/500041156>  )
+  }
+}
+

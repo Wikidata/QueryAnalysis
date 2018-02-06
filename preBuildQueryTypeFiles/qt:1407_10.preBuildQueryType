@@ -1,0 +1,17 @@
+SELECT ?var1  ?var1Label  ?var2  ?var2Label  ?var3  ?var3Label  ?var4  ?var4Label 
+WHERE {
+  ?var3  <http://wikiba.se/ontology#claim>  ?var5 .
+  ?var3  <http://wikiba.se/ontology#statementProperty>  ?var6 .
+  ?var3  <http://wikiba.se/ontology#qualifier>  ?var7 .
+  ?var3  <http://www.w3.org/1999/02/22-rdf-syntax-ns#type>  <http://wikiba.se/ontology#Property> .
+  ?var4  <http://wikiba.se/ontology#claim>  ?var8 .
+  ?var4  <http://wikiba.se/ontology#qualifier>  ?var9 .
+  ?var4  <http://www.w3.org/1999/02/22-rdf-syntax-ns#type>  <http://wikiba.se/ontology#Property> .
+  ?var1  ?var5  ?var10 .
+  ?var10  ?var6  ?var2 .
+  ?var10  ?var9  <http://www.wikidata.org/entity/Q26451513> .
+ SERVICE  <http://wikiba.se/ontology#label>   {
+    <http://www.bigdata.com/rdf#serviceParam>  <http://wikiba.se/ontology#language>  "en".
+  }
+}
+

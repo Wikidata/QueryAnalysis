@@ -1,3 +1,5 @@
-SELECT  *
-WHERE
-  { wd:Q1383412  wdt:P31  ?v }
+SELECT ?var1 
+WHERE {
+  <http://www.wikidata.org/entity/Q337510>  <http://www.wikidata.org/prop/direct/P31>  ?var1 .
+}
+
