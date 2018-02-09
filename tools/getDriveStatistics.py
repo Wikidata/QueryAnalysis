@@ -39,7 +39,7 @@ for monthName in args.months.split(","):
     month = utility.addMissingSlash(monthName)
 
     for secondKey, secondFolder in {"user":"userData", "nonUser":"nonUserData"}.iteritems():
-        for thirdKey, thirdFolder in {"all":"", "unique":"uniqueQueryDataset", "queryType":"queryTypeDataset"}.iteritems():
+        for thirdKey, thirdFolder in {"all":"", "queryType":"queryTypeDataset"}.iteritems():
             monthFolder = month + secondFolder + "/" + thirdFolder + "/"
             monthFolder = monthFolder.strip("/")
 
