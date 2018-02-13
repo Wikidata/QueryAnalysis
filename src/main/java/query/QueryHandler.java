@@ -521,12 +521,14 @@ public abstract class QueryHandler implements Serializable
       Tuple2<String, String> value = Main.queryTypeToToolMapping.get(key);
       this.toolName = value._1;
       this.toolVersion = value._2;
+      this.toolComputed = true;
       return;
     }
 
     if (isOrganicUserAgent(this.getUserAgent())) {
       this.toolName = "USER";
       this.toolVersion = "1.0";
+      this.toolComputed = true;
     }
   }
 
