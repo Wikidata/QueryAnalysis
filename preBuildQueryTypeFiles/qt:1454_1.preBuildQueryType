@@ -1,0 +1,20 @@
+SELECT ?var1  ?var2  ?var3 (  MIN ( ?var4  ) AS  ?var4  )
+WHERE {
+  ?var1  <http://www.wikidata.org/prop/direct/P31>  <http://www.wikidata.org/entity/Q11424> .
+ SERVICE  <http://wikiba.se/ontology#label>   {
+    <http://www.bigdata.com/rdf#serviceParam>  <http://wikiba.se/ontology#language>  "[AUTO_LANGUAGE], en".
+  }
+ OPTIONAL {
+  ?var1  <http://www.wikidata.org/prop/direct/P345>  ?var2 .
+ }
+ OPTIONAL {
+  ?var1  <http://www.wikidata.org/prop/direct/P1258>  ?var3 .
+ }
+ OPTIONAL {
+  ?var1  <http://www.wikidata.org/prop/direct/P577>  ?var4 .
+ }
+}
+GROUP BY  ?var1  ?var2  ?var3 
+LIMIT 200
+OFFSET 75400
+

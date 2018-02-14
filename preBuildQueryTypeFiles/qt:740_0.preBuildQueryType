@@ -1,0 +1,13 @@
+SELECT ?var1 
+WHERE {
+  ?var2  <http://www.wikidata.org/prop/direct/P31>  <http://www.wikidata.org/entity/Q571> .
+ OPTIONAL {
+  ?var2  <http://www.wikidata.org/prop/direct/P18>  ?var1 .
+ }
+ OPTIONAL {
+  ?var2  <http://www.wikidata.org/prop/direct/P1476>  ?var3 .
+ }
+ FILTER (  (  REGEX (  STR (  ?var3  ) , "string1", "string2" )  ) 
+) .
+}
+
