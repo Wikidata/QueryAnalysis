@@ -5,6 +5,9 @@ from postprocess import processdata
 from utility import utility
 import config
 
+# This list contains all fields that should not be split because they could contain commas
+notToSplit = ["user_agent", "ToolName"]
+
 
 def writeOutMethod(filename, fieldValues, dictionary):
     with open(filename, "w") as file:
@@ -23,7 +26,7 @@ def writeOutMethod(filename, fieldValues, dictionary):
 
 
 
-def hourlyFieldValue(month, metric, monthsFolder = config.monthsFolder, ignoreLock = False, outputPath = None, outputFilename = None, filterParams = "", writeOut = False):
+def hourlyFieldValue(month, metric, monthsFolder = config.monthsFolder, ignoreLock = False, outputPath = None, outputFilename = None, filterParams = "", nosplitting = False, writeOut = False):
     if os.path.isfile(utility.addMissingSlash(monthsFolder)
                       + utility.addMissingSlash(month) + "locked") \
        and not ignoreLock:
@@ -76,14 +79,32 @@ def hourlyFieldValue(month, metric, monthsFolder = config.monthsFolder, ignoreLo
 
             if hour in xrange(0,24):
                 data = processed["#" + metric]
-                self.monthlyFieldValues.add(data)
                 monthlyHour = hour + 24 * (day - 1)
-                if data in self.monthlyData[monthlyHour]:
-                    self.monthlyData[monthlyHour][data] += 1
+
+                if metric in notToSplit:
+                    self.addValue(data, monthlyHour)
                 else:
-                    self.monthlyData[monthlyHour][data] = 1
+                    field_array = data.split(",")
+                    field_array = map(lambda it: it.strip(), field_array)
+                    field_array = [x for x in field_array if x]
+                    if nosplitting:
+                        field_array = sorted(field_array)
+                        self.addValue(utility.listToString(field_array), monthlyHour)
+                    else:
+                        for entry in field_array:
+                            if entry != "":
+                                self.addValue(entry, monthlyHour)
+
             else:
                 print str(hour) + " is not in 0-23"
+
+        def addValue(self, data, monthlyHour):
+            self.monthlyFieldValues.add(data)
+
+            if data in self.monthlyData[monthlyHour]:
+                self.monthlyData[monthlyHour][data] += 1
+            else:
+                self.monthlyData[monthlyHour][data] = 1
 
         def writeHourlyValues(self):
             writeOutMethod(pathBase + outputFile, self.monthlyFieldValues, self.monthlyData)
@@ -119,8 +140,11 @@ if __name__ == '__main__':
                         + " NOTE: If you use this option you should probably also"
                         + "set the --outputPath to some value other than the "
                         + "default.")
-    parser.add_argument("metric", type=str,
-                        help="The metric that should be ranked")
+    parser.add_argument("--nosplitting", "-n", help="Check if you do not want the"
+		                + " script to split entries at commas and count each part"
+		                + " separately but instead just to sort such entries and "
+		                + "count them as a whole.", action="store_true")
+    parser.add_argument("metric", type=str, help="The metric that should be ranked")
     parser.add_argument("month", type=str,
                         help="The month for which the ranking should be "
                         + "generated.")
@@ -132,4 +156,4 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
 
-    hourlyFieldValue(args.month, args.metric, monthsFolder = args.monthsFolder, ignoreLock = args.ignoreLock, outputPath = args.outputPath, outputFilename = args.outputFilename, filterParams = args.filter, writeOut = True)
+    hourlyFieldValue(args.month, args.metric, monthsFolder = args.monthsFolder, ignoreLock = args.ignoreLock, outputPath = args.outputPath, outputFilename = args.outputFilename, filterParams = args.filter, nosplitting = args.nosplitting, writeOut = True)
