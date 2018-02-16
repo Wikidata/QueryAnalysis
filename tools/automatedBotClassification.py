@@ -197,9 +197,14 @@ class botClassification():
                         firstUserAgent = userAgentEntry
                     print(queryTypeEntry + "\t" + userAgentEntry + "\t" + "not set\tnot set\t", file = newBots)
                 if firstUserAgent != None:
-                    encoded = urllib.quote_plus(queryTypeDict[firstUserAgent][0])
+                    example = queryTypeDict[firstUserAgent][0]
+                    encoded = urllib.quote_plus(example)
                     print("?query=" + encoded + "\tpath\tagent\ttime\ttype\thour\tstatus", file = forAnonymization)
                     queryTypeOrder.append(queryTypeEntry)
+
+                    #print("---------------------------\n")
+                    #print(queryTypeEntry + "\n")
+                    #print(example +  "\n")
 
         mavenCall = ['mvn', 'exec:java@Anonymizer']
 
