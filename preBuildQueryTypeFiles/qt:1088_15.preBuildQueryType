@@ -1,0 +1,11 @@
+SELECT ?var1  ?var2 
+WHERE {
+  ?var1  <http://www.wikidata.org/prop/direct/P2002>  ?var2 ;
+ <http://wikiba.se/ontology#sitelinks>  ?var3 .
+  VALUES (  ?var2  ) {
+   (  "string1" )
+   (  "string2" )
+  }
+}
+ORDER BY ASC( ?var3 )
+
