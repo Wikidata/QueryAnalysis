@@ -65,7 +65,7 @@ def processDay(handler, day, month, monthsFolder,
         for processed, source in izip(pReader, sReader):
             if startIdx <= i <= endIdx:
                 requestParameters = dict(urlparse.parse_qsl(urlparse.urlsplit(
-                    source['uri_query']).query))
+                    source['uri_query']).query.replace(';', "%3B")))
 
                 if 'query' in requestParameters.keys():
                     sparqlQuery = requestParameters['query']
@@ -94,7 +94,7 @@ def processDayAnonymous(handler, day, month, monthsFolder, startIdx=0, endIdx=sy
         for anonymous in aReader:
             if startIdx <= i <= endIdx:
                 requestParameters = dict(urlparse.parse_qsl(urlparse.urlsplit(
-                    anonymous['#anonymizedQuery']).query))
+                    anonymous['#anonymizedQuery']).query.replace(';', "%3B")))
 
                 if 'query' in requestParameters.keys():
                     sparqlQuery = requestParameters['query']
