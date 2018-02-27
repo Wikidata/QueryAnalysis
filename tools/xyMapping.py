@@ -88,7 +88,7 @@ def hourlyFieldValue(month, metricOne, metricTwo, monthsFolder = config.monthsFo
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         description="This script creates tables displaying all values of the "
-        + "specified field and their hourly count.")
+        + "specified first metric and their occurence for the specified second metric count.")
     parser.add_argument("--monthsFolder", "-m", default=config.monthsFolder,
                         type=str, help="The folder in which the months directory "
                         + "are residing.")
