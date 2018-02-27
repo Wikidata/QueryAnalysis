@@ -20,13 +20,7 @@ def fieldRanking(month, metric, monthsFolder = config.monthsFolder, ignoreLock =
 		+ " Use -i or ignoreLock = True if you want to force the execution of this script."
 		sys.exit()
 
-	argMetric = metric
-	metric = ""
-
-	if argMetric.startswith("#"):
-		metric = argMetric[1:]
-	else:
-		metric = argMetric
+	metric = utility.argMetric(metric)
 
 	pathBase = utility.addMissingSlash(monthsFolder) \
 		    + utility.addMissingSlash(month) \
@@ -48,40 +42,19 @@ def fieldRanking(month, metric, monthsFolder = config.monthsFolder, ignoreLock =
 
 
 	class FieldRankingHandler:
-		totalCount = 0
 		totalMetricCounts = defaultdict(int)
 
 		def handle(self, sparqlQuery, processed):
-		    if not filter.checkLine(processed):
-		        return
+			if not filter.checkLine(processed):
+				return
 
-		    entry = str(processed["#" + metric])
-
-		    if metric in notToSplit:
-		    	self.countQuery()
-		    	self.countEntry(entry)
-		    else:
-		    	field_array = entry.split(",")
-		    	if nosplitting:
-		    		field_array = sorted(field_array)
-		        	self.countQuery()
-		        	self.countEntry(utility.listToString(field_array))
-		    	else:
-		        	self.countQuery()
-		        	for entry in field_array:
-		        		self.countEntry(entry)
-
-		def countEntry(self, entry):
-		    self.totalMetricCounts[entry] += 1
-
-		def countQuery(self):
-		    self.totalCount += 1
+			for key in utility.fetchEntries(processed, metric, nosplitting = nosplitting):
+				self.totalMetricCounts[key] += 1
 
 		def writeOut(self):
-		    self.writeCount(pathBase + outputFile,
-		                    self.totalMetricCounts, self.totalCount)
+			self.writeCount(pathBase + outputFile, self.totalMetricCounts)
 
-		def writeCount(self, filename, metricsCount, count):
+		def writeCount(self, filename, metricsCount):
 		    with open(filename, "w") as file:
 				file.write(header)
 				for k, v in sorted(metricsCount.iteritems(), key=lambda (k, v): (v, k), reverse=True):
