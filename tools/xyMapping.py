@@ -1,17 +1,17 @@
 import argparse
 import os
 import sys
-from postprocess import processdata
-from utility import utility
+
+from collections import defaultdict
+
 import config
 
-# This list contains all fields that should not be split because they could contain commas
-notToSplit = ["user_agent", "ToolName"]
+from postprocess import processdata
+from utility import utility
 
-
-def writeOutMethod(filename, fieldValues, dictionary):
+def writeOutMethod(filename, fieldValues, dictionary, headerStart):
     with open(filename, "w") as file:
-        header = "hour"
+        header = headerStart
         for field in sorted(fieldValues):
             header += "\t" + field
         file.write(header + "\n")
@@ -26,7 +26,7 @@ def writeOutMethod(filename, fieldValues, dictionary):
 
 
 
-def hourlyFieldValue(month, metric, monthsFolder = config.monthsFolder, ignoreLock = False, outputPath = None, outputFilename = None, filterParams = "", nosplitting = False, writeOut = False):
+def hourlyFieldValue(month, metricOne, metricTwo, monthsFolder = config.monthsFolder, ignoreLock = False, outputPath = None, outputFilename = None, filterParams = "", nosplittingOne = False, nosplittingTwo = False, writeOut = False):
     if os.path.isfile(utility.addMissingSlash(monthsFolder)
                       + utility.addMissingSlash(month) + "locked") \
        and not ignoreLock:
@@ -34,19 +34,16 @@ def hourlyFieldValue(month, metric, monthsFolder = config.monthsFolder, ignoreLo
         + "moment. Use -i if you want to force the execution of this script."
         sys.exit()
 
-    argMetric = metric
-    metric = ""
+    metricOne = utility.argMetric(metricOne)
+    metricTwo = utility.argMetric(metricTwo)
 
-    if argMetric.startswith("#"):
-        metric = argMetric[1:]
-    else:
-        metric = argMetric
+    folderName = metricOne + "_" + metricTwo
 
     pathBase = utility.addMissingSlash(monthsFolder) \
             + utility.addMissingSlash(month) \
-            + utility.addMissingSlash(metric)
+            + utility.addMissingSlash(folderName)
 
-    outputFile = month.strip("/").replace("/", "_") + "_" + metric + "_Hourly_Values.tsv"
+    outputFile = month.strip("/").replace("/", "_") + "_" + folderName + "_Hourly_Values.tsv"
 
     if outputFilename is not None:
     	outputFile = outputFilename
@@ -65,49 +62,18 @@ def hourlyFieldValue(month, metric, monthsFolder = config.monthsFolder, ignoreLo
             if not filter.checkLine(processed):
                 return
 
-            day = processed["#day"]
+            entriesOne = utility.fetchEntries(processed, metricOne, nosplittingOne)
 
-            if 24 * (day - 1) not in self.monthlyData:
-                for j in xrange(0, 24):
-                    self.monthlyData[j + 24 * (day - 1)] = dict()
+            for keyTwo in utility.fetchEntries(processed, metricTwo, nosplittingTwo):
+                if keyTwo not in self.monthlyData:
+                    self.monthlyData[keyTwo] = defaultdict(int)
 
-            try:
-                hour = int(processed["#hour"])
-            except ValueError:
-                print processed["#hour"] + " could not be parsed as integer"
-                return
-
-            if hour in xrange(0,24):
-                data = processed["#" + metric]
-                monthlyHour = hour + 24 * (day - 1)
-
-                if metric in notToSplit:
-                    self.addValue(data, monthlyHour)
-                else:
-                    field_array = data.split(",")
-                    field_array = map(lambda it: it.strip(), field_array)
-                    field_array = [x for x in field_array if x]
-                    if nosplitting:
-                        field_array = sorted(field_array)
-                        self.addValue(utility.listToString(field_array), monthlyHour)
-                    else:
-                        for entry in field_array:
-                            if entry != "":
-                                self.addValue(entry, monthlyHour)
-
-            else:
-                print str(hour) + " is not in 0-23"
-
-        def addValue(self, data, monthlyHour):
-            self.monthlyFieldValues.add(data)
-
-            if data in self.monthlyData[monthlyHour]:
-                self.monthlyData[monthlyHour][data] += 1
-            else:
-                self.monthlyData[monthlyHour][data] = 1
+                for keyOne in entriesOne:
+                    self.monthlyFieldValues.add(keyOne)
+                    self.monthlyData[keyTwo][keyOne] += 1
 
         def writeHourlyValues(self):
-            writeOutMethod(pathBase + outputFile, self.monthlyFieldValues, self.monthlyData)
+            writeOutMethod(pathBase + outputFile, self.monthlyFieldValues, self.monthlyData, metricTwo + "\\" + metricOne)
 
     handler = hourlyFieldValueHandler()
 
@@ -140,11 +106,16 @@ if __name__ == '__main__':
                         + " NOTE: If you use this option you should probably also"
                         + "set the --outputPath to some value other than the "
                         + "default.")
-    parser.add_argument("--nosplitting", "-n", help="Check if you do not want the"
-		                + " script to split entries at commas and count each part"
+    parser.add_argument("--nosplittingOne", "-n1", help="Check if you do not want the"
+		                + " script to split entries for metric one at commas and count each part"
 		                + " separately but instead just to sort such entries and "
 		                + "count them as a whole.", action="store_true")
-    parser.add_argument("metric", type=str, help="The metric that should be ranked")
+    parser.add_argument("--nosplittingTwo", "-n2", help="Check if you do not want the"
+		                + " script to split entries for metric one at commas and count each part"
+		                + " separately but instead just to sort such entries and "
+		                + "count them as a whole.", action="store_true")
+    parser.add_argument("metricOne", type=str, help="The metric that should be ranked")
+    parser.add_argument("metricTwo", type=str, help="The metric that should be ranked")
     parser.add_argument("month", type=str,
                         help="The month for which the ranking should be "
                         + "generated.")
@@ -156,4 +127,4 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
 
-    hourlyFieldValue(args.month, args.metric, monthsFolder = args.monthsFolder, ignoreLock = args.ignoreLock, outputPath = args.outputPath, outputFilename = args.outputFilename, filterParams = args.filter, nosplitting = args.nosplitting, writeOut = True)
+    hourlyFieldValue(args.month, args.metricOne, args.metricTwo, monthsFolder = args.monthsFolder, ignoreLock = args.ignoreLock, outputPath = args.outputPath, outputFilename = args.outputFilename, filterParams = args.filter, nosplittingOne = args.nosplittingOne, nosplittingTwo = args.nosplittingTwo, writeOut = True)
