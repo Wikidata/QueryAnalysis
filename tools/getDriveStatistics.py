@@ -6,6 +6,7 @@ import sys
 from utility import utility
 import config
 import fieldRanking
+import xyMapping
 
 os.nice(19)
 
@@ -29,6 +30,13 @@ statisticsSubfolder = monthsFolder + "statistics/"
 if not os.path.exists(statisticsSubfolder):
     os.makedirs(statisticsSubfolder)
 
+def fieldRankingOn(monthFolder, metric, filename):
+    print "Working with fieldRanking " + metric + " on " + filename
+    fieldRanking.fieldRanking(monthFolder, metric, monthsFolder = args.monthsFolder, outputPath = statisticsSubfolder + metric + "_Ranking", outputFilename = filename, writeOut = True, notifications = False)
+
+def xyMappingOn(monthFolder, metricOne, metricTwo, filename, nosplitOne = False, nosplitTwo = False):
+    xyMapping.xyMapping(monthFolder, metricOne, metricTwo, monthsFolder = args.monthsFolder, outputPath = statisticsSubfolder + metricOne + "_" + metricTwo, outputFilename = filename, nosplittingOne = nosplitOne, nosplittingTwo = nosplitTwo, writeOut = True, notifications = False)
+
 for monthName in args.months.split(","):
     cleanMonthName = monthName.strip("/").replace("/", "SLASH")
 
@@ -44,23 +52,16 @@ for monthName in args.months.split(","):
             monthFolder = monthFolder.strip("/")
 
             filename = cleanMonthName + "#" + secondKey + "#" + thirdKey
-            print "Working with fieldRanking Predicates on " + filename
-            fieldRanking.fieldRanking(monthFolder, "Predicates", monthsFolder = args.monthsFolder, outputPath = statisticsSubfolder + "predicates_Ranking", outputFilename = filename, writeOut = True, notifications = False)
-            print "Working with fieldRanking Categories on " + filename
-            fieldRanking.fieldRanking(monthFolder, "Categories", monthsFolder = args.monthsFolder, outputPath = statisticsSubfolder + "categories_Ranking", outputFilename = filename, writeOut = True, notifications = False)
-            print "Working with fieldRanking TripleCountWithService on " + filename
-            fieldRanking.fieldRanking(monthFolder, "TripleCountWithService", monthsFolder = args.monthsFolder, outputPath = statisticsSubfolder + "tripleCountWithService_Ranking", outputFilename = filename, writeOut = True, notifications = False)
-            print "Working with fieldRanking TripleCountWithoutService on " + filename
-            fieldRanking.fieldRanking(monthFolder, "TripleCountWithoutService", monthsFolder = args.monthsFolder, outputPath = statisticsSubfolder + "tripleCountWithoutService_Ranking", outputFilename = filename, writeOut = True, notifications = False)
-            print "Working with fieldRanking ToolName on " + filename
-            fieldRanking.fieldRanking(monthFolder, "ToolName", monthsFolder = args.monthsFolder, outputPath = statisticsSubfolder + "toolName_Ranking", outputFilename = filename, writeOut = True, notifications = False)
-            print "Working with fieldRanking NonSimplePropertyPaths on " + filename
-            fieldRanking.fieldRanking(monthFolder, "NonSimplePropertyPaths", monthsFolder = args.monthsFolder, outputPath = statisticsSubfolder + "nonSimplePropertyPaths_Ranking", outputFilename = filename, writeOut = True, notifications = False)
-            print "Working with fieldRanking PrimaryLanguage on " + filename
-            fieldRanking.fieldRanking(monthFolder, "PrimaryLanguage", monthsFolder = args.monthsFolder, outputPath = statisticsSubfolder + "primaryLanguage_Ranking", outputFilename = filename, writeOut = True, notifications = False)
+            fieldRankingOn(monthFolder, "Predicates", filename)
+            fieldRankingOn(monthFolder, "Categories", filename)
+            fieldRankingOn(monthFolder, "TripleCountWithService", filename)
+            fieldRankingOn(monthFolder, "TripleCountWithoutService", filename)
+            fieldRankingOn(monthFolder, "ToolName", filename)
+            fieldRankingOn(monthFolder, "NonSimplePropertyPaths", filename)
+            fieldRankingOn(monthFolder, "PrimaryLanguage", filename)
             if thirdKey is not "queryType":
-                print "Working with fieldRanking QueryType on " + filename
-                fieldRanking.fieldRanking(monthFolder, "QueryType", monthsFolder = args.monthsFolder, outputPath = statisticsSubfolder + "queryType_Ranking", outputFilename = filename, writeOut = True, notifications = False)
+                fieldRankingOn(monthFolder, "QueryType", filename)
+            xyMappingOn(monthFolder, "UsedSparqlFeatures", "QuerySize", filename)
             for script, scriptFolder in {"getSparqlStatistic.py":"sparqlFeatures", "operatorUsageStatistic.py":"operatorUsage", "generalStat.py":"generalStats"}.iteritems():
                 folder = utility.addMissingSlash(statisticsSubfolder + scriptFolder)
                 if not os.path.exists(folder):
