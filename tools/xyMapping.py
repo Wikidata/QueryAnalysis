@@ -26,7 +26,7 @@ def writeOutMethod(filename, fieldValues, dictionary, headerStart):
 
 
 
-def hourlyFieldValue(month, metricOne, metricTwo, monthsFolder = config.monthsFolder, ignoreLock = False, outputPath = None, outputFilename = None, filterParams = "", nosplittingOne = False, nosplittingTwo = False, writeOut = False):
+def xyMapping(month, metricOne, metricTwo, monthsFolder = config.monthsFolder, ignoreLock = False, outputPath = None, outputFilename = None, filterParams = "", nosplittingOne = False, nosplittingTwo = False, writeOut = False):
     if os.path.isfile(utility.addMissingSlash(monthsFolder)
                       + utility.addMissingSlash(month) + "locked") \
        and not ignoreLock:
@@ -127,4 +127,4 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
 
-    hourlyFieldValue(args.month, args.metricOne, args.metricTwo, monthsFolder = args.monthsFolder, ignoreLock = args.ignoreLock, outputPath = args.outputPath, outputFilename = args.outputFilename, filterParams = args.filter, nosplittingOne = args.nosplittingOne, nosplittingTwo = args.nosplittingTwo, writeOut = True)
+    xyMapping(args.month, args.metricOne, args.metricTwo, monthsFolder = args.monthsFolder, ignoreLock = args.ignoreLock, outputPath = args.outputPath, outputFilename = args.outputFilename, filterParams = args.filter, nosplittingOne = args.nosplittingOne, nosplittingTwo = args.nosplittingTwo, writeOut = True)
