@@ -35,6 +35,7 @@ def fieldRankingOn(monthFolder, metric, filename):
     fieldRanking.fieldRanking(monthFolder, metric, monthsFolder = args.monthsFolder, outputPath = statisticsSubfolder + metric + "_Ranking", outputFilename = filename, writeOut = True, notifications = False)
 
 def xyMappingOn(monthFolder, metricOne, metricTwo, filename, nosplitOne = False, nosplitTwo = False):
+    print "Working with xyMapping " + metricOne + " " + metricTwo + " on " + filename
     xyMapping.xyMapping(monthFolder, metricOne, metricTwo, monthsFolder = args.monthsFolder, outputPath = statisticsSubfolder + metricOne + "_" + metricTwo, outputFilename = filename, nosplittingOne = nosplitOne, nosplittingTwo = nosplitTwo, writeOut = True, notifications = False)
 
 for monthName in args.months.split(","):
