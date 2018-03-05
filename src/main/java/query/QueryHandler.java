@@ -93,6 +93,10 @@ public abstract class QueryHandler implements Serializable
    */
   protected long line;
   /**
+   * The non-simple property paths as a string of comma separated values.
+   */
+  protected String nonSimplePropertyPaths;
+  /**
    * If this entry was the first entry for this specific query.
    */
   private boolean isFirst;
@@ -161,9 +165,13 @@ public abstract class QueryHandler implements Serializable
    */
   private String categories;
   /**
-   * The non-simple property paths as a string of comma separated values.
+   * The urls used by service calls.
    */
-  protected String nonSimplePropertyPaths;
+  private Set<String> serviceCalls;
+  /**
+   * The urls used by service calls as a list of comma separated values.
+   */
+  private String serviceCallsString;
   /**
    * The unique id consists of the hash of the QueryString combined with the line it was being executed.
    */
@@ -369,7 +377,7 @@ public abstract class QueryHandler implements Serializable
    * Useful for caching.
    */
   protected abstract void computeTripleCountWithService();
-  
+
   /**
    * @return Returns the number of triples in the query pattern
    * (including triples in SERIVCE blocks).
@@ -865,6 +873,38 @@ public abstract class QueryHandler implements Serializable
    * Computes if this query is simple or complex.
    */
   public abstract void computeSimpleOrComplex();
+
+  /**
+   * @return {@link #serviceCallsString}
+   */
+  public String getServiceCallsString()
+  {
+    if (serviceCallsString == null) {
+      serviceCallsString = computeAnyIDString(getServiceCalls());
+    }
+    return serviceCallsString;
+  }
+  /**
+   * @return {@link #serviceCalls}
+   */
+  private Set<String> getServiceCalls()
+  {
+    if (serviceCalls == null) {
+      computeServiceCalls();
+    }
+    return serviceCalls;
+  }
+  /**
+   * Computes all service calls in the query.
+   */
+  protected abstract void computeServiceCalls();
+  /**
+   * @param serviceCallsToSet {@link #serviceCalls}
+   */
+  protected void setServiceCalls(Set<String> serviceCallsToSet)
+  {
+    serviceCalls = serviceCallsToSet;
+  }
 
   /**
    * If called this query is being marked the first processed query with this query String.

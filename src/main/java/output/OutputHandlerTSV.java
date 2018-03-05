@@ -110,6 +110,7 @@ public class OutputHandlerTSV extends OutputHandler
     header.add("#Coordinates");
     header.add("#UsedSparqlFeatures");
     header.add("#PrimaryLanguage");
+    header.add("#ServiceCalls");
 
     header.add("#original_line(filename_line)");
     writer.writeHeaders(header);
@@ -185,6 +186,7 @@ public class OutputHandlerTSV extends OutputHandler
       }
       line.add(sparqlStatisticsLine);
       line.add(queryHandler.getPrimaryLanguage());
+      line.add(queryHandler.getServiceCallsString());
 
     } else {
       for (int i = 0; i < 13; i++) {

@@ -839,4 +839,25 @@ public class OpenRDFQueryHandler extends QueryHandler
     }
     return QueryHandler.Complexity.COMPLEX;
   }
+
+  @Override
+  protected void computeServiceCalls()
+  {
+    Set<String> newServiceCalls = new HashSet<String>();
+    try {
+      getParsedQuery().getTupleExpr().visit(new QueryModelVisitorBase<Exception>()
+      {
+        @Override
+        public void meet(Service service)
+        {
+          newServiceCalls.add(service.getServiceRef().getValue().stringValue());
+        }
+      });
+    }
+    catch (Exception e) {
+      logger.error("Error while collection service calls.", e);
+      newServiceCalls.add("INTERNAL ERROR");
+    }
+    setServiceCalls(newServiceCalls);
+  }
 }
