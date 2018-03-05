@@ -26,7 +26,7 @@ def writeOutMethod(filename, fieldValues, dictionary, headerStart):
 
 
 
-def xyMapping(month, metricOne, metricTwo, monthsFolder = config.monthsFolder, ignoreLock = False, outputPath = None, outputFilename = None, filterParams = "", nosplittingOne = False, nosplittingTwo = False, writeOut = False):
+def xyMapping(month, metricOne, metricTwo, monthsFolder = config.monthsFolder, ignoreLock = False, outputPath = None, outputFilename = None, filterParams = "", nosplittingOne = False, nosplittingTwo = False, writeOut = False, notifications = True):
     if os.path.isfile(utility.addMissingSlash(monthsFolder)
                       + utility.addMissingSlash(month) + "locked") \
        and not ignoreLock:
@@ -42,6 +42,9 @@ def xyMapping(month, metricOne, metricTwo, monthsFolder = config.monthsFolder, i
     pathBase = utility.addMissingSlash(monthsFolder) \
             + utility.addMissingSlash(month) \
             + utility.addMissingSlash(folderName)
+
+    if outputPath is not None:
+        pathBase = utility.addMissingSlash(outputPath)
 
     outputFile = month.strip("/").replace("/", "_") + "_" + folderName + ".tsv"
 
@@ -77,7 +80,7 @@ def xyMapping(month, metricOne, metricTwo, monthsFolder = config.monthsFolder, i
 
     handler = hourlyFieldValueHandler()
 
-    processdata.processMonth(handler, month, monthsFolder)
+    processdata.processMonth(handler, month, monthsFolder, notifications = notifications)
 
     if writeOut:
         if not os.path.exists(pathBase):
@@ -94,6 +97,7 @@ if __name__ == '__main__':
                         + "are residing.")
     parser.add_argument("--ignoreLock", "-i", help="Ignore locked file and execute"
                         + " anyways", action="store_true")
+    parser.add_argument("--suppressNotifications", "-s", help = "Suppress notifications from processdata.py.", action = "store_true")
     parser.add_argument("--outputPath", "-p", type=str, help="The path where the"
                         + " output files should be generated.")
     parser.add_argument("--outputFilename", "-o", type=str, help="The name of the output file to be generated.")
@@ -127,4 +131,4 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
 
-    xyMapping(args.month, args.metricOne, args.metricTwo, monthsFolder = args.monthsFolder, ignoreLock = args.ignoreLock, outputPath = args.outputPath, outputFilename = args.outputFilename, filterParams = args.filter, nosplittingOne = args.nosplittingOne, nosplittingTwo = args.nosplittingTwo, writeOut = True)
+    xyMapping(args.month, args.metricOne, args.metricTwo, monthsFolder = args.monthsFolder, ignoreLock = args.ignoreLock, outputPath = args.outputPath, outputFilename = args.outputFilename, filterParams = args.filter, nosplittingOne = args.nosplittingOne, nosplittingTwo = args.nosplittingTwo, writeOut = True, notifications = not args.suppressNotifications)
