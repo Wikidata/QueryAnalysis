@@ -844,6 +844,10 @@ public class OpenRDFQueryHandler extends QueryHandler
   protected void computeServiceCalls()
   {
     Set<String> newServiceCalls = new HashSet<String>();
+    if (getValidityStatus() != QueryHandler.Validity.VALID) {
+      setServiceCalls(newServiceCalls);
+      return;
+    }
     try {
       getParsedQuery().getTupleExpr().visit(new QueryModelVisitorBase<Exception>()
       {
