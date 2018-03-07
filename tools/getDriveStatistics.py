@@ -60,6 +60,7 @@ for monthName in args.months.split(","):
             fieldRankingOn(monthFolder, "ToolName", filename)
             fieldRankingOn(monthFolder, "NonSimplePropertyPaths", filename)
             fieldRankingOn(monthFolder, "PrimaryLanguage", filename)
+            fieldRankingOn(monthFolder, "ServiceCalls", filename)
             if thirdKey is not "queryType":
                 fieldRankingOn(monthFolder, "QueryType", filename)
             xyMappingOn(monthFolder, "UsedSparqlFeatures", "QuerySize", filename)
