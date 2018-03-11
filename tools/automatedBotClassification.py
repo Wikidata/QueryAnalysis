@@ -34,7 +34,7 @@ parser.add_argument("--filter", "-f", default="", type=str, help="Constraints "
                     + " set the --outputPath to some value other than the "
                     + "default.")
 parser.add_argument("month", type=str, help="The month for which the ranking should be generated.")
-parser.add_argument("--threshold", "-t", default = 2000, type = int, help = "The threshold above which the cominations should be listed. Default is 2000.")
+parser.add_argument("--threshold", "-t", default = 2000, type = int, help = "The threshold above which the combinations should be listed. Default is 2000.")
 
 if (len(sys.argv[1:]) == 0):
     parser.print_help()
