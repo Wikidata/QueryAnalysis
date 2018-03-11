@@ -6,12 +6,6 @@ from postprocess import processdata
 from utility import utility
 import config
 
-# This script creates descending rankings for each day for all metrics (in the
-# array metrics)
-
-# This list contains all fields that should not be split because they could contain commas
-notToSplit = ["user_agent", "ToolName"]
-
 def fieldRanking(month, metric, monthsFolder = config.monthsFolder, ignoreLock = False, outputPath = None, outputFilename = None, filterParams = "", nosplitting = False, writeOut = False, notifications = True):
 	if os.path.isfile(utility.addMissingSlash(monthsFolder)
 		              + utility.addMissingSlash(month) + "locked") \
@@ -52,12 +46,9 @@ def fieldRanking(month, metric, monthsFolder = config.monthsFolder, ignoreLock =
 				self.totalMetricCounts[key] += 1
 
 		def writeOut(self):
-			self.writeCount(pathBase + outputFile, self.totalMetricCounts)
-
-		def writeCount(self, filename, metricsCount):
-		    with open(filename, "w") as file:
+			with open(pathBase + outputFile, "w") as file:
 				file.write(header)
-				for k, v in sorted(metricsCount.iteritems(), key=lambda (k, v): (v, k), reverse=True):
+				for k, v in sorted(self.totalMetricCounts.iteritems(), key=lambda (k, v): (v, k), reverse=True):
 					file.write(str(k) + "\t" + str(v) + "\n")
 
 	handler = FieldRankingHandler()
