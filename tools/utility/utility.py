@@ -50,14 +50,18 @@ def fetchEntries(processed, metric, nosplitting = False):
         if metric in notToSplit:
             return [data]
         else:
-            field_array = data.split(",")
-            field_array = map(lambda it: it.strip(), field_array)
-            field_array = [x for x in field_array if x]
+            field_array = splitEntry(data)
             if nosplitting:
                 field_array = sorted(field_array)
                 return [listToString(field_array)]
             else:
                 return field_array
+
+def splitEntry(entry):
+    field_array = entry.split(",")
+    field_array = map(lambda it: it.strip(), field_array)
+    field_array = [x for x in field_array if  x]
+    return field_array
 
 class filter:
 
