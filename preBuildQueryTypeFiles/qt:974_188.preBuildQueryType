@@ -1,0 +1,5 @@
+SELECT ?var1  ?var2 
+WHERE {
+  <http://purl.org/ontology/bibo/Journal>  ?var2  ?var1 .
+}
+

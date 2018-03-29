@@ -1,0 +1,15 @@
+SELECT ?var1  ?var2 
+WHERE {
+  ?var1  <http://www.wikidata.org/prop/direct/P31>  <http://www.wikidata.org/entity/Q11424> .
+  ?var1  <http://schema.org/description>  ?var2 .
+ FILTER (  (  CONTAINS (  ?var2 , "string1" )  ) 
+) .
+ OPTIONAL {
+  ?var1  <http://schema.org/description>  ?var3 .
+ FILTER (  ( (  LANG (  ?var3  )  =  "string2" ) ) 
+) .
+ }
+ FILTER (  ( !( BOUND (  ?var3  ) ) ) 
+) .
+}
+

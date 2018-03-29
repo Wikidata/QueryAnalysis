@@ -1,0 +1,25 @@
+PREFIX gas: <http://www.bigdata.com/rdf/gas#> 
+SELECT ?var1 (  (  ?var2 + ?var3  )  AS  ?var4  )
+WHERE {
+ SERVICE  <http://www.bigdata.com/rdf/gas#service>   {
+    <http://www.bigdata.com/rdf/gas#program>  <http://www.bigdata.com/rdf/gas#gasClass>  "com.bigdata.rdf.graph.analytics.SSSP";
+ <http://www.bigdata.com/rdf/gas#in>  <http://www.wikidata.org/entity/Q130879> ;
+ <http://www.bigdata.com/rdf/gas#traversalDirection>  "string1";
+ <http://www.bigdata.com/rdf/gas#out>  ?var1 ;
+ <http://www.bigdata.com/rdf/gas#out1>  ?var2 ;
+ <http://www.bigdata.com/rdf/gas#maxIterations> "10"^^<http://www.w3.org/2001/XMLSchema#integer> ;
+ <http://www.bigdata.com/rdf/gas#linkType>  <http://www.wikidata.org/prop/direct/P279> .
+  }
+ SERVICE  <http://www.bigdata.com/rdf/gas#service>   {
+    <http://www.bigdata.com/rdf/gas#program>  <http://www.bigdata.com/rdf/gas#gasClass>  "com.bigdata.rdf.graph.analytics.SSSP";
+ <http://www.bigdata.com/rdf/gas#in>  <http://www.wikidata.org/entity/Q1124> ;
+ <http://www.bigdata.com/rdf/gas#traversalDirection>  "string1";
+ <http://www.bigdata.com/rdf/gas#out>  ?var1 ;
+ <http://www.bigdata.com/rdf/gas#out1>  ?var3 ;
+ <http://www.bigdata.com/rdf/gas#maxIterations> "10"^^<http://www.w3.org/2001/XMLSchema#integer> ;
+ <http://www.bigdata.com/rdf/gas#linkType>  <http://www.wikidata.org/prop/direct/P279> .
+  }
+}
+ORDER BY ASC( ?var4 )
+LIMIT 1
+

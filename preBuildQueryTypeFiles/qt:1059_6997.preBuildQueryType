@@ -1,0 +1,5 @@
+ ASK
+WHERE {
+  ?var1  <http://www.wikidata.org/prop/direct/P1933>  "string1".
+}
+

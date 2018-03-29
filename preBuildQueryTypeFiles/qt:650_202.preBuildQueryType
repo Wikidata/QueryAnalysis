@@ -1,0 +1,10 @@
+SELECT( "1"^^<http://www.w3.org/2001/XMLSchema#integer>  AS  ?var1  )
+WHERE {
+  <http://www.wikidata.org/entity/Q330635>  <http://www.wikidata.org/prop/direct/P106>  ?var2 .
+ FILTER (  (  EXISTS  {
+   <http://www.wikidata.org/entity/Q330635>  <http://www.wikidata.org/prop/direct/P106>  <http://www.wikidata.org/entity/Q33999> .
+ }
+ ) 
+) .
+}
+
