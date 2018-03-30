@@ -1,0 +1,6 @@
+SELECT ?var1 ?var2 ?var3 ?var4
+ WHERE {
+      {  <http://brt.basisregistraties.overheid.nl/top10nl/id/plaats/entity1> <http://www.w3.org/2000/01/rdf-schema#label> ?var2 ;
+             <http://www.wikidata.org/prop/direct/P981> ?var3 ;
+             <http://www.wikidata.org/prop/direct/P1082> ?var4 . }
+     OPTIONAL {  <http://brt.basisregistraties.overheid.nl/top10nl/id/plaats/entity1> <http://www.wikidata.org/prop/direct/P41> ?var1 . } }

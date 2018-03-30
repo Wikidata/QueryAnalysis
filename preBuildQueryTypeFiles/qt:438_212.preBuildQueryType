@@ -1,0 +1,6 @@
+SELECT ?var1
+ WHERE {
+      {  ?var3 <http://www.wikidata.org/prop/direct/P981> ?var2 ;
+             <http://www.wikidata.org/prop/direct/P1082> ?var5 ;
+             <http://www.w3.org/2000/01/rdf-schema#label> "string1"^^<http://www.w3.org/2001/XMLSchema#string> . }
+     OPTIONAL {  ?var3 <http://www.wikidata.org/prop/direct/P41> ?var4 . } }
