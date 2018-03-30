@@ -1,0 +1,6 @@
+SELECT ?var1 
+WHERE {
+  ?var1  <http://www.wikidata.org/prop/direct/P345>  "string1".
+}
+LIMIT 1
+

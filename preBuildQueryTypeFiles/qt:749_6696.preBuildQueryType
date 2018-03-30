@@ -1,0 +1,33 @@
+PREFIX schema: <http://schema.org/> 
+SELECT DISTINCT ?var1  ?var2  ?var3  ?var4  ?var5  ?var6 ( COUNT ( DISTINCT  ?var7  ) AS  ?var8  )
+WHERE {
+  ?var9  <http://www.w3.org/2000/01/rdf-schema#label>  ?var1 .
+  ?var9  <http://www.w3.org/2000/01/rdf-schema#label>  "string1"@fr .
+  ?var9  <http://www.wikidata.org/prop/direct/P21>  ?var6 .
+ OPTIONAL {
+  ?var9  <http://www.wikidata.org/prop/direct/P106>  ?var10 .
+ }
+ OPTIONAL {
+  ?var9  <http://www.wikidata.org/prop/direct/P27>  ?var11 .
+ }
+ OPTIONAL {
+  ?var9  <http://www.wikidata.org/prop/direct/P268>  ?var3 .
+ }
+ OPTIONAL {
+  ?var9  <http://www.wikidata.org/prop/direct/P569>  ?var4 .
+ }
+ OPTIONAL {
+  ?var9  <http://www.wikidata.org/prop/direct/P570>  ?var5 .
+ }
+  ?var7  <http://schema.org/about>  ?var9 .
+ OPTIONAL {
+  ?var11  <http://www.w3.org/2000/01/rdf-schema#label>  ?var2 .
+ FILTER (  ( (  LANG (  ?var2  )  =  "string2" ) ) 
+) .
+ }
+ FILTER (  ( (  LANG (  ?var1  )  =  "string3" ) ) 
+) .
+}
+GROUP BY  ?var2  ?var1  ?var3  ?var4  ?var5  ?var6 
+ORDER BY ASC( ?var4 )
+

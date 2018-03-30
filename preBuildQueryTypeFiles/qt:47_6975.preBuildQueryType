@@ -1,0 +1,6 @@
+SELECT ?var1  ?var2 
+WHERE {
+  ?var3  <http://rdf.ebi.ac.uk/terms/expressionatlas/refersTo>  ?var2 ;
+ <http://rdf.ebi.ac.uk/terms/expressionatlas/isOutputOf>  ?var1 .
+}
+

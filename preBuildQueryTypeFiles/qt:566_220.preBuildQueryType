@@ -1,0 +1,28 @@
+SELECT *
+WHERE {
+  ?var1  <http://www.wikidata.org/prop/direct/P31>  <http://www.wikidata.org/entity/Q1339195> .
+ OPTIONAL {
+  ?var1  <http://www.wikidata.org/prop/direct/P1619>  ?var2 .
+ }
+ OPTIONAL {
+  ?var1  <http://www.wikidata.org/prop/direct/P18>  ?var3 .
+ }
+ OPTIONAL {
+  ?var1  <http://www.wikidata.org/prop/direct/P625>  ?var4 .
+ }
+ OPTIONAL {
+  ?var1  <http://www.wikidata.org/prop/direct/P197>  ?var5 .
+ }
+ OPTIONAL {
+  ?var1  <http://www.wikidata.org/prop/direct/P131>  ?var6 .
+ }
+ OPTIONAL {
+  ?var6  <http://www.wikidata.org/prop/direct/P373>  ?var7 .
+ }
+ SERVICE  <http://wikiba.se/ontology#label>   {
+    <http://www.bigdata.com/rdf#serviceParam>  <http://wikiba.se/ontology#language>  "[AUTO_LANGUAGE],en".
+  }
+ FILTER (  (  ?var1  IN (  <http://www.wikidata.org/entity/Q1865371>  )  ) 
+) .
+}
+

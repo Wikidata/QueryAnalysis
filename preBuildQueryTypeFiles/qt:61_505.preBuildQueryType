@@ -1,6 +1,6 @@
  ASK
 WHERE {
-  <http://www.wikidata.org/entity/Q21175177> ( <http://www.wikidata.org/prop/direct/P31> / <http://www.wikidata.org/prop/direct/P279> *) <http://www.wikidata.org/entity/Q7397> .
+  <http://www.wikidata.org/entity/Q23929935> ( <http://www.wikidata.org/prop/direct/P31> / <http://www.wikidata.org/prop/direct/P279> *) <http://www.wikidata.org/entity/Q7397> .
   <http://www.bigdata.com/queryHints#Prior>  <http://www.bigdata.com/queryHints#gearing>  "string1".
 }
 
