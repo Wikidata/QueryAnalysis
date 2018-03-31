@@ -1,0 +1,29 @@
+PREFIX entity: <http://www.wikidata.org/entity/> 
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> 
+PREFIX hint: <http://www.bigdata.com/queryHints#> 
+SELECT ?var1  ?var2Label  ?var3  ?var4Label  ?var5 
+WHERE {
+  <http://www.bigdata.com/queryHints#Query>  <http://www.bigdata.com/queryHints#optimizer>  "None".
+ {
+   BIND (  <http://www.wikidata.org/entity/Q266209>  AS  ?var3 ).
+   BIND (  "string1" AS  ?var1 ).
+   BIND (  "string2"@ru  AS  ?var2Label ).
+ }
+  UNION
+ {
+   <http://www.wikidata.org/entity/Q266209>  ?var1  ?var3 .
+   ?var6  ?var7  ?var1 .
+   ?var6  <http://www.w3.org/1999/02/22-rdf-syntax-ns#type>  <http://wikiba.se/ontology#Property> .
+   ?var6  <http://www.w3.org/2000/01/rdf-schema#label>  ?var2Label .
+ }
+  ?var3  <http://www.w3.org/2000/01/rdf-schema#label>  ?var4Label .
+ OPTIONAL {
+  ?var3  <http://www.wikidata.org/prop/direct/P18>  ?var5 .
+ }
+ FILTER (  ( (  LANG (  ?var4Label  )  =  "string3" ) ) 
+) .
+ FILTER (  ( (  LANG (  ?var2Label  )  =  "string3" ) ) 
+) .
+}
+LIMIT 1000
+
