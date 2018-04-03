@@ -1,0 +1,13 @@
+SELECT( "1"^^<http://www.w3.org/2001/XMLSchema#integer>  AS  ?var1  )
+WHERE {
+  ?var2  <http://www.wikidata.org/prop/direct/P17>  <http://www.wikidata.org/entity/Q252> .
+ {
+   ?var2 ( <http://www.wikidata.org/prop/direct/P31> / <http://www.wikidata.org/prop/direct/P279> *) <http://www.wikidata.org/entity/Q34770> .
+ }
+  UNION
+ {
+   ?var2  <http://www.wikidata.org/prop/direct/P279> * <http://www.wikidata.org/entity/Q34770> .
+ }
+}
+LIMIT 1
+
