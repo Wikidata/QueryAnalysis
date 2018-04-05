@@ -34,37 +34,25 @@ def featureVectors(month, metric, monthsFolder = config.monthsFolder, threshold 
 
 	filter.setup(filterParams)
 
-	validVectorEntries = set()
-
 	vectors = list()
 
-	result = fieldRanking.fieldRanking(month, metric, monthsFolder, ignoreLock = ignoreLock, outputPath = outputPath, outputFilename = outputFilename, filterParams = filterParams, writeOut = False, notifications = notifications)
-	for keyOneEntry, keyOneEntryCount in sorted(result.iteritems(), key=lambda (k, v): (v, k), reverse = True):
-		if keyOneEntryCount < threshold:
-			break
-		validVectorEntries.add(keyOneEntry)
+	vectorEntries = set()
 
 	result = fieldRanking.fieldRanking(month, metric, monthsFolder, ignoreLock = ignoreLock, outputPath = outputPath, outputFilename = outputFilename, filterParams = filterParams, nosplitting = True, writeOut = False, notifications = notifications)
 	for keyOneEntry, keyOneEntryCount in sorted(result.iteritems(), key = lambda (k, v): (v, k), reverse = True):
+		if keyOneEntryCount < threshold:
+			break
+
 		if metric not in utility.notToSplit:
 			entries = utility.splitEntry(keyOneEntry)
 		else:
 			entries = [keyOneEntry]
 
-		notValid = False
-		for entry in entries:
-			if entry not in validVectorEntries:
-				notValid = True
-				break
-
-		if notValid:
-			continue
-
 		newVector = defaultdict(int)
 
-		for vectorEntry in validVectorEntries:
-			if vectorEntry in entries:
-				newVector[vectorEntry] = 1
+		for entry in entries:
+			newVector[entry] = 1
+			vectorEntries.add(entry)
 
 		newVector["count"] = keyOneEntryCount
 
@@ -74,7 +62,7 @@ def featureVectors(month, metric, monthsFolder = config.monthsFolder, threshold 
 		if not os.path.exists(pathBase):
 			os.makedirs(pathBase)
 		with open(pathBase + outputFile, "w") as file:
-			headerEntries = sorted(validVectorEntries)
+			headerEntries = sorted(vectorEntries)
 			for headerEntry in headerEntries:
 				file.write(str(headerEntry) + "\t")
 			file.write("count\n")
@@ -86,7 +74,7 @@ def featureVectors(month, metric, monthsFolder = config.monthsFolder, threshold 
 
 if __name__ == '__main__':
 	parser = argparse.ArgumentParser(
-		description="This script creates a table with columns for all features that occured more than threshold times. Only vectors made up from these features are counted.")
+		description="This script creates a table with columns for all features vectors that occured more than threshold times.")
 	parser.add_argument("--monthsFolder", "-m", default=config.monthsFolder,
 		                type=str, help="The folder in which the months directory "
 		                + "are residing.")
