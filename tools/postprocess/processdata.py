@@ -76,6 +76,7 @@ def processDay(handler, day, month, monthsFolder,
                 processed['#day'] = day
                 processed['#user_agent'] = source['user_agent']
                 processed['#http_status'] = source['http_status']
+                processed['#ts'] = source['ts']
                 handler.handle(sparqlQuery, processed)
             elif i > endIdx:
                 break
