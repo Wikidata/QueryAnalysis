@@ -64,8 +64,8 @@ os.chdir(utility.addMissingSlash(args.monthsFolder)
 pathBase = "queryTypeDataRanking/"
 fileName = "Query_Type_Data_Ranking.tsv"
 
-processedPrefix = "processedLogData/QueryProcessedOpenRDF"
-sourcePrefix = "rawLogData/QueryCnt"
+processedPrefix = config.processedPrefix
+sourcePrefix = config.sourcePrefix
 
 if not os.path.exists(pathBase):
     os.makedirs(pathBase)
