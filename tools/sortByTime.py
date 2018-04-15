@@ -48,7 +48,7 @@ for i in xrange(1, 32):
         shutil.copyfileobj(input_file, output_file)
     os.remove(filename_gzip)
     df = pandas.read_csv(filename_tsv, sep="\t", header=0, index_col=0)
-    df = df.sort(["ts"])
+    df = df.sort_values(by=["ts"])
     df.to_csv(filename_tsv, sep="\t")
     with open (filename_tsv, 'rb') as input_file, gzip.open(filename_gzip, 'wb') as output_file:
         shutil.copyfileobj(input_file, output_file)

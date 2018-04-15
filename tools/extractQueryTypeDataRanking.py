@@ -136,7 +136,7 @@ if len(queryTypes) > 0:
 
 df = pandas.read_csv(pathBase + fileName, sep="\t",
                      header=0, index_col=0)
-df = df.sort(["#QueryTypeCount"], ascending=False)
+df = df.sort_values(by=["#QueryTypeCount"], ascending=False)
 df.to_csv(pathBase + fileName, sep="\t")
 
 print "Done."
