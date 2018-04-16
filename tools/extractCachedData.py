@@ -50,6 +50,8 @@ if not os.path.exists(subfolderUncached):
     os.makedirs(subfolderUncached + "processedLogData")
     os.makedirs(subfolderUncached + "rawLogData")
 
+valueErrors = list()
+
 for i in xrange(1, 32):
     if not (os.path.exists(processedPrefix + "%02d" % i + ".tsv.gz")
             and gzip.os.path.exists(sourcePrefix + "%02d" % i + ".tsv.gz")):
@@ -96,7 +98,11 @@ for i in xrange(1, 32):
                 uncachedsWriter.writerow(sh)
 
             uri_query = source["uri_query"]
-            timestamp = parse(source["ts"])
+            try:
+                timestamp = parse(source["ts"])
+            except ValueError:
+                valueErrors.append(source["ts"])
+                continue
 
             if lasttime == None:
                 lasttime = timestamp
@@ -115,3 +121,8 @@ for i in xrange(1, 32):
                     uncachedpWriter.writerow(processed)
                     uncachedsWriter.writerow(source)
                     cache[uri_query] = timestamp
+
+if len(valueErrors) > 0:
+    print "Value errors for time stamps:"
+    for error in valueErrors:
+        print error
