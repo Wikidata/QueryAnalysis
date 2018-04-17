@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import argparse
 import csv
 import gzip
@@ -110,13 +112,21 @@ for i in xrange(1, 32):
                 uncachedpWriter.writerow(processed)
                 uncachedsWriter.writerow(source)
             else:
-                if lasttime < timestamp:
+                if (timestamp - lasttime).total_seconds() >= 60:
                     for k, v in cache.items():
                         if (timestamp - v).total_seconds() / 60 > 5.0:
                             del cache[k]
                 if uri_query in cache:
-                    cachedpWriter.writerow(processed)
-                    cachedsWriter.writerow(source)
+                    cacheTime = cache[uri_query]
+
+                    if (timestamp - cacheTime).total_seconds() / 60 > 5.0:
+                        uncachedpWriter.writerow(processed)
+                        uncachedsWriter.writerow(source)
+                        del cache[uri_query]
+                    else:
+                        cachedpWriter.writerow(processed)
+                        cachedsWriter.writerow(source)
+
                 else:
                     uncachedpWriter.writerow(processed)
                     uncachedsWriter.writerow(source)
