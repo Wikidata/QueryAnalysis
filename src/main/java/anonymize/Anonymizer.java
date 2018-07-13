@@ -50,7 +50,7 @@ public class Anonymizer
     options.addOption("l", "logging", false, "Enables file logging.");
     options.addOption("w", "workingDirectory", true, "The directory we should be working on.");
     options.addOption("n", "numberOfThreads", true, "Number of used threads, default 1");
-    options.addOption("u", "unanonymizedStringLength", true, "Strings of this length or lower should not be anonymized. Default is zero.");
+    options.addOption("u", "unanonymizedStringLength", true, "Strings of this length or lower should not be anonymized. Default is ten.");
 
     CommandLineParser parser = new DefaultParser();
     CommandLine cmd;
@@ -94,7 +94,7 @@ public class Anonymizer
       if (cmd.hasOption("unanonymizedStringLength")) {
         unanonymizedStringLength = Integer.parseInt(cmd.getOptionValue("unanonymizedStringLength"));
       } else {
-        unanonymizedStringLength = 0;
+        unanonymizedStringLength = 10;
       }
     } catch (UnrecognizedOptionException e) {
       System.out.println("Unrecognized commandline option: " + e.getOption());

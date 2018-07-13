@@ -90,7 +90,7 @@ public class OutputHandlerAnonymizer extends OutputHandler
     header.add("#anonymizedQuery");
     header.add("#timestamp");
     header.add("#sourceCategory");
-    header.add("#userAgent");
+    header.add("#user_agent");
     writer.writeHeaders(header);
   }
 

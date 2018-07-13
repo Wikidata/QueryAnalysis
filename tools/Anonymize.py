@@ -17,8 +17,8 @@ parser.add_argument("--monthsFolder", "-m", default=config.monthsFolder,
                     type=str,
                     help="The folder in which the months directory are "
                     + "residing.")
-parser.add_argument("--unanonymizedStringLength", "-u", default=0, type=int,
-                    help="Strings of this length or lower should not be anonymized. Default is zero.")
+parser.add_argument("--unanonymizedStringLength", "-u", default=10, type=int,
+                    help="Strings of this length or lower should not be anonymized. Default is ten.")
 parser.add_argument("months", type=str, help="The months to be processed")
 
 if (len(sys.argv[1:]) == 0):
