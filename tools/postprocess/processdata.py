@@ -103,7 +103,7 @@ def processDayAnonymous(handler, day, month, monthsFolder, startIdx=0, endIdx=sy
                 else:
                     sparqlQuery = None
 
-                anonymous["#timestamp"] = anonymous["#timestamp"]
+                anonymous['#Valid'] = 'VALID'
                 handler.handle(sparqlQuery, anonymous)
             elif i > endIdx:
                 break

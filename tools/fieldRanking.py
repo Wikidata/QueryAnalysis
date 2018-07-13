@@ -6,7 +6,7 @@ from postprocess import processdata
 from utility import utility
 import config
 
-def fieldRanking(month, metric, monthsFolder = config.monthsFolder, ignoreLock = False, outputPath = None, outputFilename = None, filterParams = "", nosplitting = False, writeOut = False, notifications = True):
+def fieldRanking(month, metric, monthsFolder = config.monthsFolder, ignoreLock = False, outputPath = None, outputFilename = None, filterParams = "", nosplitting = False, writeOut = False, notifications = True, anonymous = False):
 	if os.path.isfile(utility.addMissingSlash(monthsFolder)
 		              + utility.addMissingSlash(month) + "locked") \
 	   and not ignoreLock:
@@ -23,7 +23,11 @@ def fieldRanking(month, metric, monthsFolder = config.monthsFolder, ignoreLock =
 	if outputPath is not None:
 		pathBase = utility.addMissingSlash(outputPath)
 
-	outputFile = month.strip("/").replace("/", "_") + "_" + metric + "_Ranking.tsv"
+	addString = ""
+	if anonymous:
+		addString = "_anonymous_"
+
+	outputFile = month.strip("/").replace("/", "_") + "_" + metric + addString + "_Ranking.tsv"
 
 	if outputFilename is not None:
 		outputFile = outputFilename
@@ -53,7 +57,12 @@ def fieldRanking(month, metric, monthsFolder = config.monthsFolder, ignoreLock =
 
 	handler = FieldRankingHandler()
 
-	processdata.processMonth(handler, month, monthsFolder, notifications = notifications)
+	if anonymous:
+	    processdata.processMonth(handler, month, monthsFolder, anonymous = True, notifications = notifications)
+	else:
+	    processdata.processMonth(handler, month, monthsFolder, notifications = notifications)
+
+
 
 	if writeOut:
 		if not os.path.exists(pathBase):
@@ -86,6 +95,9 @@ if __name__ == '__main__':
 		                + " script to split entries at commas and count each part"
 		                + " separately but instead just to sort such entries and "
 		                + "count them as a whole.", action="store_true")
+	parser.add_argument("--anonymous", "-a", action="store_true", help="Check to switch to ranking the anonymous data."
+            			+ " WARNING: No processed metrics are available for anonymous data because the anonymous files"
+                    	+ " do not synch up to the processed files due to dropping the invalid lines.")
 	parser.add_argument("metric", type=str,
 		                help="The metric that should be ranked")
 	parser.add_argument("month", type=str,
@@ -99,4 +111,4 @@ if __name__ == '__main__':
 
 	args = parser.parse_args()
 
-	fieldRanking(args.month, args.metric, monthsFolder = args.monthsFolder, ignoreLock = args.ignoreLock, outputPath = args.outputPath, outputFilename = args.outputFilename, filterParams = args.filter, nosplitting = args.nosplitting, writeOut = True, notifications = not args.suppressNotifications)
+	fieldRanking(args.month, args.metric, monthsFolder = args.monthsFolder, ignoreLock = args.ignoreLock, outputPath = args.outputPath, outputFilename = args.outputFilename, filterParams = args.filter, nosplitting = args.nosplitting, writeOut = True, notifications = not args.suppressNotifications, anonymous = args.anonymous)
