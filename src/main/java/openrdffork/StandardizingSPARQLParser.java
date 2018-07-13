@@ -121,7 +121,7 @@ public class StandardizingSPARQLParser extends SPARQLParser
         @Override
         public Object visit(ASTString string, Object data) throws VisitorException
         {
-          if (string.getValue().length() < Anonymizer.unanonymizedStringLength) {
+          if (string.getValue().length() <= Anonymizer.unanonymizedStringLength) {
             return super.visit(string, data);
           }
 
