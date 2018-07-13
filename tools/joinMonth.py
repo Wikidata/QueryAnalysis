@@ -32,6 +32,7 @@ def joinMonth(month, monthsFolder = config.monthsFolder, ignoreLock = False, out
     with gzip.open(targetFile, "w") as target:
         headerSet = False
         for i in xrange(1, 32):
+            print "Working on %02d" % i
             sourceFile = pathBase + anonymizedPrefix + "%02d" % i + ".tsv.gz"
             if not (os.path.exists(sourceFile)):
                 continue
