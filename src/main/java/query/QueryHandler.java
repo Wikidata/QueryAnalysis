@@ -547,7 +547,7 @@ public abstract class QueryHandler implements Serializable
   public static boolean isOrganicUserAgent(String userAgent)
   {
     for (String regex : Main.userAgentRegex) {
-      if (userAgent.matches(regex)) {
+      if (userAgent.matches("(?i)" + regex)) {
         return true;
       }
     }
