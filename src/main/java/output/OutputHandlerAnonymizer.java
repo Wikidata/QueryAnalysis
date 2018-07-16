@@ -150,7 +150,7 @@ public class OutputHandlerAnonymizer extends OutputHandler
         logger.error("Apparently this system does not support UTF-8. Please fix this before running the program again.");
         return;
       }
-      line.add("?query=" + encodedRenderedQueryString);
+      line.add(encodedRenderedQueryString);
       line.add(timeStamp);
       if (queryHandler.getSourceCategory().equals(QueryHandler.SourceCategory.USER)) {
         line.add("organic");

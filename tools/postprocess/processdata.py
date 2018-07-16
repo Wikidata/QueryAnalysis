@@ -3,6 +3,7 @@ import csv
 import glob
 import gzip
 import os
+import urllib
 import urlparse
 from pprint import pprint
 import sys
@@ -95,13 +96,7 @@ def processDayAnonymous(handler, day, month, monthsFolder, startIdx=0, endIdx=sy
         i = 0
         for anonymous in aReader:
             if startIdx <= i <= endIdx:
-                requestParameters = dict(urlparse.parse_qsl(urlparse.urlsplit(
-                    anonymous['#anonymizedQuery']).query.replace(';', "%3B")))
-
-                if 'query' in requestParameters.keys():
-                    sparqlQuery = requestParameters['query']
-                else:
-                    sparqlQuery = None
+                sparqlQuery = urllib.unquote_plus(anonymous['#anonymizedQuery'])
 
                 anonymous['#Valid'] = 'VALID'
                 handler.handle(sparqlQuery, anonymous)
