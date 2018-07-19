@@ -49,7 +49,10 @@ def fieldEntriesDaysApart(months, metric, days, monthsFolder = config.monthsFold
                 return
 
             for key in utility.fetchEntries(processed, metric, nosplitting = nosplitting):
-                parsedTime = dateparser.parse(processed["#ts"])
+                try:
+                    parsedTime = dateparser.parse(processed["#ts"])
+                except ValueError:
+                    print "ValueError on " + processed["#ts"]
                 if not key in self.firstSeen:
                     self.firstSeen[key] = parsedTime
                     self.lastSeen[key] = parsedTime
