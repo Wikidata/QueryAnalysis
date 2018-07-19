@@ -37,6 +37,7 @@ def fieldEntriesDaysApart(months, metric, days, monthsFolder = config.monthsFold
 
     filter.setup(filterParams)
 
+    faultyTimestamps = defaultdict(int)
 
     class FieldEntriesDaysApartHandler:
         firstSeen = dict()
@@ -49,10 +50,13 @@ def fieldEntriesDaysApart(months, metric, days, monthsFolder = config.monthsFold
                 return
 
             for key in utility.fetchEntries(processed, metric, nosplitting = nosplitting):
+                timestamp = processed["#ts"]
                 try:
-                    parsedTime = dateparser.parse(processed["#ts"])
+                    parsedTime = dateparser.parse(timestamp)
                 except ValueError:
-                    print "ValueError on " + processed["#ts"]
+                    print "ERROR: Faulty timestamp " + str(timestamp)
+                    faultyTimestamps[timestamp] += 1
+                    continue
                 if not key in self.firstSeen:
                     self.firstSeen[key] = parsedTime
                     self.lastSeen[key] = parsedTime
@@ -80,6 +84,11 @@ def fieldEntriesDaysApart(months, metric, days, monthsFolder = config.monthsFold
             processdata.processMonth(handler, month, monthsFolder, notifications = notifications)
 
     handler.compute()
+
+    if len(faultyTimestamps) > 0:
+        print "Faulty timestamp\tcount"
+        for k, v in sorted(faultyTimestamps.iteritems(), key=lambda (k, v): (v, k), reverse=True):
+            print str(k) + "\t" + str(v)
 
     if writeOut:
         if not os.path.exists(pathBase):
