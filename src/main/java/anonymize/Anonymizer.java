@@ -7,18 +7,29 @@ import input.factories.InputHandlerTSVFactory;
 import logging.LoggingHandler;
 import org.apache.commons.cli.*;
 import org.apache.log4j.Logger;
+
+import com.univocity.parsers.common.ParsingContext;
+import com.univocity.parsers.common.processor.ObjectRowProcessor;
+import com.univocity.parsers.tsv.TsvParser;
+import com.univocity.parsers.tsv.TsvParserSettings;
+
 import output.factories.OutputHandlerAnonymizerFactory;
+import query.QueryHandler;
 import query.factories.OpenRDFQueryHandlerFactory;
+import scala.Tuple2;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.zip.GZIPInputStream;
 
 /**
  * @author adrian
@@ -34,6 +45,14 @@ public class Anonymizer
    * A list containing all strings excluded from anonymization.
    */
   public static final List<String> whitelistedStrings = new ArrayList<String>();
+  /**
+   * A list of allowed tool names.
+   */
+  public static final List<String> allowedToolNames = new ArrayList<String>();
+  /**
+   * A mapping of user agents to anonymized user agents.
+   */
+  public static final Map<String, String> allowedUserAgents = new HashMap<String, String>();
   /**
    * Strings of this length or lower should not be anonymized.
    */
@@ -119,6 +138,8 @@ public class Anonymizer
 
     Anonymizer.loadWhitelistDatatypes();
     Anonymizer.loadWhitelistStrings();
+    Anonymizer.loadAllowedToolNames();
+    Anonymizer.loadAllowedUserAgents();
 
     File lockFile;
 
@@ -191,6 +212,61 @@ public class Anonymizer
       logger.error("Could not read the anonymization string whitelist.", e);
     } catch (IOException e) {
       logger.error("Could not read the anonymization string whitelist.", e);
+    }
+  }
+
+  public static void loadAllowedToolNames()
+  {
+    try (BufferedReader reader = new BufferedReader(new FileReader("anonymization/allowedToolNames.tsv"))) {
+      String line = null;
+      boolean first = true;
+      while ((line = reader.readLine()) != null) {
+        if (first) {
+          first = false;
+          continue;
+        }
+        Anonymizer.allowedToolNames.add(line);
+      }
+    } catch (FileNotFoundException e) {
+      logger.error("Could not read the allowed ToolNames string whitelist.", e);
+    } catch (IOException e) {
+      logger.error("Could not read the allowed ToolNames string whitelist.", e);
+    }
+  }
+
+  public static void loadAllowedUserAgents()
+  {
+    try {
+      InputStreamReader reader = new InputStreamReader(new FileInputStream("anonymization/allowedUserAgents.tsv"));
+
+      TsvParserSettings parserSettings = new TsvParserSettings();
+      parserSettings.setLineSeparatorDetectionEnabled(true);
+      parserSettings.setHeaderExtractionEnabled(true);
+      parserSettings.setSkipEmptyLines(true);
+      parserSettings.setReadInputOnSeparateThread(true);
+
+      ObjectRowProcessor rowProcessor = new ObjectRowProcessor()
+      {
+        @Override
+        public void rowProcessed(Object[] row, ParsingContext parsingContext)
+        {
+          if (row.length <= 1) {
+            logger.warn("Ignoring line without tab while parsing.");
+            return;
+          }
+
+          allowedUserAgents.put(row[1].toString(), row[0].toString());
+        }
+      };
+
+      parserSettings.setProcessor(rowProcessor);
+
+      TsvParser parser = new TsvParser(parserSettings);
+
+      parser.parse(reader);
+    }
+    catch (FileNotFoundException e) {
+      logger.error("Could not read the allowed user agent string mapping.", e);
     }
   }
 }

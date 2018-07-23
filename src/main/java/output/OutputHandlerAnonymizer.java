@@ -5,6 +5,8 @@ package output;
 
 import com.univocity.parsers.tsv.TsvWriter;
 import com.univocity.parsers.tsv.TsvWriterSettings;
+
+import anonymize.Anonymizer;
 import general.Main;
 import openrdffork.RenderVisitor;
 import openrdffork.StandardizingPrefixDeclProcessor;
@@ -159,8 +161,12 @@ public class OutputHandlerAnonymizer extends OutputHandler
       }
       if (QueryHandler.isOrganicUserAgent(queryHandler.getUserAgent())) {
         line.add("browser");
+      } else if (Anonymizer.allowedToolNames.contains(queryHandler.getToolName())) {
+        line.add(queryHandler.getToolName());
+      } else if (Anonymizer.allowedUserAgents.containsKey(queryHandler.getUserAgent())) {
+        line.add(Anonymizer.allowedUserAgents.get(queryHandler.getUserAgent()));
       } else {
-        line.add(queryHandler.getUserAgent());
+        line.add("other");
       }
       writer.writeRow(line);
     }
