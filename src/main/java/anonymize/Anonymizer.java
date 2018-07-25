@@ -217,7 +217,7 @@ public class Anonymizer
 
   public static void loadAllowedToolNames()
   {
-    try (BufferedReader reader = new BufferedReader(new FileReader("anonymization/allowedToolNames.tsv"))) {
+    try (BufferedReader reader = new BufferedReader(new FileReader("anonymization/allowedToolNames"))) {
       String line = null;
       boolean first = true;
       while ((line = reader.readLine()) != null) {
@@ -237,7 +237,7 @@ public class Anonymizer
   public static void loadAllowedUserAgents()
   {
     try {
-      InputStreamReader reader = new InputStreamReader(new FileInputStream("anonymization/allowedUserAgents.tsv"));
+      InputStreamReader reader = new InputStreamReader(new FileInputStream("anonymization/allowedUserAgents"));
 
       TsvParserSettings parserSettings = new TsvParserSettings();
       parserSettings.setLineSeparatorDetectionEnabled(true);
