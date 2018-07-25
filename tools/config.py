@@ -6,3 +6,4 @@ queryTypeMapDbLocation = "/home/mkroetzsch/querydata/months/queryTypeMap.db"
 
 processedPrefix = "processedLogData/QueryProcessedOpenRDF"
 sourcePrefix = "rawLogData/QueryCnt"
+anonymousPrefix = "anonymousRawData/AnonymousQueryCnt"
