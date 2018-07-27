@@ -377,7 +377,7 @@ public final class Main
   /**
    * Loads all user agents that should be in the user source category.
    */
-  private static void loadToolNamesForUserCategory()
+  public static void loadToolNamesForUserCategory()
   {
     TsvParserSettings parserSettings = new TsvParserSettings();
     parserSettings.setLineSeparatorDetectionEnabled(true);

@@ -135,6 +135,7 @@ public class Anonymizer
     Main.loadUserAgentRegex();
     Main.loadQueryTypeMap();
     Main.loadPreBuildQueryTypes();
+    Main.loadToolNamesForUserCategory();
 
     Anonymizer.loadWhitelistDatatypes();
     Anonymizer.loadWhitelistStrings();
