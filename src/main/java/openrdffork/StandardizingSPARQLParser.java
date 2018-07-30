@@ -97,6 +97,12 @@ public class StandardizingSPARQLParser extends SPARQLParser
       queryContainer.jjtAccept(new ASTVisitorBase()
       {
 
+        public Object visit(ASTPrefixDecl prefix, Object data) throws VisitorException
+        {
+          prefix.jjtReplaceWith(null);
+          return super.visit(prefix, data);
+        }
+
         public Object visit(ASTVar variable, Object data) throws VisitorException
         {
           String label = "Label";

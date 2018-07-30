@@ -64,9 +64,12 @@ public class RenderVisitor implements SyntaxTreeBuilderVisitor
   {
     String result = "";
     for (int i = startIndex; i < node.jjtGetNumChildren(); i++) {
-      result += node.jjtGetChild(i).jjtAccept(this, data.toString()).toString();
-      if (i < node.jjtGetNumChildren() - 1) {
-        result += childrenLink;
+      Node child = node.jjtGetChild(i);
+      if (child != null) {
+        result += child.jjtAccept(this, data.toString()).toString();
+        if (i < node.jjtGetNumChildren() - 1) {
+          result += childrenLink;
+        }
       }
     }
     return result;
@@ -96,9 +99,12 @@ public class RenderVisitor implements SyntaxTreeBuilderVisitor
   {
     String result = " " + call + " ( ";
     for (int i = 0; i < node.jjtGetNumChildren(); i++) {
-      result += node.jjtGetChild(i).jjtAccept(this, data).toString();
-      if (i < node.jjtGetNumChildren() - 1) {
-        result += childrenLink;
+      Node child = node.jjtGetChild(i);
+      if (child != null) {
+        result += child.jjtAccept(this, data).toString();
+        if (i < node.jjtGetNumChildren() - 1) {
+          result += childrenLink;
+        }
       }
     }
     result += " ) ";
@@ -135,7 +141,10 @@ public class RenderVisitor implements SyntaxTreeBuilderVisitor
     int i = 0;
     if (node.jjtGetNumChildren() > 0) {
       while (node.jjtGetChild(i) instanceof ASTVar) {
-        result += node.jjtGetChild(i).jjtAccept(this, data).toString();
+        Node child = node.jjtGetChild(i);
+        if (child != null) {
+          result += child.jjtAccept(this, data).toString();
+        }
         i++;
         if (i >= node.jjtGetNumChildren()) {
           break;
