@@ -16,7 +16,7 @@ def fieldEntriesDaysApart(months, metric, days, monthsFolder = config.monthsFold
     metric = utility.argMetric(metric)
 
     pathBase = utility.addMissingSlash(monthsFolder) \
-		    + utility.addMissingSlash(months) \
+		    + utility.addMissingSlash(months.replace("/", "_")) \
 		    + utility.addMissingSlash(metric)
 
     if outputPath is not None:
