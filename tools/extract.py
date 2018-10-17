@@ -68,6 +68,14 @@ class userDataset(simpleDataset):
             self.pWriter.writerow(processed)
             self.sWriter.writerow(source)
 
+class nonUserDataset(simpleDataset):
+    subfolder = "nonUserData/"
+
+    def write(self, processed, source):
+        if (processed["#SourceCategory"] != "USER"):
+            self.pWriter.writerow(processed)
+            self.sWriter.writerow(source)
+
 class status2xxDataset(simpleDataset):
     subfolder = "status2xx/"
 
@@ -112,7 +120,12 @@ parser.add_argument(
     help="A subset containing only queries posed by users.",
     action="store_true"
 )
-
+parser.add_argument(
+    "--nonUserDataset",
+    "-n",
+    help="A subset containing only queries posed by non-users.",
+    action="store_true"
+)
 parser.add_argument(
     "--status2xxDataset",
     "-s2",
@@ -139,6 +152,8 @@ if args.uniqueDataset:
     datasets.append(uniqueDataset())
 if args.userDataset:
     datasets.append(userDataset())
+if args.nonUserDataset:
+    datasets.append(nonUserDataset())
 if args.status2xxDataset:
     datasets.append(status2xxDataset())
 if args.status500Dataset:
