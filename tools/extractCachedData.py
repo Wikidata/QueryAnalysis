@@ -13,7 +13,7 @@ import config
 from utility import utility
 
 parser = argparse.ArgumentParser(
-    description="Creates a two subsets of the raw log files and the processed log files that would have been cached / not been cached.")
+    description="Creates two subsets of the raw log files and the processed log files that would have been cached / not been cached.")
 parser.add_argument("--monthsFolder", "-m", default=config.monthsFolder,
                     type=str, help="the folder in which the months directory "
                     + "are residing")

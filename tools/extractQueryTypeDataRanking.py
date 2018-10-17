@@ -19,7 +19,6 @@ from utility import utility
 # The file contains all metrics that are specific for the query type (ignoring
 # things like subject and object names) as well as one example query for this
 # query type
-# TODO: Setup command line parameters
 
 fieldBasedOnQueryType = ['#Valid', '#QuerySize', '#VariableCountHead',
                          '#VariableCountPattern', '#TripleCountWithService',
@@ -30,7 +29,7 @@ fieldBasedOnQueryType = ['#Valid', '#QuerySize', '#VariableCountHead',
 
 parser = argparse.ArgumentParser(
     description="Generates a list of all query types sorted in descending"
-    + " order by nomber of appearance based on fieldRanking.py's output for"
+    + " order by number of appearance based on fieldRanking.py's output for"
     + " the field #QueryType")
 parser.add_argument("--monthsFolder", "-m",
                     default=config.monthsFolder, type=str,
