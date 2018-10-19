@@ -3,19 +3,23 @@
  */
 package output;
 
-import com.univocity.parsers.tsv.TsvWriter;
-import com.univocity.parsers.tsv.TsvWriterSettings;
-
 import anonymize.Anonymizer;
 import general.Main;
 import openrdffork.RenderVisitor;
 import openrdffork.StandardizingPrefixDeclProcessor;
 import openrdffork.StandardizingSPARQLParser;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
 import org.apache.log4j.Logger;
 import org.openrdf.query.MalformedQueryException;
 import org.openrdf.query.parser.sparql.BaseDeclProcessor;
 import org.openrdf.query.parser.sparql.StringEscapesProcessor;
-import org.openrdf.query.parser.sparql.ast.*;
+import org.openrdf.query.parser.sparql.ast.ASTQueryContainer;
+import org.openrdf.query.parser.sparql.ast.ParseException;
+import org.openrdf.query.parser.sparql.ast.SyntaxTreeBuilder;
+import org.openrdf.query.parser.sparql.ast.TokenMgrError;
+import org.openrdf.query.parser.sparql.ast.VisitorException;
+
 import query.OpenRDFQueryHandler;
 import query.QueryHandler;
 import query.QueryHandler.Validity;
@@ -23,6 +27,7 @@ import query.factories.QueryHandlerFactory;
 
 import java.io.*;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.GZIPOutputStream;
@@ -41,14 +46,6 @@ public class OutputHandlerAnonymizer extends OutputHandler
    */
   private QueryHandlerFactory queryHandlerFactory;
   /**
-   * A writer created at object creation to be used in line-by-line writing.
-   */
-  private TsvWriter writer;
-  /**
-   * The outputStream object we are writing too.
-   */
-  private OutputStream outputStream;
-  /**
    * The number of failed queries.
    */
   private int failedQueriesNumber = 0;
@@ -56,11 +53,11 @@ public class OutputHandlerAnonymizer extends OutputHandler
   /**
    * @param fileToWrite              The file to write the anonymized queries to.
    * @param queryHandlerFactoryToSet The query handler factory to supply the query handler to be used to check validity.
-   * @throws FileNotFoundException If the file exists but is a directory rather than a regular file,
-   *                               does not exist but cannot be created,
+   * @throws IOException if the file exists but is a directory
+   *                               rather than a regular file, does not exist but cannot be created,
    *                               or cannot be opened for any other reason
    */
-  public OutputHandlerAnonymizer(String fileToWrite, QueryHandlerFactory queryHandlerFactoryToSet) throws FileNotFoundException
+  public OutputHandlerAnonymizer(String fileToWrite, QueryHandlerFactory queryHandlerFactoryToSet) throws IOException
   {
     super(fileToWrite, queryHandlerFactoryToSet);
   }
@@ -68,38 +65,40 @@ public class OutputHandlerAnonymizer extends OutputHandler
   /**
    * @param fileToWrite              The file to write the anonymized queries to.
    * @param queryHandlerFactoryToSet The query handler class to use for checking query validity.
-   * @throws FileNotFoundException If the file exists but is a directory rather than a regular file,
-   *                               does not exist but cannot be created,
-   *                               or cannot be opened for any other reason
+   * @throws IOException if the output file could not be to
    */
-  public void initialize(String fileToWrite, QueryHandlerFactory queryHandlerFactoryToSet) throws FileNotFoundException
+  public void initialize(String fileToWrite, QueryHandlerFactory queryHandlerFactoryToSet) throws IOException
   {
     if (!Main.gzipOutput) {
       outputFile = fileToWrite + ".tsv";
-      outputStream = new FileOutputStream(outputFile);
+      bufferedWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outputFile, false), StandardCharsets.UTF_8));
     } else {
       try {
         outputFile = fileToWrite + ".tsv.gz";
-        outputStream = new GZIPOutputStream(new FileOutputStream(new File(outputFile)));
+        bufferedWriter = new BufferedWriter(new OutputStreamWriter(new GZIPOutputStream(new FileOutputStream(outputFile, false)), StandardCharsets.UTF_8));
       } catch (IOException e) {
         logger.error("Somehow we are unable to write the output to " + outputFile, e);
       }
     }
-    writer = new TsvWriter(outputStream, new TsvWriterSettings());
-    this.queryHandlerFactory = queryHandlerFactoryToSet;
 
     List<String> header = new ArrayList<>();
     header.add("#anonymizedQuery");
     header.add("#timestamp");
     header.add("#sourceCategory");
     header.add("#user_agent");
-    writer.writeHeaders(header);
+
+    csvPrinter = new CSVPrinter(bufferedWriter, CSVFormat.newFormat('\t')
+        .withHeader(header.toArray(new String[header.size()]))
+        .withRecordSeparator('\n')
+        .withQuote('"'));
+
+    this.queryHandlerFactory = queryHandlerFactoryToSet;
   }
 
 
   @Override
   public void writeLine(String queryToAnalyze, Validity validityStatus, String userAgent, String timeStamp, long currentLine, int currentDay,
-                        String currentFile)
+                        String currentFile) throws IOException
   {
     List<Object> line = new ArrayList<>();
 
@@ -141,7 +140,8 @@ public class OutputHandlerAnonymizer extends OutputHandler
           logger.error("Could not write the failed query to failed queries folder.", i);
         }
         return;
-      } catch (ClassCastException e) {
+      }
+      catch (ClassCastException e) {
         logger.error("Unexpected class cast exception after anonymization.", e);
       }
 
@@ -168,16 +168,17 @@ public class OutputHandlerAnonymizer extends OutputHandler
       } else {
         line.add("other");
       }
-      writer.writeRow(line);
+      csvPrinter.printRecord(line);
     }
   }
 
-  @Override
+  /**
+   * Closes the writer this object was writing to.
+   */
   public final void closeFiles()
   {
-    writer.close();
     try {
-      outputStream.close();
+      csvPrinter.close();
     } catch (IOException e) {
       logger.error("Unable to close the outputStream ", e);
     }

@@ -1,18 +1,27 @@
 package output;
 
-import com.univocity.parsers.tsv.TsvWriter;
-import com.univocity.parsers.tsv.TsvWriterSettings;
+import java.io.BufferedWriter;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.zip.GZIPOutputStream;
+
 import general.Main;
+
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
 import org.apache.log4j.Logger;
 import query.Cache;
 import query.QueryHandler;
 import query.factories.QueryHandlerFactory;
 
-import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.zip.GZIPOutputStream;
+
 
 /**
  * @author adrian
@@ -34,14 +43,14 @@ public class OutputHandlerTSV extends OutputHandler
   private QueryHandlerFactory queryHandlerFactory;
 
   /**
-   * A writer created at object creation to be used in line-by-line writing.
+   * The csv-handler.
    */
-  private TsvWriter writer;
+  private CSVPrinter csvPrinter;
 
   /**
-   * The outputStream object we are writing too.
+   * A writer created at object creation to be used in line-by-line writing.
    */
-  private OutputStream outputStream;
+  private BufferedWriter bufferedWriter;
 
   /**
    * The Caching module object.
@@ -51,11 +60,11 @@ public class OutputHandlerTSV extends OutputHandler
   /**
    * @param fileToWrite              location of the file to write the received values to
    * @param queryHandlerFactoryToSet The query handler factory to supply the query handler to generate the output with.
-   * @throws FileNotFoundException if the file exists but is a directory
+   * @throws IOException if the file exists but is a directory
    *                               rather than a regular file, does not exist but cannot be created,
    *                               or cannot be opened for any other reason
    */
-  public OutputHandlerTSV(String fileToWrite, QueryHandlerFactory queryHandlerFactoryToSet) throws FileNotFoundException
+  public OutputHandlerTSV(String fileToWrite, QueryHandlerFactory queryHandlerFactoryToSet) throws IOException
   {
     super(fileToWrite, queryHandlerFactoryToSet);
   }
@@ -65,27 +74,24 @@ public class OutputHandlerTSV extends OutputHandler
    *
    * @param fileToWrite              location of the file to write the received values to
    * @param queryHandlerFactoryToSet The query handler factory to supply the query handler to generate the output with.
-   * @throws FileNotFoundException if the file exists but is a directory
-   *                               rather than a regular file, does not exist but cannot be created,
-   *                               or cannot be opened for any other reason
+   * @throws IOException if the output file could not be to
    */
-  public void initialize(String fileToWrite, QueryHandlerFactory queryHandlerFactoryToSet) throws FileNotFoundException
+  public void initialize(String fileToWrite, QueryHandlerFactory queryHandlerFactoryToSet) throws IOException
   {
     if (!Main.gzipOutput) {
       outputFile = fileToWrite + ".tsv";
-      outputStream = new FileOutputStream(outputFile);
+      bufferedWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outputFile, false), StandardCharsets.UTF_8));
     } else {
       try {
         outputFile = fileToWrite + ".tsv.gz";
-        outputStream = new GZIPOutputStream(new FileOutputStream(new File(outputFile)));
+        bufferedWriter = new BufferedWriter(new OutputStreamWriter(new GZIPOutputStream(new FileOutputStream(outputFile, false)), StandardCharsets.UTF_8));
       } catch (IOException e) {
         logger.error("Somehow we are unable to write the output to " + outputFile, e);
       }
     }
-    writer = new TsvWriter(outputStream, new TsvWriterSettings());
-    this.queryHandlerFactory = queryHandlerFactoryToSet;
 
     List<String> header = new ArrayList<>();
+
     header.add("#Valid");
     header.add("#First");
     header.add("#UniqueId");
@@ -113,21 +119,14 @@ public class OutputHandlerTSV extends OutputHandler
     header.add("#ServiceCalls");
 
     header.add("#original_line(filename_line)");
-    writer.writeHeaders(header);
-  }
 
-  /**
-   * Closes the writer this object was writing to.
-   */
-  public final void closeFiles()
-  {
-    writer.close();
+    csvPrinter = new CSVPrinter(bufferedWriter, CSVFormat.newFormat('\t')
+        .withHeader(header.toArray(new String[header.size()]))
+        .withRecordSeparator('\n')
+        .withQuote('"'));
+    this.queryHandlerFactory = queryHandlerFactoryToSet;
 
-    try {
-      outputStream.close();
-    } catch (IOException e) {
-      logger.error("Unable to close the outputStream ", e);
-    }
+
   }
 
   /**
@@ -139,9 +138,10 @@ public class OutputHandlerTSV extends OutputHandler
    * @param userAgent      The user agent the query was being executed by.
    * @param currentLine    The line from which the data to be written originates.
    * @param currentFile    The file from which the data to be written originates.
+   * @throws IOException If there was an error during writing.
    */
   @Override
-  public final void writeLine(String queryToAnalyze, QueryHandler.Validity validityStatus, String userAgent, String timeStamp, long currentLine, int day, String currentFile)
+  public final void writeLine(String queryToAnalyze, QueryHandler.Validity validityStatus, String userAgent, String timeStamp, long currentLine, int day, String currentFile) throws IOException
   {
     QueryHandler queryHandler = cache.getQueryHandler(validityStatus, queryToAnalyze, currentLine, day, userAgent, currentFile, threadNumber, queryHandlerFactory);
 
@@ -195,6 +195,18 @@ public class OutputHandlerTSV extends OutputHandler
     }
     line.add(currentFile + "_" + currentLine);
 
-    writer.writeRow(line);
+    csvPrinter.printRecord(line);
+  }
+  
+  /**
+   * Closes the writer this object was writing to.
+   */
+  public final void closeFiles()
+  {
+    try {
+      csvPrinter.close();
+    } catch (IOException e) {
+      logger.error("Unable to close the outputStream ", e);
+    }
   }
 }

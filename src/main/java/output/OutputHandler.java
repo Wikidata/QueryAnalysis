@@ -4,9 +4,13 @@ import openrdffork.TupleExprWrapper;
 import query.QueryHandler;
 import query.factories.QueryHandlerFactory;
 
+import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.Map;
+
+import org.apache.commons.csv.CSVPrinter;
 
 /**
  * @author adrian
@@ -30,13 +34,23 @@ public abstract class OutputHandler implements Serializable
    * The output file this handler writes to.
    */
   protected String outputFile;
+  
+  /**
+   * The csv-handler.
+   */
+  protected CSVPrinter csvPrinter;
+
+  /**
+   * A writer created at object creation to be used in line-by-line writing.
+   */
+  protected BufferedWriter bufferedWriter;
 
   /**
    * @param fileToWrite            The file to write the output to.
-   * @param queryHandlerClassToSet The query Handler class to use for generating the output.
-   * @throws FileNotFoundException If there was some error concerning the file to write to.
+   * @param queryHandlerFactoryToSet The query Handler factory to use for generating the output.
+   * @throws IOException If there was some error concerning the file to write to.
    */
-  public OutputHandler(String fileToWrite, QueryHandlerFactory queryHandlerFactoryToSet) throws FileNotFoundException
+  public OutputHandler(String fileToWrite, QueryHandlerFactory queryHandlerFactoryToSet) throws IOException
   {
     this.outputFile = fileToWrite;
     this.initialize(fileToWrite, queryHandlerFactoryToSet);
@@ -71,9 +85,9 @@ public abstract class OutputHandler implements Serializable
    *
    * @param fileToWrite              The file to write the output to.
    * @param queryHandlerFactoryToSet The query handler factory to supply the query handler for generating the output.
-   * @throws FileNotFoundException If there was some error concerning the file to write to.
+   * @throws IOException If there was some error concerning the file to write to.
    */
-  public abstract void initialize(String fileToWrite, QueryHandlerFactory queryHandlerFactoryToSet) throws FileNotFoundException;
+  public abstract void initialize(String fileToWrite, QueryHandlerFactory queryHandlerFactoryToSet) throws IOException;
 
   /**
    * Takes a query and the additional information from input and writes
@@ -86,8 +100,9 @@ public abstract class OutputHandler implements Serializable
    * @param currentLine    The line from which the data to be written originates.
    * @param currentDay     The day from which the data to be written originates.
    * @param currentFile    The file from which the data to be written originates.
+   * @throws IOException If there was an error during writing.
    */
-  public abstract void writeLine(String queryToAnalyze, QueryHandler.Validity validityStatus, String userAgent, String timeStamp, long currentLine, int currentDay, String currentFile);
+  public abstract void writeLine(String queryToAnalyze, QueryHandler.Validity validityStatus, String userAgent, String timeStamp, long currentLine, int currentDay, String currentFile) throws IOException;
 
   /**
    * Closes any files that might have been opened.
