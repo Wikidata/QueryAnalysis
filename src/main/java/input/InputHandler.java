@@ -41,8 +41,9 @@ public abstract class InputHandler
    *
    * @param outputHandler Handles the data that should be written.
    * @param day           The day we are reading from.
+   * @throws IOException If there was an error during writing.
    */
-  public abstract void parseTo(OutputHandler outputHandler, int day);
+  public abstract void parseTo(OutputHandler outputHandler, int day) throws IOException;
 
   /**
    * @return The current input file this handler writes to.

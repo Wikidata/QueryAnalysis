@@ -69,7 +69,12 @@ public class ParseOneDayWorker implements Runnable
   {
     logger.info("Start processing " + inputHandler.getInputFile());
     outputHandler.setThreadNumber(day);
-    inputHandler.parseTo(outputHandler, day);
-    logger.info("Done processing " + inputHandler.getInputFile() + " to " + outputHandler.getOutputFile() + ".");
+    try {
+      inputHandler.parseTo(outputHandler, day);
+      logger.info("Done processing " + inputHandler.getInputFile() + " to " + outputHandler.getOutputFile() + ".");
+    }
+    catch (IOException e) {
+      logger.error("Error processing " + inputHandler.getInputFile() + " to " + outputHandler.getOutputFile() + ".", e);
+    }
   }
 }

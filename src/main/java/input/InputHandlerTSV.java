@@ -65,8 +65,9 @@ public class InputHandlerTSV extends InputHandler
    * Read the file given by reader and hands the data to the outputHandler.
    * @param day The day currently being processed.
    * @param outputHandler Handles the data that should be written.
+   * @throws IOException If there was an error during writing.
    */
-  public final void parseTo(final OutputHandler outputHandler, int day)
+  public final void parseTo(final OutputHandler outputHandler, int day) throws IOException
   {
     for (CSVRecord csvRecord : csvParser) {
       if (csvRecord.size() <= 1) {
