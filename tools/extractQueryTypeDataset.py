@@ -85,7 +85,7 @@ for monthName in args.month.split(","):
                     sWriter.fieldnames = sReader.fieldnames
                     sWriter.writerow(sh)
 
-                if (processed['#QueryType'] not in usedQueryTypes):
+                if (processed['QueryType'] not in usedQueryTypes):
                     pWriter.writerow(processed)
                     sWriter.writerow(source)
-                    usedQueryTypes.add(processed['#QueryType'])
+                    usedQueryTypes.add(processed['QueryType'])

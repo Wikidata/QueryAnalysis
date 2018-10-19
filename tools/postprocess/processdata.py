@@ -73,12 +73,12 @@ def processDay(handler, day, month, monthsFolder,
                 else:
                     sparqlQuery = None
 
-                processed['#hour'] = source['hour']
-                processed['#day'] = day
-                processed['#user_agent'] = source['user_agent']
-                processed['#http_status'] = source['http_status']
-                processed['#timestamp'] = source['ts']
-                processed['#ts'] = source['ts']
+                processed['hour'] = source['hour']
+                processed['day'] = day
+                processed['user_agent'] = source['user_agent']
+                processed['http_status'] = source['http_status']
+                processed['timestamp'] = source['ts']
+                processed['ts'] = source['ts']
                 handler.handle(sparqlQuery, processed)
             elif i > endIdx:
                 break
@@ -99,7 +99,7 @@ def processDayAnonymous(handler, day, month, monthsFolder, startIdx=0, endIdx=sy
             if startIdx <= i <= endIdx:
                 sparqlQuery = urllib.unquote_plus(anonymous['#anonymizedQuery'])
 
-                anonymous['#Valid'] = 'VALID'
+                anonymous['Valid'] = 'VALID'
                 handler.handle(sparqlQuery, anonymous)
             elif i > endIdx:
                 break
@@ -117,7 +117,7 @@ def processRankedQueryType(handler, month, monthsFolder, startIdx = 0, endIdx = 
         i = 0
         for ranked in rReader:
             if startIdx <= i <= endIdx:
-                handler.handle(ranked["#ExampleQuery"], ranked)
+                handler.handle(ranked["ExampleQuery"], ranked)
             elif i > endIdx:
                 break
             i += 1

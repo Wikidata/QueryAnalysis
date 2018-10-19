@@ -20,10 +20,10 @@ from utility import utility
 # things like subject and object names) as well as one example query for this
 # query type
 
-fieldBasedOnQueryType = ['#Valid', '#QuerySize', '#VariableCountHead',
-                         '#VariableCountPattern', '#TripleCountWithService',
-                         '#QueryComplexity', '#SubjectsAndObjects', '#Predicates',
-                         '#Categories', '#UsedSparqlFeatures']
+fieldBasedOnQueryType = ['Valid', 'QuerySize', 'VariableCountHead',
+                         'VariableCountPattern', 'TripleCountWithService',
+                         'QueryComplexity', 'SubjectsAndObjects', 'Predicates',
+                         'Categories', 'UsedSparqlFeatures']
 
 # Number of query types to be extracted, use 0 for infinity
 
@@ -72,9 +72,9 @@ if not os.path.exists(pathBase):
 with open(pathBase + fileName, "w") as types:
     typeWriter = csv.DictWriter(types, None, delimiter="\t")
 
-    th = {"#QueryType":"#QueryType", "#QueryTypeCount":"#QueryTypeCount", "#ExampleQuery":"#ExampleQuery"}
+    th = {"QueryType":"QueryType", "QueryTypeCount":"QueryTypeCount", "ExampleQuery":"ExampleQuery"}
 
-    typeWriter.fieldnames = ["#QueryType", "#QueryTypeCount", "#ExampleQuery"]
+    typeWriter.fieldnames = ["QueryType", "QueryTypeCount", "ExampleQuery"]
 
     for h in fieldBasedOnQueryType:
         th[h] = h
@@ -104,7 +104,7 @@ with open(pathBase + fileName, "w") as types:
             sReader = csv.DictReader(s, delimiter="\t")
 
             for processed, source in izip(pReader, sReader):
-                queryType = processed["#QueryType"]
+                queryType = processed["QueryType"]
                 if queryType in queryTypes:
 
                     processedToWrite = dict()
@@ -112,9 +112,9 @@ with open(pathBase + fileName, "w") as types:
                     d = dict(urlparse.parse_qsl(
                         urlparse.urlsplit(source['uri_query']).query))
                     if 'query' in d.keys():
-                        processedToWrite['#ExampleQuery'] = d['query']
+                        processedToWrite['ExampleQuery'] = d['query']
                     else:
-                        processedToWrite['#ExampleQuery'] = ""
+                        processedToWrite['ExampleQuery'] = ""
                         print "ERROR: Could not find query in uri_query:"
                         print source['uri_query']
 
@@ -122,8 +122,8 @@ with open(pathBase + fileName, "w") as types:
                         if key in fieldBasedOnQueryType:
                             processedToWrite[key] = processed[key]
 
-                    processedToWrite["#QueryType"] = queryType
-                    processedToWrite["#QueryTypeCount"] = queryTypes[queryType]
+                    processedToWrite["QueryType"] = queryType
+                    processedToWrite["QueryTypeCount"] = queryTypes[queryType]
 
                     typeWriter.writerow(processedToWrite)
                     del queryTypes[queryType]
@@ -135,7 +135,7 @@ if len(queryTypes) > 0:
 
 df = pandas.read_csv(pathBase + fileName, sep="\t",
                      header=0, index_col=0)
-df = df.sort_values(by=["#QueryTypeCount"], ascending=False)
+df = df.sort_values(by=["QueryTypeCount"], ascending=False)
 df.to_csv(pathBase + fileName, sep="\t")
 
 print "Done."

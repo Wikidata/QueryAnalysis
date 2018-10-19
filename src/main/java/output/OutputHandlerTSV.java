@@ -92,33 +92,33 @@ public class OutputHandlerTSV extends OutputHandler
 
     List<String> header = new ArrayList<>();
 
-    header.add("#Valid");
-    header.add("#First");
-    header.add("#UniqueId");
-    header.add("#OriginalId");
-    header.add("#SourceCategory");
-    header.add("#ToolName");
-    header.add("#ToolVersion");
-    header.add("#ExampleQueryStringComparison");
-    header.add("#ExampleQueryParsedComparison");
-    header.add("#StringLengthWithComments");
-    header.add("#QuerySize");
-    header.add("#VariableCountHead");
-    header.add("#VariableCountPattern");
-    header.add("#TripleCountWithService");
-    header.add("#TripleCountWithoutService");
-    header.add("#QueryType");
-    header.add("#QueryComplexity");
-    header.add("#NonSimplePropertyPaths");
-    header.add("#SubjectsAndObjects");
-    header.add("#Predicates");
-    header.add("#Categories");
-    header.add("#Coordinates");
-    header.add("#UsedSparqlFeatures");
-    header.add("#PrimaryLanguage");
-    header.add("#ServiceCalls");
+    header.add("Valid");
+    header.add("First");
+    header.add("UniqueId");
+    header.add("OriginalId");
+    header.add("SourceCategory");
+    header.add("ToolName");
+    header.add("ToolVersion");
+    header.add("ExampleQueryStringComparison");
+    header.add("ExampleQueryParsedComparison");
+    header.add("StringLengthWithComments");
+    header.add("QuerySize");
+    header.add("VariableCountHead");
+    header.add("VariableCountPattern");
+    header.add("TripleCountWithService");
+    header.add("TripleCountWithoutService");
+    header.add("QueryType");
+    header.add("QueryComplexity");
+    header.add("NonSimplePropertyPaths");
+    header.add("SubjectsAndObjects");
+    header.add("Predicates");
+    header.add("Categories");
+    header.add("Coordinates");
+    header.add("UsedSparqlFeatures");
+    header.add("PrimaryLanguage");
+    header.add("ServiceCalls");
 
-    header.add("#original_line(filename_line)");
+    header.add("original_line(filename_line)");
 
     csvPrinter = new CSVPrinter(bufferedWriter, CSVFormat.newFormat('\t')
         .withHeader(header.toArray(new String[header.size()]))

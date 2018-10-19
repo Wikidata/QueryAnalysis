@@ -31,7 +31,7 @@ args = parser.parse_args()
 
 if args.anonymous:
     sourcePrefix = config.anonymousPrefix
-    key = "#timestamp"
+    key = "timestamp"
 else:
     sourcePrefix = config.sourcePrefix
     key = "ts"

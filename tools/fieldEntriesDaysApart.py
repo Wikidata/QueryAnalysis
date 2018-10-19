@@ -50,7 +50,7 @@ def fieldEntriesDaysApart(months, metric, days, monthsFolder = config.monthsFold
                 return
 
             for key in utility.fetchEntries(processed, metric, nosplitting = nosplitting):
-                timestamp = processed["#timestamp"]
+                timestamp = processed["timestamp"]
                 try:
                     parsedTime = dateparser.parse(timestamp)
                 except ValueError:

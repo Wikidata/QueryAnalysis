@@ -82,10 +82,10 @@ public class OutputHandlerAnonymizer extends OutputHandler
     }
 
     List<String> header = new ArrayList<>();
-    header.add("#anonymizedQuery");
-    header.add("#timestamp");
-    header.add("#sourceCategory");
-    header.add("#user_agent");
+    header.add("anonymizedQuery");
+    header.add("timestamp");
+    header.add("sourceCategory");
+    header.add("user_agent");
 
     csvPrinter = new CSVPrinter(bufferedWriter, CSVFormat.newFormat('\t')
         .withHeader(header.toArray(new String[header.size()]))
