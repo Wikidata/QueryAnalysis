@@ -32,7 +32,7 @@ class simpleDataset(object):
         self.s = gzip.open(sourceFolder +  config.sourceFilePrefix + "%02d" % day + ".tsv.gz", "w")
 
         self.pWriter = csv.DictWriter(self.p, None, delimiter="\t")
-        self.sWriter = csv.DictWriter(self.s, None, delimiter="\t", quoting=csv.QUOTE_NONE)
+        self.sWriter = csv.DictWriter(self.s, None, delimiter="\t")
 
         if self.pWriter.fieldnames is None:
             ph = dict((h, h) for h in pReader.fieldnames)
