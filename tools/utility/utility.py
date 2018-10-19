@@ -16,11 +16,6 @@ def addMissingSlash(directoryString):
         return directoryString + "/"
     return directoryString
 
-def addMissingDoubleCross(text):
-    if not text.startswith("#"):
-        return "#" + text
-    return text
-
 def argMetric(metric):
     if metric.startswith("#"):
         return metric[1:]
@@ -31,22 +26,22 @@ def fetchEntries(processed, metric, nosplitting = False):
     metric = argMetric(metric)
     if metric == "monthly_hour":
         try:
-            hour = int(processed["#hour"])
+            hour = int(processed["hour"])
         except ValueError:
-            print processed["#hour"] + " could not be parsed as integer"
+            print processed["hour"] + " could not be parsed as integer"
             return []
         if hour not in xrange(0,24):
             print str(hour) + " is not in 0-23"
             return []
         try:
-            day = int(processed["#day"])
+            day = int(processed["day"])
         except:
-            print processed["#day"] + " could not be parsed as integer"
+            print processed["day"] + " could not be parsed as integer"
             return []
 
         return [hour + 24 * (day - 1)]
     else:
-        data = processed["#" + metric]
+        data = processed[metric]
         if metric in notToSplit:
             return [data]
         else:
@@ -68,7 +63,7 @@ class filter:
     parameters = dict()
 
     def setup(self, filterParameter):
-        self.parameters["#Valid"] = re.compile("^VALID$")
+        self.parameters["Valid"] = re.compile("^VALID$")
 
         filters = filterParameter.split(",")
 
@@ -77,7 +72,7 @@ class filter:
 
         for element in filters:
             arguments = element.split("=")
-            self.parameters["#" + arguments[0]] = re.compile(arguments[1])
+            self.parameters[arguments[0]] = re.compile(arguments[1])
 
     def checkLine(self, processed):
         for key, value in self.parameters.iteritems():
