@@ -56,7 +56,7 @@ class uniqueDataset(simpleDataset):
     subfolder = "uniqueDataset/"
 
     def write(self, processed, source):
-        if (processed['#First'] == "FIRST"):
+        if (processed['First'] == "FIRST"):
             self.pWriter.writerow(processed)
             self.sWriter.writerow(source)
 
@@ -64,7 +64,7 @@ class userDataset(simpleDataset):
     subfolder = "userData/"
 
     def write(self, processed, source):
-        if (processed["#SourceCategory"] == "USER"):
+        if (processed["SourceCategory"] == "USER"):
             self.pWriter.writerow(processed)
             self.sWriter.writerow(source)
 
@@ -72,7 +72,7 @@ class nonUserDataset(simpleDataset):
     subfolder = "nonUserData/"
 
     def write(self, processed, source):
-        if (processed["#SourceCategory"] != "USER"):
+        if (processed["SourceCategory"] != "USER"):
             self.pWriter.writerow(processed)
             self.sWriter.writerow(source)
 
