@@ -8,6 +8,8 @@ import sys
 from itertools import izip
 from utility import utility
 
+os.nice(19)
+
 class simpleDataset(object):
     subfolder = "simpleDataset/"
     p = None
