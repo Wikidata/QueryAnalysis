@@ -55,8 +55,8 @@ if __name__ == '__main__':
     parser.add_argument("--outputPath", "-p", type=str, help="The path where the "
 		                + "output file should be generated.")
     parser.add_argument("--outputFilename", "-o", type=str, help="The name of the output file to be generated.")
-    parser.add_argument("month", type=str,
-                        help="the month which we're interested in")
+    parser.add_argument("months", type=str,
+                        help="the months which we're interested in")
 
     if (len(sys.argv[1:]) == 0):
         parser.print_help()
@@ -64,4 +64,5 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    joinMonth(args.month, monthsFolder = args.monthsFolder, ignoreLock = args.ignoreLock, outputPath = args.outputPath, outputFilename = args.outputFilename)
+    for monthName in args.months.split(","):
+        joinMonth(monthName, monthsFolder = args.monthsFolder, ignoreLock = args.ignoreLock, outputPath = args.outputPath, outputFilename = args.outputFilename)
