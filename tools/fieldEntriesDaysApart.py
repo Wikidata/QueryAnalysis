@@ -3,14 +3,14 @@ import os
 import sys
 from collections import defaultdict
 from dateutil import parser as dateparser
-from postprocess import processdata
-from utility import utility
-import config
+from .postprocess import processdata
+from .utility import utility
+from . import config
 
 def fieldEntriesDaysApart(months, metric, days, monthsFolder = config.monthsFolder, ignoreLock = False, outputPath = None, outputFilename = None, filterParams = "", nosplitting = False, writeOut = False, notifications = True, anonymous = False):
     for month in months.split(","):
         if os.path.isfile(utility.addMissingSlash(monthsFolder) + utility.addMissingSlash(month) + "locked") and not ignoreLock:
-            print "ERROR: The month " + month + " is being edited at the moment." + " Use -i or ignoreLock = True if you want to force the execution of this script."
+            print("ERROR: The month " + month + " is being edited at the moment." + " Use -i or ignoreLock = True if you want to force the execution of this script.")
             sys.exit()
 
     metric = utility.argMetric(metric)
@@ -54,7 +54,7 @@ def fieldEntriesDaysApart(months, metric, days, monthsFolder = config.monthsFold
                 try:
                     parsedTime = dateparser.parse(timestamp)
                 except ValueError:
-                    print "ERROR: Faulty timestamp " + str(timestamp)
+                    print("ERROR: Faulty timestamp " + str(timestamp))
                     faultyTimestamps[timestamp] += 1
                     continue
                 if not key in self.firstSeen:
@@ -64,7 +64,7 @@ def fieldEntriesDaysApart(months, metric, days, monthsFolder = config.monthsFold
                     self.lastSeen[key] = parsedTime
 
         def compute(self):
-            for key, firstTS in self.firstSeen.iteritems():
+            for key, firstTS in self.firstSeen.items():
                 lastTS = self.lastSeen[key]
                 if (lastTS - firstTS).days >= days:
                     self.fieldEntries.add(key)
@@ -86,9 +86,9 @@ def fieldEntriesDaysApart(months, metric, days, monthsFolder = config.monthsFold
     handler.compute()
 
     if len(faultyTimestamps) > 0:
-        print "Faulty timestamp\tcount"
-        for k, v in sorted(faultyTimestamps.iteritems(), key=lambda (k, v): (v, k), reverse=True):
-            print str(k) + "\t" + str(v)
+        print("Faulty timestamp\tcount")
+        for k, v in sorted(iter(faultyTimestamps.items()), key=lambda k_v: (k_v[1], k_v[0]), reverse=True):
+            print(str(k) + "\t" + str(v))
 
     if writeOut:
         if not os.path.exists(pathBase):

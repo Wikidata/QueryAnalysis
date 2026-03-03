@@ -2,10 +2,10 @@ import argparse
 import os
 import sys
 from collections import defaultdict
-from postprocess import processdata
-from utility import utility
+from .postprocess import processdata
+from .utility import utility
 import pprint
-import config
+from . import config
 
 parser = argparse.ArgumentParser(description="Counts the valid queries")
 parser.add_argument("--monthsFolder", "-m", default=config.monthsFolder,
@@ -26,8 +26,8 @@ args = parser.parse_args()
 if os.path.isfile(utility.addMissingSlash(args.monthsFolder)
                   + utility.addMissingSlash(args.month) + "locked") \
    and not args.ignoreLock:
-    print("ERROR: The month " + args.month + " is being edited at the moment."
-          + " Use -i if you want to force the execution of this script.")
+    print(("ERROR: The month " + args.month + " is being edited at the moment."
+          + " Use -i if you want to force the execution of this script."))
     sys.exit()
 
 

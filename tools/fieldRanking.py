@@ -2,15 +2,15 @@ import argparse
 import os
 import sys
 from collections import defaultdict
-from postprocess import processdata
-from utility import utility
-import config
+from .postprocess import processdata
+from .utility import utility
+from . import config
 
 def fieldRanking(month, metric, monthsFolder = config.monthsFolder, ignoreLock = False, outputPath = None, outputFilename = None, filterParams = "", nosplitting = False, writeOut = False, notifications = True, anonymous = False):
 	if os.path.isfile(utility.addMissingSlash(monthsFolder)
 		              + utility.addMissingSlash(month) + "locked") \
 	   and not ignoreLock:
-		print "ERROR: The month " + month + " is being edited at the moment."
+		print("ERROR: The month " + month + " is being edited at the moment.")
 		+ " Use -i or ignoreLock = True if you want to force the execution of this script."
 		sys.exit()
 
@@ -52,7 +52,7 @@ def fieldRanking(month, metric, monthsFolder = config.monthsFolder, ignoreLock =
 		def writeOut(self):
 			with open(pathBase + outputFile, "w") as file:
 				file.write(header)
-				for k, v in sorted(self.totalMetricCounts.iteritems(), key=lambda (k, v): (v, k), reverse=True):
+				for k, v in sorted(iter(self.totalMetricCounts.items()), key=lambda k_v: (k_v[1], k_v[0]), reverse=True):
 					file.write(str(k) + "\t" + str(v) + "\n")
 
 	handler = FieldRankingHandler()

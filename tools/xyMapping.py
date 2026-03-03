@@ -4,10 +4,10 @@ import sys
 
 from collections import defaultdict
 
-import config
+from . import config
 
-from postprocess import processdata
-from utility import utility
+from .postprocess import processdata
+from .utility import utility
 
 def writeOutMethod(filename, fieldValues, dictionary, headerStart):
     with open(filename, "w") as file:
@@ -18,7 +18,7 @@ def writeOutMethod(filename, fieldValues, dictionary, headerStart):
         for j in sorted(dictionary.keys()):
             line = str(j)
             for field in sorted(fieldValues):
-                if field in dictionary[j].keys():
+                if field in list(dictionary[j].keys()):
                     line += "\t" + str(dictionary[j][field])
                 else:
                     line += "\t0"
@@ -30,7 +30,7 @@ def xyMapping(month, metricOne, metricTwo, monthsFolder = config.monthsFolder, i
     if os.path.isfile(utility.addMissingSlash(monthsFolder)
                       + utility.addMissingSlash(month) + "locked") \
        and not ignoreLock:
-        print "ERROR: The month " + month + " is being edited at the "
+        print("ERROR: The month " + month + " is being edited at the ")
         + "moment. Use -i if you want to force the execution of this script."
         sys.exit()
 

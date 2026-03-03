@@ -1,11 +1,11 @@
 import argparse
-import config
+from . import config
 import csv
 import gzip
 import os
 import sys
-from itertools import izip
-from utility import utility
+
+from .utility import utility
 
 parser = argparse.ArgumentParser(
     description="Creates a subset of the raw log files and the processed log "
@@ -34,7 +34,7 @@ args = parser.parse_args()
 if os.path.isfile(utility.addMissingSlash(args.monthsFolder) +
                   utility.addMissingSlash(args.month) + "locked") \
    and not args.ignoreLock:
-    print "ERROR: The month " + args.month + " is being edited at the moment."
+    print("ERROR: The month " + args.month + " is being edited at the moment.")
     + "Use -i if you want to force the execution of this script."
     sys.exit()
 
@@ -57,11 +57,11 @@ for monthName in args.month.split(","):
 
     usedQueryTypes = set()
 
-    for i in xrange(1, 32):
+    for i in range(1, 32):
         if not (os.path.exists(subfolder + processedPrefix + "%02d" % i + ".tsv.gz")
                 and gzip.os.path.exists(subfolder + sourcePrefix + "%02d" % i + ".tsv.gz")):
             continue
-        print "Working on %02d" % i
+        print("Working on %02d" % i)
         with gzip.open(subfolder + processedPrefix + "%02d" % i + ".tsv.gz") as p, \
                 gzip.open(subfolder + sourcePrefix + "%02d" % i + ".tsv.gz") as s, \
                 gzip.open(subfolderUnique + processedPrefix + "%02d" % i
@@ -74,7 +74,7 @@ for monthName in args.month.split(","):
             pWriter = csv.DictWriter(user_p, None, delimiter="\t")
             sWriter = csv.DictWriter(user_s, None, delimiter="\t")
 
-            for processed, source in izip(pReader, sReader):
+            for processed, source in zip(pReader, sReader):
                 if pWriter.fieldnames is None:
                     ph = dict((h, h) for h in pReader.fieldnames)
                     pWriter.fieldnames = pReader.fieldnames

@@ -3,9 +3,9 @@ import os
 import pprint
 import sys
 from collections import defaultdict
-from postprocess import processdata
-from utility import utility
-import config
+from .postprocess import processdata
+from .utility import utility
+from . import config
 
 parser = argparse.ArgumentParser(
     description="Counts the used tools/bots in the given folder")
@@ -27,7 +27,7 @@ args = parser.parse_args()
 if os.path.isfile(utility.addMissingSlash(args.monthsFolder) +
                   utility.addMissingSlash(args.month) + "locked") \
    and not args.ignoreLock:
-    print "ERROR: The month " + args.month + " is being edited at the moment."
+    print("ERROR: The month " + args.month + " is being edited at the moment.")
     + " Use -i if you want to force the execution of this script."
     sys.exit()
 
@@ -40,7 +40,7 @@ class CountToolsHandler:
             self.toolCounter[processed['#ToolName']] += 1
 
     def __str__(self):
-        return pprint.pformat(sorted(self.toolCounter.iteritems(),
+        return pprint.pformat(sorted(iter(self.toolCounter.items()),
                                      key=lambda x: x[1], reverse=True))
 
 
@@ -48,4 +48,4 @@ handler = CountToolsHandler()
 
 processdata.processMonth(handler, args.month, args.monthsFolder)
 
-print handler
+print(handler)

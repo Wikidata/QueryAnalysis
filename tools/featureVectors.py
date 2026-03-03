@@ -2,17 +2,17 @@ import argparse
 import os
 import sys
 from collections import defaultdict
-from postprocess import processdata
-from utility import utility
+from .postprocess import processdata
+from .utility import utility
 
-import config
-import fieldRanking
+from . import config
+from . import fieldRanking
 
 def featureVectors(month, metric, monthsFolder = config.monthsFolder, threshold = 100, ignoreLock = False, outputPath = None, outputFilename = None, filterParams = "", writeOut = False, notifications = True):
 	if os.path.isfile(utility.addMissingSlash(monthsFolder)
 		              + utility.addMissingSlash(month) + "locked") \
 	   and not ignoreLock:
-		print "ERROR: The month " + month + " is being edited at the moment."
+		print("ERROR: The month " + month + " is being edited at the moment.")
 		+ " Use -i or ignoreLock = True if you want to force the execution of this script."
 		sys.exit()
 
@@ -39,7 +39,7 @@ def featureVectors(month, metric, monthsFolder = config.monthsFolder, threshold 
 	vectorEntries = set()
 
 	result = fieldRanking.fieldRanking(month, metric, monthsFolder, ignoreLock = ignoreLock, outputPath = outputPath, outputFilename = outputFilename, filterParams = filterParams, nosplitting = True, writeOut = False, notifications = notifications)
-	for keyOneEntry, keyOneEntryCount in sorted(result.iteritems(), key = lambda (k, v): (v, k), reverse = True):
+	for keyOneEntry, keyOneEntryCount in sorted(iter(result.items()), key = lambda k_v: (k_v[1], k_v[0]), reverse = True):
 		if keyOneEntryCount < threshold:
 			break
 

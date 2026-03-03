@@ -5,9 +5,9 @@ import sys
 import os.path
 import cartopy.crs as ccrs
 import matplotlib.pyplot as plt
-from postprocess import processdata
-from utility import utility
-import config
+from .postprocess import processdata
+from .utility import utility
+from . import config
 
 parser = argparse.ArgumentParser(
     description="Generaets a heatmap based on geo coordinates")
@@ -28,7 +28,7 @@ args = parser.parse_args()
 if os.path.isfile(utility.addMissingSlash(args.monthsFolder)
                   + utility.addMissingSlash(args.month) + "locked") \
    and not args.ignoreLock:
-    print "ERROR: The month " + args.month + " is being edited at the moment."
+    print("ERROR: The month " + args.month + " is being edited at the moment.")
     + " Use -i if you want to force the execution of this script."
     sys.exit()
 

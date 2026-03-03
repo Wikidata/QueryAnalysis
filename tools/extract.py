@@ -1,12 +1,12 @@
 import argparse
-import config
+from . import config
 import csv
 import gzip
 import os
 import sys
 
-from itertools import izip
-from utility import utility
+
+from .utility import utility
 
 os.nice(19)
 
@@ -165,15 +165,15 @@ for month in args.months.split(","):
     monthFolder = utility.addMissingSlash(args.monthsFolder) + utility.addMissingSlash(month)
 
     if os.path.isfile(monthFolder + "locked") and not args.ignoreLock:
-        print "ERROR: The month " + month + " is being edited at the moment. Use -i if you want to force the execution of this script."
+        print("ERROR: The month " + month + " is being edited at the moment. Use -i if you want to force the execution of this script.")
         sys.exit()
 
-    for i in xrange(1, 32):
+    for i in range(1, 32):
         processed = monthFolder + config.processedPrefix + "%02d" % i + ".tsv.gz"
         source = monthFolder + config.sourcePrefix + "%02d" % i + ".tsv.gz"
         if not (os.path.exists(processed) and gzip.os.path.exists(source)):
             continue
-        print "Working on %02d" % i
+        print("Working on %02d" % i)
         with gzip.open(processed) as p, gzip.open(source) as s:
             pReader = csv.DictReader(p, delimiter="\t")
             sReader = csv.DictReader(s, delimiter="\t")
@@ -181,6 +181,6 @@ for month in args.months.split(","):
             for dataset in datasets:
                 dataset.open(pReader, sReader, i)
 
-            for processed, source in izip(pReader, sReader):
+            for processed, source in zip(pReader, sReader):
                 for dataset in datasets:
                     dataset.write(processed, source)

@@ -4,9 +4,9 @@ import sys
 from collections import defaultdict
 from pprint import pprint
 
-import config
-from postprocess import processdata
-from utility import utility
+from . import config
+from .postprocess import processdata
+from .utility import utility
 import itertools
 
 parser = argparse.ArgumentParser(
@@ -42,9 +42,9 @@ args = parser.parse_args()
 if os.path.isfile(utility.addMissingSlash(args.monthsFolder)
                   + utility.addMissingSlash(args.month) + "locked") \
    and not args.ignoreLock:
-    print("ERROR: The month " + str(args.month) +
+    print(("ERROR: The month " + str(args.month) +
           " is being edited at the moment." +
-          " Use -i if you want to force the execution of this script.")
+          " Use -i if you want to force the execution of this script."))
     sys.exit()
 
 
@@ -132,13 +132,13 @@ class OperatorStatisticHandler:
     def printSparqlTranslation(self):
         result = ""
         i = 1
-        for featureName, featureCount in sorted(self.statistic.iteritems()):
+        for featureName, featureCount in sorted(self.statistic.items()):
             #print(featureName + "\t" + str(featureCount))
             print(featureCount)
             i += 1
 
         print("")
-        print(str(self.totalCount))
+        print((str(self.totalCount)))
 
 
 handler = OperatorStatisticHandler()
@@ -146,6 +146,6 @@ handler = OperatorStatisticHandler()
 processdata.processMonth(
     handler, args.month, args.monthsFolder, notifications=False)
 
-print args.position
+print(args.position)
 
 handler.printSparqlTranslation()

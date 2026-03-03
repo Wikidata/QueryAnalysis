@@ -3,11 +3,11 @@ import csv
 import glob
 import gzip
 import os
-import urllib
-import urlparse
+import urllib.request, urllib.parse, urllib.error
+import urllib.parse
 from pprint import pprint
 import sys
-from itertools import izip
+
 
 from utility import utility
 
@@ -47,14 +47,14 @@ def processMonth(handler, month, monthsFolder, anonymous = False, notifications 
 
 
 def processDay(handler, day, month, monthsFolder,
-               startIdx=0, endIdx=sys.maxint, notifications = True):
+               startIdx=0, endIdx=sys.maxsize, notifications = True):
     processedFileName = utility.addMissingSlash(monthsFolder) \
         + utility.addMissingSlash(month) \
         + processedFolder + processedPrefix + "%02d" % day \
         + processedSuffix
 
     if notifications:
-        print "Working on: " + processedFileName
+        print("Working on: " + processedFileName)
     with gzip.open(processedFileName) as p, \
             gzip.open(utility.addMissingSlash(monthsFolder)
                       + utility.addMissingSlash(month) + "rawLogData/"
@@ -63,12 +63,12 @@ def processDay(handler, day, month, monthsFolder,
         sReader = csv.DictReader(s, delimiter="\t")
 
         i = 0
-        for processed, source in izip(pReader, sReader):
+        for processed, source in zip(pReader, sReader):
             if startIdx <= i <= endIdx:
-                requestParameters = dict(urlparse.parse_qsl(urlparse.urlsplit(
+                requestParameters = dict(urllib.parse.parse_qsl(urllib.parse.urlsplit(
                     source['uri_query']).query.replace(';', "%3B")))
 
-                if 'query' in requestParameters.keys():
+                if 'query' in list(requestParameters.keys()):
                     sparqlQuery = requestParameters['query']
                 else:
                     sparqlQuery = None
@@ -84,20 +84,20 @@ def processDay(handler, day, month, monthsFolder,
                 break
             i += 1
 
-def processDayAnonymous(handler, day, month, monthsFolder, startIdx=0, endIdx=sys.maxint, notifications = True):
+def processDayAnonymous(handler, day, month, monthsFolder, startIdx=0, endIdx=sys.maxsize, notifications = True):
     anonymousFileName = utility.addMissingSlash(monthsFolder) \
     + utility.addMissingSlash(month) \
     + anonymousDataFolder + anonymousFilePrefix + "%02d" % day + anonymousFileSuffix
 
     if notifications:
-        print "Working on: " + anonymousFileName
+        print("Working on: " + anonymousFileName)
     with gzip.open(anonymousFileName) as a:
         aReader = csv.DictReader(a, delimiter="\t")
 
         i = 0
         for anonymous in aReader:
             if startIdx <= i <= endIdx:
-                sparqlQuery = urllib.unquote_plus(anonymous['#anonymizedQuery'])
+                sparqlQuery = urllib.parse.unquote_plus(anonymous['#anonymizedQuery'])
 
                 anonymous['Valid'] = 'VALID'
                 handler.handle(sparqlQuery, anonymous)
@@ -105,11 +105,11 @@ def processDayAnonymous(handler, day, month, monthsFolder, startIdx=0, endIdx=sy
                 break
             i += 1
 
-def processRankedQueryType(handler, month, monthsFolder, startIdx = 0, endIdx = sys.maxint, notifications = True):
+def processRankedQueryType(handler, month, monthsFolder, startIdx = 0, endIdx = sys.maxsize, notifications = True):
     rankedQueryTypeFilename = utility.addMissingSlash(monthsFolder) + utility.addMissingSlash(month) + rankedQueryTypeFolder + rankedQueryTypeFile
 
     if notifications:
-        print "Working on: " + rankedQueryTypeFilename
+        print("Working on: " + rankedQueryTypeFilename)
 
     with open(rankedQueryTypeFilename) as r:
         rReader = csv.DictReader(r, delimiter = "\t")

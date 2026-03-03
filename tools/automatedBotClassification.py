@@ -1,4 +1,4 @@
-from __future__ import print_function
+
 
 import argparse
 import csv
@@ -7,13 +7,13 @@ import os
 import shutil
 import subprocess
 import sys
-import urllib
+import urllib.request, urllib.parse, urllib.error
 
-import config
-import fieldRanking
+from . import config
+from . import fieldRanking
 
-from postprocess import processdata
-from utility import utility
+from .postprocess import processdata
+from .utility import utility
 
 parser = argparse.ArgumentParser(description = "This script searches for all combinations with occurences above the threshold.")
 parser.add_argument("--monthsFolder", "-m", default=config.monthsFolder,
@@ -123,7 +123,7 @@ class botClassification():
 
     def prepare(self):
         result = fieldRanking.fieldRanking(args.month, queryType, args.monthsFolder, ignoreLock = args.ignoreLock, filterParams = args.filter)
-        for index, (keyOneEntry, keyOneEntryCount) in enumerate(sorted(result.iteritems(), key=lambda (k, v): (v, k), reverse = True)):
+        for index, (keyOneEntry, keyOneEntryCount) in enumerate(sorted(iter(result.items()), key=lambda k_v1: (k_v1[1], k_v1[0]), reverse = True)):
             if keyOneEntryCount < args.threshold:
                 break
             self.queryTypes[keyOneEntry] = dict()
@@ -147,9 +147,9 @@ class botClassification():
         queryTypeDict[userAgentEntry].append(sparqlQuery)
 
     def threshold(self):
-        for queryTypeEntry, queryTypeDict in self.queryTypes.items():
+        for queryTypeEntry, queryTypeDict in list(self.queryTypes.items()):
             self.queryTypesCount[queryTypeEntry] = 0
-            for userAgentEntry, queries in queryTypeDict.items():
+            for userAgentEntry, queries in list(queryTypeDict.items()):
                 numberOfQueries = len(queries)
                 if (numberOfQueries < args.threshold):
                     del queryTypeDict[userAgentEntry]
@@ -167,17 +167,17 @@ class botClassification():
         with open(manualCheckupFolder + "readme.md", "w") as readmeFile:
             print("This directory contains all " + queryType + "-" + userAgent + "-Combinations above a threshold of " + str(args.threshold) + ".", file = readmeFile)
             print("count\t" + queryType + "\t" + userAgent + "-count", file = readmeFile)
-            for queryTypeEntry, count in sorted(self.queryTypesCount.iteritems(), key = lambda (k, v): (v, k), reverse = True):
+            for queryTypeEntry, count in sorted(iter(self.queryTypesCount.items()), key = lambda k_v2: (k_v2[1], k_v2[0]), reverse = True):
                 print(str(count) + "\t" + queryTypeEntry + "\t" + str(len(self.queryTypes[queryTypeEntry])), file = readmeFile)
 
-        for queryTypeEntry, queryTypeDict in self.queryTypes.iteritems():
+        for queryTypeEntry, queryTypeDict in self.queryTypes.items():
 
             queryTypePath = preparePath(manualCheckupFolder, queryTypeEntry, tooLong)
 
             with open(queryTypePath + "info.txt", "w") as infoQueryTypeFile:
                 print("count\t" + userAgent, file = infoQueryTypeFile)
 
-                for i, (userAgentEntry, queries) in enumerate(sorted(queryTypeDict.iteritems(), key = lambda (k, v): (len(v), k), reverse = True)):
+                for i, (userAgentEntry, queries) in enumerate(sorted(iter(queryTypeDict.items()), key = lambda k_v: (len(k_v[1]), k_v[0]), reverse = True)):
 
                     print(str(len(queries)) + "\t" + userAgentEntry, file = infoQueryTypeFile)
 
@@ -190,7 +190,7 @@ class botClassification():
         with open(pathBase + "newBots.tsv", "w") as newBots, gzip.open(tempForAnonymization + "QueryCnt01.tsv.gz", "w") as forAnonymization:
             print("queryType\tuserAgent\ttool\tversion\tcomment", file = newBots)
             print("uri_query\turi_path\tuser_agent\tts\tagent_type\thour\thttp_status", file = forAnonymization)
-            for queryTypeEntry, queryTypeDict in self.queryTypes.iteritems():
+            for queryTypeEntry, queryTypeDict in self.queryTypes.items():
                 firstUserAgent = None
                 for userAgentEntry in queryTypeDict:
                     if firstUserAgent == None:
@@ -198,7 +198,7 @@ class botClassification():
                     print(queryTypeEntry + "\t" + userAgentEntry + "\t" + "not set\tnot set\t", file = newBots)
                 if firstUserAgent != None:
                     example = queryTypeDict[firstUserAgent][0]
-                    encoded = urllib.quote_plus(example)
+                    encoded = urllib.parse.quote_plus(example)
                     print("?query=" + encoded + "\tpath\tagent\ttime\ttype\thour\tstatus", file = forAnonymization)
                     queryTypeOrder.append(queryTypeEntry)
 

@@ -4,15 +4,15 @@ import gzip
 import os
 import shutil
 import sys
-import urlparse
+import urllib.parse
 
 import pandas
-from itertools import izip
 
-import config
-import fieldRanking
 
-from utility import utility
+from . import config
+from . import fieldRanking
+
+from .utility import utility
 
 # Generates a list of all query types sorted in descending order by number of
 # appearance based on fieldRanking.tsv's output for the field #QueryType
@@ -53,7 +53,7 @@ args = parser.parse_args()
 if os.path.isfile(utility.addMissingSlash(args.monthsFolder) +
                   utility.addMissingSlash(args.month) + "locked") \
    and not args.ignoreLock:
-    print "ERROR: The month " + args.month + " is being edited at the moment."
+    print("ERROR: The month " + args.month + " is being edited at the moment.")
     + " Use -i if you want to force the execution of this script."
     sys.exit()
 
@@ -86,37 +86,37 @@ with open(pathBase + fileName, "w") as types:
     queryTypes = dict()
 
     queryTypeCount = fieldRanking.fieldRanking(args.month, "QueryType", monthsFolder = args.monthsFolder, ignoreLock = args.ignoreLock)
-    for i, (k, v) in enumerate(sorted(queryTypeCount.iteritems(), key=lambda (k, v): (v, k), reverse=True)):
+    for i, (k, v) in enumerate(sorted(iter(queryTypeCount.items()), key=lambda k_v: (k_v[1], k_v[0]), reverse=True)):
         if i >= args.topNumber and args.topNumber != 0:
             break
         i += 1
 
         queryTypes[k] = v
 
-    for i in xrange(1, 32):
+    for i in range(1, 32):
         if not (os.path.exists(processedPrefix + "%02d" % i + ".tsv.gz")
                 and os.path.exists(sourcePrefix + "%02d" % i + ".tsv.gz")):
             continue
-        print "Working on %02d" % i
+        print("Working on %02d" % i)
         with gzip.open(processedPrefix + "%02d" % i + ".tsv.gz") as p, \
                 gzip.open(sourcePrefix + "%02d" % i + ".tsv.gz") as s:
             pReader = csv.DictReader(p, delimiter="\t")
             sReader = csv.DictReader(s, delimiter="\t")
 
-            for processed, source in izip(pReader, sReader):
+            for processed, source in zip(pReader, sReader):
                 queryType = processed["QueryType"]
                 if queryType in queryTypes:
 
                     processedToWrite = dict()
 
-                    d = dict(urlparse.parse_qsl(
-                        urlparse.urlsplit(source['uri_query']).query))
-                    if 'query' in d.keys():
+                    d = dict(urllib.parse.parse_qsl(
+                        urllib.parse.urlsplit(source['uri_query']).query))
+                    if 'query' in list(d.keys()):
                         processedToWrite['ExampleQuery'] = d['query']
                     else:
                         processedToWrite['ExampleQuery'] = ""
-                        print "ERROR: Could not find query in uri_query:"
-                        print source['uri_query']
+                        print("ERROR: Could not find query in uri_query:")
+                        print(source['uri_query'])
 
                     for key in processed:
                         if key in fieldBasedOnQueryType:
@@ -129,13 +129,13 @@ with open(pathBase + fileName, "w") as types:
                     del queryTypes[queryType]
 
 if len(queryTypes) > 0:
-    print "Could not find examples for the following query types:"
+    print("Could not find examples for the following query types:")
     for key in queryTypes:
-        print "\t" + key
+        print("\t" + key)
 
 df = pandas.read_csv(pathBase + fileName, sep="\t",
                      header=0, index_col=0)
 df = df.sort_values(by=["QueryTypeCount"], ascending=False)
 df.to_csv(pathBase + fileName, sep="\t")
 
-print "Done."
+print("Done.")

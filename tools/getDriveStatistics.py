@@ -3,10 +3,10 @@ import os
 import subprocess
 import sys
 
-from utility import utility
-import config
-import fieldRanking
-import xyMapping
+from .utility import utility
+from . import config
+from . import fieldRanking
+from . import xyMapping
 
 os.nice(19)
 
@@ -31,24 +31,24 @@ if not os.path.exists(statisticsSubfolder):
     os.makedirs(statisticsSubfolder)
 
 def fieldRankingOn(monthFolder, metric, filename):
-    print "Working with fieldRanking " + metric + " on " + filename
+    print("Working with fieldRanking " + metric + " on " + filename)
     fieldRanking.fieldRanking(monthFolder, metric, monthsFolder = args.monthsFolder, outputPath = statisticsSubfolder + metric + "_Ranking", outputFilename = filename, writeOut = True, notifications = False)
 
 def xyMappingOn(monthFolder, metricOne, metricTwo, filename, nosplitOne = False, nosplitTwo = False):
-    print "Working with xyMapping " + metricOne + " " + metricTwo + " on " + filename
+    print("Working with xyMapping " + metricOne + " " + metricTwo + " on " + filename)
     xyMapping.xyMapping(monthFolder, metricOne, metricTwo, monthsFolder = args.monthsFolder, outputPath = statisticsSubfolder + metricOne + "_" + metricTwo, outputFilename = filename, nosplittingOne = nosplitOne, nosplittingTwo = nosplitTwo, writeOut = True, notifications = False)
 
 for monthName in args.months.split(","):
     cleanMonthName = monthName.strip("/").replace("/", "SLASH")
 
     if os.path.isfile(utility.addMissingSlash(args.monthsFolder) + utility.addMissingSlash(monthName) + "locked") and not args.ignoreLock:
-        print "ERROR: The month " + monthName + " is being edited at the moment. Use -i if you want to force the execution of this script."
+        print("ERROR: The month " + monthName + " is being edited at the moment. Use -i if you want to force the execution of this script.")
         continue
 
     month = utility.addMissingSlash(monthName)
 
-    for secondKey, secondFolder in {"user":"userData", "nonUser":"nonUserData"}.iteritems():
-        for thirdKey, thirdFolder in {"all":"", "queryType":"queryTypeDataset"}.iteritems():
+    for secondKey, secondFolder in {"user":"userData", "nonUser":"nonUserData"}.items():
+        for thirdKey, thirdFolder in {"all":"", "queryType":"queryTypeDataset"}.items():
             monthFolder = month + secondFolder + "/" + thirdFolder + "/"
             monthFolder = monthFolder.strip("/")
 
@@ -64,11 +64,11 @@ for monthName in args.months.split(","):
             if thirdKey is not "queryType":
                 fieldRankingOn(monthFolder, "QueryType", filename)
             xyMappingOn(monthFolder, "UsedSparqlFeatures", "QuerySize", filename)
-            for script, scriptFolder in {"getSparqlStatistic.py":"sparqlFeatures", "operatorUsageStatistic.py":"operatorUsage", "generalStat.py":"generalStats"}.iteritems():
+            for script, scriptFolder in {"getSparqlStatistic.py":"sparqlFeatures", "operatorUsageStatistic.py":"operatorUsage", "generalStat.py":"generalStats"}.items():
                 folder = utility.addMissingSlash(statisticsSubfolder + scriptFolder)
                 if not os.path.exists(folder):
                     os.makedirs(folder)
-                print "Working with " + script + " on " + filename
+                print("Working with " + script + " on " + filename)
                 with open(folder + filename, "w") as f:
                     if subprocess.call(['python', script, monthFolder, '-m', args.monthsFolder, '-p', monthName + "\n" + secondKey + "\n" + thirdKey], stdout = f) != 0:
-                        print "ERROR: Could not calculate " + filename
+                        print("ERROR: Could not calculate " + filename)

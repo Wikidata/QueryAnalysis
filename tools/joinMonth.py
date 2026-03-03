@@ -3,12 +3,12 @@ import gzip
 import os
 import sys
 
-import config
-from utility import utility
+from . import config
+from .utility import utility
 
 def joinMonth(month, monthsFolder = config.monthsFolder, ignoreLock = False, outputPath = None, outputFilename = None):
     if os.path.isfile(utility.addMissingSlash(monthsFolder) + utility.addMissingSlash(month) + "locked") and not ignoreLock:
-        print "ERROR: The month " + month + " is being edited at the moment. Use -i or ignoreLock = True if you want to force the execution of this script."
+        print("ERROR: The month " + month + " is being edited at the moment. Use -i or ignoreLock = True if you want to force the execution of this script.")
         sys.exit()
 
     anonymizedFolder = "anonymousRawData/"
@@ -31,8 +31,8 @@ def joinMonth(month, monthsFolder = config.monthsFolder, ignoreLock = False, out
 
     with gzip.open(targetFile, "w") as target:
         headerSet = False
-        for i in xrange(1, 32):
-            print "Working on %02d" % i
+        for i in range(1, 32):
+            print("Working on %02d" % i)
             sourceFile = pathBase + anonymizedPrefix + "%02d" % i + ".tsv.gz"
             if not (os.path.exists(sourceFile)):
                 continue

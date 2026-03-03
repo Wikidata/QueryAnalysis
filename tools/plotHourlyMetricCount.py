@@ -86,7 +86,7 @@ def plotHist(data, title, countTools, xlabel="hour", ylabel="count of queries", 
 inputDirectory = "dayTriple/"
 
 files = []
-for i in xrange(1, 3):
+for i in range(1, 3):
 	files.append(metricName + "/" + "%02d" % i + "ClassifiedBotsData.tsv")
 
 
@@ -105,10 +105,10 @@ totalDataPerDay = {}
 totalMetricNames = set()
 
 for file in files:
-	print "Working on: " + file
+	print("Working on: " + file)
 
 	day = file.replace(metricName + '/', '').replace("ClassifiedBotsData.tsv", '')
-	print os.getcwd()
+	print(os.getcwd())
 	with open(file) as f:
 		reader = csv.DictReader(f, delimiter="\t")
 
@@ -140,7 +140,7 @@ for file in files:
 			data[metric]["Y"].append(count)
 
 		# sort data so that the log graph is kind of useful
-		sorted_data = sorted(data.items(), cmp=compare)
+		sorted_data = sorted(list(data.items()), cmp=compare)
 
 		plotHist(sorted_data, metricName + '/plots/day' + day, len(set(metrics)))
 		plotHist(sorted_data, metricName + '/plots/log/day' + day, len(set(metrics)), log=True)
@@ -154,7 +154,7 @@ for file in files:
 				sum += count
 			totalDataPerDay[metric]["Y"].append(sum)
 
-sorted_data = sorted(totalDataPerDay.items(), cmp=compare)
+sorted_data = sorted(list(totalDataPerDay.items()), cmp=compare)
 
 plotHist(sorted_data, metricName + "/plots/total", len(totalMetricNames), xlabel='day')
 plotHist(sorted_data, metricName + "/plots/total_log", len(totalMetricNames), xlabel='day',

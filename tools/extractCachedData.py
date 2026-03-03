@@ -7,10 +7,10 @@ import os
 import sys
 
 from dateutil.parser import parse
-from itertools import izip
 
-import config
-from utility import utility
+
+from . import config
+from .utility import utility
 
 parser = argparse.ArgumentParser(
     description="Creates two subsets of the raw log files and the processed log files that would have been cached / not been cached.")
@@ -30,7 +30,7 @@ if (len(sys.argv[1:]) == 0):
 args = parser.parse_args()
 
 if os.path.isfile(utility.addMissingSlash(args.monthsFolder) + utility.addMissingSlash(args.month) + "locked") and not args.ignoreLock:
-    print "ERROR: The month " + args.month + " is being edited at the moment. Use -i if you want to force the execution of this script."
+    print("ERROR: The month " + args.month + " is being edited at the moment. Use -i if you want to force the execution of this script.")
     sys.exit()
 
 os.chdir(utility.addMissingSlash(args.monthsFolder)
@@ -54,11 +54,11 @@ if not os.path.exists(subfolderUncached):
 
 valueErrors = list()
 
-for i in xrange(1, 32):
+for i in range(1, 32):
     if not (os.path.exists(processedPrefix + "%02d" % i + ".tsv.gz")
             and gzip.os.path.exists(sourcePrefix + "%02d" % i + ".tsv.gz")):
         continue
-    print "Working on %02d" % i
+    print("Working on %02d" % i)
     with gzip.open(processedPrefix + "%02d" % i + ".tsv.gz") as p, \
             gzip.open(sourcePrefix + "%02d" % i + ".tsv.gz") as s, \
             gzip.open(subfolderCached + processedPrefix + "%02d" % i   + ".tsv.gz", "w") as cached_p, \
@@ -78,7 +78,7 @@ for i in xrange(1, 32):
 
         lasttime = None
 
-        for processed, source in izip(pReader, sReader):
+        for processed, source in zip(pReader, sReader):
             if cachedpWriter.fieldnames is None:
                 ph = dict((h, h) for h in pReader.fieldnames)
                 cachedpWriter.fieldnames = pReader.fieldnames
@@ -113,7 +113,7 @@ for i in xrange(1, 32):
                 uncachedsWriter.writerow(source)
             else:
                 if (timestamp - lasttime).total_seconds() >= 60:
-                    for k, v in cache.items():
+                    for k, v in list(cache.items()):
                         if (timestamp - v).total_seconds() / 60 > 5.0:
                             del cache[k]
                 if uri_query in cache:
@@ -133,6 +133,6 @@ for i in xrange(1, 32):
                     cache[uri_query] = timestamp
 
 if len(valueErrors) > 0:
-    print "Value errors for time stamps:"
+    print("Value errors for time stamps:")
     for error in valueErrors:
-        print error
+        print(error)

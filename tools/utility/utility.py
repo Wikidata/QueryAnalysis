@@ -28,15 +28,15 @@ def fetchEntries(processed, metric, nosplitting = False):
         try:
             hour = int(processed["hour"])
         except ValueError:
-            print processed["hour"] + " could not be parsed as integer"
+            print(processed["hour"] + " could not be parsed as integer")
             return []
-        if hour not in xrange(0,24):
-            print str(hour) + " is not in 0-23"
+        if hour not in range(0,24):
+            print(str(hour) + " is not in 0-23")
             return []
         try:
             day = int(processed["day"])
         except:
-            print processed["day"] + " could not be parsed as integer"
+            print(processed["day"] + " could not be parsed as integer")
             return []
 
         return [hour + 24 * (day - 1)]
@@ -54,7 +54,7 @@ def fetchEntries(processed, metric, nosplitting = False):
 
 def splitEntry(entry):
     field_array = entry.split(",")
-    field_array = map(lambda it: it.strip(), field_array)
+    field_array = [it.strip() for it in field_array]
     field_array = [x for x in field_array if  x]
     return field_array
 
@@ -75,7 +75,7 @@ class filter:
             self.parameters[arguments[0]] = re.compile(arguments[1])
 
     def checkLine(self, processed):
-        for key, value in self.parameters.iteritems():
+        for key, value in self.parameters.items():
             match = re.match(value, str(processed[key]))
             if match == None:
                 return False

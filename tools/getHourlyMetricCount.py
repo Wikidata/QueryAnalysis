@@ -2,9 +2,9 @@ import argparse
 import os
 import sys
 from collections import defaultdict
-from postprocess import processdata
-from utility import utility
-import config
+from .postprocess import processdata
+from .utility import utility
+from . import config
 
 parser = argparse.ArgumentParser(
     description="Counts for a given metric how often it occurs per hour. "
@@ -29,7 +29,7 @@ args = parser.parse_args()
 if os.path.isfile(utility.addMissingSlash(args.monthsFolder)
                   + utility.addMissingSlash(args.month) + "locked") \
    and not args.ignoreLock:
-    print "ERROR: The month " + args.month + " is being edited at the moment."
+    print("ERROR: The month " + args.month + " is being edited at the moment.")
     + "Use -i if you want to force the execution of this script."
     sys.exit()
 
@@ -63,12 +63,12 @@ class HourlyMetricCountHandler:
             os.makedirs(outputFolder + "/" + self.metric)
 
         header = "hour\t" + self.metric + "\tcount\n"
-        for day, data in self.dailyData.iteritems():
+        for day, data in self.dailyData.items():
             with open(outputFolder + self.metric + "/" + "%02d" % day
                       + "ClassifiedBotsData.tsv", "w") as outputFile:
                 outputFile.write(header)
-                for hour, metricDict in data.iteritems():
-                    for metric in metricDict.iterkeys():
+                for hour, metricDict in data.items():
+                    for metric in metricDict.keys():
                         outputFile.write(str(hour) + "\t" + str(metric)
                                          + "\t" + str(data[hour][metric])
                                          + "\n")
@@ -76,8 +76,8 @@ class HourlyMetricCountHandler:
         with open(outputFolder + self.metric + "/" + "TotalClassifiedBotsData.tsv",
                   "w") as outputFile:
             outputFile.write(header)
-            for hour, metricDict in self.monthlyData.iteritems():
-                for metric in metricDict.iterkeys():
+            for hour, metricDict in self.monthlyData.items():
+                for metric in metricDict.keys():
                     outputFile.write(str(hour) + "\t" + str(metric) + "\t"
                                      + str(self.monthlyData[hour][metric])
                                      + "\n")
@@ -87,8 +87,8 @@ handler = HourlyMetricCountHandler(args.metric)
 
 processdata.processMonth(handler, args.month, args.monthsFolder)
 
-print args.monthsFolder + "/" + args.month \
-        + "/processedLogData/hourlyMetricCountData"
+print(args.monthsFolder + "/" + args.month \
+        + "/processedLogData/hourlyMetricCountData")
 
 handler.saveToFiles(args.monthsFolder + "/" + args.month
                     + "/processedLogData/hourlyMetricCountData")

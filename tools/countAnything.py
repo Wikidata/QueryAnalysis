@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 
 import argparse
-from postprocess import processdata
-import config
+from .postprocess import processdata
+from . import config
 import os
 import sys
-from utility import utility
+from .utility import utility
 import operator
 
 os.nice(19)
@@ -30,7 +30,7 @@ if (len(sys.argv[1:]) == 0):
 args = parser.parse_args()
 
 if os.path.isfile(utility.addMissingSlash(args.monthsFolder) + utility.addMissingSlash(args.month) + "locked") and not args.ignoreLock:
-    print "ERROR: The month " + args.month + " is being edited at the moment. Use -i if you want to force the execution of this script."
+    print("ERROR: The month " + args.month + " is being edited at the moment. Use -i if you want to force the execution of this script.")
     sys.exit()
 
 
@@ -55,10 +55,10 @@ class CountRdfPropertiesHandler:
 			self.propQueryCounts[prop] = c
 	
 	def printResults(self):
-		print "Queries: %d" % (self.queryCount)
-		print "\n\n%s\tcount" % (args.parameter)
-		for p, c in sorted(self.propQueryCounts.iteritems(), key=operator.itemgetter(1), reverse=True):
-			print "%s\t%d" % (p,c)
+		print("Queries: %d" % (self.queryCount))
+		print("\n\n%s\tcount" % (args.parameter))
+		for p, c in sorted(iter(self.propQueryCounts.items()), key=operator.itemgetter(1), reverse=True):
+			print("%s\t%d" % (p,c))
 	
 handler = CountRdfPropertiesHandler()
 processdata.processMonth(handler, args.month, args.monthsFolder)

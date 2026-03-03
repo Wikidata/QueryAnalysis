@@ -4,9 +4,9 @@ import sys
 from collections import defaultdict
 from pprint import pprint
 
-import config
-from postprocess import processdata
-from utility import utility
+from . import config
+from .postprocess import processdata
+from .utility import utility
 import itertools
 
 parser = argparse.ArgumentParser(
@@ -40,9 +40,9 @@ args = parser.parse_args()
 if os.path.isfile(utility.addMissingSlash(args.monthsFolder)
                   + utility.addMissingSlash(args.month) + "locked") \
    and not args.ignoreLock:
-    print("ERROR: The month " + str(args.month) +
+    print(("ERROR: The month " + str(args.month) +
           " is being edited at the moment." +
-          " Use -i if you want to force the execution of this script.")
+          " Use -i if you want to force the execution of this script."))
     sys.exit()
 
 
@@ -65,12 +65,12 @@ class GeneralStatisticsHandler:
         print(
             "Month\tFirst\tCopy\tSIMPLE\tCOMPLEX\tEXAMPLE_STRING\tEXAMPLE_PARSED"
         )
-        print(
+        print((
             args.month + "\t" + str(self.statistic["FIRST"]) + "\t" +
             str(self.statistic["COPY"]) + "\t" + str(self.statistic["SIMPLE"])
             + "\t" + str(self.statistic["COMPLEX"]) + "\t" +
             str(self.statistic["EXAMPLE_STRING"]) + "\t" +
-            str(self.statistic["EXAMPLE_PARSED"]))
+            str(self.statistic["EXAMPLE_PARSED"])))
 
 
 handler = GeneralStatisticsHandler()
@@ -78,7 +78,7 @@ handler = GeneralStatisticsHandler()
 processdata.processMonth(
     handler, args.month, args.monthsFolder, notifications=False)
 
-print args.position
-print ""
+print(args.position)
+print("")
 
 handler.printStat()

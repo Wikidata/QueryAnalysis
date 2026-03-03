@@ -7,9 +7,8 @@ import shutil
 import subprocess
 import sys
 import gzip
-import unifyQueryTypes
-from utility import utility
-import config
+from .utility import utility
+from . import config
 
 os.nice(19)
 
@@ -79,8 +78,8 @@ for monthName in args.months.split(","):
     if os.path.isfile(utility.addMissingSlash(args.monthsFolder)
                       + utility.addMissingSlash(monthName) + "locked") \
        and not args.ignoreLock:
-        print "ERROR: The month " + monthName + " is being edited at the " \
-        + "moment. Use -i if you want to force the execution of this script."
+        print("ERROR: The month " + monthName + " is being edited at the " \
+        + "moment. Use -i if you want to force the execution of this script.")
         sys.exit()
 
     month = utility.addMissingSlash(os.path.abspath(utility.addMissingSlash(args.monthsFolder)
@@ -93,8 +92,8 @@ for monthName in args.months.split(","):
     # If the month directory does not exist it is being created along with
     # the directories for raw and processed log data.
     if not os.path.exists(month):
-        print("Starting data extraction from wmf.wdqs_extract for "
-              + monthName + ".")
+        print(("Starting data extraction from wmf.wdqs_extract for "
+              + monthName + "."))
 
         os.makedirs(month)
         os.makedirs(processedLogDataDirectory)
@@ -103,7 +102,7 @@ for monthName in args.months.split(","):
         # For each day we send a command to hive that extracts all entries for
         # this day (in the given month and year) and writes them to temporary
         # files.
-        for day in xrange(1, months[monthName][1] + 1):
+        for day in range(1, months[monthName][1] + 1):
             arguments = ['hive', '-e']
             
             os.makedirs(tempDirectory)
@@ -116,26 +115,35 @@ for monthName in args.months.split(","):
                 hive_call += field + ", "
             hive_call = hive_call[:-2] + " "
 
+            ########## NEEDS UPDATE! ##############
+            # This hive call is obsolete and doesn't return any results.
+            # The wmf.wdqs_extract data store is no longer the right place to look.
+            # The query needs to be updated based on the current internal data schema.
+            #
+            # The only fields that are used in the anonymization part of the code
+            # are |uri_query| and |ts|; the others are for analysis only.
+            #
+            # |uri_query| is assumed to have the form "?query=<URL-encoded query>"
             hive_call += ' from wmf.wdqs_extract where uri_query<>"" ' \
                     + 'and year=\'' + str(args.year) +  '\' and month=\'' \
                     + str(months[monthName][0]) + '\' and day=\'' + str(day) + '\''
 
             arguments.append(hive_call)
             if subprocess.call(arguments) != 0:
-                print("ERROR: Raw data for month " + monthName + " does not "
-                      + "exist but could not be extracted using hive.")
+                print(("ERROR: Raw data for month " + monthName + " does not "
+                      + "exist but could not be extracted using hive."))
                 sys.exit(1)
 
             # The content of the temporary files is then copied to the actual
             # raw log data file (with added headers)
             with gzip.open(rawLogDataDirectory + "QueryCnt"
                            + "%02d"%day  + ".tsv.gz", "wb") as dayfile:
-                dayfile.write(header)
+                dayfile.write(header.encode('utf-8'))
 
                 for filename in glob.glob(tempDirectory + '*'):
                     with open(filename) as temp:
                         for line in temp:
-                            dayfile.write(line)
+                            dayfile.write(line.encode('utf-8'))
 
             shutil.rmtree(tempDirectory)
 
@@ -162,17 +170,16 @@ for monthName in args.months.split(","):
     mavenCall.append(mavenArguments)
 
     owd = os.getcwd()
-    os.chdir("..")
 
-    print "Starting data processing using QueryAnalysis for " + monthName + "."
+    print("Starting data processing using QueryAnalysis for " + monthName + ".")
 
     if subprocess.call(['mvn', 'clean', 'package']) != 0:
-        print "ERROR: Could not package the java application."
+        print("ERROR: Could not package the java application.")
         sys.exit(1)
 
     if subprocess.call(mavenCall) != 0:
-        print("ERROR: Could not execute the java application. Check the logs "
-              + "for details or rerun this script with -l to generate logs.")
+        print(("ERROR: Could not execute the java application. Check the logs "
+              + "for details or rerun this script with -l to generate logs."))
         sys.exit(1)
 
     os.chdir(owd)

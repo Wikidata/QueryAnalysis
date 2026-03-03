@@ -5,10 +5,10 @@ import sys
 
 from collections import defaultdict
 
-import config
+from . import config
 
-from postprocess import processdata
-from utility import utility
+from .postprocess import processdata
+from .utility import utility
 
 parser = argparse.ArgumentParser(
     description="Tool to rank the used data types")
@@ -30,7 +30,7 @@ args = parser.parse_args()
 if os.path.isfile(utility.addMissingSlash(args.monthsFolder)
                   + utility.addMissingSlash(args.month) + "locked") \
    and not args.ignoreLock:
-    print "ERROR: The month " + args.month + " is being edited at the "
+    print("ERROR: The month " + args.month + " is being edited at the ")
     + "moment. Use -i if you want to force the execution of this script."
     sys.exit()
 
@@ -49,6 +49,6 @@ if args.anonymous:
 else:
     processdata.processMonth(handler, args.month, args.monthsFolder)
 
-print "count\tdataType"
-for k, v in sorted(ranking.iteritems(), key=lambda (k, v): (v, k), reverse=True):
-    print str(v) + "\t" + k
+print("count\tdataType")
+for k, v in sorted(iter(ranking.items()), key=lambda k_v: (k_v[1], k_v[0]), reverse=True):
+    print(str(v) + "\t" + k)

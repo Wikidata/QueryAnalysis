@@ -4,9 +4,9 @@ import argparse
 import os
 import sys
 from tabulate import tabulate
-from postprocess import processdata
-from utility import utility
-import config
+from .postprocess import processdata
+from .utility import utility
+from . import config
 from pprint import pprint
 
 parser = argparse.ArgumentParser(
@@ -20,7 +20,7 @@ parser.add_argument('--onlyValid', "-o", action='store_true', help="If set "
                     + "only valid lines are being looked at")
 parser.add_argument("--startline", "-s", default=0, type=int, help="The line"
                     + " from which we want to start displaying the data.")
-parser.add_argument("--endline", "-e", default=sys.maxint, type=int,
+parser.add_argument("--endline", "-e", default=sys.maxsize, type=int,
                     help="The line where we want to stop displaying the data.")
 parser.add_argument("--line", "-l", type=int, help="Set if you only want to display one specific line.")
 parser.add_argument("--day", "-d", default = 1, type=int, help="The day of the month from which "
@@ -54,7 +54,7 @@ if args.line != None:
 if os.path.isfile(utility.addMissingSlash(args.monthsFolder)
                   + utility.addMissingSlash(args.month) + "locked") \
    and not args.ignoreLock:
-    print "ERROR: The month " + args.month + " is being edited at the "
+    print("ERROR: The month " + args.month + " is being edited at the ")
     + "moment. Use -i if you want to force the execution of this script."
     sys.exit()
 
@@ -86,13 +86,13 @@ class ViewDataHandler:
 
         for metric in metrics:
             data[0].append(processed[metric])
-        print tabulate(data, headers=metrics)
-        print "Query:"
+        print(tabulate(data, headers=metrics))
+        print("Query:")
         if sparqlQuery is None:
-            print "Error: Could not find query in uri_query."
+            print("Error: Could not find query in uri_query.")
         else:
-            print sparqlQuery
-            print ""
+            print(sparqlQuery)
+            print("")
 
 
 handler = ViewDataHandler()

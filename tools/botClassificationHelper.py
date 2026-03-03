@@ -1,14 +1,14 @@
-from __future__ import print_function
+
 
 import argparse
 import os
 import sys
 
-import config
-import fieldRanking
+from . import config
+from . import fieldRanking
 
-from postprocess import processdata
-from utility import utility
+from .postprocess import processdata
+from .utility import utility
 
 parser = argparse.ArgumentParser(description = "This script searches for all queries for the top N query types and their top N user agents.")
 parser.add_argument("--monthsFolder", "-m", default=config.monthsFolder,
@@ -88,7 +88,7 @@ class botClassification():
     
     def prepare(self):
         result = fieldRanking.fieldRanking(args.month, key1, args.monthsFolder, ignoreLock = args.ignoreLock, filterParams = args.filter)
-        for i, (k, v) in enumerate(sorted(result.iteritems(), key=lambda (k, v): (v, k), reverse = True)):
+        for i, (k, v) in enumerate(sorted(iter(result.items()), key=lambda k_v1: (k_v1[1], k_v1[0]), reverse = True)):
             self.actualNumber = i
             if i >= args.numberOfCombinations:
                 break
@@ -115,17 +115,17 @@ class botClassification():
         with open(pathBase + "readme.md", "w") as readmeFile:
             print("This directory contains all top {}".format(self.actualNumber) + " " + key1 + "-" + key2 + "-Combinations.", file = readmeFile)
             print("count\t" + key1, file = readmeFile)
-            for firstKey, count in sorted(self.firstKeysCount.iteritems(), key = lambda (k, v): (v, k), reverse = True):
+            for firstKey, count in sorted(iter(self.firstKeysCount.items()), key = lambda k_v2: (k_v2[1], k_v2[0]), reverse = True):
                 print(str(count) + "\t" + firstKey, file = readmeFile)
         
-        for firstKey, secondKeyDict in self.firstKeys.iteritems():
+        for firstKey, secondKeyDict in self.firstKeys.items():
                 
             firstKeyPath = preparePath(pathBase, firstKey, tooLong)
 
             with open(firstKeyPath + "info.txt", "w") as infoFirstKeyFile:
                 print("count\t" + key2, file = infoFirstKeyFile)
                 
-                for i, (secondKey, queries) in enumerate(sorted(secondKeyDict.iteritems(), key = lambda (k, v): (len(v), k), reverse = True)):
+                for i, (secondKey, queries) in enumerate(sorted(iter(secondKeyDict.items()), key = lambda k_v: (len(k_v[1]), k_v[0]), reverse = True)):
                     if i >= args.numberOfCombinations:
                         break
                     

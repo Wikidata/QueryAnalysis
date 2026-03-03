@@ -15,7 +15,7 @@ args = parser.parse_args()
 
 rankings = dict()
 
-print("Working on: " + args.rankingFile)
+print(("Working on: " + args.rankingFile))
 with open(args.rankingFile, "r") as rankingFile:
     rankingReader = csv.DictReader(rankingFile, delimiter="\t")
 

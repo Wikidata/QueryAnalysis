@@ -1,12 +1,12 @@
 import argparse
 import os
 import sys
-from postprocess import processdata
-from utility import utility
-import config
+from .postprocess import processdata
+from .utility import utility
+from . import config
 import glob
 import gzip
-from itertools import izip
+
 from random import random
 
 parser = argparse.ArgumentParser(
@@ -35,7 +35,7 @@ month = args.month
 if os.path.isfile(utility.addMissingSlash(monthsFolder) +
                   utility.addMissingSlash(month) + "locked") \
    and not args.ignoreLock:
-    print "ERROR: The month " + args.month + " is being edited at the moment."
+    print("ERROR: The month " + args.month + " is being edited at the moment.")
     + " Use -i if you want to force the execution of this script."
     sys.exit()
 
@@ -51,7 +51,7 @@ for filename in glob.glob(monthsFolder + "/" + month
     processedFileName = utility.addMissingSlash(monthsFolder) + month \
             + "/processedLogData/" + processdata.processedPrefix \
             + "%02d" % day + processdata.processedSuffix
-    print "Working on: " + processedFileName
+    print("Working on: " + processedFileName)
 
     with gzip.open(processedFileName) as p, \
             gzip.open("testData/processedLogData/" +
@@ -63,12 +63,12 @@ for filename in glob.glob(monthsFolder + "/" + month
 
         chancesSelected = float(args.lines) / float(sum(1 for line in p))
 
-        print "Done counting lines, chance for selection is " \
-                + str(chancesSelected)
+        print("Done counting lines, chance for selection is " \
+                + str(chancesSelected))
 
         headerRow = True
 
-        for processed, source in izip(gzip.open(processedFileName),
+        for processed, source in zip(gzip.open(processedFileName),
                                       gzip.open(monthsFolder + "/" + month +
                                                 "/rawLogData/" +
                                                 processdata.sourcePrefix +

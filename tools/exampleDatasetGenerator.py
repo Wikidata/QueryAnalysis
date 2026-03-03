@@ -1,13 +1,13 @@
-from __future__ import print_function
+
 
 import argparse
 import glob
 import gzip
 import random
 import sys
-import urllib
+import urllib.request, urllib.parse, urllib.error
 
-from utility import utility
+from .utility import utility
 
 parser = argparse.ArgumentParser(description = "This script generates an example raw log file based on a folder with example queries")
 parser.add_argument("--exampleQueryFolder", "-e", default="",
@@ -34,7 +34,7 @@ with gzip.open(utility.addMissingSlash(args.outputDirectory) + "QueryCnt01.tsv.g
     
     for filename in glob.glob(exampleQueryFolder + "*.exampleQuery"):
         with open(filename) as exampleFile:
-            line = "?query=" + urllib.quote_plus(exampleFile.read()) + "\t"
+            line = "?query=" + urllib.parse.quote_plus(exampleFile.read()) + "\t"
             line += random.sample(uri_path, 1)[0] + "\t"
             line += random.sample(user_agent, 1)[0] + "\t"
             line += random.sample(timestamp, 1)[0] + "\t"

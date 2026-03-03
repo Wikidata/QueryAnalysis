@@ -7,9 +7,9 @@ import sys
 
 import pandas
 
-import config
+from . import config
 
-from utility import utility
+from .utility import utility
 
 parser = argparse.ArgumentParser(description="Sorts the raw log files by timestamp.")
 parser.add_argument("--monthsFolder", "-m",
@@ -37,18 +37,18 @@ else:
     key = "ts"
 
 if os.path.isfile(utility.addMissingSlash(args.monthsFolder) + utility.addMissingSlash(args.month) + "locked") and not args.ignoreLock:
-    print "ERROR: The month " + args.month + " is being edited at the moment. Use -i if you want to force the execution of this script."
+    print("ERROR: The month " + args.month + " is being edited at the moment. Use -i if you want to force the execution of this script.")
     sys.exit()
 
 os.chdir(utility.addMissingSlash(args.monthsFolder) + utility.addMissingSlash(args.month))
 
-for i in xrange(1, 32):
+for i in range(1, 32):
     filename = sourcePrefix + "%02d" % i
     filename_gzip = filename + ".tsv.gz"
     filename_tsv = filename + ".tsv"
     if not os.path.exists(filename_gzip):
         continue
-    print "Working on %02d" % i
+    print("Working on %02d" % i)
     with gzip.open(filename_gzip, 'rb') as input_file, open(filename_tsv, 'wb') as output_file:
         shutil.copyfileobj(input_file, output_file)
     os.remove(filename_gzip)

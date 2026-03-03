@@ -19,7 +19,7 @@ with urllib.request.urlopen("https://tools.wmflabs.org/hay/propbrowse/props."
 				 '}}',
 		'format': 'json'
 	}).json()
-	print(len(allProperties))
+	print((len(allProperties)))
 
 	for category in categories['results']['bindings']:
 		for property in allProperties:
